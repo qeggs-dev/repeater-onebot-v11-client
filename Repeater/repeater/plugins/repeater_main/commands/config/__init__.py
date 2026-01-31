@@ -25,6 +25,9 @@ from ._branch_command.config_branch_bind import handle_config_branch_bind
 from ._branch_command.config_branch_bind_from import handle_config_branch_bind_from
 from ._branch_command.config_branch_info import handle_config_branch_info
 
+from ._nexus_command._upload_to_nexus import handle_config_upload_to_nexus
+from ._nexus_command._download_from_nexus import handle_config_download_from_nexus
+
 __all__ = [
     "handle_set_auto_load_prompt",
     "handle_set_auto_save_context",
@@ -51,4 +54,6 @@ __all__ = [
     "handle_config_branch_bind",
     "handle_config_branch_bind_from",
     "handle_config_branch_info",
+    "handle_config_upload_to_nexus",
+    "handle_config_download_from_nexus",
 ]
