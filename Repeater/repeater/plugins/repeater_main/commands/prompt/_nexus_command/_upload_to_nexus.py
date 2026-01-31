@@ -19,10 +19,18 @@ async def handle_prompt_upload_to_nexus(bot: Bot, event: MessageEvent, args: Mes
         await send_msg.send_debug_mode()
     
     prompt_core = PromptCore(persona_info)
+
+    timeout = None
+    if persona_info.message_str:
+        try:
+            timeout = int(persona_info.message_str)
+        except ValueError:
+            await send_msg.send_error("Invalid timeout value")
+    
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     else:
-        response = await prompt_core.upload_to_nexus()
+        response = await prompt_core.upload_to_nexus(timeout)
 
         if response.code == 200:
             data = response.get_data()
