@@ -216,7 +216,7 @@ class ChatCore:
             if add_metadata:
                 message_buffer.append("> MessageMetadata:")
                 message_buffer.append(f">     Message Type: {self._persona_info.source.value}")
-                message_buffer.append(">     Message Sending time:{{time}}")
+                message_buffer.append(">     Message Sending time:{{time()}}")
                 if enable_md_prompt:
                     message_buffer.append(">     Markdown Rendering is turned on!!")
                 if storage_configs.merge_group_id:
