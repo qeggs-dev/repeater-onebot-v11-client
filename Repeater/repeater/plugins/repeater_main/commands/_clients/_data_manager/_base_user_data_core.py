@@ -119,7 +119,7 @@ class UserDataCore(ABC):
         response = await self._httpx_client.post(
             f"{BASE_URL}/nexus/download/{self._info.namespace_str}/{self._data_type}",
             json = {
-                "id": uuid
+                "id": str(uuid)
             }
         )
         return Response(
