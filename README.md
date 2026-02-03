@@ -356,13 +356,13 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `getRequirementLicenses`   | `grl`    | `GetRequirementLicenses`  | `LICENSES`  | 4.3.10.8       | 获取依赖许可证                  | 依赖项名称                                  | 获取指定依赖的许可证信息 |
 | `getRequirementList`       | `grls`   | `GetRequirementList`      | `LICENSES`  | 4.3.10.8       | 获取依赖列表                    | 无                                         | 获取所有记录了License的依赖项名称 |
 | `getServerLicense`         | `gsl`    | `GetServerLicense`        | `LICENSES`  | 4.3.10.8       | 获取服务端许可证                | 无                                         | 获取服务端许可证信息 |
-| `checkRoleStructure`       | `crs`    | `CheckRoleStructure`      | `CONTEXT`   | 4.3.10.10      | 检查角色结构                    | 无                                         | 检查上下文中的角色结构是否符合 user-assistant 的规则 |
-| `contextUploadToNexus`     | `cutn`   | `ContextUploadToNexus`    | `NEXUS`     | 4.3.11.0       | 上传上下文到 Nexus              | 无                                         | 上传上下文到Nexus共享 |
-| `contextDownloadFromNexus` | `cdfn`   | `ContextDownloadFromNexus`| `NEXUS`     | 4.3.11.0       | 下载上下文从 Nexus              | 无                                         | 下载Nexus共享的上下文 |
-| `promptUploadToNexus`      | `putn`   | `PromptUploadToNexus`     | `NEXUS`     | 4.3.11.0       | 上传提示到 Nexus                 | 无                                        | 上传提示词到Nexus共享 |
-| `promptDownloadFromNexus`  | `pgetn`  | `PromptDownloadFromNexus` | `NEXUS`     | 4.3.11.0       | 下载提示从 Nexus                 | 无                                        | 获取Nexus共享的提示词 |
-| `configUploadToNexus`      | `cfgutn` | `ConfigUploadToNexus`     | `NEXUS`     | 4.3.11.0       | 上传配置到 Nexus                 | 无                                        | 个性配置上传到Nexus |
-| `configDownloadFromNexus`  | `cfgdtn` | `ConfigDownloadFromNexus` | `NEXUS`     | 4.3.11.0       | 下载配置从 Nexus                 | 无                                        | 从Nexus下载共享的个性配置 |
+| `checkRoleStructure`       | `crs`    | `CheckRoleStructure`      | `CONTEXT`   | 4.3.10.10      | 检查角色结构                    | 无                                        | 检查上下文中的角色结构是否符合 user-assistant 的规则 |
+| `contextUploadToNexus`     | `cutn`   | `ContextUploadToNexus`    | `NEXUS`     | 4.3.11.0       | 上传上下文到 Nexus              | 无                                        | 上传上下文到Nexus共享 |
+| `contextDownloadFromNexus` | `cdfn`   | `ContextDownloadFromNexus`| `NEXUS`     | 4.3.11.0       | 从 Nexus 下载上下文             | 资源 UUID                                 | 下载Nexus共享的上下文 |
+| `promptUploadToNexus`      | `putn`   | `PromptUploadToNexus`     | `NEXUS`     | 4.3.11.0       | 上传提示词到 Nexus              | 无                                        | 上传提示词到Nexus共享 |
+| `promptDownloadFromNexus`  | `pgetn`  | `PromptDownloadFromNexus` | `NEXUS`     | 4.3.11.0       | 从 Nexus 下载提示词             | 资源 UUID                                 | 获取Nexus共享的提示词 |
+| `configUploadToNexus`      | `cfgutn` | `ConfigUploadToNexus`     | `NEXUS`     | 4.3.11.0       | 上传配置到 Nexus                | 无                                        | 个性配置上传到Nexus |
+| `configDownloadFromNexus`  | `cfgdtn` | `ConfigDownloadFromNexus` | `NEXUS`     | 4.3.11.0       | 从 Nexus 下载配置               | 资源 UUID                                 | 从Nexus下载共享的个性配置 |
 
 
 PS：`CHAT`类型命令几乎全员支持视觉输入
