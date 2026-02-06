@@ -4,6 +4,8 @@ from ._chat_core import (
     ChatSendMsg,
     BufferStringStream as ChatBufferStringStream,
     StreamChatChunkResponse as ChatStreamChatChunkResponse,
+    CrossUserDataRouting,
+    DataRoutingField,
 )
 from ._data_manager.context_core import (
     ContextCore,

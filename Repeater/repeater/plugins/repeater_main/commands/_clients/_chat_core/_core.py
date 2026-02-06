@@ -46,7 +46,7 @@ class ChatCore:
         save_context: bool | None = None,
         save_new_only: bool | None = None,
         enable_md_prompt: bool = True,
-        cross_user_data_routing: str | None = None,
+        cross_user_data_routing: CrossUserDataRouting | None = None,
         continue_completion: bool | None = None,
     ) -> Response[ChatResponse]:
         """
@@ -103,7 +103,7 @@ class ChatCore:
         save_context: bool | None = None,
         save_new_only: bool | None = None,
         enable_md_prompt: bool = True,
-        cross_user_data_routing: str | None = None,
+        cross_user_data_routing: CrossUserDataRouting | None = None,
         continue_completion: bool | None = None,
     ) -> AsyncIterator[Any]:
         """
