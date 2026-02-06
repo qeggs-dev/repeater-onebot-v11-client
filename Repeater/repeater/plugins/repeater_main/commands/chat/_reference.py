@@ -4,7 +4,7 @@ from nonebot.params import CommandArg
 from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment
 
-from .._clients import ChatCore, ChatSendMsg
+from .._clients import ChatCore, ChatSendMsg, CrossUserDataRouting, DataRoutingField
 from ...assist import PersonaInfo, SendMsg
 from ...logger import logger
 
@@ -40,7 +40,11 @@ async def handle_reference(bot: Bot, event: MessageEvent, args: Message = Comman
         
     response = await chat_core.send_message(
         message = message.extract_plain_text().strip(),
-        reference_context_id=persona_info.noself_at_list[0],
+        cross_user_data_routing = CrossUserDataRouting(
+            context = DataRoutingField(
+                load_from_user_id = persona_info.noself_at_list[0]
+            )
+        ),
         image_url = images
     )
 
