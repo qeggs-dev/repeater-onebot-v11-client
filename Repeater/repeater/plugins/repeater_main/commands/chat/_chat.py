@@ -30,14 +30,19 @@ async def handle_chat(bot: Bot, event: MessageEvent, args: Message = CommandArg(
         module = send_msg.component
     )
 
-    message = persona_info.message
+    message_text = persona_info.message_str.strip()
 
     core = ChatCore(persona_info)
+
+    forward_msgs = await persona_info.get_forward_msgs()
+    if forward_msgs:
+        forward_msgs_text = persona_info.generates_text_from_messages_list(forward_msgs)
+        message_text = f"{forward_msgs_text}\n\n---\n\n{message_text}"
 
     images: list[str] = await persona_info.get_images_url()
 
     response = await core.send_message(
-        message = message.extract_plain_text().strip(),
+        message = message_text,
         image_url = images
     )
 
