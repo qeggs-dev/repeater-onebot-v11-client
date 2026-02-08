@@ -31,12 +31,14 @@ async def handle_tts_chat(bot: Bot, event: MessageEvent, args: Message = Command
         module = send_msg.component
     )
 
+    message_text = persona_info.message_str.strip()
+
     core = ChatCore(persona_info)
 
     images: list[str] = await persona_info.get_images_url()
 
     response = await core.send_message(
-        message = persona_info.message_str,
+        message = message_text,
         image_url = images
     )
 
