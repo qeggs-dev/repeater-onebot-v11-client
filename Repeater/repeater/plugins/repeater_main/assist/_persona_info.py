@@ -7,6 +7,8 @@ from ._assist_func import (
 from ..core_net_configs import storage_configs
 from ._namespace import MessageSource, Namespace
 from ._image_downloader import ImageDownloader
+from datetime import datetime
+from pydantic import ValidationError
 
 class PersonaInfo:
     def __init__(self, bot: Bot, event: MessageEvent, args: Message | None = None):
@@ -220,3 +222,46 @@ class PersonaInfo:
                     for image_url in downloader.get_images():
                         images.append(image_url)
         return images
+    
+    async def get_forward_msgs(self) -> list[MessageEvent]:
+        msgs: list[MessageEvent] = []
+
+        for msg in self._message_event.message:
+            if msg.type == "forward":
+                MessageEvent(
+                    **(
+                        await self._bot.get_forward_msg(msg.data["id"])
+                    )
+                )
+        return msgs
+    
+    @staticmethod
+    def generates_text_from_messages_list(messages: list[dict | MessageEvent]):
+        text_buffer: list[str] = []
+        validation_failure_counter: int = 0
+        for message in messages:
+            try:
+                if isinstance(message, dict):
+                    event = MessageEvent(**message)
+                else:
+                    event = message
+                nick_name = event.sender.card or event.sender.nickname
+                text = event.message
+                time = datetime.fromtimestamp(event.time)
+            except ValidationError:
+                try:
+                    nick_name = message["sender"]["card"] or message["sender"]["nickname"]
+                    text = message['message']
+                    time = datetime.fromtimestamp(message["time"])
+                except KeyError:
+                    validation_failure_counter += 1
+                    continue
+            
+            time_str = time.strftime("%Y-%m-%d %H:%M:%S")
+            text_buffer.append(
+                f"[{time_str}]{nick_name}: {text}"
+            )
+
+        if validation_failure_counter > 0:
+            text_buffer.append(f"Validation Failure: {validation_failure_counter}")
+        return "\n".join(text_buffer)
