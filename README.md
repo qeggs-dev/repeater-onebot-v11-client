@@ -363,7 +363,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `promptDownloadFromNexus`  | `pgetn`  | `PromptDownloadFromNexus` | `NEXUS`     | 4.3.11.0       | 从 Nexus 下载提示词             | 资源 UUID                                 | 获取Nexus共享的提示词 |
 | `configUploadToNexus`      | `cfgutn` | `ConfigUploadToNexus`     | `NEXUS`     | 4.3.11.0       | 上传配置到 Nexus                | 无                                        | 个性配置上传到Nexus |
 | `configDownloadFromNexus`  | `cfgdtn` | `ConfigDownloadFromNexus` | `NEXUS`     | 4.3.11.0       | 从 Nexus 下载配置               | 资源 UUID                                 | 从Nexus下载共享的个性配置 |
-
+| `setCustomName`            | `scn`    | `SetCustomName`           | `CONFIG`    | 4.3.12.1       | 设置个性化名称                  | 用户名                                    | 设置后模型看到的将是设置的名称而非用户名 |
 
 PS：`CHAT`类型命令几乎全员支持视觉输入
 由于需要保存上下文，复读机默认会将其下载为Base64编码
@@ -374,7 +374,6 @@ PS：`CHAT`类型命令几乎全员支持视觉输入
 它的一条命令会执行多条后端请求
 通常，它会从基础功能拼接出高级功能
 或是同时操作多个数据内容
-
 
 `NEXUS` 系列命令操作的是当前活动分支
 所以在下载前请确保你的活动分支上没有重要数据
