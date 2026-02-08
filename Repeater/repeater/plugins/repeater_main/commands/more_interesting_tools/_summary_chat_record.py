@@ -34,7 +34,7 @@ async def handle_summary_chat_record(bot: Bot, event: MessageEvent, args: Messag
             count = n
         )
 
-        text = await asyncio.to_thread(persona_info.generates_text_from_messages_list, message_list)
+        text = await asyncio.to_thread(persona_info.generates_text_from_messages_list, message_list["messages"])
 
         if text:
             text = f"{text}\n\n---\n\nPlease summarize the above chat record."
