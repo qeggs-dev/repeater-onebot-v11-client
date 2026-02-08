@@ -11,36 +11,6 @@ from .._clients import ChatCore, ChatSendMsg
 
 summary_chat_record = on_command("summaryChatRecord", aliases={"scr", "summary_chat_record", "Summary_Chat_Record", "SummaryChatRecord"}, rule=to_me(), block=True)
 
-def generate_text(messages: list[dict]):
-    text_buffer: list[str] = []
-    validation_failure_counter: int = 0
-    for message in messages["messages"]:
-        try:
-            event = MessageEvent(**message)
-            nick_name = event.sender.card or event.sender.nickname
-            text = f"{nick_name}: {event.message}"
-            time = datetime.fromtimestamp(event.time)
-        except ValidationError:
-            try:
-                nick_name = message["sender"]["card"] or message["sender"]["nickname"]
-                text = f"{nick_name}: {message['message']}"
-                time = datetime.fromtimestamp(message["time"])
-            except KeyError:
-                validation_failure_counter += 1
-                continue
-        
-        time_str = time.strftime("%Y-%m-%d %H:%M:%S")
-        text_buffer.append(
-            f"[{time_str}]{nick_name}: {text}"
-        )
-
-    if validation_failure_counter > 0:
-        text_buffer.append(f"Validation Failure: {validation_failure_counter}")
-    text_buffer.append("---")
-    text_buffer.append("Please summarize the above chat record.")
-    return "\n".join(text_buffer)
-
-
 @summary_chat_record.handle()
 async def handle_summary_chat_record(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     persona_info = PersonaInfo(bot, event, args)
@@ -64,7 +34,10 @@ async def handle_summary_chat_record(bot: Bot, event: MessageEvent, args: Messag
             count = n
         )
 
-        text = await asyncio.to_thread(generate_text, message_list)
+        text = await asyncio.to_thread(persona_info.generates_text_from_messages_list, message_list)
+
+        if text:
+            text = f"{text}\n\n---\n\nPlease summarize the above chat record."
 
         chat_core = ChatCore(persona_info)
         response = await chat_core.send_message(
