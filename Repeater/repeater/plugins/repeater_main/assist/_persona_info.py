@@ -7,6 +7,7 @@ from ._assist_func import (
 from ..core_net_configs import storage_configs
 from ._namespace import MessageSource, Namespace
 from ._image_downloader import ImageDownloader
+from nonebot import logger
 from datetime import datetime
 from pydantic import ValidationError
 
@@ -228,11 +229,10 @@ class PersonaInfo:
 
         for msg in self._message_event.message:
             if msg.type == "forward":
-                MessageEvent(
-                    **(
-                        await self._bot.get_forward_msg(msg.data["id"])
-                    )
-                )
+                forward_msg = await self._bot.get_forward_msg(id=msg.data["id"])
+                messages = forward_msg["messages"]
+                for message in messages:
+                    msgs.append(MessageEvent(**message))
         return msgs
     
     @staticmethod
@@ -241,10 +241,10 @@ class PersonaInfo:
         validation_failure_counter: int = 0
         for message in messages:
             try:
-                if isinstance(message, dict):
-                    event = MessageEvent(**message)
-                else:
+                if isinstance(message, MessageEvent):
                     event = message
+                else:
+                    event = MessageEvent(**message)
                 nick_name = event.sender.card or event.sender.nickname
                 text = event.message
                 time = datetime.fromtimestamp(event.time)
