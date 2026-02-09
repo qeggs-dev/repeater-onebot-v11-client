@@ -35,10 +35,6 @@ class TextRender:
             },
             timeout = self._timeout
         )
-        try:
-            response_json:dict = response.json()
-        except:
-            response_json = {}
         
         return Response(
             response,
