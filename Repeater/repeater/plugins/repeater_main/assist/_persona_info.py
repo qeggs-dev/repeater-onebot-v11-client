@@ -224,6 +224,29 @@ class PersonaInfo:
                         images.append(image_url)
         return images
     
+    async def get_reply_chain(self) -> list[MessageEvent]:
+        """
+        获取回复链
+
+        注：解析时，它会默认消息段中只有一个 reply 消息段，
+        如果有存在多个，那么它将会在该部分直接退出解析
+        """
+        msgs: list[MessageEvent] = []
+        message: Message = self._message_event.message
+        while True:
+            reply_messages = await self.get_reply_msgs(message)
+            if len(reply_messages) == 1:
+                event = reply_messages[0]
+                msgs.append(event)
+                message = event.message
+            else:
+                break
+        if not msgs:
+            logger.warning(
+                "Reply chain is not found"
+            )
+        return msgs
+    
     async def get_reply_msgs(self, message: Message | None = None) -> list[MessageEvent]:
         msgs: list[MessageEvent] = []
         if message is None:
@@ -234,6 +257,10 @@ class PersonaInfo:
                 msgs.append(
                     MessageEvent(**reply_msg)
                 )
+        if not msgs:
+            logger.warning(
+                "Reply is not found"
+            )
         return msgs
     
     async def get_forward_msgs(self) -> list[MessageEvent]:
@@ -245,6 +272,10 @@ class PersonaInfo:
                 messages = forward_msg["messages"]
                 for message in messages:
                     msgs.append(MessageEvent(**message))
+        if not msgs:
+            logger.warning(
+                "Forward is not found"
+            )
         return msgs
     
     @staticmethod
