@@ -785,7 +785,14 @@ class SendMsg:
         if reply:
             send_msg = self._persona_info.reply + send_msg
         await self._matcher.send(send_msg)
+        logger.info(
+            "Send message: \n{message}",
+            message = send_msg
+        )
         if not continue_handler:
+            logger.info(
+                "Break handler"
+            )
             await self.break_handler()
     
     @staticmethod
