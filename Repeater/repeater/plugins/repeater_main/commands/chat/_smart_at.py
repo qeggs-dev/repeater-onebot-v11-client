@@ -44,18 +44,18 @@ async def handle_smart_at(bot: Bot, event: MessageEvent):
     if forward_msgs:
         forward_msgs_text = persona_info.generates_text_from_messages_list(forward_msgs)
         if message_text:
-            message_text = f"{forward_msgs_text}\n\n---\n\n{message_text}"
+            message_text = f"Forwarded messages:\n{forward_msgs_text}\n\n---\n\n{message_text}"
         else:
             message_text = forward_msgs_text
     else:
         message_text = message_text
     
-    reply_msgs = await persona_info.get_reply_msgs()
+    reply_msgs = await persona_info.get_reply_chain()
     if reply_msgs:
         reply_msgs_text = persona_info.generates_text_from_messages_list(reply_msgs)
         reply_msgs_text = reply_msgs_text.replace("\n", "\n> ")
         if message_text:
-            message_text = f"{reply_msgs_text}\n\n---\n\n{message_text}"
+            message_text = f"Reply messages:\n{reply_msgs_text}\n\n---\n\n{message_text}"
         else:
             message_text = reply_msgs_text
 

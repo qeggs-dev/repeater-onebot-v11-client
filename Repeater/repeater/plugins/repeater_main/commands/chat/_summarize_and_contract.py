@@ -35,7 +35,7 @@ async def handle_summarize_and_contract(bot: Bot, event: MessageEvent, args: Mes
     if not message_text:
         message_text = storage_configs.summarize_and_contract_default_message
     
-    reply_msgs = await persona_info.get_reply_msgs()
+    reply_msgs = await persona_info.get_reply_chain()
     if reply_msgs:
         reply_msgs_text = persona_info.generates_text_from_messages_list(reply_msgs)
         reply_msgs_text = reply_msgs_text.replace("\n", "\n> ")

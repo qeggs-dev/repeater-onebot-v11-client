@@ -33,7 +33,7 @@ async def handle_tts_chat(bot: Bot, event: MessageEvent, args: Message = Command
 
     message_text = persona_info.message_str.strip()
     
-    reply_msgs = await persona_info.get_reply_msgs()
+    reply_msgs = await persona_info.get_reply_chain()
     if reply_msgs:
         reply_msgs_text = persona_info.generates_text_from_messages_list(reply_msgs)
         reply_msgs_text = reply_msgs_text.replace("\n", "\n> ")
