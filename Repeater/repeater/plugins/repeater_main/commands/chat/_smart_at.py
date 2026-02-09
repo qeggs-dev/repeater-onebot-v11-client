@@ -38,17 +38,26 @@ async def handle_smart_at(bot: Bot, event: MessageEvent):
         logger.warning("Message is empty")
         return
     
-    message_str = persona_info.message_str
+    message_text = persona_info.message_str
 
     forward_msgs = await persona_info.get_forward_msgs()
     if forward_msgs:
         forward_msgs_text = persona_info.generates_text_from_messages_list(forward_msgs)
-        if message_str:
-            message_text = f"{forward_msgs_text}\n\n---\n\n{message_str}"
+        if message_text:
+            message_text = f"{forward_msgs_text}\n\n---\n\n{message_text}"
         else:
             message_text = forward_msgs_text
     else:
-        message_text = message_str
+        message_text = message_text
+    
+    reply_msgs = await persona_info.get_reply_msgs()
+    if reply_msgs:
+        reply_msgs_text = persona_info.generates_text_from_messages_list(reply_msgs)
+        reply_msgs_text = reply_msgs_text.replace("\n", "\n> ")
+        if message_text:
+            message_text = f"{reply_msgs_text}\n\n---\n\n{message_text}"
+        else:
+            message_text = reply_msgs_text
 
     images: list[str] = await persona_info.get_images_url()
 

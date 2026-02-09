@@ -32,6 +32,15 @@ async def handle_tts_chat(bot: Bot, event: MessageEvent, args: Message = Command
     )
 
     message_text = persona_info.message_str.strip()
+    
+    reply_msgs = await persona_info.get_reply_msgs()
+    if reply_msgs:
+        reply_msgs_text = persona_info.generates_text_from_messages_list(reply_msgs)
+        reply_msgs_text = reply_msgs_text.replace("\n", "\n> ")
+        if message_text:
+            message_text = f"{reply_msgs_text}\n\n---\n\n{message_text}"
+        else:
+            message_text = reply_msgs_text
 
     core = ChatCore(persona_info)
 
