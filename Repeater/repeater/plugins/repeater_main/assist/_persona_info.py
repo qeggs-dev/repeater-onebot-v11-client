@@ -224,6 +224,18 @@ class PersonaInfo:
                         images.append(image_url)
         return images
     
+    async def get_reply_msgs(self, message: Message | None = None) -> list[MessageEvent]:
+        msgs: list[MessageEvent] = []
+        if message is None:
+            message = self._message_event.message
+        for msg in message:
+            if msg.type == "reply":
+                reply_msg = await self._bot.get_msg(message_id=msg.data["id"])
+                msgs.append(
+                    MessageEvent(**reply_msg)
+                )
+        return msgs
+    
     async def get_forward_msgs(self) -> list[MessageEvent]:
         msgs: list[MessageEvent] = []
 
