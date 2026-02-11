@@ -692,6 +692,52 @@ class SendMsg:
             )
     
     @overload
+    async def send_check_length_prompt(
+            self,
+            message: Message | str,
+            threshold: float = 1.0,
+            reply: bool = True,
+            continue_handler: Literal[False] = False
+        ) -> NoReturn: ...
+    
+    @overload
+    async def send_check_length_prompt(
+            self,
+            message: Message | str,
+            threshold: float = 1.0,
+            reply: bool = True,
+            continue_handler: Literal[True] = True
+        ) -> None: ...
+    
+    async def send_check_length_prompt(
+            self,
+            prompt: Message | str,
+            threshold: float = 1.0,
+            reply: bool = True,
+            continue_handler: bool = False
+        ):
+        if isinstance(prompt, Message):
+            text = prompt.extract_plain_text()
+        elif isinstance(prompt, str):
+            text = prompt
+        else:
+            raise TypeError(f"message must be Message or str, but got {type(prompt)}")
+        length_score = self.text_length_score(text)
+        if length_score >= threshold:
+            await self.send_mixed_render(
+                text,
+                self.prompt_str,
+                reply = reply,
+                continue_handler = continue_handler
+            )
+        else:
+            await self.send_prompt(
+                text,
+                reply = reply,
+                continue_handler = continue_handler
+            )
+    
+    @overload
     async def send_any(
             self,
             message: str | Message | MessageSegment,
