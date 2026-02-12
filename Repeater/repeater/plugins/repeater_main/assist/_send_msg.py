@@ -185,6 +185,8 @@ class SendMsg:
                 error = response.get_error()
                 if error is not None:
                     message = f"{error.error_message}\n{error.source_exception}: {error.exception_message}"
+                elif response.text:
+                    message = response.text
                 else:
                     message = f"[Error Info Is Invalid]"
             else:
