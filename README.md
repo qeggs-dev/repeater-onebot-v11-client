@@ -280,7 +280,8 @@ PS：该配置文件是专门用于对接ChatTTS的
 
 | Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
 | :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
-| ` `                        | ` `      | ` `                       | `CHAT`      | 4.0 Beta       | 默认命令，自然语言对话          | 自然语言输入                               | 当@复读机的时候，如果没有命中其他命令就会执行这个，并把所有内容作为输入 |
+| `echo`                     | `echo`   | `Echo`                    | `ECHO`      | 4.0 Beta       | 重复消息                       | 要重复消息内容                             | 重复消息内容，包括特殊消息段，如果输入不跟内容，复读机会等待下一条消息 |
+| ` `                        | ` `      | ` `                       | `CHAT`      | 4.0 Beta       | 默认命令，自然语言对话          | 自然语言输入                               | 当@复读机的时候，如果没有命中其他命令就会执行这个 |
 | `chat`                     | `c`      | `Chat`                    | `CHAT`      | 4.0 Beta       | 与机器人对话                   | 自然语言输入                               | 强制模型用文字输出，绕过Markdown渲染检查 |
 | `keepAnswering`            | `ka`     | `KeepAnswering`           | `CHAT`      | 4.0 Beta       | 持续对话(常规)                 | 无                                        | 无须输入，AI再次回复 |
 | `keepReasoning`            | `kr`     | `KeepReasoning`           | `CHAT`      | 4.0 Beta       | 持续对话(推理)                 | 无                                        | 无须输入，AI再次使用推理回复 |
@@ -314,56 +315,56 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `getNamespace`             | `gns`    | `GetNamespace`            | `NAMESPACE` | 4.2.4.4        | 获取命名空间                   | @目标用户 (不填就是自己)                    | 获取当前或指定用户的命名空间 |
 | `deleteSession`            | `ds`     | `DeleteSession`           | `MIXED`     | 4.2.5.0        | 删除所有用户数据               | 无                                        | 删除所有用户数据 |
 | `raw`                      | `raw`    | `Raw`                     | `CHAT`      | 4.2.5.1        | 发送消息且不包含任何元数据      | 自然语言输入                               | 发送消息且不包含任何元数据 |
-| `changeSession`            | `cs`     | `ChangeSession`           | `MIXED`     | 4.2.5.1        | 让所有的数据同时切换到一个分支   | 分支名称                                  | 让`Context`、`Prompt`、`Config`同时切换到一个分支 |
-| `noSaveChat`               | `nsc`    | `NoSaveChat`              | `CHAT`      | 4.2.6.6        | 不保存的聊天对话                | 无                                        | 聊天后不保存最新聊天记录 |
-| `summaryChatRecord`        | `scr`    | `SummaryChatRecord`       | `OTHER`     | 4.2.6.6        | 聊天记录总结                    | 整数，传入的消息数量                       | 获取当前群聊内指定数量的聊天记录摘要 |
-| `varExpandText`            | `vet`    | `Var_Expand_Text`         | `VAREXPAND` | 4.2.7.0        | 变量展开(文本)                 | 文本模板(使用大括号作为[变量](#变量表)标记)  | 强制使用文本输出 |
-| `varExpandImage`           | `vei`    | `Var_Expand_Image`        | `VAREXPAND` | 4.2.7.0        | 变量展开(图片)                 | 文本模板(使用大括号作为[变量](#变量表)标记)  | 强制使用图片输出 |
-| `setAutoLoadPrompt`        | `salp`   | `SetAutoLoadPrompt`       | `CONFIG`    | 4.3.1.0        | 设置自动加载提示词              | `true`或`false`                           | 设置请求时是否自动加载Prompt |
-| `setAutoSaveContext`       | `sasc`   | `SetAutoSaveContext`      | `CONFIG`    | 4.3.1.0        | 设置自动保存上下文              | `true`或`false`                           | 设置生成完毕后是否自动保存Context |
-| `setRenderTitle`           | `srt`    | `SetRenderTitle`          | `CONFIG`    | 4.3.2.1        | 设置渲染标题                    | 任意文本                                   | 渲染时显示的标题内容 |
-| `setTimezone`              | `stz`    | `SetTimezone`             | `CONFIG`    | 4.3.3.3        | 设置时区                        | 时区名称(如`Asia/Shanghai`)                | 请使用确定的时区名称 |
-| `writeUserProfile`         | `wup`    | `WriteUserProfile`        | `CONFIG`    | 4.3.3.6        | 写入用户人设数据                 | 任意文本                                   | 该部分会被嵌入到用户提示词中，告诉AI用户的基础设定 |
-| `setHtmlTemplate`          | `sht`    | `SetHtmlTemplate`         | `CONFIG`    | 4.3.3.6        | 设置HTML模板                    | 预设模板名称                               | 可以用于切换Markdown渲染时使用的HTML模板 |
-| `setSaveTextOnly`          | `ssto`   | `SetSaveTextOnly`         | `CONFIG`    | 4.3.6.0        | 是否在保存时丢弃除了文本以外的内容 | `true`或`false`                           | 设为`true`可以更快速的完成保存与读取，但模型将无法再获取之前的附加数据 |
-| `textRender`               | `tr`     | `TextRender`              | `RENDER`    | 4.3.7.0        | Markdown 文本渲染                | Markdown 文本                             | 将 Markdown 文本渲染为图片 |
-| `getModelList`             | `gml`    | `GetModelList`            | `MODEL`     | 4.3.7.4        | 获取模型列表                     | 模型类型(目前只有`chat`)                   | 获取模型列表 |
-| `generatePrompt`           | `gp`     | `GeneratePrompt`          | `MIXED`     | 4.3.7.5        | 生成提示词                       | 角色描述                                  | 生成提示词，并自动保存到用户提示词数据中 |
-| `summarizeAndContract`     | `sac`    | `SummarizeAndContract`    | `CHAT`      | 4.3.7.6        | 摘要并压缩                       | 自定义提示词，可以为空                      | 摘要并压缩对话，并自动删除多余的历史记录 |
-| `contextBranchClone`       | `cbc`    | `ContextBranchClone`      | `CONTEXT`   | 4.3.9.1        | 克隆上下文分支                   | 目标分支名称                               | 将当前活动分支复制到一个新的分支下 |
-| `contextBranchCloneFrom`   | `cbcf`   | `ContextBranchCloneFrom`  | `CONTEXT`   | 4.3.9.1        | 从分支克隆上下文                 | 源分支名称                                 | 将指定分支复制到当前活动分支下 |
-| `promptBranchClone`        | `pbc`    | `PromptBranchClone`       | `PROMPT`    | 4.3.9.1        | 克隆提示词分支                   | 目标分支名称                               | 将当前活动分支复制到一个新的分支下 |
-| `promptBranchCloneFrom`    | `pbcf`   | `PromptBranchCloneFrom`   | `PROMPT`    | 4.3.9.1        | 从分支克隆提示词                 | 源分支名称                                 | 将指定分支复制到当前活动分支下 |
-| `configBranchClone`        | `cfgbc`  | `ConfigBranchClone`       | `CONFIG`    | 4.3.9.1        | 克隆配置分支                     | 目标分支名称                               | 将当前活动分支复制到一个新的分支下 |
-| `configBranchCloneFrom`    | `cfgbcf` | `ConfigBranchCloneFrom`   | `CONFIG`    | 4.3.9.1        | 从分支克隆配置                   | 源分支名称                                 | 将指定分支复制到当前活动分支下 |
-| `contextBranchBind`        | `cbb`    | `ContextBranchBind`       | `CONTEXT`   | 4.3.9.1        | 绑定上下文分支                   | 目标分支名称                               | 创建一个新的分支，使其硬链接到当前活动分支 |
-| `contextBranchBindFrom`    | `cbbf`   | `ContextBranchBindFrom`   | `CONTEXT`   | 4.3.9.1        | 从分支绑定上下文                 | 源分支名称                                 | 删除当前活动分支的内容，并作为指定分支的硬链接 |
-| `promptBranchBind`         | `pbb`    | `PromptBranchBind`        | `PROMPT`    | 4.3.9.1        | 绑定提示词分支                   | 目标分支名称                               | 创建一个新的分支，使其硬链接到当前活动分支 |
-| `promptBranchBindFrom`     | `pbbf`   | `PromptBranchBindFrom`    | `PROMPT`    | 4.3.9.1        | 从分支绑定提示词                 | 源分支名称                                 | 删除当前活动分支的内容，并作为指定分支的硬链接 |
-| `configBranchBind`         | `cfgbb`  | `ConfigBranchBind`        | `CONFIG`    | 4.3.9.1        | 绑定配置分支                     | 目标分支名称                               | 创建一个新的分支，使其硬链接到当前活动分支 |
-| `configBranchBindFrom`     | `cfgbbf` | `ConfigBranchBindFrom`    | `CONFIG`    | 4.3.9.1        | 从分支绑定配置                   | 源分支名称                                 | 删除当前活动分支的内容，并作为指定分支的硬链接 |
-| `contextBranchInfo`        | `cbi`    | `ContextBranchInfo`       | `CONTEXT`   | 4.3.9.1        | 获取分支元数据信息               | 无                                         | 获取当前活动分支的元数据信息 |
-| `promptBranchInfo`         | `pbi`    | `PromptBranchInfo`        | `PROMPT`    | 4.3.9.1        | 获取分支元数据信息               | 无                                         | 获取当前活动分支的元数据信息 |
-| `configBranchInfo`         | `cfgbi`  | `ConfigBranchInfo`        | `CONFIG`    | 4.3.9.1        | 获取分支元数据信息               | 无                                         | 获取当前活动分支的元数据信息 |
-| `sessionBranchClone`       | `sbc`    | `SessionBranchClone`      | `MIXED`     | 4.3.9.3        | 克隆所有类型分支                 | 目标分支名称                                | 将所有类型的当前活动分支复制到一个新的分支下 |
-| `sessionBranchCloneFrom`   | `sbcf`   | `SessionBranchCloneFrom`  | `MIXED`     | 4.3.9.3        | 所有类型从指定分支克隆           | 源分支名称                                  | 所有类型的当前活动分支从指定分支复制 |
-| `sessionBranchBind`        | `sbb`    | `SessionBranchBind`       | `MIXED`     | 4.3.9.3        | 所有类型绑定指定分支             | 目标分支名称                                | 所有类型同时创建一个新分支，硬链接到当前活动分支 |
-| `sessionBranchBindFrom`    | `sbbf`   | `SessionBranchBindFrom`   | `MIXED`     | 4.3.9.3        | 所有类型绑定指定分支             | 源分支名称                                  | 所有类型同时删除活动分支数据，并从指定分支硬链接一份活动分支文件 |
-| `#` or `/`                 | `anot`   | `Annotation`              | `RESERVED`  | 4.3.9.3        | 注释，不会执行任何操作           | 无                                         | 保留的注释命令，不执行任何操作，直接忽略内容 |
-| `crossUserDataAccess`      | `cuda`   | `CrossUserDataAccess`     | `CONFIG`    | 4.3.10.3       | 允许跨用户数据访问               | `true`或`false`                            | 允许跨用户数据访问，如果设置为`false`则只能访问自己的数据 |
-| `newRequestsTextOnly`      | `nrto`   | `NewRequestsTextOnly`     | `CONFIG`    | 4.3.10.7       | 忽略请求里的非文本数据           | `true`或`false`                            | 如果设置为`true`，复读机将把所有消息当成普通文本消息处理 |
-| `adaptationInfo`           | `adai`   | `AdaptationInfo`          | `VERSION`   | 4.3.10.7       | 版本适配信息                    | 无                                         | 展示服务端和客户端的版本信息 |
-| `getRequirementLicenses`   | `grl`    | `GetRequirementLicenses`  | `LICENSES`  | 4.3.10.8       | 获取依赖许可证                  | 依赖项名称                                  | 获取指定依赖的许可证信息 |
-| `getRequirementList`       | `grls`   | `GetRequirementList`      | `LICENSES`  | 4.3.10.8       | 获取依赖列表                    | 无                                         | 获取所有记录了License的依赖项名称 |
-| `getServerLicense`         | `gsl`    | `GetServerLicense`        | `LICENSES`  | 4.3.10.8       | 获取服务端许可证                | 无                                         | 获取服务端许可证信息 |
-| `checkRoleStructure`       | `crs`    | `CheckRoleStructure`      | `CONTEXT`   | 4.3.10.10      | 检查角色结构                    | 无                                        | 检查上下文中的角色结构是否符合 user-assistant 的规则 |
-| `contextUploadToNexus`     | `cutn`   | `ContextUploadToNexus`    | `NEXUS`     | 4.3.11.0       | 上传上下文到 Nexus              | 无                                        | 上传上下文到Nexus共享 |
-| `contextDownloadFromNexus` | `cdfn`   | `ContextDownloadFromNexus`| `NEXUS`     | 4.3.11.0       | 从 Nexus 下载上下文             | 资源 UUID                                 | 下载Nexus共享的上下文 |
-| `promptUploadToNexus`      | `putn`   | `PromptUploadToNexus`     | `NEXUS`     | 4.3.11.0       | 上传提示词到 Nexus              | 无                                        | 上传提示词到Nexus共享 |
-| `promptDownloadFromNexus`  | `pgetn`  | `PromptDownloadFromNexus` | `NEXUS`     | 4.3.11.0       | 从 Nexus 下载提示词             | 资源 UUID                                 | 获取Nexus共享的提示词 |
-| `configUploadToNexus`      | `cfgutn` | `ConfigUploadToNexus`     | `NEXUS`     | 4.3.11.0       | 上传配置到 Nexus                | 无                                        | 个性配置上传到Nexus |
-| `configDownloadFromNexus`  | `cfgdtn` | `ConfigDownloadFromNexus` | `NEXUS`     | 4.3.11.0       | 从 Nexus 下载配置               | 资源 UUID                                 | 从Nexus下载共享的个性配置 |
-| `setCustomName`            | `scn`    | `SetCustomName`           | `CONFIG`    | 4.3.12.1       | 设置个性化名称                  | 用户名                                    | 设置后模型看到的将是设置的名称而非用户名 |
+| `changeSession`            | `cs`     | `ChangeSession`           | `MIXED`     | 4.2.5.1        | 让所有的数据同时切换到一个分支  | 分支名称                                  | 让`Context`、`Prompt`、`Config`同时切换到一个分支 |
+| `noSaveChat`               | `nsc`    | `NoSaveChat`              | `CHAT`      | 4.2.6.6        | 不保存的聊天对话              | 无                                        | 聊天后不保存最新聊天记录 |
+| `summaryChatRecord`        | `scr`    | `SummaryChatRecord`       | `OTHER`     | 4.2.6.6        | 聊天记录总结                  | 整数，传入的消息数量                       | 获取当前群聊内指定数量的聊天记录摘要 |
+| `varExpandText`            | `vet`    | `Var_Expand_Text`         | `VAREXPAND` | 4.2.7.0        | 变量展开(文本)                | 文本模板(使用大括号作为[变量](#变量表)标记)  | 强制使用文本输出 |
+| `varExpandImage`           | `vei`    | `Var_Expand_Image`        | `VAREXPAND` | 4.2.7.0        | 变量展开(图片)                | 文本模板(使用大括号作为[变量](#变量表)标记)  | 强制使用图片输出 |
+| `setAutoLoadPrompt`        | `salp`   | `SetAutoLoadPrompt`       | `CONFIG`    | 4.3.1.0        | 设置自动加载提示词            | `true`或`false`                           | 设置请求时是否自动加载Prompt |
+| `setAutoSaveContext`       | `sasc`   | `SetAutoSaveContext`      | `CONFIG`    | 4.3.1.0        | 设置自动保存上下文            | `true`或`false`                           | 设置生成完毕后是否自动保存Context |
+| `setRenderTitle`           | `srt`    | `SetRenderTitle`          | `CONFIG`    | 4.3.2.1        | 设置渲染标题                 | 任意文本                                   | 渲染时显示的标题内容 |
+| `setTimezone`              | `stz`    | `SetTimezone`             | `CONFIG`    | 4.3.3.3        | 设置时区                     | 时区名称(如`Asia/Shanghai`)                | 请使用确定的时区名称 |
+| `writeUserProfile`         | `wup`    | `WriteUserProfile`        | `CONFIG`    | 4.3.3.6        | 写入用户人设数据              | 任意文本                                   | 该部分会被嵌入到用户提示词中，告诉AI用户的基础设定 |
+| `setHtmlTemplate`          | `sht`    | `SetHtmlTemplate`         | `CONFIG`    | 4.3.3.6        | 设置HTML模板                 | 预设模板名称                               | 可以用于切换Markdown渲染时使用的HTML模板 |
+| `setSaveTextOnly`          | `ssto`   | `SetSaveTextOnly`         | `CONFIG`    | 4.3.6.0        | 在保存时丢弃除文本以外的内容   | `true`或`false`                           | 设为`true`可以更快速的保存与读取，但模型将无法再获取到上下文中的附加数据 |
+| `textRender`               | `tr`     | `TextRender`              | `RENDER`    | 4.3.7.0        | Markdown 文本渲染            | Markdown 文本                             | 将 Markdown 文本渲染为图片 |
+| `getModelList`             | `gml`    | `GetModelList`            | `MODEL`     | 4.3.7.4        | 获取模型列表                 | 模型类型(目前只有`chat`)                   | 获取模型列表 |
+| `generatePrompt`           | `gp`     | `GeneratePrompt`          | `MIXED`     | 4.3.7.5        | 生成提示词                   | 角色描述                                  | 生成提示词，并自动保存到用户提示词数据中 |
+| `summarizeAndContract`     | `sac`    | `SummarizeAndContract`    | `CHAT`      | 4.3.7.6        | 摘要并压缩                   | 自定义提示词，可以为空                      | 摘要并压缩对话，并自动删除多余的历史记录 |
+| `contextBranchClone`       | `cbc`    | `ContextBranchClone`      | `CONTEXT`   | 4.3.9.1        | 克隆上下文分支                | 目标分支名称                               | 将当前活动分支复制到一个新的分支下 |
+| `contextBranchCloneFrom`   | `cbcf`   | `ContextBranchCloneFrom`  | `CONTEXT`   | 4.3.9.1        | 从分支克隆上下文              | 源分支名称                                 | 将指定分支复制到当前活动分支下 |
+| `promptBranchClone`        | `pbc`    | `PromptBranchClone`       | `PROMPT`    | 4.3.9.1        | 克隆提示词分支                | 目标分支名称                               | 将当前活动分支复制到一个新的分支下 |
+| `promptBranchCloneFrom`    | `pbcf`   | `PromptBranchCloneFrom`   | `PROMPT`    | 4.3.9.1        | 从分支克隆提示词              | 源分支名称                                 | 将指定分支复制到当前活动分支下 |
+| `configBranchClone`        | `cfgbc`  | `ConfigBranchClone`       | `CONFIG`    | 4.3.9.1        | 克隆配置分支                  | 目标分支名称                               | 将当前活动分支复制到一个新的分支下 |
+| `configBranchCloneFrom`    | `cfgbcf` | `ConfigBranchCloneFrom`   | `CONFIG`    | 4.3.9.1        | 从分支克隆配置                | 源分支名称                                 | 将指定分支复制到当前活动分支下 |
+| `contextBranchBind`        | `cbb`    | `ContextBranchBind`       | `CONTEXT`   | 4.3.9.1        | 绑定上下文分支                | 目标分支名称                               | 创建一个新的分支，使其硬链接到当前活动分支 |
+| `contextBranchBindFrom`    | `cbbf`   | `ContextBranchBindFrom`   | `CONTEXT`   | 4.3.9.1        | 从分支绑定上下文              | 源分支名称                                 | 删除当前活动分支的内容，并作为指定分支的硬链接 |
+| `promptBranchBind`         | `pbb`    | `PromptBranchBind`        | `PROMPT`    | 4.3.9.1        | 绑定提示词分支                | 目标分支名称                               | 创建一个新的分支，使其硬链接到当前活动分支 |
+| `promptBranchBindFrom`     | `pbbf`   | `PromptBranchBindFrom`    | `PROMPT`    | 4.3.9.1        | 从分支绑定提示词              | 源分支名称                                 | 删除当前活动分支的内容，并作为指定分支的硬链接 |
+| `configBranchBind`         | `cfgbb`  | `ConfigBranchBind`        | `CONFIG`    | 4.3.9.1        | 绑定配置分支                  | 目标分支名称                               | 创建一个新的分支，使其硬链接到当前活动分支 |
+| `configBranchBindFrom`     | `cfgbbf` | `ConfigBranchBindFrom`    | `CONFIG`    | 4.3.9.1        | 从分支绑定配置                | 源分支名称                                 | 删除当前活动分支的内容，并作为指定分支的硬链接 |
+| `contextBranchInfo`        | `cbi`    | `ContextBranchInfo`       | `CONTEXT`   | 4.3.9.1        | 获取分支元数据信息            | 无                                         | 获取当前活动分支的元数据信息 |
+| `promptBranchInfo`         | `pbi`    | `PromptBranchInfo`        | `PROMPT`    | 4.3.9.1        | 获取分支元数据信息            | 无                                         | 获取当前活动分支的元数据信息 |
+| `configBranchInfo`         | `cfgbi`  | `ConfigBranchInfo`        | `CONFIG`    | 4.3.9.1        | 获取分支元数据信息            | 无                                         | 获取当前活动分支的元数据信息 |
+| `sessionBranchClone`       | `sbc`    | `SessionBranchClone`      | `MIXED`     | 4.3.9.3        | 克隆所有类型分支              | 目标分支名称                                | 将所有类型的当前活动分支复制到一个新的分支下 |
+| `sessionBranchCloneFrom`   | `sbcf`   | `SessionBranchCloneFrom`  | `MIXED`     | 4.3.9.3        | 所有类型从指定分支克隆        | 源分支名称                                  | 所有类型的当前活动分支从指定分支复制 |
+| `sessionBranchBind`        | `sbb`    | `SessionBranchBind`       | `MIXED`     | 4.3.9.3        | 所有类型绑定指定分支          | 目标分支名称                                | 所有类型同时创建一个新分支，硬链接到当前活动分支 |
+| `sessionBranchBindFrom`    | `sbbf`   | `SessionBranchBindFrom`   | `MIXED`     | 4.3.9.3        | 所有类型绑定指定分支          | 源分支名称                                  | 所有类型同时删除活动分支数据，并从指定分支硬链接一份活动分支文件 |
+| `#` or `/`                 | `anot`   | `Annotation`              | `RESERVED`  | 4.3.9.3        | 注释，不会执行任何操作        | 无                                         | 保留的注释命令，不执行任何操作，直接忽略内容 |
+| `crossUserDataAccess`      | `cuda`   | `CrossUserDataAccess`     | `CONFIG`    | 4.3.10.3       | 允许跨用户数据访问            | `true`或`false`                            | 允许跨用户数据访问，如果设置为`false`则只能访问自己的数据 |
+| `newRequestsTextOnly`      | `nrto`   | `NewRequestsTextOnly`     | `CONFIG`    | 4.3.10.7       | 忽略请求里的非文本数据        | `true`或`false`                            | 如果设置为`true`，复读机将把所有消息当成普通文本消息处理 |
+| `adaptationInfo`           | `adai`   | `AdaptationInfo`          | `VERSION`   | 4.3.10.7       | 版本适配信息                 | 无                                         | 展示服务端和客户端的版本信息 |
+| `getRequirementLicenses`   | `grl`    | `GetRequirementLicenses`  | `LICENSES`  | 4.3.10.8       | 获取依赖许可证               | 依赖项名称                                  | 获取指定依赖的许可证信息 |
+| `getRequirementList`       | `grls`   | `GetRequirementList`      | `LICENSES`  | 4.3.10.8       | 获取依赖列表                 | 无                                         | 获取所有记录了License的依赖项名称 |
+| `getServerLicense`         | `gsl`    | `GetServerLicense`        | `LICENSES`  | 4.3.10.8       | 获取服务端许可证             | 无                                         | 获取服务端许可证信息 |
+| `checkRoleStructure`       | `crs`    | `CheckRoleStructure`      | `CONTEXT`   | 4.3.10.10      | 检查角色结构                 | 无                                        | 检查上下文中的角色结构是否符合 user-assistant 的规则 |
+| `contextUploadToNexus`     | `cutn`   | `ContextUploadToNexus`    | `NEXUS`     | 4.3.11.0       | 上传上下文到 Nexus           | 无                                        | 上传上下文到Nexus共享 |
+| `contextDownloadFromNexus` | `cdfn`   | `ContextDownloadFromNexus`| `NEXUS`     | 4.3.11.0       | 从 Nexus 下载上下文          | 资源 UUID                                 | 下载Nexus共享的上下文 |
+| `promptUploadToNexus`      | `putn`   | `PromptUploadToNexus`     | `NEXUS`     | 4.3.11.0       | 上传提示词到 Nexus           | 无                                        | 上传提示词到Nexus共享 |
+| `promptDownloadFromNexus`  | `pgetn`  | `PromptDownloadFromNexus` | `NEXUS`     | 4.3.11.0       | 从 Nexus 下载提示词          | 资源 UUID                                 | 获取Nexus共享的提示词 |
+| `configUploadToNexus`      | `cfgutn` | `ConfigUploadToNexus`     | `NEXUS`     | 4.3.11.0       | 上传配置到 Nexus             | 无                                        | 个性配置上传到Nexus |
+| `configDownloadFromNexus`  | `cfgdtn` | `ConfigDownloadFromNexus` | `NEXUS`     | 4.3.11.0       | 从 Nexus 下载配置            | 资源 UUID                                 | 从Nexus下载共享的个性配置 |
+| `setCustomName`            | `scn`    | `SetCustomName`           | `CONFIG`    | 4.3.12.1       | 设置个性化名称               | 用户名                                    | 设置后模型看到的将是设置的名称而非用户名 |
 
 PS：`CHAT`类型命令几乎全员支持视觉输入
 由于需要保存上下文，复读机默认会将其下载为Base64编码
