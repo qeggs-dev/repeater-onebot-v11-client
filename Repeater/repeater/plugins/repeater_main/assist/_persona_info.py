@@ -224,6 +224,20 @@ class PersonaInfo:
                         images.append(image_url)
         return images
     
+    def get_video_url(self) -> list[str]:
+        urls: list[str] = []
+        for msg in self.message:
+            if msg.type == "video":
+                urls.append(msg.data["url"])
+        return urls
+    
+    async def get_audio_url(self) -> list[str]:
+        urls: list[str] = []
+        for msg in self.message:
+            if msg.type == "record":
+                urls.append(msg.data["url"])
+        return urls
+    
     async def get_reply_chain(self) -> list[MessageEvent]:
         """
         获取回复链
