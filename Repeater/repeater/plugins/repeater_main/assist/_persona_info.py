@@ -212,7 +212,7 @@ class PersonaInfo:
         if "image" in self.message:
             async with ImageDownloader(
                 self.message,
-                timeout=storage_configs.download_visual_input_timeout
+                timeout=storage_configs.download_image_timeout
             ) as downloader:
                 if base64:
                     get_image_url = downloader.download_image_to_base64()
