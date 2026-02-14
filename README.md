@@ -146,7 +146,7 @@ main_api.json
         // 每行最大字符数
         "single_line_max": 64,
         // 平均行最大字符数
-        "mean_line_max": 32,
+        "mean_line_max": 24,
         // 总字符数
         "total_length": 400,
 
@@ -169,8 +169,8 @@ main_api.json
     "welcome_messages_by_weekday": {
         "4": "Repeater is Online!\n\n疯狂星期四! ! !\n复读机想要 50,000,000 Token ，求求了（>^< ;)"
     },
-    // 是否在群聊中让所有人使用同一个User_ID
-    "merge_group_id": false,
+    // 是否在群聊中让所有人使用同一个上下文
+    "usage_group_context": false,
 
     // Repeater API超时时间
     "server_api_timeout": {
@@ -183,7 +183,12 @@ main_api.json
     },
 
     // 在用户输入图片的时候，是否将其下载为 Base64 以防止链接失效
-    "use_base64_visual_input": true
+    "use_base64_image_url": false,
+    // 下载图片的超时时间
+    "download_image_timeout": 600.0,
+
+    // 总计并收缩使用的默认消息内容
+    "summarize_and_contract_default_message": "System Message: please sum up all the contents above."
 }
 ```
 配置了一些主要的参数，如文本长度评分、推理模型使用的UID、欢迎消息等。
@@ -211,7 +216,7 @@ tts.json
         "refine_max_new_token": 384,
         // TTS 模型生成最大推理Token数
         "infer_max_new_token": 2048,
-        // TTS 语速(我不知道为什么会有两个，所以就全都加上了)
+        // 文本种子（我不确定这里是文本修饰种子还是TTS种子，但为 null 则随机生成）
         "text_seed": 42,
         // 是否跳过输入优化
         "skip_refine": true,
@@ -319,10 +324,8 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `setCustomName`            | `scn`    | `SetCustomName`           | `CONFIG`    | 4.3.12.1       | 设置个性化名称               | 用户名                                    | 设置后模型看到的将是设置的名称而非用户名 |
 
 PS：`CHAT`类型命令几乎全员支持视觉输入
-由于需要保存上下文，复读机默认会将其下载为Base64编码
-你可以在配置文件中关闭该选项，这会让复读机直接使用QQ传递的临时URL
-适合不保存图片的情况
-默认指令支持视频与音频模态
+为了速度和减少本机网络开销，复读机会直接使用QQ传递的临时URL
+你可以在配置中改用 Base64 编码的 URL
 但这些附加数据需要主动设置 `NewRequestsTextOnly` 为 `false`
 
 `MIXED`类型命令是混合型命令
