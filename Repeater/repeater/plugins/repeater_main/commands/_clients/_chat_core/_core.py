@@ -30,7 +30,7 @@ class ChatCore:
     
     @property
     def merge_group_id(self) -> str | None:
-        if storage_configs.merge_group_id:
+        if storage_configs.usage_group_context:
             return self._persona_info.namespace.merge_group_id
         return None
     
@@ -231,7 +231,7 @@ class ChatCore:
         
         if role_name is not None:
             data["role_name"] = role_name
-        elif storage_configs.merge_group_id:
+        elif storage_configs.usage_group_context:
             data["role_name"] = self._persona_info.nickname
         
         if cross_user_data_routing is not None:
@@ -249,7 +249,7 @@ class ChatCore:
                 message_buffer.append(">     Message Sending time:{{time()}}")
                 if enable_md_prompt:
                     message_buffer.append(">     Markdown Rendering is turned on!!")
-                if storage_configs.merge_group_id:
+                if storage_configs.usage_group_context:
                     message_buffer.append(">     Now User: {{username}}({{nickname}})")
                 if cross_user_data_routing:
                     message_buffer.append(">     Guest Mode(User: {{username}}), Citation context is turned on!!")
