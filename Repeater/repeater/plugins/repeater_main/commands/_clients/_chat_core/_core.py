@@ -42,6 +42,9 @@ class ChatCore:
         temporary_prompt: str | None = None,
         model_uid: str | None = None,
         image_url: str | list[str] | None = None,
+        video_url: str | list[str]  |None = None,
+        audio_url: str | list[str]  |None = None,
+        file_url: str | list[str]  |None = None,
         load_prompt: bool | None = None,
         save_context: bool | None = None,
         save_new_only: bool | None = None,
@@ -58,6 +61,9 @@ class ChatCore:
         :param temporary_prompt: 临时提示
         :param model_uid: 模型UID
         :param image_url: 图片URL
+        :param video_url: 视频URL
+        :param audio_url: 音频URL
+        :param file_url: 文件URL
         :param load_prompt: 是否加载提示
         :param save_context: 是否保存上下文
         :param save_new_only: 是否只保存新内容
@@ -74,6 +80,9 @@ class ChatCore:
             temporary_prompt = temporary_prompt,
             model_uid = model_uid,
             image_url = image_url,
+            video_url = video_url,
+            audio_url = audio_url,
+            file_url = file_url,
             load_prompt = load_prompt,
             enable_md_prompt = enable_md_prompt,
             save_context = save_context,
@@ -99,6 +108,9 @@ class ChatCore:
         temporary_prompt: str | None = None,
         model_uid: str | None = None,
         image_url: str | list[str] | None = None,
+        video_url: str | list[str]  |None = None,
+        audio_url: str | list[str]  |None = None,
+        file_url: str | list[str]  |None = None,
         load_prompt: bool | None = None,
         save_context: bool | None = None,
         save_new_only: bool | None = None,
@@ -115,6 +127,9 @@ class ChatCore:
         :param temporary_prompt: 临时提示
         :param model_uid: 模型UID
         :param image_url: 图片URL
+        :param video_url: 视频URL
+        :param audio_url: 音频URL
+        :param file_url: 文件URL
         :param load_prompt: 是否加载提示
         :param save_context: 是否保存上下文
         :param save_new_only: 是否只保存新内容
@@ -132,6 +147,9 @@ class ChatCore:
             temporary_prompt = temporary_prompt,
             model_uid = model_uid,
             image_url = image_url,
+            video_url = video_url,
+            audio_url = audio_url,
+            file_url = file_url,
             load_prompt = load_prompt,
             enable_md_prompt = enable_md_prompt,
             save_context = save_context,
@@ -169,6 +187,9 @@ class ChatCore:
         temporary_prompt: str | None = None,
         model_uid: str | None = None,
         image_url: str | list[str] | None = None,
+        video_url: str | list[str]  |None = None,
+        audio_url: str | list[str]  |None = None,
+        file_url: str | list[str]  |None = None,
         load_prompt: bool | None = None,
         save_context: bool | None = None,
         save_new_only: bool | None = None,
@@ -196,8 +217,17 @@ class ChatCore:
             temporary_prompt = temporary_prompt,
             stream = stream,
         )
-        if image_url:
-            data["image_url"] = image_url
+        if image_url or video_url or audio_url or file_url:
+            additional_data = {}
+            if image_url:
+                additional_data["image_url"] = image_url
+            if video_url:
+                additional_data["video_url"] = video_url
+            if audio_url:
+                additional_data["audio_url"] = audio_url
+            if file_url:
+                additional_data["file_url"] = file_url
+            data["additional_data"] = additional_data
         
         if role_name is not None:
             data["role_name"] = role_name
