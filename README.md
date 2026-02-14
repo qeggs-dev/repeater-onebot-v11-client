@@ -216,7 +216,7 @@ tts.json
         "refine_max_new_token": 384,
         // TTS 模型生成最大推理Token数
         "infer_max_new_token": 2048,
-        // 文本种子（我不确定这里是文本修饰种子还是TTS种子，但为 null 则随机生成）
+        // 文本种子（我不确定这里是文本修饰种子还是TTS种子，不填则随机生成）
         "text_seed": 42,
         // 是否跳过输入优化
         "skip_refine": true,
