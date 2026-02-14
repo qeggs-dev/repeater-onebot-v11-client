@@ -30,7 +30,7 @@ class StorageConfigs(BaseModel):
     welcome_messages_by_weekday: dict[int | str, str] = Field(default_factory=dict, max_length=7)
     merge_group_id: bool = False
     server_api_timeout:ServerAPITimeout = Field(default_factory = ServerAPITimeout)
-    use_base64_visual_input: bool = True
+    use_base64_image_url: bool = False
     download_visual_input_timeout: float = 600.0
     summarize_and_contract_default_message: str = "System Message: please sum up all the contents above."
 

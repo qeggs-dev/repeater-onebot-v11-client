@@ -207,7 +207,7 @@ class PersonaInfo:
     
     async def get_images_url(self, base64: bool | None = None) -> list[str]:
         if base64 is None:
-            base64 = storage_configs.use_base64_visual_input
+            base64 = storage_configs.use_base64_image_url
         images: list[str] = []
         if "image" in self.message:
             async with ImageDownloader(
