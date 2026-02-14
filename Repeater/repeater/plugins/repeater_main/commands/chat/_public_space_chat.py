@@ -29,14 +29,23 @@ async def handle_public_space_chat(bot: Bot, event: MessageEvent, args: Message 
         module = send_msg.component
     )
 
-    message = persona_info.message
+    message_text = persona_info.message_str.strip()
+    
+    reply_msgs = await persona_info.get_reply_chain()
+    if reply_msgs:
+        reply_msgs_text = persona_info.generates_text_from_messages_list(reply_msgs)
+        reply_msgs_text = reply_msgs_text.replace("\n", "\n> ")
+        if message_text:
+            message_text = f"{reply_msgs_text}\n\n---\n\n{message_text}"
+        else:
+            message_text = reply_msgs_text
 
     chat_core = ChatCore(persona_info, persona_info.namespace.public_space_id)
     
     images: list[str] = await persona_info.get_images_url()
 
     response = await chat_core.send_message(
-        message.extract_plain_text().strip(),
+        message_text,
         image_url = images
     )
 

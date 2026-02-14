@@ -50,12 +50,6 @@ async def choose_group_member_handle(bot: Bot, event: MessageEvent, args: Messag
             await send_msg.send_error(f"The current number is too large, please enter a number less than {len(member_list)}.")
         choiced: list[dict[str, Any]] = random.sample(member_list, n)
         text = await asyncio.to_thread(generate_text, choiced)
-        if n > 10:
-            await send_msg.send_mixed_render(
-                text,
-                prompt_mode = True
-            )
-        else:
-            await send_msg.send_prompt(text)
+        await send_msg.send_check_length_prompt(text)
     else:
         await send_msg.send_error("The input must be a positive integer!")

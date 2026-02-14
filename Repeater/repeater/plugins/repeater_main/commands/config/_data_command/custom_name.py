@@ -8,12 +8,12 @@ from nonebot.adapters import Bot
 from ..._clients import ConfigCore
 from ....assist import PersonaInfo, SendMsg, str_to_bool
 
-write_user_profile = on_command("writeUserProfile", aliases={"wup", "write_user_profile", "Write_User_Profile", "WriteUserProfile"}, rule=to_me(), block=True)
+set_custom_name = on_command("setCustomName", aliases={"scn", "set_custom_name", "Set_Custom_Name", "SetCustomName"}, rule=to_me(), block=True)
 
-@write_user_profile.handle()
-async def handle_write_user_profile(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
+@set_custom_name.handle()
+async def handle_set_custom_name(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     persona_info = PersonaInfo(bot=bot, event=event, args=args)
-    send_msg = SendMsg("Config.Write_User_Profile", write_user_profile, persona_info)
+    send_msg = SendMsg("Config.Set_Custom_Name", set_custom_name, persona_info)
 
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
@@ -22,5 +22,5 @@ async def handle_write_user_profile(bot: Bot, event: MessageEvent, args: Message
         await send_msg.send_debug_mode()
     else:
         config_core = ConfigCore(persona_info)
-        response = await config_core.set_config("user_profile", persona_info.message_str)
-        await send_msg.send_response_check_code(response, f"User Profile seted")
+        response = await config_core.set_config("user_name", persona_info.message_str)
+        await send_msg.send_response_check_code(response, f"Custom Name seted")

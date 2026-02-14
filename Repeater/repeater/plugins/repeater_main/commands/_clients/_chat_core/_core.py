@@ -30,7 +30,7 @@ class ChatCore:
     
     @property
     def merge_group_id(self) -> str | None:
-        if storage_configs.merge_group_id:
+        if storage_configs.usage_group_context:
             return self._persona_info.namespace.merge_group_id
         return None
     
@@ -42,11 +42,14 @@ class ChatCore:
         temporary_prompt: str | None = None,
         model_uid: str | None = None,
         image_url: str | list[str] | None = None,
+        video_url: str | list[str]  |None = None,
+        audio_url: str | list[str]  |None = None,
+        file_url: str | list[str]  |None = None,
         load_prompt: bool | None = None,
         save_context: bool | None = None,
         save_new_only: bool | None = None,
         enable_md_prompt: bool = True,
-        cross_user_data_routing: str | None = None,
+        cross_user_data_routing: CrossUserDataRouting | None = None,
         continue_completion: bool | None = None,
     ) -> Response[ChatResponse]:
         """
@@ -58,6 +61,9 @@ class ChatCore:
         :param temporary_prompt: 临时提示
         :param model_uid: 模型UID
         :param image_url: 图片URL
+        :param video_url: 视频URL
+        :param audio_url: 音频URL
+        :param file_url: 文件URL
         :param load_prompt: 是否加载提示
         :param save_context: 是否保存上下文
         :param save_new_only: 是否只保存新内容
@@ -74,6 +80,9 @@ class ChatCore:
             temporary_prompt = temporary_prompt,
             model_uid = model_uid,
             image_url = image_url,
+            video_url = video_url,
+            audio_url = audio_url,
+            file_url = file_url,
             load_prompt = load_prompt,
             enable_md_prompt = enable_md_prompt,
             save_context = save_context,
@@ -99,11 +108,14 @@ class ChatCore:
         temporary_prompt: str | None = None,
         model_uid: str | None = None,
         image_url: str | list[str] | None = None,
+        video_url: str | list[str]  |None = None,
+        audio_url: str | list[str]  |None = None,
+        file_url: str | list[str]  |None = None,
         load_prompt: bool | None = None,
         save_context: bool | None = None,
         save_new_only: bool | None = None,
         enable_md_prompt: bool = True,
-        cross_user_data_routing: str | None = None,
+        cross_user_data_routing: CrossUserDataRouting | None = None,
         continue_completion: bool | None = None,
     ) -> AsyncIterator[Any]:
         """
@@ -115,6 +127,9 @@ class ChatCore:
         :param temporary_prompt: 临时提示
         :param model_uid: 模型UID
         :param image_url: 图片URL
+        :param video_url: 视频URL
+        :param audio_url: 音频URL
+        :param file_url: 文件URL
         :param load_prompt: 是否加载提示
         :param save_context: 是否保存上下文
         :param save_new_only: 是否只保存新内容
@@ -132,6 +147,9 @@ class ChatCore:
             temporary_prompt = temporary_prompt,
             model_uid = model_uid,
             image_url = image_url,
+            video_url = video_url,
+            audio_url = audio_url,
+            file_url = file_url,
             load_prompt = load_prompt,
             enable_md_prompt = enable_md_prompt,
             save_context = save_context,
@@ -169,6 +187,9 @@ class ChatCore:
         temporary_prompt: str | None = None,
         model_uid: str | None = None,
         image_url: str | list[str] | None = None,
+        video_url: str | list[str]  |None = None,
+        audio_url: str | list[str]  |None = None,
+        file_url: str | list[str]  |None = None,
         load_prompt: bool | None = None,
         save_context: bool | None = None,
         save_new_only: bool | None = None,
@@ -196,12 +217,21 @@ class ChatCore:
             temporary_prompt = temporary_prompt,
             stream = stream,
         )
-        if image_url:
-            data["image_url"] = image_url
+        if image_url or video_url or audio_url or file_url:
+            additional_data = {}
+            if image_url:
+                additional_data["image_url"] = image_url
+            if video_url:
+                additional_data["video_url"] = video_url
+            if audio_url:
+                additional_data["audio_url"] = audio_url
+            if file_url:
+                additional_data["file_url"] = file_url
+            data["additional_data"] = additional_data
         
         if role_name is not None:
             data["role_name"] = role_name
-        elif storage_configs.merge_group_id:
+        elif storage_configs.usage_group_context:
             data["role_name"] = self._persona_info.nickname
         
         if cross_user_data_routing is not None:
@@ -216,13 +246,13 @@ class ChatCore:
             if add_metadata:
                 message_buffer.append("> MessageMetadata:")
                 message_buffer.append(f">     Message Type: {self._persona_info.source.value}")
-                message_buffer.append(">     Message Sending time:{time}")
+                message_buffer.append(">     Message Sending time:{{time()}}")
                 if enable_md_prompt:
                     message_buffer.append(">     Markdown Rendering is turned on!!")
-                if storage_configs.merge_group_id:
-                    message_buffer.append(">     Now User: {username}({nickname})")
+                if storage_configs.usage_group_context:
+                    message_buffer.append(">     Now User: {{username}}({{nickname}})")
                 if cross_user_data_routing:
-                    message_buffer.append(">     Guest Mode(User: {username}), Citation context is turned on!!")
+                    message_buffer.append(">     Guest Mode(User: {{username}}), Citation context is turned on!!")
                 message_buffer.append("\n---\n")
             message_buffer.append(message)
             data["message"] = "\n".join(message_buffer)

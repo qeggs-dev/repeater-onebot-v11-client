@@ -7,6 +7,9 @@ from ._assist_func import (
 from ..core_net_configs import storage_configs
 from ._namespace import MessageSource, Namespace
 from ._image_downloader import ImageDownloader
+from nonebot import logger
+from datetime import datetime
+from pydantic import ValidationError
 
 class PersonaInfo:
     def __init__(self, bot: Bot, event: MessageEvent, args: Message | None = None):
@@ -204,12 +207,12 @@ class PersonaInfo:
     
     async def get_images_url(self, base64: bool | None = None) -> list[str]:
         if base64 is None:
-            base64 = storage_configs.use_base64_visual_input
+            base64 = storage_configs.use_base64_image_url
         images: list[str] = []
         if "image" in self.message:
             async with ImageDownloader(
                 self.message,
-                timeout=storage_configs.download_visual_input_timeout
+                timeout=storage_configs.download_image_timeout
             ) as downloader:
                 if base64:
                     get_image_url = downloader.download_image_to_base64()
@@ -220,3 +223,102 @@ class PersonaInfo:
                     for image_url in downloader.get_images():
                         images.append(image_url)
         return images
+    
+    def get_video_url(self) -> list[str]:
+        urls: list[str] = []
+        for msg in self.message:
+            if msg.type == "video":
+                urls.append(msg.data["url"])
+        return urls
+    
+    async def get_audio_url(self) -> list[str]:
+        urls: list[str] = []
+        for msg in self.message:
+            if msg.type == "record":
+                urls.append(msg.data["url"])
+        return urls
+    
+    async def get_reply_chain(self) -> list[MessageEvent]:
+        """
+        获取回复链
+
+        注：解析时，它会默认消息段中只有一个 reply 消息段，
+        如果有存在多个，那么它将会在该部分直接退出解析
+        """
+        msgs: list[MessageEvent] = []
+        message: Message = self._message_event.message
+        while True:
+            reply_messages = await self.get_reply_msgs(message)
+            if len(reply_messages) == 1:
+                event = reply_messages[0]
+                msgs.append(event)
+                message = event.message
+            else:
+                break
+        if not msgs:
+            logger.warning(
+                "Reply chain is not found"
+            )
+        return msgs
+    
+    async def get_reply_msgs(self, message: Message | None = None) -> list[MessageEvent]:
+        msgs: list[MessageEvent] = []
+        if message is None:
+            message = self._message_event.message
+        for msg in message:
+            if msg.type == "reply":
+                reply_msg = await self._bot.get_msg(message_id=msg.data["id"])
+                msgs.append(
+                    MessageEvent(**reply_msg)
+                )
+        if not msgs:
+            logger.warning(
+                "Reply is not found"
+            )
+        return msgs
+    
+    async def get_forward_msgs(self) -> list[MessageEvent]:
+        msgs: list[MessageEvent] = []
+
+        for msg in self._message_event.message:
+            if msg.type == "forward":
+                forward_msg = await self._bot.get_forward_msg(id=msg.data["id"])
+                messages = forward_msg["messages"]
+                for message in messages:
+                    msgs.append(MessageEvent(**message))
+        if not msgs:
+            logger.warning(
+                "Forward is not found"
+            )
+        return msgs
+    
+    @staticmethod
+    def generates_text_from_messages_list(messages: list[dict | MessageEvent]):
+        text_buffer: list[str] = []
+        validation_failure_counter: int = 0
+        for message in messages:
+            try:
+                if isinstance(message, MessageEvent):
+                    event = message
+                else:
+                    event = MessageEvent(**message)
+                nick_name = event.sender.card or event.sender.nickname
+                text = event.message
+                time = datetime.fromtimestamp(event.time)
+            except ValidationError:
+                try:
+                    nick_name = message["sender"]["card"] or message["sender"]["nickname"]
+                    text = message['message']
+                    time = datetime.fromtimestamp(message["time"])
+                except KeyError:
+                    validation_failure_counter += 1
+                    continue
+            
+            time_str = time.strftime("%Y-%m-%d %H:%M:%S")
+            text_buffer.append(
+                f"[{time_str}]{nick_name}: {text}"
+            )
+
+        if validation_failure_counter > 0:
+            text_buffer.append(f"Validation Failure: {validation_failure_counter}")
+        return "\n".join(text_buffer)

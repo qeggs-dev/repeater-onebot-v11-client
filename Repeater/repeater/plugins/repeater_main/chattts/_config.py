@@ -1,5 +1,6 @@
+import random
+
 from pydantic import BaseModel, Field
-from typing import Literal
 from ..config_loader import Loader, Mode
 
 class API_ARGS(BaseModel):
@@ -11,7 +12,7 @@ class API_ARGS(BaseModel):
     top_k: int = 20
     refine_max_new_token: int = 384
     infer_max_new_token: int = 2048
-    text_seed: int = 42
+    text_seed: int = Field(default_factory=lambda: random.randint(0, 2**32 - 1))
     skip_refine: bool = True
     is_stream: bool = False
     custom_voice: int = 0

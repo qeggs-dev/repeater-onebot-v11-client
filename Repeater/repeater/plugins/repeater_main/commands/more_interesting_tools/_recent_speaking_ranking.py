@@ -74,14 +74,6 @@ async def recent_speaking_ranking_handle(bot: Bot, event: MessageEvent, args: Me
 
         if validation_failure_counter > 0:
             await send_msg.send_warning(f"Warning: There are {validation_failure_counter} message verification failures.\n")
-        line_count = text.count("\n") + 1
-        
-        if line_count > 10:
-            await send_msg.send_mixed_render(
-                text,
-                prompt_mode = True,
-            )
-        else:
-            await send_msg.send_prompt(text)
+            await send_msg.send_check_length_prompt(send_msg.prompt_str + text)
     else:
         await send_msg.send_error("The input must be a positive integer!")

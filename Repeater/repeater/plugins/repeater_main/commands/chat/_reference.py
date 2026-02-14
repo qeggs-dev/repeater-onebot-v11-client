@@ -4,7 +4,7 @@ from nonebot.params import CommandArg
 from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment
 
-from .._clients import ChatCore, ChatSendMsg
+from .._clients import ChatCore, ChatSendMsg, CrossUserDataRouting, DataRoutingField
 from ...assist import PersonaInfo, SendMsg
 from ...logger import logger
 
@@ -29,7 +29,16 @@ async def handle_reference(bot: Bot, event: MessageEvent, args: Message = Comman
         module = send_msg.component
     )
 
-    message = persona_info.message
+    message_text = persona_info.message_str.strip()
+    
+    reply_msgs = await persona_info.get_reply_chain()
+    if reply_msgs:
+        reply_msgs_text = persona_info.generates_text_from_messages_list(reply_msgs)
+        reply_msgs_text = reply_msgs_text.replace("\n", "\n> ")
+        if message_text:
+            message_text = f"{reply_msgs_text}\n\n---\n\n{message_text}"
+        else:
+            message_text = reply_msgs_text
 
     chat_core = ChatCore(persona_info)
 
@@ -39,8 +48,12 @@ async def handle_reference(bot: Bot, event: MessageEvent, args: Message = Comman
         await send_msg.send_error("Please at a member to get reference.")
         
     response = await chat_core.send_message(
-        message = message.extract_plain_text().strip(),
-        reference_context_id=persona_info.noself_at_list[0],
+        message = message_text,
+        cross_user_data_routing = CrossUserDataRouting(
+            context = DataRoutingField(
+                load_from_user_id = persona_info.noself_at_list[0]
+            )
+        ),
         image_url = images
     )
 

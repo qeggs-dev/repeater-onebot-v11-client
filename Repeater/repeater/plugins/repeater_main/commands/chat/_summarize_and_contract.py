@@ -31,16 +31,25 @@ async def handle_summarize_and_contract(bot: Bot, event: MessageEvent, args: Mes
         module = send_msg.component
     )
 
-    message = persona_info.message_str.strip()
-    if not message:
-        message = storage_configs.summarize_and_contract_default_message
+    message_text = persona_info.message_str.strip()
+    if not message_text:
+        message_text = storage_configs.summarize_and_contract_default_message
+    
+    reply_msgs = await persona_info.get_reply_chain()
+    if reply_msgs:
+        reply_msgs_text = persona_info.generates_text_from_messages_list(reply_msgs)
+        reply_msgs_text = reply_msgs_text.replace("\n", "\n> ")
+        if message_text:
+            message_text = f"{reply_msgs_text}\n\n---\n\n{message_text}"
+        else:
+            message_text = reply_msgs_text
 
     core = ChatCore(persona_info)
 
     images: list[str] = await persona_info.get_images_url()
 
     response = await core.send_message(
-        message = message,
+        message = message_text,
         image_url = images,
         save_new_only = True
     )
