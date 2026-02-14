@@ -11,7 +11,7 @@ class TextLengthScoreThreshold(BaseModel):
 class TextLengthScoreConfigs(BaseModel):
     max_lines: int = 5
     single_line_max: int = 64
-    mean_line_max: int = 32
+    mean_line_max: int = 24
     total_length: int = 400
     threshold: TextLengthScoreThreshold = Field(default_factory = TextLengthScoreThreshold)
 
@@ -28,10 +28,10 @@ class StorageConfigs(BaseModel):
     reason_model_uid: str = "reasoner"
     hello_content: str = "Repeater Is Ready!"
     welcome_messages_by_weekday: dict[int | str, str] = Field(default_factory=dict, max_length=7)
-    merge_group_id: bool = False
+    usage_group_context: bool = False
     server_api_timeout:ServerAPITimeout = Field(default_factory = ServerAPITimeout)
     use_base64_image_url: bool = False
-    download_visual_input_timeout: float = 600.0
+    download_image_timeout: float = 600.0
     summarize_and_contract_default_message: str = "System Message: please sum up all the contents above."
 
 loader: Loader[StorageConfigs] = Loader(
