@@ -60,6 +60,8 @@ async def handle_smart_at(bot: Bot, event: MessageEvent):
             message_text = reply_msgs_text
 
     images: list[str] = await persona_info.get_images_url()
+    audios: list[str] = await persona_info.get_audio_url()
+    videos: list[str] = persona_info.get_video_url()
 
     if not images:
         if not message_text:
@@ -67,7 +69,9 @@ async def handle_smart_at(bot: Bot, event: MessageEvent):
 
     response = await core.send_message(
         message = message_text,
-        image_url = images
+        image_url = images,
+        audio_url = audios,
+        video_url = videos,
     )
     
     chat_send_msg = ChatSendMsg(
