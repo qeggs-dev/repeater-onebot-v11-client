@@ -16,6 +16,7 @@ from ._data_command.set_save_text_only import handle_set_save_text_only
 from ._data_command.set_max_tokens import handle_set_max_tokens
 from ._data_command.set_timezone import handle_set_timezone
 from ._data_command.set_top_p import handle_set_top_p
+from ._data_command.thinking_mode import handle_thinking_mode
 from ._data_command.write_user_profile import handle_write_user_profile
 
 from ._branch_command.del_config import handle_del_config
@@ -50,6 +51,7 @@ __all__ = [
     "handle_set_max_tokens",
     "handle_set_timezone",
     "handle_set_top_p",
+    "handle_thinking_mode",
     "handle_write_user_profile",
     "handle_config_branch_clone",
     "handle_config_branch_clone_from",
