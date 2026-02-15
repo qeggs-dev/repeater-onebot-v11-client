@@ -47,7 +47,7 @@ async def reason_handle(bot: Bot, event: MessageEvent, args: Message = CommandAr
     
     response = await chat_core.send_message(
         message = message_text,
-        model_uid=storage_configs.reason_model_uid,
+        thinking = True,
         image_url = images
     )
     
