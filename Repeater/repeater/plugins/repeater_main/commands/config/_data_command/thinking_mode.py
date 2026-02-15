@@ -21,7 +21,7 @@ async def handle_thinking_mode(bot: Bot, event: MessageEvent, args: Message = Co
     try:
         thinking = str_to_bool(persona_info.message_str, optional = True)
     except ValueError:
-        await send_msg.send_error("Not a valid boolean value")
+        await send_msg.send_error("Not a valid value")
 
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
