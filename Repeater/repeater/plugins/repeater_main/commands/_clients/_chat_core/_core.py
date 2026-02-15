@@ -41,10 +41,11 @@ class ChatCore:
         role_name: str | None = None,
         temporary_prompt: str | None = None,
         model_uid: str | None = None,
+        thinking: bool | None = None,
         image_url: str | list[str] | None = None,
-        video_url: str | list[str]  |None = None,
-        audio_url: str | list[str]  |None = None,
-        file_url: str | list[str]  |None = None,
+        video_url: str | list[str] | None = None,
+        audio_url: str | list[str] | None = None,
+        file_url: str | list[str] | None = None,
         load_prompt: bool | None = None,
         save_context: bool | None = None,
         save_new_only: bool | None = None,
@@ -60,6 +61,7 @@ class ChatCore:
         :param role_name: 角色名称
         :param temporary_prompt: 临时提示
         :param model_uid: 模型UID
+        :param thinking: 思考模式
         :param image_url: 图片URL
         :param video_url: 视频URL
         :param audio_url: 音频URL
@@ -79,6 +81,7 @@ class ChatCore:
             role_name = role_name,
             temporary_prompt = temporary_prompt,
             model_uid = model_uid,
+            thinking = thinking,
             image_url = image_url,
             video_url = video_url,
             audio_url = audio_url,
@@ -107,10 +110,11 @@ class ChatCore:
         role_name: str | None = None,
         temporary_prompt: str | None = None,
         model_uid: str | None = None,
+        thinking: bool | None = None,
         image_url: str | list[str] | None = None,
-        video_url: str | list[str]  |None = None,
-        audio_url: str | list[str]  |None = None,
-        file_url: str | list[str]  |None = None,
+        video_url: str | list[str] | None = None,
+        audio_url: str | list[str] | None = None,
+        file_url: str | list[str] | None = None,
         load_prompt: bool | None = None,
         save_context: bool | None = None,
         save_new_only: bool | None = None,
@@ -126,6 +130,7 @@ class ChatCore:
         :param role_name: 角色名称
         :param temporary_prompt: 临时提示
         :param model_uid: 模型UID
+        :param thinking: 思考模式
         :param image_url: 图片URL
         :param video_url: 视频URL
         :param audio_url: 音频URL
@@ -146,6 +151,7 @@ class ChatCore:
             role_name = role_name,
             temporary_prompt = temporary_prompt,
             model_uid = model_uid,
+            thinking = thinking,
             image_url = image_url,
             video_url = video_url,
             audio_url = audio_url,
@@ -186,10 +192,11 @@ class ChatCore:
         role_name: str | None = None,
         temporary_prompt: str | None = None,
         model_uid: str | None = None,
+        thinking: bool | None = None,
         image_url: str | list[str] | None = None,
-        video_url: str | list[str]  |None = None,
-        audio_url: str | list[str]  |None = None,
-        file_url: str | list[str]  |None = None,
+        video_url: str | list[str] | None = None,
+        audio_url: str | list[str] | None = None,
+        file_url: str | list[str] | None = None,
         load_prompt: bool | None = None,
         save_context: bool | None = None,
         save_new_only: bool | None = None,
@@ -233,6 +240,9 @@ class ChatCore:
             data["role_name"] = role_name
         elif storage_configs.usage_group_context:
             data["role_name"] = self._persona_info.nickname
+        
+        if thinking is not None:
+            data["thinking"] = thinking
         
         if cross_user_data_routing is not None:
             data["cross_user_data_routing"] = cross_user_data_routing.model_dump(exclude_none=True)
