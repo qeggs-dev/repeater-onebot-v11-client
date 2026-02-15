@@ -1,11 +1,15 @@
 from typing import overload, Literal
 
 @overload
-def str_to_bool(s: str, optional: Literal[True]) -> bool | None:
+def str_to_bool(s: str) -> bool:
     ...
 
 @overload
-def str_to_bool(s: str, optional: Literal[False]) -> bool:
+def str_to_bool(s: str, optional: Literal[True] = False) -> bool | None:
+    ...
+
+@overload
+def str_to_bool(s: str, optional: Literal[False] = False) -> bool:
     ...
 
 def str_to_bool(s: str, optional: bool = False) -> bool:
