@@ -7,7 +7,6 @@ from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment
 from .._clients import ChatCore, ChatSendMsg
 from ...assist import PersonaInfo, SendMsg
 from ...logger import logger
-from ...core_net_configs import storage_configs
 
 reason = on_command("reason", aliases={"r", "Reason"}, rule=to_me(), block=True)
 
