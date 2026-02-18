@@ -8,7 +8,7 @@ from .._clients import ChatCore, ChatSendMsg
 from ...assist import PersonaInfo, SendMsg
 from ...logger import logger
 
-no_reason = on_command("no_reason", aliases={"nr", "no_reason", "No_Reason", "NoReason"}, rule=to_me(), block=True)
+no_reason = on_command("noReason", aliases={"nr", "no_reason", "No_Reason", "NoReason"}, rule=to_me(), block=True)
 
 @no_reason.handle()
 async def handle_no_reason(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
