@@ -158,8 +158,6 @@ main_api.json
             "private": 2.64
         }
     },
-    // 后端推理模型使用的UID
-    "reason_model_uid": "reasoner",
     // 在仅@且没有任何文本的情况下
     // 返回的消息内容
     "hello_content": "Repeater is Online!",
@@ -186,6 +184,9 @@ main_api.json
     "use_base64_image_url": false,
     // 下载图片的超时时间
     "download_image_timeout": 600.0,
+
+    // 是否使用缩写来显示分支文件大小
+    "branch_file_size_use_abbreviation": true,
 
     // 总计并收缩使用的默认消息内容
     "summarize_and_contract_default_message": "System Message: please sum up all the contents above."
@@ -323,6 +324,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `configDownloadFromNexus`  | `cfgdtn` | `ConfigDownloadFromNexus` | `NEXUS`     | 4.3.11.0       | 从 Nexus 下载配置            | 资源 UUID                                 | 从Nexus下载共享的个性配置 |
 | `setCustomName`            | `scn`    | `SetCustomName`           | `CONFIG`    | 4.3.12.1       | 设置个性化名称               | 用户名                                    | 设置后模型看到的将是设置的名称而非用户名 |
 | `thinkingMode`             | `tm`     | `ThinkingMode`            | `CONFIG`    | 4.3.14.0       | 设置思考模式                 | `true`/`false`/`null`                    | 用于在不指定 Thinking 参数时 启用/禁用/恢复默认 思考模式 |
+| `noReason`                 | `nr`     | `NoReason`                | `CHAT`      | 4.3.15.0       | 不使用 Thinking 进行对话     | 自然语言输入                              | 关闭 `thinking` 参数以阻止进入 Thinking 模式 |
 
 PS：`CHAT`类型命令几乎全员支持视觉输入
 为了速度和减少本机网络开销，复读机会直接使用QQ传递的临时URL
