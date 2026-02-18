@@ -595,15 +595,11 @@ class SendMsg:
         for msg in messages:
             if isinstance(msg, str):
                 message.append(
-                    MessageSegment.image(
-                        await self.render_text(msg)
-                    )
+                    await self.render_text(msg)
                 )
             elif isinstance(msg, Message):
                 message.append(
-                    MessageSegment.image(
-                        await self.render_text(msg.extract_plain_text())
-                    )
+                    await self.render_text(msg.extract_plain_text())
                 )
         
         await self._send(
