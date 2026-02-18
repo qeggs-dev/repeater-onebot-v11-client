@@ -32,6 +32,7 @@ class StorageConfigs(BaseModel):
     use_base64_image_url: bool = False
     download_image_timeout: float = 600.0
     summarize_and_contract_default_message: str = "System Message: please sum up all the contents above."
+    branch_file_size_use_abbreviation: bool = True
 
 loader: Loader[StorageConfigs] = Loader(
     model=StorageConfigs,
