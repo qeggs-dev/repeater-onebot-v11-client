@@ -20,6 +20,7 @@ class BranchInfo(BaseModel):
     branch_id: str = ""
     size: int = 0
     modified_time: float = 0
+    file_exists: bool = False
 
     def modified_datetime(self) -> datetime:
         return datetime.fromtimestamp(self.modified_time)
