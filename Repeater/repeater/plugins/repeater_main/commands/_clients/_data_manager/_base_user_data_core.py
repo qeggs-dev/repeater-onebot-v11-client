@@ -87,7 +87,7 @@ class UserDataCore(ABC):
     # region branch info
     async def branch_info(self) -> Response[BranchInfo]:
         response = await self._httpx_client.get(
-            f"{BASE_URL}/userdata/{self._data_type}"
+            f"{BASE_URL}/userdata/{self._data_type}/info/{self._info.namespace_str}"
         )
         return Response(
             response,
