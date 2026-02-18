@@ -46,7 +46,8 @@ async def handle_npchat(bot: Bot, event: MessageEvent, args: Message = CommandAr
 
     response = await chat_core.send_message(
         message_text,
-        image_url = images
+        image_url = images,
+        load_prompt = False,
     )
 
     send_msg = ChatSendMsg(
