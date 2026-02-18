@@ -21,7 +21,7 @@ class BranchInfo(BaseModel):
     size: int = 0
     modified_time: float = 0
 
-    def created_time(self) -> datetime:
+    def modified_datetime(self) -> datetime:
         return datetime.fromtimestamp(self.modified_time)
     
     @property
