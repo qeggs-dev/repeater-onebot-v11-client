@@ -11,7 +11,7 @@ from ...logger import logger
 reason = on_command("reason", aliases={"r", "Reason"}, rule=to_me(), block=True)
 
 @reason.handle()
-async def reason_handle(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
+async def handle_reason(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     persona_info = PersonaInfo(bot, event, args)
     send_msg = SendMsg(
         "Chat.Reason",
