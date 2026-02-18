@@ -539,7 +539,7 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
-        image = await self.text_render(text_to_render)
+        image = await self.render_text(text_to_render)
 
         if text is None:
             message = Message(
@@ -565,14 +565,52 @@ class SendMsg:
                 reply=reply,
                 continue_handler = continue_handler
             )
+    
+    @overload
+    async def send_multiple_render(
+        self,
+        messages: list[str | Message],
+        reply: bool = False,
+        continue_handler: Literal[False] = False
+    ) -> NoReturn: ...
 
     @overload
-    async def send_render(
+    async def send_multiple_render(
+        self,
+        messages: list[str | Message],
+        reply: bool = False,
+        continue_handler: Literal[True] = True
+    ) -> None: ...
+
+    async def send_multiple_render(
             self,
-            text: str,
+            messages: list[str | Message],
             reply: bool = True,
             continue_handler: Literal[False] = False
-        ) -> NoReturn: ...
+        ) -> None:
+        """
+        发送多个渲染文本
+        """
+        message = Message()
+        for msg in messages:
+            if isinstance(msg, str):
+                message.append(
+                    MessageSegment.image(
+                        await self.render_text(msg)
+                    )
+                )
+            elif isinstance(msg, Message):
+                message.append(
+                    MessageSegment.image(
+                        await self.render_text(msg.extract_plain_text())
+                    )
+                )
+        
+        await self._send(
+            message,
+            reply = reply,
+            continue_handler = continue_handler
+        )
     
     @overload
     async def send_render(
@@ -595,7 +633,7 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
-        image = await self.text_render(text)
+        image = await self.render_text(text)
         await self._send(
             Message(image),
             reply=reply,
@@ -780,7 +818,7 @@ class SendMsg:
         """
         raise FinishedException
 
-    async def text_render(self, text: str, direct_output: bool = False) -> MessageSegment:
+    async def render_text(self, text: str, direct_output: bool = False) -> MessageSegment:
         """
         渲染文本
 
