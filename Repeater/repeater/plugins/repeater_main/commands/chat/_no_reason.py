@@ -1,0 +1,59 @@
+from nonebot import on_command
+from nonebot.rule import to_me
+from nonebot.params import CommandArg
+from nonebot.adapters import Message
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment
+
+from .._clients import ChatCore, ChatSendMsg
+from ...assist import PersonaInfo, SendMsg
+from ...logger import logger
+
+no_reason = on_command("no_reason", aliases={"nr", "no_reason", "No_Reason", "NoReason"}, rule=to_me(), block=True)
+
+@no_reason.handle()
+async def handle_no_reason(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
+    persona_info = PersonaInfo(bot, event, args)
+    send_msg = SendMsg(
+        "Chat.NoReason",
+        no_reason,
+        persona_info,
+    )
+
+    if send_msg.is_debug_mode:
+        await send_msg.send_debug_mode()
+
+    logger.info(
+        "Received a message {message} from {namespace}",
+        message = persona_info.message_str,
+        namespace = persona_info.namespace_str,
+        module = send_msg.component
+    )
+
+    message_text = persona_info.message_str.strip()
+    
+    reply_msgs = await persona_info.get_reply_chain()
+    if reply_msgs:
+        reply_msgs_text = persona_info.generates_text_from_messages_list(reply_msgs)
+        reply_msgs_text = reply_msgs_text.replace("\n", "\n> ")
+        if message_text:
+            message_text = f"{reply_msgs_text}\n\n---\n\n{message_text}"
+        else:
+            message_text = reply_msgs_text
+
+    chat_core = ChatCore(persona_info)
+
+    images: list[str] = await persona_info.get_images_url()
+    
+    response = await chat_core.send_message(
+        message = message_text,
+        thinking = False,
+        image_url = images
+    )
+    
+    send_msg = ChatSendMsg(
+        send_msg.component,
+        persona_info,
+        no_reason,
+        response
+    )
+    await send_msg.send()
