@@ -78,7 +78,7 @@ class ChatSendMsg(SendMsg):
                 # 推理内容必须渲染为图片
                 if self._response.get_data().reasoning_content:
                     message.append(
-                        await self.text_render(self._response.get_data().reasoning_content)
+                        await self.render_text(self._response.get_data().reasoning_content)
                     )
                 if self._response.get_data().content:
                     message.append(text or self._response.get_data().content)
@@ -97,11 +97,11 @@ class ChatSendMsg(SendMsg):
                 message.append(self._persona_info.reply)
                 if self._response.get_data().reasoning_content:
                     message.append(
-                        await self.text_render(self._response.get_data().reasoning_content)
+                        await self.render_text(self._response.get_data().reasoning_content)
                     )
                 if self._response.get_data().content:
                     message.append(
-                        await self.text_render(self._response.get_data().content)
+                        await self.render_text(self._response.get_data().content)
                     )
                 else:
                     message.append("[Message is empty.]")
