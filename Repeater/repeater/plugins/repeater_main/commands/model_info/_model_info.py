@@ -41,15 +41,17 @@ async def handle_get_model_list(bot: Bot, event: MessageEvent, args: Message = C
                 
                 text_buffer: list[str] = []
                 for uid, models in model_maps.items():
-                    text_buffer.append(f"### {uid}")
-                    text_buffer.append("")
+                    sub_buffer: list[str] = []
+                    sub_buffer.append(f"### {uid}")
+                    sub_buffer.append("")
                     for model in models:
-                        text_buffer.append(f"**{model.name}**")
-                        text_buffer.append(f"  - id: `{model.id}`")
-                        text_buffer.append(f"  - uid: `{model.uid}`")
-                        text_buffer.append(f"  - timeout: {model.timeout}")
-                    text_buffer.append("")
-                await send_msg.send_render("\n".join(text_buffer))
+                        sub_buffer.append(f"**{model.name}**")
+                        sub_buffer.append(f"  - id: `{model.id}`")
+                        sub_buffer.append(f"  - uid: `{model.uid}`")
+                        sub_buffer.append(f"  - timeout: {model.timeout}")
+                    text_buffer.append("\n".join(sub_buffer))
+                
+                await send_msg.send_multiple_render(text_buffer)
         else:
             await send_msg.send_response_check_code(response)
 
