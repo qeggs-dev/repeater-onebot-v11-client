@@ -32,7 +32,7 @@ async def handle_context_branch_info(bot: Bot, event: MessageEvent, args: Messag
                 f"Branch ID: {data.branch_id}\n"
                 f"Branch Size: {data.size}\n"
                 f"Branch Readable Size: {data.readable_size}\n"
-                f"Branch Create Time: {data.created_time().strftime('%Y-%m-%d %H:%M:%S')}\n"
+                f"Branch Last Modified Time: {data.modified_datetime().strftime('%Y-%m-%d %H:%M:%S')}\n"
             )
         else:
             await send_msg.send_response_check_code(response, "Get Context branch info failed")
