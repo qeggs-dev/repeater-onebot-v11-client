@@ -49,7 +49,6 @@ class ChatCore:
         load_prompt: bool | None = None,
         save_context: bool | None = None,
         save_new_only: bool | None = None,
-        enable_md_prompt: bool = True,
         cross_user_data_routing: CrossUserDataRouting | None = None,
         continue_completion: bool | None = None,
     ) -> Response[ChatResponse]:
@@ -69,7 +68,6 @@ class ChatCore:
         :param load_prompt: 是否加载提示
         :param save_context: 是否保存上下文
         :param save_new_only: 是否只保存新内容
-        :param enable_md_prompt: 是否启用Markdown提示
         :param cross_user_data_routing: 跨用户数据路由
         :param continue_completion: 是否继续生成
         :return: AI返回的消息
@@ -87,7 +85,6 @@ class ChatCore:
             audio_url = audio_url,
             file_url = file_url,
             load_prompt = load_prompt,
-            enable_md_prompt = enable_md_prompt,
             save_context = save_context,
             save_new_only = save_new_only,
             cross_user_data_routing = cross_user_data_routing,
@@ -118,7 +115,6 @@ class ChatCore:
         load_prompt: bool | None = None,
         save_context: bool | None = None,
         save_new_only: bool | None = None,
-        enable_md_prompt: bool = True,
         cross_user_data_routing: CrossUserDataRouting | None = None,
         continue_completion: bool | None = None,
     ) -> AsyncIterator[Any]:
@@ -138,7 +134,6 @@ class ChatCore:
         :param load_prompt: 是否加载提示
         :param save_context: 是否保存上下文
         :param save_new_only: 是否只保存新内容
-        :param enable_md_prompt: 是否启用Markdown提示
         :param cross_user_data_routing: 跨用户数据路由
         :param continue_completion: 是否继续生成
         :return: AI返回的消息
@@ -157,7 +152,6 @@ class ChatCore:
             audio_url = audio_url,
             file_url = file_url,
             load_prompt = load_prompt,
-            enable_md_prompt = enable_md_prompt,
             save_context = save_context,
             save_new_only = save_new_only,
             cross_user_data_routing = cross_user_data_routing,
@@ -200,7 +194,6 @@ class ChatCore:
         load_prompt: bool | None = None,
         save_context: bool | None = None,
         save_new_only: bool | None = None,
-        enable_md_prompt: bool = True,
         cross_user_data_routing: CrossUserDataRouting | None = None,
         continue_completion: bool | None = None,
         stream: bool | None = None,
@@ -257,12 +250,10 @@ class ChatCore:
                 message_buffer.append("> MessageMetadata:")
                 message_buffer.append(f">     Message Type: {self._persona_info.source.value}")
                 message_buffer.append(">     Message Sending time:{{time()}}")
-                if enable_md_prompt:
-                    message_buffer.append(">     Markdown Rendering is turned on!!")
                 if storage_configs.usage_group_context:
-                    message_buffer.append(">     Now User: {{username}}({{nickname}})")
+                    message_buffer.append(">     Now User: {{user_name}}({{nick_name}})")
                 if cross_user_data_routing:
-                    message_buffer.append(">     Guest Mode(User: {{username}}), Citation context is turned on!!")
+                    message_buffer.append(">     Guest Mode(User: {{user_name}}), Citation context is turned on!!")
                 message_buffer.append("\n---\n")
             message_buffer.append(message)
             data["message"] = "\n".join(message_buffer)
