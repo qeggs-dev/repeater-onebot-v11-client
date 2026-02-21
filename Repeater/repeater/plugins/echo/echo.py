@@ -10,12 +10,12 @@ from nonebot.params import (
 
 echo = on_command("echo", aliases={"Echo"}, rule=to_me(), block=True)
 
-echo.handle()
+@echo.handle()
 async def echo_handle(matcher: Matcher, args: Message = CommandArg()):
     if args.extract_plain_text():
         matcher.set_arg("echo_text", args)
 
-echo.got("echo_text", prompt="[Echo] Waiting for input...")
+@echo.got("echo_text", prompt="[Echo] Waiting for input...")
 async def echo_got_text(args: Message = Arg("echo_text")):
     if isinstance(args, Message):
         # 如果是消息对象，则直接返回
