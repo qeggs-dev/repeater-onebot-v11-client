@@ -340,6 +340,25 @@ PS：`CHAT`类型命令几乎全员支持视觉输入
 `NEXUS` 系列命令操作的是当前活动分支
 所以在下载前请确保你的活动分支上没有重要数据
 
+所有命令都有变体
+多单词的命令格式有：
+
+- `lowerCamelCase`
+- `UpperCamelCase`
+- `snake_case`
+- `Upper_Snake_Case`
+- `abr` (Abridge)
+
+而单个单词的命令只有：
+
+- `lowercase`
+- `Uppercase`
+- `s` (Single Character)
+
+通常来说，如果一个新命令
+缩写与旧命令有冲突
+则尽量保持旧命令不变
+
 ---
 
 ## 相关仓库
