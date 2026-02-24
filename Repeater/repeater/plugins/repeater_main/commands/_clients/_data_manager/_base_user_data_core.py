@@ -40,6 +40,13 @@ class UserDataCore(ABC):
         return Response(response)
     # endregion
 
+    # region get branch list
+    async def get_branch_list(self) -> Response[list[str]]:
+        response = await self._httpx_client.get(
+            f"{BASE_URL}/userdata/{self._data_type}/branchs/{self._info.namespace_str}"
+        )
+        return Response(response)
+
     # region clone
     async def clone(self, dst_branch_id: str) -> Response[None]:
         response = await self._httpx_client.post(
