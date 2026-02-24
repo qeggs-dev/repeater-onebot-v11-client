@@ -10,6 +10,7 @@ from ._branch_command.context_branch_clone_from import handle_context_branch_clo
 from ._branch_command.context_branch_bind import handle_context_branch_bind
 from ._branch_command.context_branch_bind_from import handle_context_branch_bind_from
 from ._branch_command.context_branch_info import handle_context_branch_info
+from ._branch_command.get_context_branchs_list import handle_context_branchs_list
 
 from ._nexus_command._upload_to_nexus import handle_context_upload_to_nexus
 from ._nexus_command._download_from_nexus import handle_context_download_from_nexus
@@ -26,6 +27,7 @@ __all__ = [
     "handle_context_branch_bind",
     "handle_context_branch_bind_from",
     "handle_context_branch_info",
+    "handle_context_branchs_list",
     "handle_context_upload_to_nexus",
     "handle_context_download_from_nexus",
 ]
