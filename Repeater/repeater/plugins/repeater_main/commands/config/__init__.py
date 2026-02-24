@@ -26,6 +26,7 @@ from ._branch_command.config_branch_clone_from import handle_config_branch_clone
 from ._branch_command.config_branch_bind import handle_config_branch_bind
 from ._branch_command.config_branch_bind_from import handle_config_branch_bind_from
 from ._branch_command.config_branch_info import handle_config_branch_info
+from ._branch_command.get_config_branchs_list import handle_config_branchs_list
 
 from ._nexus_command._upload_to_nexus import handle_config_upload_to_nexus
 from ._nexus_command._download_from_nexus import handle_config_download_from_nexus
@@ -58,6 +59,7 @@ __all__ = [
     "handle_config_branch_bind",
     "handle_config_branch_bind_from",
     "handle_config_branch_info",
+    "handle_config_branchs_list",
     "handle_config_upload_to_nexus",
     "handle_config_download_from_nexus",
 ]
