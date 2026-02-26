@@ -18,7 +18,7 @@ logger = base_logger.bind(module = "Config.Core")
 class ModelInfoCore:
     def __init__(self):
         self._client = httpx.AsyncClient(
-            timeout = storage_configs.server_api_timeout.config
+            timeout = storage_configs.server_api_timeout.model_info,
         )
 
     
