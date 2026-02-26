@@ -20,6 +20,11 @@ class ServerAPITimeout(BaseModel):
     context: float = 10.0
     prompt: float = 10.0
     config: float = 10.0
+    data_manager: float = 10.0
+    licenses: float = 10.0
+    model_info: float = 10.0
+    status: float = 10.0
+    version: float = 10.0
     variable_expansion: float = 40.0
     render: float = 600.0
 
