@@ -11,7 +11,7 @@ from .version_model import VersionModel
 
 class VersionAPICore:
     _httpx_client = httpx.AsyncClient(
-        timeout = storage_configs.server_api_timeout.variable_expansion
+        timeout = storage_configs.server_api_timeout.version
     )
 
     async def get_version(self) -> Response[VersionModel]:
