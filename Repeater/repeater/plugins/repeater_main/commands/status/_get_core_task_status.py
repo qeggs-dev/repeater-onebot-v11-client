@@ -25,12 +25,14 @@ async def handle_get_core_task_status(bot: Bot, event: MessageEvent, args: Messa
             status_stack: list[str] | Any = response.json()
             if not isinstance(status_stack, list):
                 await send_msg.send_error("Response data is not a list")
+            elif not status_stack:
+                await send_msg.send_prompt("Free")
             else:
                 text_buffer: list[str] = []
                 for index, status in enumerate(status_stack):
                     text_buffer.append(("  " * index) + "└ " + status)
                 
-                await send_msg.send_check_length(text_buffer)
+                await send_msg.send_check_length_prompt("\n".join(text_buffer))
         else:
             await send_msg.send_response_check_code(response)
 
