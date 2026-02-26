@@ -6,7 +6,7 @@ from ....assist import Response
 class StatusCore:
     _httpx_client = httpx.AsyncClient(
         base_url = BASE_URL,
-        timeout = storage_configs.server_api_timeout.variable_expansion
+        timeout = storage_configs.server_api_timeout.status,
     )
 
     async def get_core_task_status(self, namespace: str) -> Response[list[str]]:
