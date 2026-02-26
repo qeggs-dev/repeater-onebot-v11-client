@@ -176,6 +176,11 @@ main_api.json
         "context": 10.0,
         "prompt": 10.0,
         "config": 10.0,
+        "data_manager": 10.0,
+        "licenses": 10.0,
+        "model_info": 10.0,
+        "status": 10.0,
+        "version": 10.0,
         "variable_expansion": 40.0,
         "render": 600.0
     },
