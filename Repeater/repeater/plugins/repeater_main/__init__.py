@@ -16,6 +16,9 @@ from .commands.mixed import *
 # === Model Info === #
 from .commands.model_info import *
 
+# === Status === #
+from .commands.status import *
+
 # === Licenses === #
 from .commands.licenses import *
 
