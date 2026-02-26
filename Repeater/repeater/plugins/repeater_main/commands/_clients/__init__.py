@@ -16,6 +16,9 @@ from ._model_info import (
     ModelType,
     MODEL_TYPES
 )
+from ._status_core import (
+    StatusCore,
+)
 from ._data_manager.prompt_core import (
     PromptCore,
 )
