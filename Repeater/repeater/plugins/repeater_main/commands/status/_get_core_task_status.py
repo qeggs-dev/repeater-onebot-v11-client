@@ -30,7 +30,11 @@ async def handle_get_core_task_status(bot: Bot, event: MessageEvent, args: Messa
             else:
                 text_buffer: list[str] = []
                 for index, status in enumerate(status_stack):
-                    text_buffer.append(("  " * index) + "└ " + status)
+                    if index == 0:
+                        prefix = ""
+                    else:
+                        prefix = ("  " * index) + "└ "
+                    text_buffer.append(prefix + status)
                 
                 await send_msg.send_check_length_prompt("\n".join(text_buffer))
         else:
