@@ -3,10 +3,7 @@ from ._net_config import net_config
 from ._storage_configs import storage_configs
 
 # ==== BASE URL ==== #
-BACKEND_HOST = net_config.backend_host
-BACKEND_PORT = net_config.backend_port
-PROTOCOL = net_config.backend_api_protocol
-BASE_URL = f"{PROTOCOL}://{BACKEND_HOST}:{BACKEND_PORT}"
+BASE_URL = net_config.backend_baseurl
 
 # ==== CHAT API ==== #
 CHAT_ROUTE = f"/chat/completion"

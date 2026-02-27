@@ -20,7 +20,7 @@ class TextRender:
     )
 
     def __init__(self, namespace: str | Namespace, timeout:float = 60.0):
-        self.url = f"{BACKEND_HOST}:{BACKEND_PORT}"
+        self.url = BASE_URL
         if isinstance(namespace, str):
             self.namespce = namespace
         elif isinstance(namespace, Namespace):
