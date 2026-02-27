@@ -5,62 +5,43 @@ from ._storage_configs import storage_configs
 # ==== BASE URL ==== #
 BACKEND_HOST = net_config.backend_host
 BACKEND_PORT = net_config.backend_port
-BASE_URL = f"{BACKEND_HOST}:{BACKEND_PORT}"
+PROTOCOL = net_config.backend_api_protocol
+BASE_URL = f"{PROTOCOL}://{BACKEND_HOST}:{BACKEND_PORT}"
 
 # ==== CHAT API ==== #
-CHAT_ROUTE = f"{BASE_URL}/chat/completion"
-NPCHAT_ROUTE = f"{BASE_URL}/chat/completion/noprompt"
+CHAT_ROUTE = f"/chat/completion"
 
 # ==== CONTEXT API ==== #
-DELETE_CONTEXT_ROUTE = f"{BASE_URL}/userdata/context/delete"
-GET_CONTEXT_LENGTH_ROUTE = f"{BASE_URL}/userdata/context/length"
-ROLE_STRUCTRUE_ROUTE = f"{BASE_URL}/userdata/context/structure_check/role"
-INJECT_CONTEXT_ROUTE = f"{BASE_URL}/session/inject"
-WIHTDRAW_CONTEXT_ROUTE = f"{BASE_URL}/userdata/context/withdraw"
-CHANGE_CONTEXT_BRANCH_ROUTE = f"{BASE_URL}/userdata/context/change"
+GET_CONTEXT_LENGTH_ROUTE = "/userdata/context/length"
+ROLE_STRUCTRUE_ROUTE = "/userdata/context/structure_check/role"
+INJECT_CONTEXT_ROUTE = "/session/inject"
+WIHTDRAW_CONTEXT_ROUTE = "/userdata/context/withdraw"
 
 # ==== PROMPT API ==== #
-SET_PROMPT_ROUTE = f"{BASE_URL}/userdata/prompt/set"
-DELETE_PROMPT_ROUTE = f"{BASE_URL}/userdata/prompt/delete"
-DELETE_SUBSESSION_PROMPT_ROUTE = f"{BASE_URL}/prompt/subsession/delete"
-CLONE_PROMPT_ROUTE = f"{BASE_URL}/prompt/clone"
+SET_PROMPT_ROUTE = "/userdata/prompt/set"
 
 # ==== CONFIG API ==== #
-SET_CONFIG_ROUTE = f"{BASE_URL}/userdata/config/set"
-GET_CONFIG_ROUTE = f"{BASE_URL}/userdata/config/get"
-REMOVE_CONFIG_KEY_ROUTE = f"{BASE_URL}/userdata/config/delkey"
-CHANGE_CONFIG_BRANCH_ROUTE = f"{BASE_URL}/userdata/config/change"
-DELETE_CONFIG_ROUTE = f"{BASE_URL}/userdata/config/delete"
-CLONE_CONFIG_ROUTE = f"{BASE_URL}/config/clone"
+SET_CONFIG_ROUTE = "/userdata/config/set"
+GET_CONFIG_ROUTE = "/userdata/config/get"
+REMOVE_CONFIG_KEY_ROUTE = "/userdata/config/delkey"
 
 # ==== MODEL API ==== #
-GET_MODEL_UID_LIST = f"{BASE_URL}/model/list"
-GET_MODEL_INFO = f"{BASE_URL}/model/info"
-GET_MODEL_TYPES = f"{BASE_URL}/model/types"
+GET_MODEL_UID_LIST = "/model/list"
+GET_MODEL_INFO = "/model/info"
+GET_MODEL_TYPES = "/model/types"
 
 # ==== Download User Data File ==== #
 
-DOWNLOAD_USER_DATA_FILE_ROUTE = f"{BASE_URL}/userdata/file"
+DOWNLOAD_USER_DATA_FILE_ROUTE = "/userdata/file"
 
 # ==== RENDER API ==== #
-DOWNLOAD_RENDERED_IMAGE_ROUTE = f"{BASE_URL}/file/render"
-TEXT_RENDER_ROUTE = f"{BASE_URL}/render"
-
-# ==== ONLINE CHECK API ==== #
-ONLINE_CHECK_ROUTE = f"{BASE_URL}/server/online"
-
-# ==== README API ==== #
-README_FILE_ROUTE = f"{BASE_URL}/readme.md"
-HTML_README_FILE_ROUTE = f"{BASE_URL}/readme.html"
-
-# ==== Balance API ==== #
-BALANCE_ROUTE = f"{BASE_URL}/balance_query"
+TEXT_RENDER_ROUTE = "/render"
 
 # ==== VARIABLE EXPANSION API ==== #
-VARIABLE_EXPANSION = f"{BASE_URL}/variable_expand"
+VARIABLE_EXPANSION = "/variable_expand"
 
 # ==== VERSION API ==== #
-VERSION_ROUTE = f"{BASE_URL}/version"
+VERSION_ROUTE = f"/version"
 
 # ==== CONFIG ==== #
 HELLO_CONTENT = storage_configs.hello_content
