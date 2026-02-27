@@ -19,6 +19,7 @@ logger = base_logger.bind(module = "Context.Core")
 
 class ContextCore(UserDataCore):
     _httpx_client = httpx.AsyncClient(
+        base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.context
     )
 

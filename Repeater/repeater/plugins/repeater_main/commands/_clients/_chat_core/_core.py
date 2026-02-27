@@ -14,8 +14,10 @@ from ....core_net_configs import *
 exit_register = ExitRegister()
 
 class ChatCore:
-    _chat_client = httpx.AsyncClient(timeout=storage_configs.server_api_timeout.chat)
-    _client = httpx.AsyncClient()
+    _chat_client = httpx.AsyncClient(
+        base_url = BASE_URL,
+        timeout = storage_configs.server_api_timeout.chat
+    )
     
     def __init__(self, persona_info: PersonaInfo, namespace: str | None = None):
         self._persona_info = persona_info
@@ -262,5 +264,4 @@ class ChatCore:
     exit_register.register()
     async def close(self):
         await self._chat_client.aclose()
-        await self._client.aclose()
     # endregion
