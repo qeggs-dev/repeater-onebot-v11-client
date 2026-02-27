@@ -65,6 +65,7 @@ PS: 此处的长度评分函数并非实际算法，仅为演示使用
 | PORT                         | 8080                                                                       | 端口号 |
 | COMMAND_START                | ["/"]                                                                      | 用于触发命令的开始字符 |
 | COMMAND_SEP                  | ["."]                                                                      | 用于触发命令的分隔符 |
+| BACKEND_BASEURL              | "http://127.0.0.1"                                                         | Repeater Server 的 IP 地址 |
 | ONEBOT_ACCESS_TOKEN          | ""                                                                         | OneBot的访问令牌 |
 | SUPERUSERS                   | [""]                                                                       | 超级用户列表 |
 
@@ -126,10 +127,10 @@ PS: 此处的长度评分函数并非实际算法，仅为演示使用
 
 ### 链接后端
 1. 找到项目目录下的`.env`文件
-2. 填写`BACKEND_HOST`和`BACKEND_PORT`字段配置项 (其中HOST是后端服务主机的IP地址，PORT是后端服务主端口号，需要你和后端配置中编写的一致)
+2. 填写`BACKEND_BASEURL`字段配置项 (需要你和后端配置中编写的一致)
 3. 执行`run.bat`或`bash run.sh`启动程序
 
-PS: 由于OneBot客户端通常为入站服务，所以默认情况下所有服务都不需要配置公网IP访问
+PS: 由于OneBot客户端通常为内网服务，所以默认情况下所有服务都不需要配置公网IP访问
 但你需要保证后端可以连接到你设定的API端口，OneBot客户端可以连接到指定社交平台的服务器
 
 ---
