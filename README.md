@@ -142,26 +142,34 @@ main_api.json
 {
     // Text Length Score 配置
     "text_length_score_config":{
+
         // 最大长度阈值
         "max_lines": 5,
+
         // 每行最大字符数
         "single_line_max": 64,
+
         // 平均行最大字符数
         "mean_line_max": 24,
+
         // 总字符数
         "total_length": 400,
 
         // 评分阈值
         "threshold": {
+
             // 群聊阈值
             "group": 1.0,
+
             // 私聊阈值
             "private": 2.64
         }
     },
+
     // 在仅@且没有任何文本的情况下
     // 返回的消息内容
     "hello_content": "Repeater is Online!",
+
     // 是hello_content的变种
     // 这里的Key是星期
     // Value是星期对应的消息内容
@@ -173,21 +181,44 @@ main_api.json
 
     // Repeater API超时时间
     "server_api_timeout": {
+
+        // 聊天 API 超时
         "chat": 600.0,
+
+        // 上下文操作 API 超时
         "context": 10.0,
+
+        // 提示词操作 API 超时
         "prompt": 10.0,
+
+        // 配置操作 API 超时
         "config": 10.0,
+
+        // 综合数据管理 API 超时
         "data_manager": 10.0,
+
+        // 许可证 API 超时
         "licenses": 10.0,
+
+        // 模型信息 API 超时
         "model_info": 10.0,
+
+        // 状态 API 超时
         "status": 10.0,
+
+        // 版本 API 超时
         "version": 10.0,
+
+        // 变量展开 API 超时
         "variable_expansion": 40.0,
+
+        // 图片渲染 API 超时
         "render": 600.0
     },
 
     // 在用户输入图片的时候，是否将其下载为 Base64 以防止链接失效
     "use_base64_image_url": false,
+
     // 下载图片的超时时间
     "download_image_timeout": 600.0,
 
@@ -205,30 +236,43 @@ tts.json
 {
     // ChatTTS API 地址
     "base_url": "http://127.0.0.1:9966",
+
     // ChatTTS API 参数
     "api_args": {
+
         // 模型名称
         "voice": "265.pt",
+
         // TTS 语速
         "speed": 6,
+
         // TTS 模型提示词
         "tts_prompt": "[break_6]",
+
         // TTS 模型温度
         "temperature": 0.2,
+
         // TTS 模型Top_P
         "top_p": 0.701,
+
         // TTS 模型Top_K
         "top_k": 20,
+
         // TTS 模型生成的最大优化Token数
         "refine_max_new_token": 384,
+
         // TTS 模型生成最大推理Token数
         "infer_max_new_token": 2048,
+
         // 文本种子（我不确定这里是文本修饰种子还是TTS种子，不填则随机生成）
         "text_seed": 42,
+
         // 是否跳过输入优化
         "skip_refine": true,
+
         // 是否为流式输出
         "is_stream": false,
+        
         // 自定义语音
         "custom_voice": 0
     },
