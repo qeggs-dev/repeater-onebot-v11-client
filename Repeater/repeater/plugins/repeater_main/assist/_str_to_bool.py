@@ -1,4 +1,18 @@
-def str_to_bool(s: str):
+from typing import overload, Literal
+
+@overload
+def str_to_bool(s: str) -> bool:
+    ...
+
+@overload
+def str_to_bool(s: str, optional: Literal[True] = False) -> bool | None:
+    ...
+
+@overload
+def str_to_bool(s: str, optional: Literal[False] = False) -> bool:
+    ...
+
+def str_to_bool(s: str, optional: bool = False) -> bool:
     """
     Convert a string to a boolean value.
 
@@ -8,6 +22,8 @@ def str_to_bool(s: str):
     Returns:
     bool: The boolean value of the string.
     """
+    if optional and s.lower() in ["", "none", "null"]:
+        return None
     if not isinstance(s, str):
         raise TypeError("Input must be a string.")
     if s.lower() in ["true", "yes", "1", "t", "y", "on"]:

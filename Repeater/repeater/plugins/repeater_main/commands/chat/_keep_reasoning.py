@@ -7,7 +7,6 @@ from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment
 from .._clients import ChatCore, ChatSendMsg
 from ...assist import PersonaInfo, SendMsg
 from ...logger import logger
-from ...core_net_configs import storage_configs
 
 keep_reasoning = on_command("keepReasoning", aliases={"kr", "keep_reasoning", "Keep_Reasoning", "KeepReasoning"}, rule=to_me(), block=True)
 
@@ -32,7 +31,7 @@ async def handle_keep_reasoning(bot: Bot, event: MessageEvent):
     chat_core = ChatCore(persona_info)
 
     response = await chat_core.send_message(
-        model_uid = storage_configs.reason_model_uid
+        thinking=True,
     )
     
     send_msg = ChatSendMsg(

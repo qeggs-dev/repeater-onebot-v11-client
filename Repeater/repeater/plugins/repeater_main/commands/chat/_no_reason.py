@@ -8,15 +8,15 @@ from .._clients import ChatCore, ChatSendMsg
 from ...assist import PersonaInfo, SendMsg
 from ...logger import logger
 
-npchat = on_command("npChat", aliases={"np", "no_prompt_chat", "No_Prompt_Chat", "NoPromptChat"}, rule=to_me(), block=True)
+no_reason = on_command("noReason", aliases={"nr", "no_reason", "No_Reason", "NoReason"}, rule=to_me(), block=True)
 
-@npchat.handle()
-async def handle_npchat(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
+@no_reason.handle()
+async def handle_no_reason(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     persona_info = PersonaInfo(bot, event, args)
     send_msg = SendMsg(
-        "Chat.No_Prompt_Chat",
-        npchat,
-        persona_info
+        "Chat.NoReason",
+        no_reason,
+        persona_info,
     )
 
     if send_msg.is_debug_mode:
@@ -26,11 +26,11 @@ async def handle_npchat(bot: Bot, event: MessageEvent, args: Message = CommandAr
         "Received a message {message} from {namespace}",
         message = persona_info.message_str,
         namespace = persona_info.namespace_str,
-        module = send_msg.component,
+        module = send_msg.component
     )
 
     message_text = persona_info.message_str.strip()
-
+    
     reply_msgs = await persona_info.get_reply_chain()
     if reply_msgs:
         reply_msgs_text = persona_info.generates_text_from_messages_list(reply_msgs)
@@ -43,17 +43,17 @@ async def handle_npchat(bot: Bot, event: MessageEvent, args: Message = CommandAr
     chat_core = ChatCore(persona_info)
 
     images: list[str] = await persona_info.get_images_url()
-
+    
     response = await chat_core.send_message(
-        message_text,
-        image_url = images,
-        load_prompt = False,
+        message = message_text,
+        thinking = False,
+        image_url = images
     )
-
+    
     send_msg = ChatSendMsg(
         send_msg.component,
         persona_info,
-        npchat,
+        no_reason,
         response
     )
     await send_msg.send()

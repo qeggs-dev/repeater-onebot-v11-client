@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from .._clients import ModelInfoCore, MODEL_TYPES, ModelType
+from .._clients import ModelInfoCore, MODEL_TYPES, ModelType, ModelInfo
 from ...assist import PersonaInfo, SendMsg, str_to_bool
 
 get_model_list = on_command("getModelList", aliases={"gml", "get_model_list", "Get_Model_List", "GetModelList"}, rule=to_me(), block=True)
@@ -33,10 +33,25 @@ async def handle_get_model_list(bot: Bot, event: MessageEvent, args: Message = C
             elif not isinstance(model_list, list):
                 await send_msg.send_error("Response data is not a list")
             else:
-                text_buffer: list[str] = []
+                model_maps: dict[str, list[ModelInfo]] = {}
                 for model in model_list:
-                    text_buffer.append(f"{model.uid} ({model.parent}/{model.name})")
-                await send_msg.send_check_length("\n".join(text_buffer))
+                    if model.parent not in model_maps:
+                        model_maps[model.parent] = []
+                    model_maps[model.parent].append(model)
+                
+                text_buffer: list[str] = []
+                for uid, models in model_maps.items():
+                    sub_buffer: list[str] = []
+                    sub_buffer.append(f"### {uid}")
+                    sub_buffer.append("")
+                    for model in models:
+                        sub_buffer.append(f"**{model.name}**")
+                        sub_buffer.append(f"  - id: `{model.id}`")
+                        sub_buffer.append(f"  - uid: `{model.uid}`")
+                        sub_buffer.append(f"  - timeout: {model.timeout}")
+                    text_buffer.append("\n".join(sub_buffer))
+                
+                await send_msg.send_multiple_render(text_buffer)
         else:
             await send_msg.send_response_check_code(response)
 

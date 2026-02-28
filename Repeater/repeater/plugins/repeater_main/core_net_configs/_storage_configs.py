@@ -25,7 +25,6 @@ class ServerAPITimeout(BaseModel):
 
 class StorageConfigs(BaseModel):
     text_length_score_configs: TextLengthScoreConfigs = Field(default_factory = TextLengthScoreConfigs)
-    reason_model_uid: str = "reasoner"
     hello_content: str = "Repeater Is Ready!"
     welcome_messages_by_weekday: dict[int | str, str] = Field(default_factory=dict, max_length=7)
     usage_group_context: bool = False
@@ -33,6 +32,7 @@ class StorageConfigs(BaseModel):
     use_base64_image_url: bool = False
     download_image_timeout: float = 600.0
     summarize_and_contract_default_message: str = "System Message: please sum up all the contents above."
+    branch_file_size_use_abbreviation: bool = True
 
 loader: Loader[StorageConfigs] = Loader(
     model=StorageConfigs,

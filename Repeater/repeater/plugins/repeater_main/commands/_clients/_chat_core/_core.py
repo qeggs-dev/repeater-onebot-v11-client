@@ -41,14 +41,14 @@ class ChatCore:
         role_name: str | None = None,
         temporary_prompt: str | None = None,
         model_uid: str | None = None,
+        thinking: bool | None = None,
         image_url: str | list[str] | None = None,
-        video_url: str | list[str]  |None = None,
-        audio_url: str | list[str]  |None = None,
-        file_url: str | list[str]  |None = None,
+        video_url: str | list[str] | None = None,
+        audio_url: str | list[str] | None = None,
+        file_url: str | list[str] | None = None,
         load_prompt: bool | None = None,
         save_context: bool | None = None,
         save_new_only: bool | None = None,
-        enable_md_prompt: bool = True,
         cross_user_data_routing: CrossUserDataRouting | None = None,
         continue_completion: bool | None = None,
     ) -> Response[ChatResponse]:
@@ -60,6 +60,7 @@ class ChatCore:
         :param role_name: 角色名称
         :param temporary_prompt: 临时提示
         :param model_uid: 模型UID
+        :param thinking: 思考模式
         :param image_url: 图片URL
         :param video_url: 视频URL
         :param audio_url: 音频URL
@@ -67,7 +68,6 @@ class ChatCore:
         :param load_prompt: 是否加载提示
         :param save_context: 是否保存上下文
         :param save_new_only: 是否只保存新内容
-        :param enable_md_prompt: 是否启用Markdown提示
         :param cross_user_data_routing: 跨用户数据路由
         :param continue_completion: 是否继续生成
         :return: AI返回的消息
@@ -79,12 +79,12 @@ class ChatCore:
             role_name = role_name,
             temporary_prompt = temporary_prompt,
             model_uid = model_uid,
+            thinking = thinking,
             image_url = image_url,
             video_url = video_url,
             audio_url = audio_url,
             file_url = file_url,
             load_prompt = load_prompt,
-            enable_md_prompt = enable_md_prompt,
             save_context = save_context,
             save_new_only = save_new_only,
             cross_user_data_routing = cross_user_data_routing,
@@ -107,14 +107,14 @@ class ChatCore:
         role_name: str | None = None,
         temporary_prompt: str | None = None,
         model_uid: str | None = None,
+        thinking: bool | None = None,
         image_url: str | list[str] | None = None,
-        video_url: str | list[str]  |None = None,
-        audio_url: str | list[str]  |None = None,
-        file_url: str | list[str]  |None = None,
+        video_url: str | list[str] | None = None,
+        audio_url: str | list[str] | None = None,
+        file_url: str | list[str] | None = None,
         load_prompt: bool | None = None,
         save_context: bool | None = None,
         save_new_only: bool | None = None,
-        enable_md_prompt: bool = True,
         cross_user_data_routing: CrossUserDataRouting | None = None,
         continue_completion: bool | None = None,
     ) -> AsyncIterator[Any]:
@@ -126,6 +126,7 @@ class ChatCore:
         :param role_name: 角色名称
         :param temporary_prompt: 临时提示
         :param model_uid: 模型UID
+        :param thinking: 思考模式
         :param image_url: 图片URL
         :param video_url: 视频URL
         :param audio_url: 音频URL
@@ -133,7 +134,6 @@ class ChatCore:
         :param load_prompt: 是否加载提示
         :param save_context: 是否保存上下文
         :param save_new_only: 是否只保存新内容
-        :param enable_md_prompt: 是否启用Markdown提示
         :param cross_user_data_routing: 跨用户数据路由
         :param continue_completion: 是否继续生成
         :return: AI返回的消息
@@ -146,12 +146,12 @@ class ChatCore:
             role_name = role_name,
             temporary_prompt = temporary_prompt,
             model_uid = model_uid,
+            thinking = thinking,
             image_url = image_url,
             video_url = video_url,
             audio_url = audio_url,
             file_url = file_url,
             load_prompt = load_prompt,
-            enable_md_prompt = enable_md_prompt,
             save_context = save_context,
             save_new_only = save_new_only,
             cross_user_data_routing = cross_user_data_routing,
@@ -186,14 +186,14 @@ class ChatCore:
         role_name: str | None = None,
         temporary_prompt: str | None = None,
         model_uid: str | None = None,
+        thinking: bool | None = None,
         image_url: str | list[str] | None = None,
-        video_url: str | list[str]  |None = None,
-        audio_url: str | list[str]  |None = None,
-        file_url: str | list[str]  |None = None,
+        video_url: str | list[str] | None = None,
+        audio_url: str | list[str] | None = None,
+        file_url: str | list[str] | None = None,
         load_prompt: bool | None = None,
         save_context: bool | None = None,
         save_new_only: bool | None = None,
-        enable_md_prompt: bool = True,
         cross_user_data_routing: CrossUserDataRouting | None = None,
         continue_completion: bool | None = None,
         stream: bool | None = None,
@@ -234,6 +234,9 @@ class ChatCore:
         elif storage_configs.usage_group_context:
             data["role_name"] = self._persona_info.nickname
         
+        if thinking is not None:
+            data["thinking"] = thinking
+        
         if cross_user_data_routing is not None:
             data["cross_user_data_routing"] = cross_user_data_routing.model_dump(exclude_none=True)
         elif self.merge_group_id:
@@ -247,12 +250,10 @@ class ChatCore:
                 message_buffer.append("> MessageMetadata:")
                 message_buffer.append(f">     Message Type: {self._persona_info.source.value}")
                 message_buffer.append(">     Message Sending time:{{time()}}")
-                if enable_md_prompt:
-                    message_buffer.append(">     Markdown Rendering is turned on!!")
                 if storage_configs.usage_group_context:
-                    message_buffer.append(">     Now User: {{username}}({{nickname}})")
+                    message_buffer.append(">     Now User: {{user_name}}({{nick_name}})")
                 if cross_user_data_routing:
-                    message_buffer.append(">     Guest Mode(User: {{username}}), Citation context is turned on!!")
+                    message_buffer.append(">     Guest Mode(User: {{user_name}}), Citation context is turned on!!")
                 message_buffer.append("\n---\n")
             message_buffer.append(message)
             data["message"] = "\n".join(message_buffer)

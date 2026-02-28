@@ -7,12 +7,11 @@ from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment
 from .._clients import ChatCore, ChatSendMsg
 from ...assist import PersonaInfo, SendMsg
 from ...logger import logger
-from ...core_net_configs import storage_configs
 
 reason = on_command("reason", aliases={"r", "Reason"}, rule=to_me(), block=True)
 
 @reason.handle()
-async def reason_handle(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
+async def handle_reason(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     persona_info = PersonaInfo(bot, event, args)
     send_msg = SendMsg(
         "Chat.Reason",
@@ -47,7 +46,7 @@ async def reason_handle(bot: Bot, event: MessageEvent, args: Message = CommandAr
     
     response = await chat_core.send_message(
         message = message_text,
-        model_uid=storage_configs.reason_model_uid,
+        thinking = True,
         image_url = images
     )
     

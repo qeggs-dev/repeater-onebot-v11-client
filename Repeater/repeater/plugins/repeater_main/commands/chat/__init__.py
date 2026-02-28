@@ -1,7 +1,8 @@
 from ._chat import handle_chat
 from ._smart_at import handle_smart_at
 from ._raw import handle_raw_chat
-from ._reason import reason_handle
+from ._reason import handle_reason
+from ._no_reason import handle_no_reason
 from ._nosave_chat import handle_nosave_chat
 from ._render_chat import handle_render_chat
 from ._npchat import handle_npchat
@@ -16,7 +17,8 @@ __all__ = [
     "handle_chat",
     "handle_smart_at",
     "handle_raw_chat",
-    "reason_handle",
+    "handle_reason",
+    "handle_no_reason",
     "handle_nosave_chat",
     "handle_render_chat",
     "handle_npchat",

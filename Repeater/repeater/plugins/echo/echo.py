@@ -23,3 +23,4 @@ async def echo_got_text(args: Message = Arg("echo_text")):
     else:
         # 回退到纯文本模式
         await echo.finish(ArgPlainText())
+
