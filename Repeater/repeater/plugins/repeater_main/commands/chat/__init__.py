@@ -1,4 +1,5 @@
 from ._chat import handle_chat
+from ._generate_candidate_answer import handle_generate_candidate_answer
 from ._smart_at import handle_smart_at
 from ._raw import handle_raw_chat
 from ._reason import handle_reason
@@ -15,6 +16,7 @@ from ._tts_chat import handle_tts_chat
 
 __all__ = [
     "handle_chat",
+    "handle_generate_candidate_answer"
     "handle_smart_at",
     "handle_raw_chat",
     "handle_reason",
