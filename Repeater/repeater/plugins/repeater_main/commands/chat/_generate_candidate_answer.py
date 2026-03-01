@@ -41,8 +41,8 @@ async def handle_generate_candidate_answer(bot: Bot, event: MessageEvent, args: 
             await send_msg.send_error("Please enter a number")
 
     meta_prompt = [
-        "System Command:"
-        "Please imitate the user's tone and speaking style",
+        "System Command:",
+        "**Please imitate the user's tone and speaking style**",
         "Generate candidate content",
         "The format is as follows:",
         "",
