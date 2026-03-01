@@ -38,7 +38,7 @@ async def handle_generate_candidate_answer(bot: Bot, event: MessageEvent, args: 
         try:
             number = float(message_text)
         except ValueError:
-            send_msg.send_error("Please enter a number")
+            await send_msg.send_error("Please enter a number")
 
     meta_prompt = [
         "I do not know how to reply to you, please provide some simple candidates",
