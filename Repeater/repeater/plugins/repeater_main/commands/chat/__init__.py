@@ -16,7 +16,7 @@ from ._tts_chat import handle_tts_chat
 
 __all__ = [
     "handle_chat",
-    "handle_generate_candidate_answer"
+    "handle_generate_candidate_answer",
     "handle_smart_at",
     "handle_raw_chat",
     "handle_reason",
