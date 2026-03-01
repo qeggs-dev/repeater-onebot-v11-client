@@ -41,8 +41,10 @@ async def handle_generate_candidate_answer(bot: Bot, event: MessageEvent, args: 
             await send_msg.send_error("Please enter a number")
 
     meta_prompt = [
-        "I do not know how to reply to you, please provide some simple candidates",
-        "Use the following format:",
+        "System Command:"
+        "Please imitate the user's tone and speaking style",
+        "Generate candidate content",
+        "The format is as follows:",
         "",
         "1. Answer 1",
         "2. Answer 2",
@@ -70,6 +72,7 @@ async def handle_generate_candidate_answer(bot: Bot, event: MessageEvent, args: 
 
     response = await core.send_message(
         message = meta_prompt_str,
+        add_metadata = False,
         save_context = False,
         image_url = images
     )
