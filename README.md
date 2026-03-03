@@ -381,7 +381,8 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `getConfigBranchList`      | `gcfgbl` | `GetConfigBranchList`     | `CONFIG`    | 4.3.16.7       | 获取当前上下文分支           | 无                                        | 获取当前上下文分支 |
 | `getCoreTaskStatus`        | `gcts`   | `GetCoreTaskStatus`       | `STATUS`    | 4.3.17.0       | 获取当前任务状态             | 无                                        | 获取当前核心任务状态 (Free or Task Stack) |
 | `generateCandidateAnswer`  | `gca`    | `GenerateCandidateAnswer` | `CHAT`      | 4.3.18.0       | 生成候选答案                 | 候选数量                                  | 生成候选答案（生成内容不保存至上下文） |
-| `environmentUploadToNexus` | `eutn`   | `EnvironmentUploadToNexus`| `NEXUS`     | 4.3.19.0       | 上传环境到Nexus              | 超时秒数                                  | 同时上传所有用户数据到Nexus |
+| `envUploadToNexus`         | `eutn`   | `EnvUploadToNexus`        | `NEXUS`     | 4.3.19.0       | 上传环境到 Nexus             | 超时秒数                                  | 同时上传所有用户数据到Nexus |
+| `envDownloadFromNexus`     | `edfn`   | `EnvDownloadFromNexus`    | `NEXUS`     | 4.3.19.0       | 从 Nexus 下载环境            | 资源 UUID                                | 从 Nexus 同时下载所有用户数据 |
 
 PS：`CHAT`类型命令几乎全员支持视觉输入
 为了速度和减少本机网络开销，复读机会直接使用QQ传递的临时URL
