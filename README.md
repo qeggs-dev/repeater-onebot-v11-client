@@ -366,11 +366,11 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `getRequirementList`       | `grls`   | `GetRequirementList`      | `LICENSES`  | 4.3.10.8       | 获取依赖列表                 | 无                                         | 获取所有记录了License的依赖项名称 |
 | `getServerLicense`         | `gsl`    | `GetServerLicense`        | `LICENSES`  | 4.3.10.8       | 获取服务端许可证             | 无                                         | 获取服务端许可证信息 |
 | `checkRoleStructure`       | `crs`    | `CheckRoleStructure`      | `CONTEXT`   | 4.3.10.10      | 检查角色结构                 | 无                                        | 检查上下文中的角色结构是否符合 user-assistant 的规则 |
-| `contextUploadToNexus`     | `cutn`   | `ContextUploadToNexus`    | `NEXUS`     | 4.3.11.0       | 上传上下文到 Nexus           | 无                                        | 上传上下文到Nexus共享 |
+| `contextUploadToNexus`     | `cutn`   | `ContextUploadToNexus`    | `NEXUS`     | 4.3.11.0       | 上传上下文到 Nexus           | 超时秒数                                   | 上传上下文到Nexus共享 |
 | `contextDownloadFromNexus` | `cdfn`   | `ContextDownloadFromNexus`| `NEXUS`     | 4.3.11.0       | 从 Nexus 下载上下文          | 资源 UUID                                 | 下载Nexus共享的上下文 |
-| `promptUploadToNexus`      | `putn`   | `PromptUploadToNexus`     | `NEXUS`     | 4.3.11.0       | 上传提示词到 Nexus           | 无                                        | 上传提示词到Nexus共享 |
+| `promptUploadToNexus`      | `putn`   | `PromptUploadToNexus`     | `NEXUS`     | 4.3.11.0       | 上传提示词到 Nexus           | 超时秒数                                   | 上传提示词到Nexus共享 |
 | `promptDownloadFromNexus`  | `pgetn`  | `PromptDownloadFromNexus` | `NEXUS`     | 4.3.11.0       | 从 Nexus 下载提示词          | 资源 UUID                                 | 获取Nexus共享的提示词 |
-| `configUploadToNexus`      | `cfgutn` | `ConfigUploadToNexus`     | `NEXUS`     | 4.3.11.0       | 上传配置到 Nexus             | 无                                        | 个性配置上传到Nexus |
+| `configUploadToNexus`      | `cfgutn` | `ConfigUploadToNexus`     | `NEXUS`     | 4.3.11.0       | 上传配置到 Nexus             | 超时秒数                                  | 个性配置上传到Nexus |
 | `configDownloadFromNexus`  | `cfgdtn` | `ConfigDownloadFromNexus` | `NEXUS`     | 4.3.11.0       | 从 Nexus 下载配置            | 资源 UUID                                 | 从Nexus下载共享的个性配置 |
 | `setCustomName`            | `scn`    | `SetCustomName`           | `CONFIG`    | 4.3.12.1       | 设置个性化名称               | 用户名                                    | 设置后模型看到的将是设置的名称而非用户名 |
 | `thinkingMode`             | `tm`     | `ThinkingMode`            | `CONFIG`    | 4.3.14.0       | 设置思考模式                 | `true`/`false`/`null`                    | 用于在不指定 Thinking 参数时 启用/禁用/恢复默认 思考模式 |
@@ -381,6 +381,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `getConfigBranchList`      | `gcfgbl` | `GetConfigBranchList`     | `CONFIG`    | 4.3.16.7       | 获取当前上下文分支           | 无                                        | 获取当前上下文分支 |
 | `getCoreTaskStatus`        | `gcts`   | `GetCoreTaskStatus`       | `STATUS`    | 4.3.17.0       | 获取当前任务状态             | 无                                        | 获取当前核心任务状态 (Free or Task Stack) |
 | `generateCandidateAnswer`  | `gca`    | `GenerateCandidateAnswer` | `CHAT`      | 4.3.18.0       | 生成候选答案                 | 候选数量                                  | 生成候选答案（生成内容不保存至上下文） |
+| `environmentUploadToNexus` | `eutn`   | `EnvironmentUploadToNexus`| `NEXUS`     | 4.3.19.0       | 上传环境到Nexus              | 超时秒数                                  | 同时上传所有用户数据到Nexus |
 
 PS：`CHAT`类型命令几乎全员支持视觉输入
 为了速度和减少本机网络开销，复读机会直接使用QQ传递的临时URL
