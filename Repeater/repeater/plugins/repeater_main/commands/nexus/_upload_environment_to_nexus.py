@@ -8,7 +8,7 @@ from nonebot.adapters import Bot
 from .._clients import NexusCore
 from ...assist import PersonaInfo, SendMsg
 
-environment_upload_to_nexus = on_command("environmentUploadToNexus", aliases={"eutn", "environment_upload_to_nexus", "Environment_Upload_To_Nexus", "EnvironmentUploadToNexus"}, rule=to_me(), block=True)
+environment_upload_to_nexus = on_command("envUploadToNexus", aliases={"eutn", "env_upload_to_nexus", "Env_Upload_To_Nexus", "EnvUploadToNexus"}, rule=to_me(), block=True)
 
 @environment_upload_to_nexus.handle()
 async def handle_environment_upload_to_nexus(bot: Bot, event: MessageEvent, args: Message = CommandArg()):

@@ -8,7 +8,7 @@ from nonebot.adapters import Bot
 from .._clients import NexusCore
 from ...assist import PersonaInfo, SendMsg
 
-environment_download_from_nexus = on_command("environmentDownloadFromNexus", aliases={"cdfn", "environment_download_from_nexus", "Environment_Download_From_Nexus", "EnvironmentDownloadFromNexus"}, rule=to_me(), block=True)
+environment_download_from_nexus = on_command("envDownloadFromNexus", aliases={"cdfn", "env_download_from_nexus", "Env_Download_From_Nexus", "EnvDownloadFromNexus"}, rule=to_me(), block=True)
 
 @environment_download_from_nexus.handle()
 async def handle_environment_download_from_nexus(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
