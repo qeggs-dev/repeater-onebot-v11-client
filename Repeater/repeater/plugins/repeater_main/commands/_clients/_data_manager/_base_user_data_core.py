@@ -108,7 +108,7 @@ class UserDataCore(ABC):
     # region upload to nexus
     async def upload_to_nexus(self, timeout: int | None = None) -> Response[NexusUploadResponse]:
         response = await self._httpx_client.post(
-            f"/nexus/upload/{self._info.namespace_str}/{self._data_type}",
+            f"/nexus/upload/{self._info.namespace_str}/single/{self._data_type}",
             json = {
                 "timeout": timeout
             }
@@ -127,7 +127,7 @@ class UserDataCore(ABC):
             raise ValueError("UUID is not valid")
         
         response = await self._httpx_client.post(
-            f"/nexus/download/{self._info.namespace_str}/{self._data_type}",
+            f"/nexus/download/{self._info.namespace_str}/single/{self._data_type}",
             json = {
                 "id": str(uuid)
             }
