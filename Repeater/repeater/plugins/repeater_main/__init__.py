@@ -25,6 +25,9 @@ from .commands.licenses import *
 # === More Interesting Tools === #
 from .commands.more_interesting_tools import *
 
+# === Nexus === #
+from .commands.nexus import *
+
 # === Var Expand === #
 from .commands.variable_expansion import *
 
