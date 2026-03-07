@@ -384,10 +384,13 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `envUploadToNexus`         | `eutn`   | `EnvUploadToNexus`        | `NEXUS`     | 4.3.19.0       | 上传环境到 Nexus             | 超时秒数                                  | 同时上传所有用户数据到Nexus |
 | `envDownloadFromNexus`     | `edfn`   | `EnvDownloadFromNexus`    | `NEXUS`     | 4.3.19.0       | 从 Nexus 下载环境            | 资源 UUID                                | 从 Nexus 同时下载所有用户数据 |
 
-PS：`CHAT`类型命令几乎全员支持视觉输入
+PS：`CHAT`类型命令大部分都做到了支持视觉输入
+默认命令已支持全模态输入
 为了速度和减少本机网络开销，复读机会直接使用QQ传递的临时URL
 你可以在配置中改用 Base64 编码的 URL
-但这些附加数据需要主动设置 `NewRequestsTextOnly` 为 `false`
+(这只对图片数据有效)
+但想要 Repeater Server 不忽略附加数据需要主动设置 `NewRequestsTextOnly` 为 `false`
+或是找管理员关闭 Repeater Server 的自动拦截
 
 `MIXED`类型命令是混合型命令
 它的一条命令会执行多条后端请求
