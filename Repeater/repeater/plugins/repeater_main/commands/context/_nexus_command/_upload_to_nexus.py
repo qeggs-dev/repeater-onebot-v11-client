@@ -21,9 +21,9 @@ async def handle_context_upload_to_nexus(bot: Bot, event: MessageEvent, args: Me
     context_core = ContextCore(persona_info)
 
     timeout = None
-    if persona_info.message_str:
+    if persona_info.message_striped_str:
         try:
-            timeout = int(persona_info.message_str)
+            timeout = int(persona_info.message_striped_str)
         except ValueError:
             await send_msg.send_error("Invalid timeout value")
 

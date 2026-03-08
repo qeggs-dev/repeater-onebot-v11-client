@@ -23,7 +23,7 @@ async def handle_generate_candidate_answer(bot: Bot, event: MessageEvent, args: 
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
 
-    message_text = persona_info.message_str.strip()
+    message_text = persona_info.message_striped_str
 
     logger.info(
         "Received a message {message} from {namespace}",

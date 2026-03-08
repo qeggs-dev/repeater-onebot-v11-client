@@ -25,12 +25,12 @@ async def handle_nosave_chat(bot: Bot, event: MessageEvent, args: Message = Comm
 
     logger.info(
         "Received a message {message} from {namespace}",
-        message = persona_info.message_str,
+        message = persona_info.message_striped_str,
         namespace = persona_info.namespace_str,
         module = send_msg.component
     )
 
-    message_text = persona_info.message_str.strip()
+    message_text = persona_info.message_striped_str
     
     reply_msgs = await persona_info.get_reply_chain()
     if reply_msgs:

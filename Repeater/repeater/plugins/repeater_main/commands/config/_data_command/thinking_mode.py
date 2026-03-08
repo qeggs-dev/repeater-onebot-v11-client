@@ -19,7 +19,7 @@ async def handle_thinking_mode(bot: Bot, event: MessageEvent, args: Message = Co
         await send_msg.send_debug_mode()
 
     try:
-        thinking = str_to_bool(persona_info.message_str, optional = True)
+        thinking = str_to_bool(persona_info.message_striped_str, optional = True)
     except ValueError:
         await send_msg.send_error("Not a valid value")
 

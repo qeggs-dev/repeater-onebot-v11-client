@@ -21,9 +21,9 @@ async def handle_prompt_upload_to_nexus(bot: Bot, event: MessageEvent, args: Mes
     prompt_core = PromptCore(persona_info)
 
     timeout = None
-    if persona_info.message_str:
+    if persona_info.message_striped_str:
         try:
-            timeout = int(persona_info.message_str)
+            timeout = int(persona_info.message_striped_str)
         except ValueError:
             await send_msg.send_error("Invalid timeout value")
     

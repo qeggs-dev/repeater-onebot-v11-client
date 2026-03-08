@@ -19,7 +19,7 @@ async def handle_set_auto_save_context(bot: Bot, event: MessageEvent, args: Mess
         await send_msg.send_debug_mode()
 
     try:
-        auto_save_context = str_to_bool(persona_info.message_str)
+        auto_save_context = str_to_bool(persona_info.message_striped_str)
     except ValueError:
         await send_msg.send_error("Not a valid boolean value")
 

@@ -22,13 +22,13 @@ async def handle_change_session(bot: Bot, event: MessageEvent, args: Message = C
     prompt_core = PromptCore(persona_info)
     config_core = ConfigCore(persona_info)
     response_context = await context_core.change_branch(
-        persona_info.message_str
+        persona_info.message_striped_str
     )
     response_prompt = await prompt_core.change_branch(
-        persona_info.message_str
+        persona_info.message_striped_str
     )
     response_config = await config_core.change_branch(
-        persona_info.message_str
+        persona_info.message_striped_str
     )
     await send_msg.send_multiple_responses(
         (response_context, "Context"),

@@ -21,7 +21,7 @@ async def handle_generate_prompt(bot: Bot, event: MessageEvent, args: Message = 
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
 
-    message = persona_info.message_str.strip()
+    message = persona_info.message_striped_str
 
     meta_prompt_file_path = "prompts/generate_prompt/meta_prompt.txt"
     try:

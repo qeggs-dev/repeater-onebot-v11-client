@@ -13,4 +13,4 @@ text_render = on_command("textRender", aliases={"tr", "text_render", "Text_Rende
 async def handle_text_render(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     persona_info = PersonaInfo(bot, event, args)
     send_msg = SendMsg("Render.Markdown", text_render, persona_info)
-    await send_msg.send_render(persona_info.message_str)
+    await send_msg.send_render(persona_info.message_striped_str)

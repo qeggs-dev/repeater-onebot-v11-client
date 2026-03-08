@@ -19,7 +19,7 @@ async def handle_set_auto_shrink_length(bot: Bot, event: MessageEvent, args: Mes
         await send_msg.send_debug_mode()
 
     try:
-        auto_shrink_length = int(persona_info.message_str)
+        auto_shrink_length = int(persona_info.message_striped_str)
     except ValueError:
         await send_msg.send_error("Message must be a number")
 

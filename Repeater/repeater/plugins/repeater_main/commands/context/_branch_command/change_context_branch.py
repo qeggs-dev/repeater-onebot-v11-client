@@ -18,7 +18,7 @@ async def handle_change_context_branch(bot: Bot, event: MessageEvent, args: Mess
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     
-    msg = persona_info.message_str.strip()
+    msg = persona_info.message_striped_str
     
     context_core = ContextCore(persona_info)
     if send_msg.is_debug_mode:

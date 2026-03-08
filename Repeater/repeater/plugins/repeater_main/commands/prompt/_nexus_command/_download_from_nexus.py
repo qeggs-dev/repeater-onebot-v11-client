@@ -23,10 +23,10 @@ async def handle_prompt_download_from_nexus(bot: Bot, event: MessageEvent, args:
         await send_msg.send_debug_mode()
     else:
         try:
-            response = await prompt_core.download_from_nexus(persona_info.message_str)
+            response = await prompt_core.download_from_nexus(persona_info.message_striped_str)
         except ValueError as e:
             await send_msg.send_error(
-                f"Invalid UUID: {persona_info.message_str}"
+                f"Invalid UUID: {persona_info.message_striped_str}"
             )
 
         if response.code == 200:

@@ -20,7 +20,7 @@ async def handle_smart_at(bot: Bot, event: MessageEvent):
 
     logger.info(
         "Received a message {message} from {namespace}",
-        message = persona_info.message_str,
+        message = persona_info.message_striped_str,
         namespace = persona_info.namespace_str,
         module = send_msg.component
     )
@@ -38,7 +38,7 @@ async def handle_smart_at(bot: Bot, event: MessageEvent):
         logger.warning("Message is empty")
         return
     
-    message_text = persona_info.message_str
+    message_text = persona_info.message_striped_str
 
     forward_msgs = await persona_info.get_forward_msgs()
     if forward_msgs:

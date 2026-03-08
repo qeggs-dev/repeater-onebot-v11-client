@@ -19,7 +19,7 @@ async def handle_get_model_list(bot: Bot, event: MessageEvent, args: Message = C
         await send_msg.send_debug_mode()
     else:
         model_info_core = ModelInfoCore()
-        model_type_str = persona_info.message_str.strip()
+        model_type_str = persona_info.message_striped_str
         if model_type_str in MODEL_TYPES:
             model_type = ModelType(model_type_str)
         else:
