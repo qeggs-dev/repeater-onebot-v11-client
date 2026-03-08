@@ -137,6 +137,10 @@ class PersonaInfo:
         return self.message.extract_plain_text()
     
     @property
+    def message_striped_str(self) -> str:
+        return self.message_str.strip()
+    
+    @property
     def args_str(self) -> str:
         return self.args.extract_plain_text()
     
