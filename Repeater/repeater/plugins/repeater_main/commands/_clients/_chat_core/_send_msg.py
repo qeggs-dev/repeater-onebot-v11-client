@@ -83,7 +83,7 @@ class ChatSendMsg(SendMsg):
                 if self._response.get_data().content:
                     message.append(text or self._response.get_data().content)
                 else:
-                    message.append("Message is empty.")
+                    message.append("[Message is empty.]")
                 await self._matcher.finish(message)
             else:
                 await self.send_error_response(self._response)
