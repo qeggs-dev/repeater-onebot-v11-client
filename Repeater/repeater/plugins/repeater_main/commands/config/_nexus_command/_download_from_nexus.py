@@ -34,7 +34,7 @@ async def handle_config_download_from_nexus(bot: Bot, event: MessageEvent, args:
             if data is None:
                 await send_msg.send_error("Unable to process data.")
             else:
-                await send_msg.send_config(
+                await send_msg.send_prompt(
                     f"Download successful."
                 )
         else:
