@@ -34,8 +34,6 @@ async def handle_context_download_from_nexus(bot: Bot, event: MessageEvent, args
             if data is None:
                 await send_msg.send_error("Unable to process data.")
             else:
-                await send_msg.send_prompt(
-                    f"Download successful."
-                )
+                await send_msg.send_prompt(f"Download successful.")
         else:
             await send_msg.send_response_check_code(response, "Unable to download context from Nexus.")
