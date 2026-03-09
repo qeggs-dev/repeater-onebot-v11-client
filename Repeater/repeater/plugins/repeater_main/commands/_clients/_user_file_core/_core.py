@@ -1,5 +1,4 @@
-import json
-import httpx
+from urllib.parse import urljoin
 from typing import (
     Optional,
     Union
@@ -15,5 +14,5 @@ class UserFileCore:
     # region get_utl
     async def get_user_data_file_url(self):
         logger.info("Get user data file url", module = "user_file.core")
-        return f"{BASE_URL}{DOWNLOAD_USER_DATA_FILE_ROUTE}/{self._info.namespace_str}.zip"
+        return urljoin(BASE_URL, f"{DOWNLOAD_USER_DATA_FILE_ROUTE}/{self._info.namespace_str}.zip")
     # endregion
