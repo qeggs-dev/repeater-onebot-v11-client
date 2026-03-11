@@ -1,6 +1,7 @@
 import time
 import asyncio
 from typing import Awaitable
+from nonebot import logger
 
 class LimitSpeed:
     def __init__(
@@ -17,5 +18,10 @@ class LimitSpeed:
             expected_time_delta = self.limit_speed_per_minute / 60
             time_dalta = max(0, expected_time_delta - (last_time_dalta / 1e9))
             if time_dalta > 0:
+                logger.info(
+                    "Limit speed: {speed_limit:%.2f}/min, sleep {time_dalta:%.2f} sec",
+                    speed_limit = self.limit_speed_per_minute,
+                    time_dalta = time_dalta
+                )
                 await asyncio.sleep(time_dalta)
         await task
