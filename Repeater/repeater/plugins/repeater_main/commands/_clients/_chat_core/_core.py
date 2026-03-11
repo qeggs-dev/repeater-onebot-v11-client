@@ -99,7 +99,9 @@ class ChatCore:
         )
         response = await self._chat_client.post(
             url = url,
-            json = data.submit_body()
+            json = data.submit_body(
+                persona_info = self._persona_info
+            )
         )
             
         return Response(
@@ -171,7 +173,9 @@ class ChatCore:
         async with self._chat_client.stream(
             method="POST",
             url=url,
-            json=data.submit_body()  # 使用 json= 表示请求体数据
+            json=data.submit_body(
+                persona_info = self._persona_info
+            )
         ) as response:
             response.raise_for_status()
             
