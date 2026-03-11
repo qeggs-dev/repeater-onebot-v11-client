@@ -219,6 +219,12 @@ main_api.json
     // 在用户输入图片的时候，是否将其下载为 Base64 以防止链接失效
     "use_base64_image_url": false,
 
+    // 限制发送消息的频率
+    // 降低风控风险
+    // 默认 100 次/分钟
+    // 如果想关闭可以设置为 null
+    "send_msg_limit_speed_per_minute": 100,
+
     // 下载图片的超时时间
     "download_image_timeout": 600.0,
 
