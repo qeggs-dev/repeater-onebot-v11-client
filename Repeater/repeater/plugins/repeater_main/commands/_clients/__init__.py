@@ -41,3 +41,31 @@ from ._version import (
 from ._licenses import (
     LicenseCore,
 )
+from ._content_role import (
+    ContentRole,
+)
+
+__all__ = [
+    "ChatCore",
+    "ChatResponse",
+    "ChatSendMsg",
+    "ChatBufferStringStream",
+    "ChatStreamChatChunkResponse",
+    "CrossUserDataRouting",
+    "DataRoutingField",
+    "ContextCore",
+    "PromptCore",
+    "ConfigCore",
+    "NexusCore",
+    "ModelInfoCore",
+    "ModelInfo",
+    "ModelType",
+    "MODEL_TYPES",
+    "StatusCore",
+    "UserFileCore",
+    "VariableExpansionCore",
+    "VersionAPICore",
+    "VersionModel",
+    "LicenseCore",
+    "ContentRole",
+]
