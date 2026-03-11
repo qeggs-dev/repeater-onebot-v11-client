@@ -5,15 +5,13 @@ from typing import Awaitable
 class LimitSpeed:
     def __init__(
             self,
-            limit_speed_per_minute: int = 100,
-            enable_limit_speed: bool = True
+            limit_speed_per_minute: int | float | None = 100
         ):
         self.limit_speed_per_minute = limit_speed_per_minute
-        self.enable_limit_speed = enable_limit_speed
         self.last_send_time = time.monotonic_ns()
     
     async def submit(self, task: Awaitable) -> None:
-        if self.enable_limit_speed:
+        if self.limit_speed_per_minute is not None:
             current_time = time.monotonic_ns()
             last_time_dalta = current_time - self.last_send_time
             expected_time_delta = self.limit_speed_per_minute / 60
