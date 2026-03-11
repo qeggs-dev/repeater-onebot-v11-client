@@ -2,6 +2,7 @@ from pydantic import BaseModel
 from typing import Any
 from .._content_role import ContentRole
 from ._cross_user_data_routing import CrossUserDataRouting
+from ....assist import PersonaInfo
 from ....core_net_configs import storage_configs
 
 class ChatRequestModel(BaseModel):
@@ -23,11 +24,11 @@ class ChatRequestModel(BaseModel):
     continue_completion: bool | None = None
     stream: bool | None = None
     
-    def submit_message(self) -> str | None:
+    def submit_message(self, persona_info: PersonaInfo) -> str | None:
         message_buffer:list[str] = []
         if self.add_metadata:
             message_buffer.append("> MessageMetadata:")
-            message_buffer.append(f">     Message Type: {self._persona_info.source.value}")
+            message_buffer.append(f">     Message Type: {persona_info.source.value}")
             message_buffer.append(">     Message Sending time:{{time()}}")
             if storage_configs.usage_group_context:
                 message_buffer.append(">     Now User: {{user_name}}({{nick_name}})")
@@ -37,8 +38,8 @@ class ChatRequestModel(BaseModel):
         message_buffer.append(self.message)
         return "\n".join(message_buffer)
     
-    def submit_body(self) -> dict[str, Any]:
+    def submit_body(self, persona_info: PersonaInfo) -> dict[str, Any]:
         base_body = self.model_dump(exclude_none=True)
         if self.message:
-            base_body["message"] = self.submit_message()
+            base_body["message"] = self.submit_message(persona_info)
         return base_body
