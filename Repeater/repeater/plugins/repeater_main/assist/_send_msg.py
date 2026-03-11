@@ -19,13 +19,19 @@ from typing import (
     Type,
     overload,
     Literal,
+    ClassVar
 )
 from datetime import datetime
+from ._limit_speed import LimitSpeed
 from ..logger import logger
 
 T_RESPONSE = TypeVar("T_RESPONSE")
 
 class SendMsg:
+    limit_speed: ClassVar[LimitSpeed] = LimitSpeed(
+        storage_configs.send_msg_limit_speed_per_minute,
+        storage_configs.send_msg_limit_speed_per_minute is not None
+    )
     def __init__(
             self,
             component: str,
@@ -866,7 +872,9 @@ class SendMsg:
         send_msg = self._prefix + message
         if reply:
             send_msg = self._persona_info.reply + send_msg
-        await self._matcher.send(send_msg)
+        await self.limit_speed(
+            self._matcher.send(send_msg)
+        )
         logger.info(
             "Send message: \n{message}",
             message = send_msg
