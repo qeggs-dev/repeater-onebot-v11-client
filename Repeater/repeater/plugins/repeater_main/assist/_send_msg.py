@@ -29,8 +29,7 @@ T_RESPONSE = TypeVar("T_RESPONSE")
 
 class SendMsg:
     limit_speed: ClassVar[LimitSpeed] = LimitSpeed(
-        storage_configs.send_msg_limit_speed_per_minute,
-        storage_configs.send_msg_limit_speed_per_minute is not None
+        storage_configs.send_msg_limit_speed_per_minute
     )
     def __init__(
             self,
@@ -872,7 +871,7 @@ class SendMsg:
         send_msg = self._prefix + message
         if reply:
             send_msg = self._persona_info.reply + send_msg
-        await self.limit_speed(
+        await self.limit_speed.submit(
             self._matcher.send(send_msg)
         )
         logger.info(
