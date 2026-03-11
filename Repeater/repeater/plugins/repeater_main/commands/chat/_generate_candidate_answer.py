@@ -1,3 +1,5 @@
+import re
+
 from nonebot import on_command
 from nonebot.internal.matcher.matcher import Matcher
 from nonebot.rule import to_me
@@ -6,10 +8,12 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent
 from ...logger import logger
 
-from .._clients import ChatCore, ChatSendMsg
+from .._clients import ChatCore, ChatSendMsg, ContentRole
 from ...assist import PersonaInfo, SendMsg
 
 generate_candidate_answer: type[Matcher] = on_command("generateCandidateAnswer", aliases={"gca", "generate_candidate_answer", "Generate_Candidate_Answer", "GenerateCandidateAnswer"}, rule=to_me(), block=True)
+
+metadata_pattern = re.compile(r"> Message\s*?Metadata:.*?---(?:\r?\n)+", re.DOTALL | re.IGNORECASE)
 
 @generate_candidate_answer.handle()
 async def handle_generate_candidate_answer(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
@@ -31,56 +35,42 @@ async def handle_generate_candidate_answer(bot: Bot, event: MessageEvent, args: 
         namespace = persona_info.namespace_str,
         module = send_msg.component
     )
-
-    try:
-        number = int(message_text)
-    except ValueError:
-        try:
-            number = float(message_text)
-        except ValueError:
-            await send_msg.send_error("Please enter a number")
-
-    meta_prompt = [
-        "System Command:",
-        "**Please imitate the user's tone and speaking style**",
-        "Generate candidate content",
-        "The format is as follows:",
-        "",
-        "1. Answer 1",
-        "2. Answer 2",
-        "3. Answer 3",
-        "...",
-        "",
-        "And so on",
-        f"Finally, {number} answers are generated."
-    ]
-
-    meta_prompt_str = "\n".join(meta_prompt)
     
     reply_msgs = await persona_info.get_reply_chain()
     if reply_msgs:
         reply_msgs_text = persona_info.generates_text_from_messages_list(reply_msgs)
         reply_msgs_text = reply_msgs_text.replace("\n", "\n> ")
-        if meta_prompt_str:
-            meta_prompt_str = f"{reply_msgs_text}\n\n---\n\n{meta_prompt_str}"
-        else:
-            meta_prompt_str = reply_msgs_text
 
     core = ChatCore(persona_info)
 
     images: list[str] = await persona_info.get_images_url()
 
     response = await core.send_message(
-        message = meta_prompt_str,
+        message = None,
         add_metadata = False,
         save_context = False,
+        temporary_prompt = (
+            "{%- if user_profile -%}\n"
+            "{{user_profile}}\n"
+            "{%- endif %}"
+        ),
+        history_msg_role_map = {
+            ContentRole.USER: ContentRole.ASSISTANT,
+            ContentRole.ASSISTANT: ContentRole.USER,
+            ContentRole.SYSTEM: None,
+            ContentRole.FUNCTION: None
+        },
         image_url = images
     )
+
+    def filters(message: str) -> str:
+        return metadata_pattern.sub("", message)
 
     send_msg = ChatSendMsg(
         send_msg.component,
         persona_info,
         generate_candidate_answer,
-        response
+        response,
+        content_handler = filters
     )
     await send_msg.send()
