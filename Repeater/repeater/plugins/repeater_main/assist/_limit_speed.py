@@ -15,7 +15,7 @@ class LimitSpeed:
         if self.limit_speed_per_minute is not None:
             current_time = time.monotonic_ns()
             last_time_dalta = current_time - self.last_send_time
-            expected_time_delta = self.limit_speed_per_minute / 60
+            expected_time_delta = 60 / self.limit_speed_per_minute
             time_dalta = max(0, expected_time_delta - (last_time_dalta / 1e9))
             if time_dalta > 0:
                 logger.info(
