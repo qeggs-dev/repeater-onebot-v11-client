@@ -380,7 +380,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `getPromptBranchList`      | `gpbl`   | `GetPromptBranchList`     | `PROMPT`    | 4.3.16.7       | 获取提示词分支列表           | 无                                        | 返回当前用户的提示词分支列表 |
 | `getConfigBranchList`      | `gcfgbl` | `GetConfigBranchList`     | `CONFIG`    | 4.3.16.7       | 获取当前上下文分支           | 无                                        | 获取当前上下文分支 |
 | `getCoreTaskStatus`        | `gcts`   | `GetCoreTaskStatus`       | `STATUS`    | 4.3.17.0       | 获取当前任务状态             | 无                                        | 获取当前核心任务状态 (Free or Task Stack) |
-| `generateCandidateAnswer`  | `gca`    | `GenerateCandidateAnswer` | `CHAT`      | 4.3.18.0       | 生成候选答案                 | 候选数量                                  | 生成候选答案（生成内容不保存至上下文） |
+| `generateCandidateAnswer`  | `gca`    | `GenerateCandidateAnswer` | `CHAT`      | 4.3.18.0       | 生成候选答案                 | 无                                        | 生成候选答案（生成内容不保存至上下文） |
 | `envUploadToNexus`         | `eutn`   | `EnvUploadToNexus`        | `NEXUS`     | 4.3.19.0       | 上传环境到 Nexus             | 超时秒数                                  | 同时上传所有用户数据到Nexus |
 | `envDownloadFromNexus`     | `edfn`   | `EnvDownloadFromNexus`    | `NEXUS`     | 4.3.19.0       | 从 Nexus 下载环境            | 资源 UUID                                | 从 Nexus 同时下载所有用户数据 |
 
