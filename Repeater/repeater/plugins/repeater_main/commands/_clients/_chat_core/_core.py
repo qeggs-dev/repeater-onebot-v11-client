@@ -5,6 +5,7 @@ from typing import (
     AsyncIterator
 )
 import httpx
+from .._content_role import ContentRole
 from ._response_body import ChatResponse, StreamChatChunkResponse
 from ._cross_user_data_routing import CrossUserDataRouting, DataRoutingField
 from ....exit_register import ExitRegister
@@ -51,6 +52,7 @@ class ChatCore:
         load_prompt: bool | None = None,
         save_context: bool | None = None,
         save_new_only: bool | None = None,
+        history_msg_role_map: dict[ContentRole, ContentRole | None] | None = None,
         cross_user_data_routing: CrossUserDataRouting | None = None,
         continue_completion: bool | None = None,
     ) -> Response[ChatResponse]:
@@ -70,6 +72,7 @@ class ChatCore:
         :param load_prompt: 是否加载提示
         :param save_context: 是否保存上下文
         :param save_new_only: 是否只保存新内容
+        :param history_msg_role_map: 历史消息角色映射
         :param cross_user_data_routing: 跨用户数据路由
         :param continue_completion: 是否继续生成
         :return: AI返回的消息
@@ -89,6 +92,7 @@ class ChatCore:
             load_prompt = load_prompt,
             save_context = save_context,
             save_new_only = save_new_only,
+            history_msg_role_map = history_msg_role_map,
             cross_user_data_routing = cross_user_data_routing,
             continue_completion = continue_completion,
         )
@@ -117,6 +121,7 @@ class ChatCore:
         load_prompt: bool | None = None,
         save_context: bool | None = None,
         save_new_only: bool | None = None,
+        history_msg_role_map: dict[ContentRole, ContentRole | None] | None = None,
         cross_user_data_routing: CrossUserDataRouting | None = None,
         continue_completion: bool | None = None,
     ) -> AsyncIterator[Any]:
@@ -136,6 +141,7 @@ class ChatCore:
         :param load_prompt: 是否加载提示
         :param save_context: 是否保存上下文
         :param save_new_only: 是否只保存新内容
+        :param history_msg_role_map: 历史消息角色映射
         :param cross_user_data_routing: 跨用户数据路由
         :param continue_completion: 是否继续生成
         :return: AI返回的消息
@@ -156,6 +162,7 @@ class ChatCore:
             load_prompt = load_prompt,
             save_context = save_context,
             save_new_only = save_new_only,
+            history_msg_role_map = history_msg_role_map,
             cross_user_data_routing = cross_user_data_routing,
             continue_completion = continue_completion,
             stream = True,
@@ -196,6 +203,7 @@ class ChatCore:
         load_prompt: bool | None = None,
         save_context: bool | None = None,
         save_new_only: bool | None = None,
+        history_msg_role_map: dict[ContentRole, ContentRole | None] | None = None,
         cross_user_data_routing: CrossUserDataRouting | None = None,
         continue_completion: bool | None = None,
         stream: bool | None = None,
@@ -238,6 +246,11 @@ class ChatCore:
         
         if thinking is not None:
             data["thinking"] = thinking
+        
+        if history_msg_role_map is not None:
+            data["history_msg_role_map"] = {
+                key.value: value.value for key, value in history_msg_role_map.items()
+            }
         
         if cross_user_data_routing is not None:
             data["cross_user_data_routing"] = cross_user_data_routing.model_dump(exclude_none=True)
