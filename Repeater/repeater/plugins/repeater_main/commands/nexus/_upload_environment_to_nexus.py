@@ -38,7 +38,7 @@ async def handle_environment_upload_to_nexus(bot: Bot, event: MessageEvent, args
                 await send_msg.send_error("Unable to process data.")
             else:
                 await send_msg.send_prompt(
-                    f"Upload successful.\nFile ID: {data.file_uuid}"
+                    f"Upload successful.\nFile ID: {data.resource_uuid}"
                 )
         else:
             await send_msg.send_response_check_code(response, "Unable to upload environment to Nexus.")
