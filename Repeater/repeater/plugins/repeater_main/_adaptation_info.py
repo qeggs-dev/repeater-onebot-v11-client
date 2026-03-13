@@ -1,1 +1,1 @@
-__adaptation__ = "4.3.24"
+__adaptation__ = "4.3.25"
