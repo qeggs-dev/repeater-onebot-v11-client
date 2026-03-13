@@ -21,7 +21,7 @@ class LimitSpeed:
                 time_dalta = max(0, expected_time_delta - (last_time_dalta / 1e9))
                 if time_dalta > 0:
                     logger.info(
-                        "Limit speed: {speed_limit:%.2f}/min, sleep {time_dalta:%.2f} sec",
+                        "Limit speed: {speed_limit}/min, sleep {time_dalta:.2f} sec",
                         speed_limit = self.limit_speed_per_minute,
                         time_dalta = time_dalta
                     )
