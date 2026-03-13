@@ -38,7 +38,7 @@ async def handle_config_upload_to_nexus(bot: Bot, event: MessageEvent, args: Mes
                 await send_msg.send_error("Unable to process data.")
             else:
                 await send_msg.send_config(
-                    f"Upload successful.\nFile ID: {data.file_uuid}"
+                    f"Upload successful.\nFile ID: {data.resource_uuid}"
                 )
         else:
             await send_msg.send_response_check_code(response, "Unable to upload config to Nexus.")
