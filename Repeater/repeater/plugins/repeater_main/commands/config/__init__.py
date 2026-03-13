@@ -14,6 +14,7 @@ from ._data_command.set_render_style import handle_set_render_style
 from ._data_command.set_render_title import handle_set_render_title
 from ._data_command.set_save_text_only import handle_set_save_text_only
 from ._data_command.set_max_tokens import handle_set_max_tokens
+from ._data_command.set_model_timeout import handle_set_model_timeout
 from ._data_command.set_timezone import handle_set_timezone
 from ._data_command.set_top_p import handle_set_top_p
 from ._data_command.thinking_mode import handle_thinking_mode
@@ -50,6 +51,7 @@ __all__ = [
     "handle_set_save_text_only",
     "handle_change_config_branch",
     "handle_set_max_tokens",
+    "handle_set_model_timeout",
     "handle_set_timezone",
     "handle_set_top_p",
     "handle_thinking_mode",
