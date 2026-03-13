@@ -390,6 +390,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `envUploadToNexus`         | `eutn`   | `EnvUploadToNexus`        | `NEXUS`     | 4.3.19.0       | 上传环境到 Nexus             | 超时秒数                                  | 同时上传所有用户数据到Nexus |
 | `envDownloadFromNexus`     | `edfn`   | `EnvDownloadFromNexus`    | `NEXUS`     | 4.3.19.0       | 从 Nexus 下载环境            | 资源 UUID                                | 从 Nexus 同时下载所有用户数据 |
 | `generateCandidateReason`  | `gcr`    | `GenerateCandidateReason` | `CHAT`      | 4.3.23.1       | 生成候选推理                 | 无                                        | 生成候选回答并开启推理（生成内容不保存） |
+| `setModelTimeout`          | `smto`   | `SetModelTimeout`         | `CONFIG`    | 4.3.25.0       | 设置模型超时时间             | 超时秒数                                  | 设置模型超时时间 |
 
 PS：`CHAT`类型命令大部分都做到了支持视觉输入
 默认命令已支持全模态输入
