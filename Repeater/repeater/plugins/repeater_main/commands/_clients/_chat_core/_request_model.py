@@ -5,8 +5,15 @@ from ._cross_user_data_routing import CrossUserDataRouting
 from ....assist import PersonaInfo
 from ....core_net_configs import storage_configs
 
+class ChatUserInfo(BaseModel):
+    username: str | None = None
+    nickname: str | None = None
+    age: int | float | None = None
+    gender: str | None = None
+
 class ChatRequestModel(BaseModel):
     message: str | None = None
+    user_info: ChatUserInfo | None = None
     add_metadata: bool = True
     role_name: str | None = None
     temporary_prompt: str | None = None
