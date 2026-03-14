@@ -1,4 +1,4 @@
-import json
+import orjson
 from typing import (
     Any,
     Literal,
@@ -7,11 +7,11 @@ from typing import (
 import httpx
 from .._content_role import ContentRole
 from ._response_body import ChatResponse, StreamChatChunkResponse
-from ._cross_user_data_routing import CrossUserDataRouting, DataRoutingField
+from ._cross_user_data_routing import CrossUserDataRouting
 from ....exit_register import ExitRegister
 from ....assist import PersonaInfo, Response
 from ....core_net_configs import *
-from ._request_model import ChatRequestModel
+from ._request_model import ChatRequestModel, ChatUserInfo
 
 exit_register = ExitRegister()
 
@@ -79,8 +79,19 @@ class ChatCore:
         :return: AI返回的消息
         """
         url = f"{CHAT_ROUTE}/{self.namespace}"
+
+        if cross_user_data_routing is None:
+            if self.merge_group_id:
+                cross_user_data_routing = CrossUserDataRouting()
+                cross_user_data_routing.context.fill_missing(self.merge_group_id)
         data = ChatRequestModel(
             message = message,
+            user_info = ChatUserInfo(
+                username = self._persona_info.nickname,
+                nickname = self._persona_info.card,
+                gender = self._persona_info.gender,
+                age = self._persona_info.age,
+            ),
             add_metadata = add_metadata,
             role_name = role_name,
             temporary_prompt = temporary_prompt,
@@ -149,10 +160,19 @@ class ChatCore:
         :param continue_completion: 是否继续生成
         :return: AI返回的消息
         """
-        import json
         url = f"{CHAT_ROUTE}/{self.namespace}"
+        if cross_user_data_routing is None:
+            if self.merge_group_id:
+                cross_user_data_routing = CrossUserDataRouting()
+                cross_user_data_routing.context.fill_missing(self.merge_group_id)
         data = ChatRequestModel(
             message = message,
+            user_info = ChatUserInfo(
+                username = self._persona_info.nickname,
+                nickname = self._persona_info.card,
+                gender = self._persona_info.gender,
+                age = self._persona_info.age,
+            ),
             add_metadata = add_metadata,
             role_name = role_name,
             temporary_prompt = temporary_prompt,
@@ -183,7 +203,7 @@ class ChatCore:
                 if not line.strip():
                     continue
 
-                yield StreamChatChunkResponse(**json.loads(line))
+                yield StreamChatChunkResponse(**orjson.loads(line))
     
     @staticmethod
     def _merge_dict(base: dict[str, Any], **kwargs: Any) -> dict[str, Any]:
