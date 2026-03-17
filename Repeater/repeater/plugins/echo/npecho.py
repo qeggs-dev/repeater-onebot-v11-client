@@ -12,10 +12,10 @@ no_promot_echo = on_command("noPromptEcho", aliases={"npecho", "no_prompt_echo",
 
 @no_promot_echo.handle()
 async def np_echo_handle(matcher: Matcher, args: Message = CommandArg()):
-    if args.extract_plain_text():
+    if args:
         matcher.set_arg("echo_text", args)
 
-@no_promot_echo.got("echo_text")
+@no_promot_echo.receive("echo_text")
 async def np_echo_got_text(args: Message = Arg("echo_text")):
     if isinstance(args, Message):
         # 如果是消息对象，则直接返回

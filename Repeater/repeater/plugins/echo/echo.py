@@ -12,7 +12,7 @@ echo = on_command("echo", aliases={"Echo"}, rule=to_me(), block=True)
 
 @echo.handle()
 async def echo_handle(matcher: Matcher, args: Message = CommandArg()):
-    if args.extract_plain_text():
+    if args:
         matcher.set_arg("echo_text", args)
 
 @echo.got("echo_text", prompt="[Echo] Waiting for input...")
