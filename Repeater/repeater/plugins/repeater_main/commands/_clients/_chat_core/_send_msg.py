@@ -5,6 +5,7 @@ from ._response_body import ChatResponse
 from ....chattts import ChatTTSAPI
 from typing import NoReturn, Type, Callable
 from ....logger import logger as base_logger
+from ....core_net_configs import storage_configs
 
 logger = base_logger.bind(module = "Chat.SendMsg")
 
@@ -24,6 +25,10 @@ class ChatSendMsg(SendMsg):
         self._reasoning_content_handler = reasoning_content_handler
         self._content_handler = content_handler
         self._data = self._response.get_data()
+    
+    @property
+    def ai_generate_tip(self) -> str:
+        return storage_configs.ai_generate_tip
     
     @property
     def reasoning_content(self) -> str | None:
@@ -91,7 +96,10 @@ class ChatSendMsg(SendMsg):
                 # 推理内容必须渲染为图片
                 if self.reasoning_content:
                     message.append(
-                        await self.render_text(self.reasoning_content)
+                        await self.render_text(
+                            self.reasoning_content,
+                            document_end_comments = self.ai_generate_tip
+                        )
                     )
                 if self.content:
                     message.append(text or self.content)
@@ -109,11 +117,17 @@ class ChatSendMsg(SendMsg):
                 message = Message()
                 if self.reasoning_content:
                     message.append(
-                        await self.render_text(self.reasoning_content)
+                        await self.render_text(
+                            self.reasoning_content,
+                            document_end_comments = self.ai_generate_tip
+                        )
                     )
                 if self.content:
                     message.append(
-                        await self.render_text(self.content or text)
+                        await self.render_text(
+                            self.content or text,
+                            document_end_comments = self.ai_generate_tip
+                        )
                     )
                 else:
                     message.append("[Message is empty.]")
