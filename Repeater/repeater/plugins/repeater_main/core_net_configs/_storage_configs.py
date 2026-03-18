@@ -40,6 +40,7 @@ class StorageConfigs(BaseModel):
     ai_generate_tip: str = "Repeaters can also make mistakes. Check for important information."
     summarize_and_contract_default_message: str = "System Message: please sum up all the contents above."
     branch_file_size_use_abbreviation: bool = True
+    hash_user_id: bool = False
 
 loader: Loader[StorageConfigs] = Loader(
     model=StorageConfigs,
