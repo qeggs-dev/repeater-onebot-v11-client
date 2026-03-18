@@ -20,6 +20,11 @@ class ServerAPITimeout(BaseModel):
     context: float = 10.0
     prompt: float = 10.0
     config: float = 10.0
+    data_manager: float = 10.0
+    licenses: float = 10.0
+    model_info: float = 10.0
+    status: float = 10.0
+    version: float = 10.0
     variable_expansion: float = 40.0
     render: float = 600.0
 
@@ -30,6 +35,7 @@ class StorageConfigs(BaseModel):
     usage_group_context: bool = False
     server_api_timeout:ServerAPITimeout = Field(default_factory = ServerAPITimeout)
     use_base64_image_url: bool = False
+    send_msg_limit_speed_per_minute: int | float | None = 100
     download_image_timeout: float = 600.0
     summarize_and_contract_default_message: str = "System Message: please sum up all the contents above."
     branch_file_size_use_abbreviation: bool = True

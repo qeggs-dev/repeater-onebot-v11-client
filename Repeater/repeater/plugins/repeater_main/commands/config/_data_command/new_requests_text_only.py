@@ -19,7 +19,7 @@ async def handle_new_requests_text_only(bot: Bot, event: MessageEvent, args: Mes
         await send_msg.send_debug_mode()
     
     try:
-        new_requests_text_only = str_to_bool(persona_info.message_str)
+        new_requests_text_only = str_to_bool(persona_info.message_striped_str)
     except ValueError:
         await send_msg.send_error("Not a valid boolean value")
     

@@ -1,11 +1,11 @@
-<center>
+<div align="center">
 
 # @复读机Repeater
 **- Only Chat, Focus Chat. -**
 
 [![Python 3.11+](https://img.shields.io/badge/Python-3.11+-blue.svg?logo=python)](https://www.python.org/downloads/) [![License: MIT](https://img.shields.io/badge/License-MIT-63b9ff.svg)](https://opensource.org/licenses/MIT) [![Protocol](https://img.shields.io/badge/Protocol-Repeater%20API-brightgreen.svg)](https://github.com/qeggs-dev/repeater-ai-chatbot)
 
-</center>
+</div>
 
 ---
 
@@ -65,6 +65,7 @@ PS: 此处的长度评分函数并非实际算法，仅为演示使用
 | PORT                         | 8080                                                                       | 端口号 |
 | COMMAND_START                | ["/"]                                                                      | 用于触发命令的开始字符 |
 | COMMAND_SEP                  | ["."]                                                                      | 用于触发命令的分隔符 |
+| BACKEND_BASEURL              | "http://127.0.0.1"                                                         | Repeater Server 的 IP 地址 |
 | ONEBOT_ACCESS_TOKEN          | ""                                                                         | OneBot的访问令牌 |
 | SUPERUSERS                   | [""]                                                                       | 超级用户列表 |
 
@@ -126,10 +127,10 @@ PS: 此处的长度评分函数并非实际算法，仅为演示使用
 
 ### 链接后端
 1. 找到项目目录下的`.env`文件
-2. 填写`BACKEND_HOST`和`BACKEND_PORT`字段配置项 (其中HOST是后端服务主机的IP地址，PORT是后端服务主端口号，需要你和后端配置中编写的一致)
+2. 填写`BACKEND_BASEURL`字段配置项 (需要你和后端配置中编写的一致)
 3. 执行`run.bat`或`bash run.sh`启动程序
 
-PS: 由于OneBot客户端通常为入站服务，所以默认情况下所有服务都不需要配置公网IP访问
+PS: 由于OneBot客户端通常为内网服务，所以默认情况下所有服务都不需要配置公网IP访问
 但你需要保证后端可以连接到你设定的API端口，OneBot客户端可以连接到指定社交平台的服务器
 
 ---
@@ -141,26 +142,34 @@ main_api.json
 {
     // Text Length Score 配置
     "text_length_score_config":{
+
         // 最大长度阈值
         "max_lines": 5,
+
         // 每行最大字符数
         "single_line_max": 64,
+
         // 平均行最大字符数
         "mean_line_max": 24,
+
         // 总字符数
         "total_length": 400,
 
         // 评分阈值
         "threshold": {
+
             // 群聊阈值
             "group": 1.0,
+
             // 私聊阈值
             "private": 2.64
         }
     },
+
     // 在仅@且没有任何文本的情况下
     // 返回的消息内容
     "hello_content": "Repeater is Online!",
+
     // 是hello_content的变种
     // 这里的Key是星期
     // Value是星期对应的消息内容
@@ -172,16 +181,50 @@ main_api.json
 
     // Repeater API超时时间
     "server_api_timeout": {
+
+        // 聊天 API 超时
         "chat": 600.0,
+
+        // 上下文操作 API 超时
         "context": 10.0,
+
+        // 提示词操作 API 超时
         "prompt": 10.0,
+
+        // 配置操作 API 超时
         "config": 10.0,
+
+        // 综合数据管理 API 超时
+        "data_manager": 10.0,
+
+        // 许可证 API 超时
+        "licenses": 10.0,
+
+        // 模型信息 API 超时
+        "model_info": 10.0,
+
+        // 状态 API 超时
+        "status": 10.0,
+
+        // 版本 API 超时
+        "version": 10.0,
+
+        // 变量展开 API 超时
         "variable_expansion": 40.0,
+
+        // 图片渲染 API 超时
         "render": 600.0
     },
 
     // 在用户输入图片的时候，是否将其下载为 Base64 以防止链接失效
     "use_base64_image_url": false,
+
+    // 限制发送消息的频率
+    // 降低风控风险
+    // 默认 100 次/分钟
+    // 如果想关闭可以设置为 null
+    "send_msg_limit_speed_per_minute": 100,
+
     // 下载图片的超时时间
     "download_image_timeout": 600.0,
 
@@ -199,30 +242,43 @@ tts.json
 {
     // ChatTTS API 地址
     "base_url": "http://127.0.0.1:9966",
+
     // ChatTTS API 参数
     "api_args": {
+
         // 模型名称
         "voice": "265.pt",
+
         // TTS 语速
         "speed": 6,
+
         // TTS 模型提示词
         "tts_prompt": "[break_6]",
+
         // TTS 模型温度
         "temperature": 0.2,
+
         // TTS 模型Top_P
         "top_p": 0.701,
+
         // TTS 模型Top_K
         "top_k": 20,
+
         // TTS 模型生成的最大优化Token数
         "refine_max_new_token": 384,
+
         // TTS 模型生成最大推理Token数
         "infer_max_new_token": 2048,
+
         // 文本种子（我不确定这里是文本修饰种子还是TTS种子，不填则随机生成）
         "text_seed": 42,
+
         // 是否跳过输入优化
         "skip_refine": true,
+
         // 是否为流式输出
         "is_stream": false,
+
         // 自定义语音
         "custom_voice": 0
     },
@@ -254,7 +310,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `changeDefaultPersonality` | `cdp`    | `ChangeDefaultPersonality`| `CONFIG`    | 4.0 Beta       | 修改默认人格                   | 人格预设名称                               | 修改默认人格路由 |
 | `deletePrompt`             | `dp`     | `DeletePrompt`            | `PROMPT`    | 4.0 Beta       | 删除提示词                     | 无                                        | 删除提示词 |
 | `deleteContext`            | `dc`     | `DeleteContext`           | `CONTEXT`   | 4.0 Beta       | 删除上下文                     | 无                                        | 删除上下文 |
-| `varExpand`                | `ve`     | `VarExpand`               | `VAREXPAND` | 4.0 Beta       | 变量展开                       | 文本模板(使用大括号作为变量标记)            | 变量展开 |
+| `varExpand`                | `ve`     | `VarExpand`               | `VAREXPAND` | 4.0 Beta       | 变量展开                       | 文本模板                                  | 变量展开 |
 | `setDefaultModel`          | `sdm`    | `SetDefaultModel`         | `CONFIG`    | 4.0 Beta       | 设置默认模型                   | 模型UID                                   | 设置默认使用的模型 |
 | `setTopP`                  | `stp`    | `SetTopP`                 | `CONFIG`    | 4.0.1 Beta     | 设置Top_P参数                  | 0\~1的浮点数<br/>或`0%`\~`100%`的百分比    | 设置Top_P参数 |
 | `setMaxTokens`             | `stm`    | `SetMaxTokens`            | `CONFIG`    | 4.0.1 Beta     | 设置最大生成tokens数           | 整数，通常最大可达模型上下文窗口长度的一半    | 设置最大生成tokens数 |
@@ -276,8 +332,8 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `changeSession`            | `cs`     | `ChangeSession`           | `MIXED`     | 4.2.5.1        | 让所有的数据同时切换到一个分支  | 分支名称                                  | 让`Context`、`Prompt`、`Config`同时切换到一个分支 |
 | `noSaveChat`               | `nsc`    | `NoSaveChat`              | `CHAT`      | 4.2.6.6        | 不保存的聊天对话              | 无                                        | 聊天后不保存最新聊天记录 |
 | `summaryChatRecord`        | `scr`    | `SummaryChatRecord`       | `OTHER`     | 4.2.6.6        | 聊天记录总结                  | 整数，传入的消息数量                       | 获取当前群聊内指定数量的聊天记录摘要 |
-| `varExpandText`            | `vet`    | `Var_Expand_Text`         | `VAREXPAND` | 4.2.7.0        | 变量展开(文本)                | 文本模板(使用大括号作为[变量](#变量表)标记)  | 强制使用文本输出 |
-| `varExpandImage`           | `vei`    | `Var_Expand_Image`        | `VAREXPAND` | 4.2.7.0        | 变量展开(图片)                | 文本模板(使用大括号作为[变量](#变量表)标记)  | 强制使用图片输出 |
+| `varExpandText`            | `vet`    | `Var_Expand_Text`         | `VAREXPAND` | 4.2.7.0        | 变量展开(文本)                | 文本模板                                 | 强制使用文本输出 |
+| `varExpandImage`           | `vei`    | `Var_Expand_Image`        | `VAREXPAND` | 4.2.7.0        | 变量展开(图片)                | 文本模板                                 | 强制使用图片输出 |
 | `setAutoLoadPrompt`        | `salp`   | `SetAutoLoadPrompt`       | `CONFIG`    | 4.3.1.0        | 设置自动加载提示词            | `true`/`false`                           | 设置请求时是否自动加载Prompt |
 | `setAutoSaveContext`       | `sasc`   | `SetAutoSaveContext`      | `CONFIG`    | 4.3.1.0        | 设置自动保存上下文            | `true`/`false`                           | 设置生成完毕后是否自动保存Context |
 | `setRenderTitle`           | `srt`    | `SetRenderTitle`          | `CONFIG`    | 4.3.2.1        | 设置渲染标题                 | 任意文本                                   | 渲染时显示的标题内容 |
@@ -316,21 +372,34 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `getRequirementList`       | `grls`   | `GetRequirementList`      | `LICENSES`  | 4.3.10.8       | 获取依赖列表                 | 无                                         | 获取所有记录了License的依赖项名称 |
 | `getServerLicense`         | `gsl`    | `GetServerLicense`        | `LICENSES`  | 4.3.10.8       | 获取服务端许可证             | 无                                         | 获取服务端许可证信息 |
 | `checkRoleStructure`       | `crs`    | `CheckRoleStructure`      | `CONTEXT`   | 4.3.10.10      | 检查角色结构                 | 无                                        | 检查上下文中的角色结构是否符合 user-assistant 的规则 |
-| `contextUploadToNexus`     | `cutn`   | `ContextUploadToNexus`    | `NEXUS`     | 4.3.11.0       | 上传上下文到 Nexus           | 无                                        | 上传上下文到Nexus共享 |
+| `contextUploadToNexus`     | `cutn`   | `ContextUploadToNexus`    | `NEXUS`     | 4.3.11.0       | 上传上下文到 Nexus           | 超时秒数                                   | 上传上下文到Nexus共享 |
 | `contextDownloadFromNexus` | `cdfn`   | `ContextDownloadFromNexus`| `NEXUS`     | 4.3.11.0       | 从 Nexus 下载上下文          | 资源 UUID                                 | 下载Nexus共享的上下文 |
-| `promptUploadToNexus`      | `putn`   | `PromptUploadToNexus`     | `NEXUS`     | 4.3.11.0       | 上传提示词到 Nexus           | 无                                        | 上传提示词到Nexus共享 |
+| `promptUploadToNexus`      | `putn`   | `PromptUploadToNexus`     | `NEXUS`     | 4.3.11.0       | 上传提示词到 Nexus           | 超时秒数                                   | 上传提示词到Nexus共享 |
 | `promptDownloadFromNexus`  | `pgetn`  | `PromptDownloadFromNexus` | `NEXUS`     | 4.3.11.0       | 从 Nexus 下载提示词          | 资源 UUID                                 | 获取Nexus共享的提示词 |
-| `configUploadToNexus`      | `cfgutn` | `ConfigUploadToNexus`     | `NEXUS`     | 4.3.11.0       | 上传配置到 Nexus             | 无                                        | 个性配置上传到Nexus |
+| `configUploadToNexus`      | `cfgutn` | `ConfigUploadToNexus`     | `NEXUS`     | 4.3.11.0       | 上传配置到 Nexus             | 超时秒数                                  | 个性配置上传到Nexus |
 | `configDownloadFromNexus`  | `cfgdtn` | `ConfigDownloadFromNexus` | `NEXUS`     | 4.3.11.0       | 从 Nexus 下载配置            | 资源 UUID                                 | 从Nexus下载共享的个性配置 |
 | `setCustomName`            | `scn`    | `SetCustomName`           | `CONFIG`    | 4.3.12.1       | 设置个性化名称               | 用户名                                    | 设置后模型看到的将是设置的名称而非用户名 |
 | `thinkingMode`             | `tm`     | `ThinkingMode`            | `CONFIG`    | 4.3.14.0       | 设置思考模式                 | `true`/`false`/`null`                    | 用于在不指定 Thinking 参数时 启用/禁用/恢复默认 思考模式 |
 | `noReason`                 | `nr`     | `NoReason`                | `CHAT`      | 4.3.15.0       | 不使用 Thinking 进行对话     | 自然语言输入                              | 关闭 `thinking` 参数以阻止进入 Thinking 模式 |
 | `noPromptEcho`             | `npecho` | `NoPromptEcho`            | `ECHO`      | 4.3.16.0       | 无额外反应的Echo             | 任何内容                                  | 与 `echo` 命令相同，但不在未找到参数时显示等待提示词 |
+| `getContextBranchsList`    | `gcbl`   | `GetContextBranchslist`   | `CONTEXT`   | 4.3.16.7       | 获取分支列表                 | 无                                        | 返回当前用户的上下文分支列表 |
+| `getPromptBranchList`      | `gpbl`   | `GetPromptBranchList`     | `PROMPT`    | 4.3.16.7       | 获取提示词分支列表           | 无                                        | 返回当前用户的提示词分支列表 |
+| `getConfigBranchList`      | `gcfgbl` | `GetConfigBranchList`     | `CONFIG`    | 4.3.16.7       | 获取当前上下文分支           | 无                                        | 获取当前上下文分支 |
+| `getCoreTaskStatus`        | `gcts`   | `GetCoreTaskStatus`       | `STATUS`    | 4.3.17.0       | 获取当前任务状态             | 无                                        | 获取当前核心任务状态 (Free or Task Stack) |
+| `generateCandidateAnswer`  | `gca`    | `GenerateCandidateAnswer` | `CHAT`      | 4.3.18.0       | 生成候选答案                 | 无                                        | 生成候选答案（生成内容不保存） |
+| `envUploadToNexus`         | `eutn`   | `EnvUploadToNexus`        | `NEXUS`     | 4.3.19.0       | 上传环境到 Nexus             | 超时秒数                                  | 同时上传所有用户数据到Nexus |
+| `envDownloadFromNexus`     | `edfn`   | `EnvDownloadFromNexus`    | `NEXUS`     | 4.3.19.0       | 从 Nexus 下载环境            | 资源 UUID                                 | 从 Nexus 同时下载所有用户数据 |
+| `generateCandidateReason`  | `gcr`    | `GenerateCandidateReason` | `CHAT`      | 4.3.23.1       | 生成候选推理                 | 无                                        | 生成候选回答并开启推理（生成内容不保存） |
+| `setModelTimeout`          | `smto`   | `SetModelTimeout`         | `CONFIG`    | 4.3.25.0       | 设置模型超时时间             | 超时秒数                                   | 设置模型超时时间 |
+| `removeReasoningPrompt`    | `rrp`    | `RemoveReasoningPrompt`   | `CONFIG`    | 4.3.26.0       | 删除推理内容                 | 删除推理内容 |                             | 设置是否在提交时移除模型输出的思考内容（不影响保存） |
 
-PS：`CHAT`类型命令几乎全员支持视觉输入
+PS：`CHAT`类型命令大部分都做到了支持视觉输入
+默认命令已支持全模态输入
 为了速度和减少本机网络开销，复读机会直接使用QQ传递的临时URL
 你可以在配置中改用 Base64 编码的 URL
-但这些附加数据需要主动设置 `NewRequestsTextOnly` 为 `false`
+(这只对图片数据有效)
+但想要 Repeater Server 不忽略附加数据需要主动设置 `NewRequestsTextOnly` 为 `false`
+或是找管理员关闭 Repeater Server 的自动拦截
 
 `MIXED`类型命令是混合型命令
 它的一条命令会执行多条后端请求

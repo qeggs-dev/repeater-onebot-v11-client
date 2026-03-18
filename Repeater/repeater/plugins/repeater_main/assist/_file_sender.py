@@ -9,8 +9,7 @@ class FileSender:
             data = {
                 "group_id": self.persona_info._group_id,
                 "file": url,
-                "name": file_name,
-                "folder_id": None
+                "name": file_name
             }
             await self.persona_info.bot.upload_group_file(**data)
         elif self.persona_info.source == MessageSource.PRIVATE:

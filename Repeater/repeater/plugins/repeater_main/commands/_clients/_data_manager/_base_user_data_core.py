@@ -15,7 +15,10 @@ from ._branch_info import BranchInfo
 logger = base_logger.bind(module = "UserData.Core")
 
 class UserDataCore(ABC):
-    _httpx_client = httpx.AsyncClient()
+    _httpx_client = httpx.AsyncClient(
+        base_url = BASE_URL,
+        timeout = storage_configs.server_api_timeout.data_manager,
+    )
 
     def __init__(self, info: PersonaInfo, data_type: str):
         self._info = info
@@ -24,7 +27,7 @@ class UserDataCore(ABC):
     # region change subsession
     async def change_branch(self, new_branch_id: str) -> Response[None]:
         response = await self._httpx_client.put(
-            f"{BASE_URL}/userdata/{self._data_type}/change/{self._info.namespace_str}",
+            f"/userdata/{self._data_type}/change/{self._info.namespace_str}",
             data={
                 "new_branch_id": new_branch_id
             }
@@ -35,15 +38,22 @@ class UserDataCore(ABC):
     # region Delete
     async def delete(self) -> Response[None]:
         response = await self._httpx_client.delete(
-            f"{BASE_URL}/userdata/{self._data_type}/delete/{self._info.namespace_str}"
+            f"/userdata/{self._data_type}/delete/{self._info.namespace_str}"
         )
         return Response(response)
     # endregion
 
+    # region get branch list
+    async def get_branch_list(self) -> Response[list[str]]:
+        response = await self._httpx_client.get(
+            f"/userdata/{self._data_type}/branchs/{self._info.namespace_str}"
+        )
+        return Response(response)
+
     # region clone
     async def clone(self, dst_branch_id: str) -> Response[None]:
         response = await self._httpx_client.post(
-            f"{BASE_URL}/userdata/{self._data_type}/clone/{self._info.namespace_str}",
+            f"/userdata/{self._data_type}/clone/{self._info.namespace_str}",
             data={
                 "dst_branch_id": dst_branch_id
             }
@@ -54,7 +64,7 @@ class UserDataCore(ABC):
     # region clone from
     async def clone_from(self, src_branch_id: str) -> Response[None]:
         response = await self._httpx_client.post(
-            f"{BASE_URL}/userdata/{self._data_type}/clone_from/{self._info.namespace_str}",
+            f"/userdata/{self._data_type}/clone_from/{self._info.namespace_str}",
             data={
                 "src_branch_id": src_branch_id
             }
@@ -65,7 +75,7 @@ class UserDataCore(ABC):
     # region bind
     async def bind(self, dst_branch_id: str) -> Response[None]:
         response = await self._httpx_client.post(
-            f"{BASE_URL}/userdata/{self._data_type}/bind/{self._info.namespace_str}",
+            f"/userdata/{self._data_type}/bind/{self._info.namespace_str}",
             data={
                 "dst_branch_id": dst_branch_id
             }
@@ -76,7 +86,7 @@ class UserDataCore(ABC):
     # region bind from
     async def bind_from(self, src_branch_id: str) -> Response[None]:
         response = await self._httpx_client.post(
-            f"{BASE_URL}/userdata/{self._data_type}/bind_from/{self._info.namespace_str}",
+            f"/userdata/{self._data_type}/bind_from/{self._info.namespace_str}",
             data={
                 "src_branch_id": src_branch_id
             }
@@ -87,7 +97,7 @@ class UserDataCore(ABC):
     # region branch info
     async def branch_info(self) -> Response[BranchInfo]:
         response = await self._httpx_client.get(
-            f"{BASE_URL}/userdata/{self._data_type}/info/{self._info.namespace_str}"
+            f"/userdata/{self._data_type}/info/{self._info.namespace_str}"
         )
         return Response(
             response,
@@ -98,7 +108,7 @@ class UserDataCore(ABC):
     # region upload to nexus
     async def upload_to_nexus(self, timeout: int | None = None) -> Response[NexusUploadResponse]:
         response = await self._httpx_client.post(
-            f"{BASE_URL}/nexus/upload/{self._info.namespace_str}/{self._data_type}",
+            f"/nexus/upload/{self._info.namespace_str}/single/{self._data_type}",
             json = {
                 "timeout": timeout
             }
@@ -117,7 +127,7 @@ class UserDataCore(ABC):
             raise ValueError("UUID is not valid")
         
         response = await self._httpx_client.post(
-            f"{BASE_URL}/nexus/download/{self._info.namespace_str}/{self._data_type}",
+            f"/nexus/download/{self._info.namespace_str}/single/{self._data_type}",
             json = {
                 "id": str(uuid)
             }

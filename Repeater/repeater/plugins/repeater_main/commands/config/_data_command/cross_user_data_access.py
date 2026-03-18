@@ -19,7 +19,7 @@ async def handle_cross_user_data_access(bot: Bot, event: MessageEvent, args: Mes
         await send_msg.send_debug_mode()
     
     try:
-        cross_user_data_access = str_to_bool(persona_info.message_str)
+        cross_user_data_access = str_to_bool(persona_info.message_striped_str)
     except ValueError:
         await send_msg.send_error("Not a valid boolean value")
     

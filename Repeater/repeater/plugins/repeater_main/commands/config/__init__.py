@@ -9,11 +9,13 @@ from ._data_command.change_default_personality import handle_change_default_pers
 from ._data_command.cross_user_data_access import handle_cross_user_data_access
 from ._data_command.custom_name import handle_set_custom_name
 from ._data_command.new_requests_text_only import handle_new_requests_text_only
+from ._data_command.remove_resoning_prompt import handle_set_remove_reasoning_prompt
 from ._data_command.set_html_template import handle_set_html_template
 from ._data_command.set_render_style import handle_set_render_style
 from ._data_command.set_render_title import handle_set_render_title
 from ._data_command.set_save_text_only import handle_set_save_text_only
 from ._data_command.set_max_tokens import handle_set_max_tokens
+from ._data_command.set_model_timeout import handle_set_model_timeout
 from ._data_command.set_timezone import handle_set_timezone
 from ._data_command.set_top_p import handle_set_top_p
 from ._data_command.thinking_mode import handle_thinking_mode
@@ -26,6 +28,7 @@ from ._branch_command.config_branch_clone_from import handle_config_branch_clone
 from ._branch_command.config_branch_bind import handle_config_branch_bind
 from ._branch_command.config_branch_bind_from import handle_config_branch_bind_from
 from ._branch_command.config_branch_info import handle_config_branch_info
+from ._branch_command.get_config_branchs_list import handle_config_branchs_list
 
 from ._nexus_command._upload_to_nexus import handle_config_upload_to_nexus
 from ._nexus_command._download_from_nexus import handle_config_download_from_nexus
@@ -42,6 +45,7 @@ __all__ = [
     "handle_cross_user_data_access",
     "handle_set_custom_name",
     "handle_new_requests_text_only",
+    "handle_set_remove_reasoning_prompt",
     "handle_set_html_template",
     "handle_del_config",
     "handle_set_render_style",
@@ -49,6 +53,7 @@ __all__ = [
     "handle_set_save_text_only",
     "handle_change_config_branch",
     "handle_set_max_tokens",
+    "handle_set_model_timeout",
     "handle_set_timezone",
     "handle_set_top_p",
     "handle_thinking_mode",
@@ -58,6 +63,7 @@ __all__ = [
     "handle_config_branch_bind",
     "handle_config_branch_bind_from",
     "handle_config_branch_info",
+    "handle_config_branchs_list",
     "handle_config_upload_to_nexus",
     "handle_config_download_from_nexus",
 ]

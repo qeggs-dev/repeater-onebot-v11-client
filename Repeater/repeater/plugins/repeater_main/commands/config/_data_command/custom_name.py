@@ -22,5 +22,5 @@ async def handle_set_custom_name(bot: Bot, event: MessageEvent, args: Message = 
         await send_msg.send_debug_mode()
     else:
         config_core = ConfigCore(persona_info)
-        response = await config_core.set_config("user_name", persona_info.message_str)
+        response = await config_core.set_config("user_name", persona_info.message_striped_str)
         await send_msg.send_response_check_code(response, f"Custom Name seted")

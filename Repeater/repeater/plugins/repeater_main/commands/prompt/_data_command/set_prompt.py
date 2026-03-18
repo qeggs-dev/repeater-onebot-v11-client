@@ -19,7 +19,7 @@ async def handle_setprompt(bot: Bot, event: MessageEvent, args: Message = Comman
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
 
-    msg = persona_info.message_str.strip()
+    msg = persona_info.message_striped_str
     
     prompt_core = PromptCore(persona_info)
     if send_msg.is_debug_mode:

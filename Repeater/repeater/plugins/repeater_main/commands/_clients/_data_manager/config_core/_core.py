@@ -18,6 +18,7 @@ logger = base_logger.bind(module = "Config.Core")
 
 class ConfigCore(UserDataCore):
     _httpx_client = httpx.AsyncClient(
+        base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.config
     )
 

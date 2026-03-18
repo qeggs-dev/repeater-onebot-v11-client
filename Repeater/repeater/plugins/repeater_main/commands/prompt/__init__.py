@@ -7,6 +7,7 @@ from ._branch_command.prompt_branch_clone_from import handle_prompt_branch_clone
 from ._branch_command.prompt_branch_bind import handle_prompt_branch_bind
 from ._branch_command.prompt_branch_bind_from import handle_prompt_branch_bind_from
 from ._branch_command.prompt_branch_info import handle_prompt_branch_info
+from ._branch_command.get_prompt_branchs_list import handle_prompt_branchs_list
 
 from ._nexus_command._upload_to_nexus import handle_prompt_upload_to_nexus
 from ._nexus_command._download_from_nexus import handle_prompt_download_from_nexus
@@ -20,6 +21,7 @@ __all__ = [
     "handle_prompt_branch_bind",
     "handle_prompt_branch_bind_from",
     "handle_prompt_branch_info",
+    "handle_prompt_branchs_list",
     "handle_prompt_upload_to_nexus",
     "handle_prompt_download_from_nexus",
 ]

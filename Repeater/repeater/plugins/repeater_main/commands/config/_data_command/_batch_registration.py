@@ -65,7 +65,7 @@ class BatchRegistration:
             if callable(command.type_converter):
                 value = command.type_converter(persona_info)
             else:
-                value = persona_info.message_str
+                value = persona_info.message_striped_str
             response = await chat_core.set_config(command.config_key, value)
             if callable(command.prompt):
                 prompt = command.prompt(persona_info)

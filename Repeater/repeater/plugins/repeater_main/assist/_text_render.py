@@ -14,10 +14,13 @@ class RendedImage(BaseModel):
     created_ms: int = 0
 
 class TextRender:
-    _client = httpx.AsyncClient()
+    _client = httpx.AsyncClient(
+        base_url = BASE_URL,
+        timeout = storage_configs.server_api_timeout.render
+    )
 
     def __init__(self, namespace: str | Namespace, timeout:float = 60.0):
-        self.url = f"{BACKEND_HOST}:{BACKEND_PORT}"
+        self.url = BASE_URL
         if isinstance(namespace, str):
             self.namespce = namespace
         elif isinstance(namespace, Namespace):

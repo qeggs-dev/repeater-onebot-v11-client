@@ -18,19 +18,11 @@ async def handle_set_timezone(bot: Bot, event: MessageEvent, args: Message = Com
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
 
-    msg = persona_info.message_str.strip()
-
-    try:
-        timezone = float(msg)
-    except ValueError:
-        await send_msg.send_error("Invalid timezone value. Please enter a valid number.")
-    
-    if timezone <= -12 or timezone >= 14:
-        await send_msg.send_error("Invalid timezone value. Please enter a number between -12 and 14.")
+    msg = persona_info.message_striped_str
 
     config_core = ConfigCore(persona_info)
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     else:
-        response = await config_core.set_config("timezone", timezone)
-        await send_msg.send_response_check_code(response, f"Set Timezone to {timezone}")
+        response = await config_core.set_config("timezone", msg)
+        await send_msg.send_response_check_code(response, f"Set Timezone to {msg}")

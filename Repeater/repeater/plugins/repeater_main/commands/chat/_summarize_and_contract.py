@@ -26,12 +26,12 @@ async def handle_summarize_and_contract(bot: Bot, event: MessageEvent, args: Mes
 
     logger.info(
         "Received a message {message} from {namespace}",
-        message = persona_info.message_str,
+        message = persona_info.message_striped_str,
         namespace = persona_info.namespace_str,
         module = send_msg.component
     )
 
-    message_text = persona_info.message_str.strip()
+    message_text = persona_info.message_striped_str
     if not message_text:
         message_text = storage_configs.summarize_and_contract_default_message
     
