@@ -1,8 +1,6 @@
-import json
 import httpx
 from typing import (
-    Optional,
-    Union
+    Any
 )
 
 from ....core_net_configs import *
@@ -19,7 +17,7 @@ class VariableExpansionCore:
         self._info = info
     
     # region set note  
-    async def expand_variable(self, text: str) -> Response[None]:
+    async def expand_variable(self, text: str, **extra_fields: Any) -> Response[None]:
         logger.info("Expanding variable", module = "variable_expansion.core")
         response = await self._httpx_client.post(
             f"{VARIABLE_EXPANSION}/{self._info.namespace_str}",
@@ -30,7 +28,8 @@ class VariableExpansionCore:
                     "gender": self._info.gender,
                     "age": self._info.age,
                 },
-                "text": text
+                "text": text,
+                **extra_fields
             }
         )
         return Response(

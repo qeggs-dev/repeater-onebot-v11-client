@@ -16,6 +16,7 @@ class ChatRequestModel(BaseModel):
     user_info: ChatUserInfo | None = None
     add_metadata: bool = True
     role_name: str | None = None
+    extra_template_fields: dict[str, Any] | None = None
     temporary_prompt: str | None = None
     model_uid: str | None = None
     thinking: bool | None = None
@@ -31,11 +32,11 @@ class ChatRequestModel(BaseModel):
     continue_completion: bool | None = None
     stream: bool | None = None
     
-    def submit_message(self, persona_info: PersonaInfo) -> str | None:
+    def submit_message(self) -> str | None:
         message_buffer:list[str] = []
         if self.add_metadata:
             message_buffer.append("> MessageMetadata:")
-            message_buffer.append(f">     Message Type: {persona_info.source.value}")
+            message_buffer.append(">     Message Type: {{message_type}}")
             message_buffer.append(">     Message Sending time:{{time()}}")
             if storage_configs.usage_group_context:
                 message_buffer.append(">     Now User: {{user_name}}({{nick_name}})")
@@ -45,8 +46,8 @@ class ChatRequestModel(BaseModel):
         message_buffer.append(self.message)
         return "\n".join(message_buffer)
     
-    def submit_body(self, persona_info: PersonaInfo) -> dict[str, Any]:
+    def submit_body(self) -> dict[str, Any]:
         base_body = self.model_dump(exclude_none=True)
         if self.message:
-            base_body["message"] = self.submit_message(persona_info)
+            base_body["message"] = self.submit_message()
         return base_body

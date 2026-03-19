@@ -46,6 +46,7 @@ class ChatCore:
         temporary_prompt: str | None = None,
         model_uid: str | None = None,
         thinking: bool | None = None,
+        extra_template_fields: dict[str, Any] | None = None,
         image_url: str | list[str] | None = None,
         video_url: str | list[str] | None = None,
         audio_url: str | list[str] | None = None,
@@ -66,6 +67,7 @@ class ChatCore:
         :param temporary_prompt: 临时提示
         :param model_uid: 模型UID
         :param thinking: 思考模式
+        :param extra_template_fields: 额外模板字段
         :param image_url: 图片URL
         :param video_url: 视频URL
         :param audio_url: 音频URL
@@ -97,6 +99,11 @@ class ChatCore:
             temporary_prompt = temporary_prompt,
             model_uid = model_uid,
             thinking = thinking,
+            extra_template_fields = extra_template_fields.update(
+                {
+                    "message_type": self._persona_info.source.value
+                }
+            ),
             image_url = image_url,
             video_url = video_url,
             audio_url = audio_url,
@@ -110,9 +117,7 @@ class ChatCore:
         )
         response = await self._chat_client.post(
             url = url,
-            json = data.submit_body(
-                persona_info = self._persona_info
-            )
+            json = data.submit_body()
         )
             
         return Response(
@@ -128,6 +133,7 @@ class ChatCore:
         temporary_prompt: str | None = None,
         model_uid: str | None = None,
         thinking: bool | None = None,
+        extra_template_fields: dict[str, Any] | None = None,
         image_url: str | list[str] | None = None,
         video_url: str | list[str] | None = None,
         audio_url: str | list[str] | None = None,
@@ -148,6 +154,7 @@ class ChatCore:
         :param temporary_prompt: 临时提示
         :param model_uid: 模型UID
         :param thinking: 思考模式
+        :param extra_template_fields: 额外模板字段
         :param image_url: 图片URL
         :param video_url: 视频URL
         :param audio_url: 音频URL
@@ -178,6 +185,11 @@ class ChatCore:
             temporary_prompt = temporary_prompt,
             model_uid = model_uid,
             thinking = thinking,
+            extra_template_fields = extra_template_fields.update(
+                {
+                    "message_type": self._persona_info.source.value
+                }
+            ),
             image_url = image_url,
             video_url = video_url,
             audio_url = audio_url,
@@ -193,9 +205,7 @@ class ChatCore:
         async with self._chat_client.stream(
             method="POST",
             url=url,
-            json=data.submit_body(
-                persona_info = self._persona_info
-            )
+            json=data.submit_body()
         ) as response:
             response.raise_for_status()
             
