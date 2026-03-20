@@ -86,6 +86,9 @@ class ChatCore:
             if self.merge_group_id:
                 cross_user_data_routing = CrossUserDataRouting()
                 cross_user_data_routing.context.fill_missing(self.merge_group_id)
+        if extra_template_fields is None:
+            extra_template_fields = {}
+        extra_template_fields["message_type"] = self._persona_info.source.value
         data = ChatRequestModel(
             message = message,
             user_info = ChatUserInfo(
@@ -99,11 +102,7 @@ class ChatCore:
             temporary_prompt = temporary_prompt,
             model_uid = model_uid,
             thinking = thinking,
-            extra_template_fields = extra_template_fields.update(
-                {
-                    "message_type": self._persona_info.source.value
-                }
-            ),
+            extra_template_fields = extra_template_fields,
             image_url = image_url,
             video_url = video_url,
             audio_url = audio_url,
@@ -172,6 +171,9 @@ class ChatCore:
             if self.merge_group_id:
                 cross_user_data_routing = CrossUserDataRouting()
                 cross_user_data_routing.context.fill_missing(self.merge_group_id)
+        if extra_template_fields is None:
+            extra_template_fields = {}
+        extra_template_fields["message_type"] = self._persona_info.source.value
         data = ChatRequestModel(
             message = message,
             user_info = ChatUserInfo(
@@ -185,11 +187,7 @@ class ChatCore:
             temporary_prompt = temporary_prompt,
             model_uid = model_uid,
             thinking = thinking,
-            extra_template_fields = extra_template_fields.update(
-                {
-                    "message_type": self._persona_info.source.value
-                }
-            ),
+            extra_template_fields = extra_template_fields,
             image_url = image_url,
             video_url = video_url,
             audio_url = audio_url,
