@@ -12,6 +12,7 @@ from ....exit_register import ExitRegister
 from ....assist import PersonaInfo, Response
 from ....core_net_configs import *
 from ._request_model import ChatRequestModel, ChatUserInfo
+from ...._adaptation_info import __adaptation__, __adaptation_text__
 
 exit_register = ExitRegister()
 
@@ -33,10 +34,21 @@ class ChatCore:
             return self._persona_info.namespace_str
     
     @property
-    def merge_group_id(self) -> str | None:
+    def merge_namespace(self) -> str | None:
         if storage_configs.usage_group_context:
-            return self._persona_info.namespace.merge_group_id
+            return self._persona_info.namespace.merge_namespace
         return None
+    
+    def _add_extra_template_fields(self, extra_template_fields: dict[str, Any] | None = None) -> dict[str, Any]:
+        if extra_template_fields is None:
+            extra_template_fields = {}
+        extra_template_fields.update(
+            {
+                "message_type": self._persona_info.source.value,
+                "adaptation_version": __adaptation__,
+                "adaptation_info": __adaptation_text__,
+            }
+        )
     
     async def send_message(
         self,
@@ -83,12 +95,10 @@ class ChatCore:
         url = f"{CHAT_ROUTE}/{self.namespace}"
 
         if cross_user_data_routing is None:
-            if self.merge_group_id:
+            if self.merge_namespace:
                 cross_user_data_routing = CrossUserDataRouting()
-                cross_user_data_routing.context.fill_missing(self.merge_group_id)
-        if extra_template_fields is None:
-            extra_template_fields = {}
-        extra_template_fields["message_type"] = self._persona_info.source.value
+                cross_user_data_routing.context.fill_missing(self.merge_namespace)
+        self._add_extra_template_fields(extra_template_fields)
         data = ChatRequestModel(
             message = message,
             user_info = ChatUserInfo(
@@ -168,12 +178,10 @@ class ChatCore:
         """
         url = f"{CHAT_ROUTE}/{self.namespace}"
         if cross_user_data_routing is None:
-            if self.merge_group_id:
+            if self.merge_namespace:
                 cross_user_data_routing = CrossUserDataRouting()
-                cross_user_data_routing.context.fill_missing(self.merge_group_id)
-        if extra_template_fields is None:
-            extra_template_fields = {}
-        extra_template_fields["message_type"] = self._persona_info.source.value
+                cross_user_data_routing.context.fill_missing(self.merge_namespace)
+        self._add_extra_template_fields(extra_template_fields)
         data = ChatRequestModel(
             message = message,
             user_info = ChatUserInfo(
