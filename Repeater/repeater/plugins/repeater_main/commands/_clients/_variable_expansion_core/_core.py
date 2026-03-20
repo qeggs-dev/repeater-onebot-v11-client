@@ -42,7 +42,7 @@ class VariableExpansionCore:
                     "age": self._info.age,
                 },
                 "text": text,
-                **extra_fields
+                "extra_fields": extra_fields
             }
         )
         return Response(
