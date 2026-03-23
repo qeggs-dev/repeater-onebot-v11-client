@@ -41,14 +41,17 @@ class ChatCore:
     
     def _add_extra_template_fields(self, extra_template_fields: dict[str, Any] | None = None) -> dict[str, Any]:
         if extra_template_fields is None:
-            extra_template_fields = {}
-        extra_template_fields.update(
+            extra_template_fields_copy = {}
+        else:
+            extra_template_fields_copy = extra_template_fields.copy()
+        extra_template_fields_copy.update(
             {
                 "message_type": self._persona_info.source.value,
                 "adaptation_version": __adaptation__,
                 "adaptation_info": __adaptation_text__,
             }
         )
+        return extra_template_fields_copy
     
     async def send_message(
         self,
@@ -98,7 +101,7 @@ class ChatCore:
             if self.merge_namespace:
                 cross_user_data_routing = CrossUserDataRouting()
                 cross_user_data_routing.context.fill_missing(self.merge_namespace)
-        self._add_extra_template_fields(extra_template_fields)
+        extra_template_fields = self._add_extra_template_fields(extra_template_fields)
         data = ChatRequestModel(
             message = message,
             user_info = ChatUserInfo(
