@@ -30,12 +30,6 @@ class ModelInfoCore:
         response = await self._client.get(
             f"{GET_MODEL_UID_LIST}/{type.value}",
         )
-        json_data = response.json()
-        if not isinstance(json_data, list):
-            return Response(
-                response,
-                parsed_data = None,
-            )
         return Response(
             httpx_response = response,
             model = ModelsResponse,
