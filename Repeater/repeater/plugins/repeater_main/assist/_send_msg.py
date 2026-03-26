@@ -29,7 +29,7 @@ T_RESPONSE = TypeVar("T_RESPONSE")
 
 class SendMsg:
     limit_speed: ClassVar[LimitSpeed] = LimitSpeed(
-        storage_configs.send_msg_limit_speed_per_minute
+        storage_configs.camouflage.send_msg_limit_speed_per_minute
     )
     def __init__(
             self,
