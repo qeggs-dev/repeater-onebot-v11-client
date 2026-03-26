@@ -11,7 +11,7 @@ from ._cross_user_data_routing import CrossUserDataRouting
 from ....exit_register import ExitRegister
 from ....assist import PersonaInfo, Response
 from ....core_net_configs import *
-from ._request_model import ChatRequestModel, ChatUserInfo
+from ._request_model import ChatRequestModel, ChatUserInfo, AdditionalData
 from ...._adaptation_info import __adaptation__, __adaptation_text__
 
 exit_register = ExitRegister()
@@ -116,10 +116,12 @@ class ChatCore:
             model_uid = model_uid,
             thinking = thinking,
             extra_template_fields = extra_template_fields,
-            image_url = image_url,
-            video_url = video_url,
-            audio_url = audio_url,
-            file_url = file_url,
+            additional_data = AdditionalData(
+                image_url = image_url,
+                video_url = video_url,
+                audio_url = audio_url,
+                file_url = file_url,
+            ),
             load_prompt = load_prompt,
             save_context = save_context,
             save_new_only = save_new_only,
@@ -199,10 +201,12 @@ class ChatCore:
             model_uid = model_uid,
             thinking = thinking,
             extra_template_fields = extra_template_fields,
-            image_url = image_url,
-            video_url = video_url,
-            audio_url = audio_url,
-            file_url = file_url,
+            additional_data = AdditionalData(
+                image_url = image_url,
+                video_url = video_url,
+                audio_url = audio_url,
+                file_url = file_url,
+            ),
             load_prompt = load_prompt,
             save_context = save_context,
             save_new_only = save_new_only,
