@@ -1,12 +1,12 @@
 import orjson
 from typing import (
     Any,
-    Literal,
     AsyncIterator
 )
 import httpx
 from .._content_role import ContentRole
 from ._response_body import ChatResponse, StreamChatChunkResponse
+from ._break_response_body import BreakResponse
 from ._cross_user_data_routing import CrossUserDataRouting
 from ....exit_register import ExitRegister
 from ....assist import PersonaInfo, Response
@@ -228,13 +228,19 @@ class ChatCore:
 
                 yield StreamChatChunkResponse(**orjson.loads(line))
     
-    @staticmethod
-    def _merge_dict(base: dict[str, Any], **kwargs: Any) -> dict[str, Any]:
-        base_copy = base.copy()
-        for key, value in kwargs.items():
-            if value is not None:
-                base_copy[key] = value
-        return base_copy
+    async def break_chat_task(self) -> Response[BreakResponse]:
+        """
+        中断当前在线的任务
+        """
+        response = await self._chat_client.post(
+            url = f"{BREAK_CHAT_TASK_ROUTE}/{self.namespace}"
+        )
+
+        return Response(
+            httpx_response = response,
+            model = BreakResponse
+        )
+     
     
     exit_register.register()
     async def close(self):
