@@ -7,6 +7,7 @@ BASE_URL = net_config.backend_baseurl
 
 # ==== CHAT API ==== #
 CHAT_ROUTE = f"/chat/completion"
+BREAK_CHAT_TASK_ROUTE = f"/chat/break"
 
 # ==== CONTEXT API ==== #
 GET_CONTEXT_LENGTH_ROUTE = "/userdata/context/length"
