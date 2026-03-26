@@ -11,6 +11,12 @@ class ChatUserInfo(BaseModel):
     age: int | float | None = None
     gender: str | None = None
 
+class AdditionalData(BaseModel):
+    image_url: str | list[str] | None = None
+    video_url: str | list[str] | None = None
+    audio_url: str | list[str] | None = None
+    file_url: str | list[str] | None = None
+
 class ChatRequestModel(BaseModel):
     message: str | None = None
     user_info: ChatUserInfo | None = None
@@ -20,10 +26,7 @@ class ChatRequestModel(BaseModel):
     temporary_prompt: str | None = None
     model_uid: str | None = None
     thinking: bool | None = None
-    image_url: str | list[str] | None = None
-    video_url: str | list[str] | None = None
-    audio_url: str | list[str] | None = None
-    file_url: str | list[str] | None = None
+    additional_data: AdditionalData | None = None
     load_prompt: bool | None = None
     save_context: bool | None = None
     save_new_only: bool | None = None
