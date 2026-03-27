@@ -1,13 +1,12 @@
-import json
 import httpx
 from typing import (
-    Optional,
-    Union
+    Any
 )
 
 from ....core_net_configs import *
 from ....assist import PersonaInfo, Response
 from ....logger import logger
+from ...._adaptation_info import __adaptation__, __adaptation_text__
 
 class VariableExpansionCore:
     _httpx_client = httpx.AsyncClient(
@@ -18,9 +17,21 @@ class VariableExpansionCore:
     def __init__(self, info: PersonaInfo):
         self._info = info
     
+    def _add_extra_template_fields(self, extra_template_fields: dict[str, Any] | None = None) -> dict[str, Any]:
+        if extra_template_fields is None:
+            extra_template_fields = {}
+        extra_template_fields.update(
+            {
+                "message_type": self._info.source.value,
+                "adaptation_version": __adaptation__,
+                "adaptation_info": __adaptation_text__,
+            }
+        )
+    
     # region set note  
-    async def expand_variable(self, text: str) -> Response[None]:
+    async def expand_variable(self, text: str, **extra_fields: Any) -> Response[None]:
         logger.info("Expanding variable", module = "variable_expansion.core")
+        self._add_extra_template_fields(extra_fields)
         response = await self._httpx_client.post(
             f"{VARIABLE_EXPANSION}/{self._info.namespace_str}",
             json={
@@ -30,7 +41,8 @@ class VariableExpansionCore:
                     "gender": self._info.gender,
                     "age": self._info.age,
                 },
-                "text": text
+                "text": text,
+                "extra_fields": extra_fields
             }
         )
         return Response(

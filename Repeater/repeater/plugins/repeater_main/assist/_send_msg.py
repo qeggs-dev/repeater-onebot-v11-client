@@ -29,7 +29,7 @@ T_RESPONSE = TypeVar("T_RESPONSE")
 
 class SendMsg:
     limit_speed: ClassVar[LimitSpeed] = LimitSpeed(
-        storage_configs.send_msg_limit_speed_per_minute
+        storage_configs.camouflage.send_msg_limit_speed_per_minute
     )
     def __init__(
             self,
@@ -514,6 +514,7 @@ class SendMsg:
             text_to_render: str,
             text: str | None = None,
             prompt_mode: bool = False,
+            document_end_comments: str = "",
             reply: bool = True,
             continue_handler: Literal[False] = False
         ) -> NoReturn: ...
@@ -524,6 +525,7 @@ class SendMsg:
             text_to_render: str,
             text: str | None = None,
             prompt_mode: bool = False,
+            document_end_comments: str = "",
             reply: bool = True,
             continue_handler: Literal[True] = True
         ) -> None: ...
@@ -533,6 +535,7 @@ class SendMsg:
             text_to_render: str,
             text: str | None = None,
             prompt_mode: bool = False,
+            document_end_comments: str = "",
             reply: bool = True,
             continue_handler: bool = False
         ):
@@ -544,7 +547,10 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
-        image = await self.render_text(text_to_render)
+        image = await self.render_text(
+            text_to_render,
+            document_end_comments = document_end_comments
+        )
 
         if text is None:
             message = Message(
@@ -573,23 +579,26 @@ class SendMsg:
     
     @overload
     async def send_multiple_render(
-        self,
-        messages: list[str | Message],
-        reply: bool = False,
-        continue_handler: Literal[False] = False
-    ) -> NoReturn: ...
+            self,
+            messages: list[str | Message],
+            document_end_comments: str = "",
+            reply: bool = False,
+            continue_handler: Literal[False] = False
+        ) -> NoReturn: ...
 
     @overload
     async def send_multiple_render(
-        self,
-        messages: list[str | Message],
-        reply: bool = False,
-        continue_handler: Literal[True] = True
-    ) -> None: ...
+            self,
+            messages: list[str | Message],
+            document_end_comments: str = "",
+            reply: bool = False,
+            continue_handler: Literal[True] = True
+        ) -> None: ...
 
     async def send_multiple_render(
             self,
             messages: list[str | Message],
+            document_end_comments: str = "",
             reply: bool = True,
             continue_handler: Literal[False] = False
         ) -> None:
@@ -600,11 +609,17 @@ class SendMsg:
         for msg in messages:
             if isinstance(msg, str):
                 message.append(
-                    await self.render_text(msg)
+                    await self.render_text(
+                        msg,
+                        document_end_comments = document_end_comments
+                    )
                 )
             elif isinstance(msg, Message):
                 message.append(
-                    await self.render_text(msg.extract_plain_text())
+                    await self.render_text(
+                        msg.extract_plain_text(),
+                        document_end_comments = document_end_comments
+                    )
                 )
         
         await self._send(
@@ -617,13 +632,24 @@ class SendMsg:
     async def send_render(
             self,
             text: str,
+            document_end_comments: str = "",
             reply: bool = True,
             continue_handler: Literal[True] = True
         ) -> None: ...
     
+    @overload
     async def send_render(
             self,
             text: str,
+            document_end_comments: str = "",
+            reply: bool = True,
+            continue_handler: Literal[False] = False
+        ) -> NoReturn: ...
+    
+    async def send_render(
+            self,
+            text: str,
+            document_end_comments: str = "",
             reply: bool = True,
             continue_handler: bool = False
         ):
@@ -634,7 +660,10 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
-        image = await self.render_text(text)
+        image = await self.render_text(
+            text,
+            document_end_comments = document_end_comments
+        )
         await self._send(
             Message(image),
             reply=reply,
@@ -692,6 +721,7 @@ class SendMsg:
             self,
             message: Message | str,
             threshold: float = 1.0,
+            document_end_comments: str = "",
             reply: bool = True,
             continue_handler: Literal[False] = False
         ) -> NoReturn: ...
@@ -701,6 +731,7 @@ class SendMsg:
             self,
             message: Message | str,
             threshold: float = 1.0,
+            document_end_comments: str = "",
             reply: bool = True,
             continue_handler: Literal[True] = True
         ) -> None: ...
@@ -709,6 +740,7 @@ class SendMsg:
             self,
             message: Message | str,
             threshold: float = 1.0,
+            document_end_comments: str = "",
             reply: bool = True,
             continue_handler: bool = False
         ):
@@ -722,6 +754,7 @@ class SendMsg:
         if length_score >= threshold:
             await self.send_render(
                 text,
+                document_end_comments = document_end_comments,
                 reply = reply,
                 continue_handler = continue_handler
             )
@@ -737,6 +770,7 @@ class SendMsg:
             self,
             message: Message | str,
             threshold: float = 1.0,
+            document_end_comments: bool = False,
             reply: bool = True,
             continue_handler: Literal[False] = False
         ) -> NoReturn: ...
@@ -746,6 +780,7 @@ class SendMsg:
             self,
             message: Message | str,
             threshold: float = 1.0,
+            document_end_comments: str = "",
             reply: bool = True,
             continue_handler: Literal[True] = True
         ) -> None: ...
@@ -754,6 +789,7 @@ class SendMsg:
             self,
             prompt: Message | str,
             threshold: float = 1.0,
+            document_end_comments: str = "",
             reply: bool = True,
             continue_handler: bool = False
         ):
@@ -768,6 +804,7 @@ class SendMsg:
             await self.send_mixed_render(
                 text,
                 self.prompt_str,
+                document_end_comments = document_end_comments,
                 reply = reply,
                 continue_handler = continue_handler
             )
@@ -819,14 +856,18 @@ class SendMsg:
         """
         raise FinishedException
 
-    async def render_text(self, text: str, direct_output: bool = False) -> MessageSegment:
+    async def render_text(self, text: str, direct_output: bool = False, document_end_comments: str = "") -> MessageSegment:
         """
         渲染文本
 
         :param text: 渲染文本内容
         """
         if text:
-            render_response: Response[RendedImage] = await self._text_render.render(text, direct_output = direct_output)
+            render_response: Response[RendedImage] = await self._text_render.render(
+                text,
+                direct_output = direct_output,
+                document_end_comments = document_end_comments
+            )
             if render_response.code == 200:
                 data = render_response.get_data()
                 if data is not None:

@@ -11,7 +11,8 @@ from ._cross_user_data_routing import CrossUserDataRouting
 from ....exit_register import ExitRegister
 from ....assist import PersonaInfo, Response
 from ....core_net_configs import *
-from ._request_model import ChatRequestModel, ChatUserInfo
+from ._request_model import ChatRequestModel, ChatUserInfo, AdditionalData
+from ...._adaptation_info import __adaptation__, __adaptation_text__
 
 exit_register = ExitRegister()
 
@@ -33,10 +34,24 @@ class ChatCore:
             return self._persona_info.namespace_str
     
     @property
-    def merge_group_id(self) -> str | None:
+    def merge_namespace(self) -> str | None:
         if storage_configs.usage_group_context:
-            return self._persona_info.namespace.merge_group_id
+            return self._persona_info.namespace.merge_namespace
         return None
+    
+    def _add_extra_template_fields(self, extra_template_fields: dict[str, Any] | None = None) -> dict[str, Any]:
+        if extra_template_fields is None:
+            extra_template_fields_copy = {}
+        else:
+            extra_template_fields_copy = extra_template_fields.copy()
+        extra_template_fields_copy.update(
+            {
+                "message_type": self._persona_info.source.value,
+                "adaptation_version": __adaptation__,
+                "adaptation_info": __adaptation_text__,
+            }
+        )
+        return extra_template_fields_copy
     
     async def send_message(
         self,
@@ -46,6 +61,7 @@ class ChatCore:
         temporary_prompt: str | None = None,
         model_uid: str | None = None,
         thinking: bool | None = None,
+        extra_template_fields: dict[str, Any] | None = None,
         image_url: str | list[str] | None = None,
         video_url: str | list[str] | None = None,
         audio_url: str | list[str] | None = None,
@@ -66,6 +82,7 @@ class ChatCore:
         :param temporary_prompt: 临时提示
         :param model_uid: 模型UID
         :param thinking: 思考模式
+        :param extra_template_fields: 额外模板字段
         :param image_url: 图片URL
         :param video_url: 视频URL
         :param audio_url: 音频URL
@@ -81,9 +98,10 @@ class ChatCore:
         url = f"{CHAT_ROUTE}/{self.namespace}"
 
         if cross_user_data_routing is None:
-            if self.merge_group_id:
+            if self.merge_namespace:
                 cross_user_data_routing = CrossUserDataRouting()
-                cross_user_data_routing.context.fill_missing(self.merge_group_id)
+                cross_user_data_routing.context.fill_missing(self.merge_namespace)
+        extra_template_fields = self._add_extra_template_fields(extra_template_fields)
         data = ChatRequestModel(
             message = message,
             user_info = ChatUserInfo(
@@ -97,10 +115,13 @@ class ChatCore:
             temporary_prompt = temporary_prompt,
             model_uid = model_uid,
             thinking = thinking,
-            image_url = image_url,
-            video_url = video_url,
-            audio_url = audio_url,
-            file_url = file_url,
+            extra_template_fields = extra_template_fields,
+            additional_data = AdditionalData(
+                image_url = image_url,
+                video_url = video_url,
+                audio_url = audio_url,
+                file_url = file_url,
+            ),
             load_prompt = load_prompt,
             save_context = save_context,
             save_new_only = save_new_only,
@@ -110,9 +131,7 @@ class ChatCore:
         )
         response = await self._chat_client.post(
             url = url,
-            json = data.submit_body(
-                persona_info = self._persona_info
-            )
+            json = data.submit_body()
         )
             
         return Response(
@@ -128,6 +147,7 @@ class ChatCore:
         temporary_prompt: str | None = None,
         model_uid: str | None = None,
         thinking: bool | None = None,
+        extra_template_fields: dict[str, Any] | None = None,
         image_url: str | list[str] | None = None,
         video_url: str | list[str] | None = None,
         audio_url: str | list[str] | None = None,
@@ -148,6 +168,7 @@ class ChatCore:
         :param temporary_prompt: 临时提示
         :param model_uid: 模型UID
         :param thinking: 思考模式
+        :param extra_template_fields: 额外模板字段
         :param image_url: 图片URL
         :param video_url: 视频URL
         :param audio_url: 音频URL
@@ -162,9 +183,10 @@ class ChatCore:
         """
         url = f"{CHAT_ROUTE}/{self.namespace}"
         if cross_user_data_routing is None:
-            if self.merge_group_id:
+            if self.merge_namespace:
                 cross_user_data_routing = CrossUserDataRouting()
-                cross_user_data_routing.context.fill_missing(self.merge_group_id)
+                cross_user_data_routing.context.fill_missing(self.merge_namespace)
+        self._add_extra_template_fields(extra_template_fields)
         data = ChatRequestModel(
             message = message,
             user_info = ChatUserInfo(
@@ -178,10 +200,13 @@ class ChatCore:
             temporary_prompt = temporary_prompt,
             model_uid = model_uid,
             thinking = thinking,
-            image_url = image_url,
-            video_url = video_url,
-            audio_url = audio_url,
-            file_url = file_url,
+            extra_template_fields = extra_template_fields,
+            additional_data = AdditionalData(
+                image_url = image_url,
+                video_url = video_url,
+                audio_url = audio_url,
+                file_url = file_url,
+            ),
             load_prompt = load_prompt,
             save_context = save_context,
             save_new_only = save_new_only,
@@ -193,9 +218,7 @@ class ChatCore:
         async with self._chat_client.stream(
             method="POST",
             url=url,
-            json=data.submit_body(
-                persona_info = self._persona_info
-            )
+            json=data.submit_body()
         ) as response:
             response.raise_for_status()
             
