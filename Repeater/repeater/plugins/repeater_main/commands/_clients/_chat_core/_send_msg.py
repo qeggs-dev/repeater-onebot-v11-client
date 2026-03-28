@@ -26,10 +26,15 @@ class ChatSendMsg(SendMsg):
         self._chat_tts_api = ChatTTSAPI()
         self._reasoning_content_handler = reasoning_content_handler
         self._content_handler = content_handler
-        try:
-            self._data = self._response.get_data()
-        except ValidationError:
+        if self._response.initialized:
+            try:
+                self._data = self._response.get_data()
+            except ValidationError:
+                self._data = None
+            self._error = self._response.to_error()
+        else:
             self._data = None
+            self._error = None
     
     @property
     def ai_generate_tip(self) -> str:
@@ -57,14 +62,20 @@ class ChatSendMsg(SendMsg):
                 self._response,
                 message = self.content
             )
-
-    async def send(self) -> NoReturn:
+    
+    async def _check_response(self) -> None | NoReturn:
         if self.is_debug_mode:
             await self.send_debug_mode()
         
-        if self._data is None:
-            await self.send_error_response(self._response)
+        if self._error is not None:
+            await self.send_error_response(self._error)
         
+        if self._response.exception_info:
+            await self.send_error(self._response.exception_info.exc_value)
+
+    async def send(self) -> NoReturn:
+        self._check_response()
+
         if self._response.code == 200:
             score = self.text_length_score(self.content)
             threshold = self.text_length_score_threshold
@@ -82,12 +93,8 @@ class ChatSendMsg(SendMsg):
             )
     
     async def send_tts_mode(self, text: str | None = None) -> NoReturn:
-        if self.is_debug_mode:
-            await self.send_debug_mode()
-        
-        if self._data is None:
-            await self.send_error_response(self._response)
-        
+        self._check_response()
+
         if self._response.code == 200:
             if self.reasoning_content:
                 await self.send_render(
@@ -108,11 +115,7 @@ class ChatSendMsg(SendMsg):
             )
     
     async def send_text_mode(self, text: str | None = None) -> NoReturn:
-        if self.is_debug_mode:
-            await self.send_debug_mode()
-        
-        if self._data is None:
-            await self.send_error_response(self._response)
+        self._check_response()
         
         if self._response.code == 200:
             message = Message()
@@ -136,11 +139,7 @@ class ChatSendMsg(SendMsg):
             )
     
     async def send_image_mode(self, text: str | None = None) -> NoReturn:
-        if self.is_debug_mode:
-            await self.send_debug_mode()
-        
-        if self._data is None:
-            await self.send_error_response(self._response)
+        self._check_response()
         
         if self._response.code == 200:
             message = Message()

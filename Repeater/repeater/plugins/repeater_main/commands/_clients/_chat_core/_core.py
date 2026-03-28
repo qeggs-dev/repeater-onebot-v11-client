@@ -129,11 +129,13 @@ class ChatCore:
             cross_user_data_routing = cross_user_data_routing,
             continue_completion = continue_completion,
         )
-        response = await self._chat_client.post(
-            url = url,
-            json = data.submit_body()
-        )
-            
+        try:
+            response = await self._chat_client.post(
+                url = url,
+                json = data.submit_body()
+            )
+        except Exception as e:
+            return Response(model=ChatResponse)
         return Response(
             response,
             ChatResponse
@@ -215,26 +217,32 @@ class ChatCore:
             continue_completion = continue_completion,
             stream = True,
         )
-        async with self._chat_client.stream(
-            method="POST",
-            url=url,
-            json=data.submit_body()
-        ) as response:
-            response.raise_for_status()
-            
-            async for line in response.aiter_lines():
-                if not line.strip():
-                    continue
+        try:
+            async with self._chat_client.stream(
+                method="POST",
+                url=url,
+                json=data.submit_body()
+            ) as response:
+                response.raise_for_status()
+                
+                async for line in response.aiter_lines():
+                    if not line.strip():
+                        continue
 
-                yield StreamChatChunkResponse(**orjson.loads(line))
+                    yield StreamChatChunkResponse(**orjson.loads(line))
+        except Exception as e:
+            return Response(model=ChatResponse)
     
     async def break_chat_task(self) -> Response[BreakResponse]:
         """
         中断当前在线的任务
         """
-        response = await self._chat_client.post(
-            url = f"{BREAK_CHAT_TASK_ROUTE}/{self.namespace}"
-        )
+        try:
+            response = await self._chat_client.post(
+                url = f"{BREAK_CHAT_TASK_ROUTE}/{self.namespace}"
+            )
+        except Exception as e:
+            return Response(model=BreakResponse)
 
         return Response(
             httpx_response = response,
