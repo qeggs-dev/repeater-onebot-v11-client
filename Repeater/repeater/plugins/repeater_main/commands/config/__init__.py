@@ -10,7 +10,7 @@ from ._data_command.cross_user_data_access import handle_cross_user_data_access
 from ._data_command.custom_name import handle_set_custom_name
 from ._data_command.new_requests_text_only import handle_new_requests_text_only
 from ._data_command.remove_resoning_prompt import handle_set_remove_reasoning_prompt
-from ._data_command.render_doc_end_comment import handle_render_doc_end_comment
+from ._data_command.render_doc_bottom_comment import handle_render_doc_bottom_comment
 from ._data_command.set_html_template import handle_set_html_template
 from ._data_command.set_render_style import handle_set_render_style
 from ._data_command.set_render_title import handle_set_render_title
@@ -47,7 +47,7 @@ __all__ = [
     "handle_set_custom_name",
     "handle_new_requests_text_only",
     "handle_set_remove_reasoning_prompt",
-    "handle_render_doc_end_comment",
+    "handle_render_doc_bottom_comment",
     "handle_set_html_template",
     "handle_del_config",
     "handle_set_render_style",
