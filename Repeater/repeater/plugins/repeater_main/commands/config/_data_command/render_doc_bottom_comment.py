@@ -25,4 +25,4 @@ async def handle_render_doc_bottom_comment(bot: Bot, event: MessageEvent, args: 
         await send_msg.send_debug_mode()
     else:
         response = await config_core.set_config("render_document_bottom_comment", msg)
-        await send_msg.send_response_check_code(response, f"Set Render Document End Comments to {msg}")
+        await send_msg.send_response_check_code(response, f"Set Render Document Bottom Comments to {msg}")
