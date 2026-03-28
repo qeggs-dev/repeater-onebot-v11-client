@@ -351,7 +351,7 @@ class SendMsg:
             text_to_render: str,
             text: str | None = None,
             prompt_mode: bool = False,
-            document_end_comments: str = "",
+            document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: bool = False
         ):
@@ -365,7 +365,7 @@ class SendMsg:
         """
         image = await self.render_text(
             text_to_render,
-            document_end_comments = document_end_comments
+            document_bottom_comment = document_bottom_comment
         )
 
         if text is None:
@@ -396,7 +396,7 @@ class SendMsg:
     async def send_multiple_render(
             self,
             messages: list[str | Message],
-            document_end_comments: str = "",
+            document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: Literal[False] = False
         ) -> None:
@@ -409,14 +409,14 @@ class SendMsg:
                 message.append(
                     await self.render_text(
                         msg,
-                        document_end_comments = document_end_comments
+                        document_bottom_comment = document_bottom_comment
                     )
                 )
             elif isinstance(msg, Message):
                 message.append(
                     await self.render_text(
                         msg.extract_plain_text(),
-                        document_end_comments = document_end_comments
+                        document_bottom_comment = document_bottom_comment
                     )
                 )
         
@@ -429,7 +429,7 @@ class SendMsg:
     async def send_render(
             self,
             text: str,
-            document_end_comments: str = "",
+            document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: bool = False
         ):
@@ -442,7 +442,7 @@ class SendMsg:
         """
         image = await self.render_text(
             text,
-            document_end_comments = document_end_comments
+            document_bottom_comment = document_bottom_comment
         )
         await self._send(
             Message(image),
@@ -482,7 +482,7 @@ class SendMsg:
             self,
             message: Message | str,
             threshold: float = 1.0,
-            document_end_comments: str = "",
+            document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: bool = False
         ):
@@ -496,7 +496,7 @@ class SendMsg:
         if length_score >= threshold:
             await self.send_render(
                 text,
-                document_end_comments = document_end_comments,
+                document_bottom_comment = document_bottom_comment,
                 reply = reply,
                 continue_handler = continue_handler
             )
@@ -511,7 +511,7 @@ class SendMsg:
             self,
             prompt: Message | str,
             threshold: float = 1.0,
-            document_end_comments: str = "",
+            document_document_bottom_comments: str = "",
             reply: bool = True,
             continue_handler: bool = False
         ):
@@ -526,7 +526,7 @@ class SendMsg:
             await self.send_mixed_render(
                 text,
                 self.prompt_str,
-                document_end_comments = document_end_comments,
+                document_bottom_comment = document_document_bottom_comments,
                 reply = reply,
                 continue_handler = continue_handler
             )
@@ -562,7 +562,7 @@ class SendMsg:
         """
         raise FinishedException
 
-    async def render_text(self, text: str, direct_output: bool = False, document_end_comments: str = "") -> MessageSegment:
+    async def render_text(self, text: str, direct_output: bool = False, document_bottom_comment: str = "") -> MessageSegment:
         """
         渲染文本
 
@@ -572,7 +572,7 @@ class SendMsg:
             render_response: Response[RendedImage] = await self._text_render.render(
                 text,
                 direct_output = direct_output,
-                document_end_comments = document_end_comments
+                document_bottom_comment = document_bottom_comment
             )
             if render_response.code == 200:
                 data = render_response.get_data()

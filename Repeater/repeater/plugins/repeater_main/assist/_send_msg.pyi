@@ -287,7 +287,7 @@ class SendMsg:
             text_to_render: str,
             text: str | None = None,
             prompt_mode: bool = False,
-            document_end_comments: str = "",
+            document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: Literal[False] = False
         ) -> NoReturn: ...
@@ -298,7 +298,7 @@ class SendMsg:
             text_to_render: str,
             text: str | None = None,
             prompt_mode: bool = False,
-            document_end_comments: str = "",
+            document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: Literal[True] = True
         ) -> None: ...
@@ -308,7 +308,7 @@ class SendMsg:
             text_to_render: str,
             text: str | None = None,
             prompt_mode: bool = False,
-            document_end_comments: str = "",
+            document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: bool = False
         ): ...
@@ -317,7 +317,7 @@ class SendMsg:
     async def send_multiple_render(
             self,
             messages: list[str | Message],
-            document_end_comments: str = "",
+            document_bottom_comment: str = "",
             reply: bool = False,
             continue_handler: Literal[False] = False
         ) -> NoReturn: ...
@@ -326,7 +326,7 @@ class SendMsg:
     async def send_multiple_render(
             self,
             messages: list[str | Message],
-            document_end_comments: str = "",
+            document_bottom_comment: str = "",
             reply: bool = False,
             continue_handler: Literal[True] = True
         ) -> None: ...
@@ -334,7 +334,7 @@ class SendMsg:
     async def send_multiple_render(
             self,
             messages: list[str | Message],
-            document_end_comments: str = "",
+            document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: Literal[False] = False
         ) -> None: ...
@@ -343,7 +343,7 @@ class SendMsg:
     async def send_render(
             self,
             text: str,
-            document_end_comments: str = "",
+            document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: Literal[True] = True
         ) -> None: ...
@@ -352,7 +352,7 @@ class SendMsg:
     async def send_render(
             self,
             text: str,
-            document_end_comments: str = "",
+            document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: Literal[False] = False
         ) -> NoReturn: ...
@@ -360,7 +360,7 @@ class SendMsg:
     async def send_render(
             self,
             text: str,
-            document_end_comments: str = "",
+            document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: bool = False
         ): ...
@@ -397,7 +397,7 @@ class SendMsg:
             self,
             message: Message | str,
             threshold: float = 1.0,
-            document_end_comments: str = "",
+            document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: Literal[False] = False
         ) -> NoReturn: ...
@@ -407,7 +407,7 @@ class SendMsg:
             self,
             message: Message | str,
             threshold: float = 1.0,
-            document_end_comments: str = "",
+            document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: Literal[True] = True
         ) -> None: ...
@@ -416,7 +416,7 @@ class SendMsg:
             self,
             message: Message | str,
             threshold: float = 1.0,
-            document_end_comments: str = "",
+            document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: bool = False
         ):
@@ -427,7 +427,7 @@ class SendMsg:
             self,
             message: Message | str,
             threshold: float = 1.0,
-            document_end_comments: bool = False,
+            document_bottom_comment: bool = False,
             reply: bool = True,
             continue_handler: Literal[False] = False
         ) -> NoReturn: ...
@@ -437,7 +437,7 @@ class SendMsg:
             self,
             message: Message | str,
             threshold: float = 1.0,
-            document_end_comments: str = "",
+            document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: Literal[True] = True
         ) -> None: ...
@@ -446,7 +446,7 @@ class SendMsg:
             self,
             prompt: Message | str,
             threshold: float = 1.0,
-            document_end_comments: str = "",
+            document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: bool = False
         ): ...
@@ -478,7 +478,7 @@ class SendMsg:
     async def break_handler(self) -> NoReturn:
         ...
 
-    async def render_text(self, text: str, direct_output: bool = False, document_end_comments: str = "") -> MessageSegment:
+    async def render_text(self, text: str, direct_output: bool = False, document_bottom_comment: str = "") -> MessageSegment:
         ...
     
     @overload

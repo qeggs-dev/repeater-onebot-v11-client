@@ -33,14 +33,14 @@ class TextRender:
             self,
             text: str,
             direct_output: bool | None = None,
-            document_end_comments: str = ""
+            document_bottom_comment: str = ""
         ) -> Response[RendedImage]:
         response = await self._client.post(
             f"{TEXT_RENDER_ROUTE}/{self.namespce}",
             json={
                 "text": text,
                 "direct_output": direct_output,
-                "document_end_comments": document_end_comments
+                "document_bottom_comment": document_bottom_comment
             },
             timeout = self._timeout
         )
