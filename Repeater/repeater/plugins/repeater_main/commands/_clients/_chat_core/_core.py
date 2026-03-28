@@ -217,21 +217,18 @@ class ChatCore:
             continue_completion = continue_completion,
             stream = True,
         )
-        try:
-            async with self._chat_client.stream(
-                method="POST",
-                url=url,
-                json=data.submit_body()
-            ) as response:
-                response.raise_for_status()
-                
-                async for line in response.aiter_lines():
-                    if not line.strip():
-                        continue
+        async with self._chat_client.stream(
+            method="POST",
+            url=url,
+            json=data.submit_body()
+        ) as response:
+            response.raise_for_status()
+            
+            async for line in response.aiter_lines():
+                if not line.strip():
+                    continue
 
-                    yield StreamChatChunkResponse(**orjson.loads(line))
-        except Exception as e:
-            return Response(model=ChatResponse)
+                yield StreamChatChunkResponse(**orjson.loads(line))
     
     async def break_chat_task(self) -> Response[BreakResponse]:
         """
