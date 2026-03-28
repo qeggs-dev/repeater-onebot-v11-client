@@ -17,7 +17,6 @@ from typing import (
     NoReturn,
     TypeVar,
     Type,
-    overload,
     Literal,
     ClassVar
 )
@@ -88,20 +87,6 @@ class SendMsg:
         else:
             return storage_configs.hello_content
     
-    @overload
-    async def send_debug_mode(
-            self,
-            reply: bool = True,
-            continue_handler: Literal[False] = False,
-        ) -> NoReturn: ...
-
-    @overload
-    async def send_debug_mode(
-            self,
-            reply: bool = True,
-            continue_handler: Literal[True] = True,
-        ) -> None: ...
-    
     async def send_debug_mode(
             self,
             reply: bool = True,
@@ -120,24 +105,6 @@ class SendMsg:
             reply = reply,
             continue_handler = continue_handler,
         )
-    
-    @overload
-    async def send_response_check_code(
-            self,
-            response: Response[T_RESPONSE],
-            message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
-            reply: bool = True,
-            continue_handler: Literal[False] = False,
-        ) -> NoReturn: ...
-
-    @overload
-    async def send_response_check_code(
-            self,
-            response: Response[T_RESPONSE],
-            message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
-            reply: bool = True,
-            continue_handler: Literal[True] = True,
-        ) -> None: ...
     
     async def send_response_check_code(
             self,
@@ -160,24 +127,6 @@ class SendMsg:
                 reply = reply,
                 continue_handler = continue_handler,
             )
-    
-    @overload
-    async def send_error_response(
-            self,
-            response: Response[T_RESPONSE],
-            message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
-            reply: bool = True,
-            continue_handler: Literal[False] = False,
-        ) -> NoReturn: ...
-
-    @overload
-    async def send_error_response(
-            self,
-            response: Response[T_RESPONSE],
-            message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
-            reply: bool = True,
-            continue_handler: Literal[True] = True,
-        ) -> None: ...
     
     async def send_error_response(
             self,
@@ -203,24 +152,6 @@ class SendMsg:
                 reply = reply,
                 continue_handler = continue_handler,
             )
-    
-    @overload
-    async def send_response(
-            self,
-            response: Response[T_RESPONSE],
-            message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
-            reply: bool = True,
-            continue_handler: Literal[False] = False,
-        ) -> NoReturn: ...
-
-    @overload
-    async def send_response(
-            self,
-            response: Response[T_RESPONSE],
-            message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
-            reply: bool = True,
-            continue_handler: Literal[True] = True,
-        ) -> None: ...
     
     async def send_response(
             self,
@@ -252,22 +183,6 @@ class SendMsg:
             reply = reply,
             continue_handler = continue_handler
         )
-    
-    @overload
-    async def send_multiple_responses(
-            self,
-            *responses: Response[T_RESPONSE] | tuple[Response[T_RESPONSE], str],
-            reply: bool = True,
-            continue_handler: Literal[False] = False
-        ) -> NoReturn: ...
-    
-    @overload
-    async def send_multiple_responses(
-            self,
-            *responses: Response[T_RESPONSE] | tuple[Response[T_RESPONSE], str],
-            reply: bool = True,
-            continue_handler: Literal[True] = True
-        ) -> None: ...
     
     async def send_multiple_responses(
             self,
@@ -307,20 +222,6 @@ class SendMsg:
             continue_handler = continue_handler
         )
     
-    @overload
-    async def send_hello(
-            self,
-            reply: bool = True,
-            continue_handler: Literal[False] = False,
-        ) -> NoReturn: ...
-    
-    @overload
-    async def send_hello(
-            self,
-            reply: bool = True,
-            continue_handler: Literal[True] = True,
-        ) -> None: ...
-    
     async def send_hello(
             self,
             reply: bool = True,
@@ -344,22 +245,6 @@ class SendMsg:
             f"==== {self._component} ====\n"
             f"> [{self._persona_info.namespace}]\n"
         )
-    
-    @overload
-    async def send_prompt(
-            self,
-            prompt: Message | str,
-            reply: bool = True,
-            continue_handler: Literal[False] = False,
-        ) -> NoReturn: ...
-
-    @overload
-    async def send_prompt(
-            self,
-            prompt: Message | str,
-            reply: bool = True,
-            continue_handler: Literal[True] = True,
-        ) -> None: ...
     
     async def send_prompt(
             self,
@@ -391,25 +276,9 @@ class SendMsg:
         else:
             raise TypeError("prompt must be str or Message")
     
-    @overload
     async def send_error(
             self,
-            error: str,
-            reply: bool = True,
-            continue_handler: Literal[False] = False,
-        ) -> NoReturn: ...
-
-    @overload
-    async def send_error(
-            self,
-            error: str,
-            reply: bool = True,
-            continue_handler: Literal[True] = True,
-        ) -> None: ...
-    
-    async def send_error(
-            self,
-            error: str,
+            error: str | Exception,
             reply: bool = True,
             continue_handler: bool = False
         ):
@@ -437,22 +306,6 @@ class SendMsg:
                 continue_handler = continue_handler
             )
     
-    @overload
-    async def send_warning(
-            self,
-            warning: str,
-            reply: bool = True,
-            continue_handler: Literal[True] = True
-        ) -> None: ...
-
-    @overload
-    async def send_warning(
-            self,
-            warning: str,
-            reply: bool = True,
-            continue_handler: Literal[False] = False
-        ) -> NoReturn: ...
-    
     async def send_warning(
             self,
             warning: str,
@@ -473,21 +326,6 @@ class SendMsg:
             reply = reply,
             continue_handler = continue_handler
         )
-    @overload
-    async def send_text(
-            self,
-            text: str | None = None,
-            reply: bool = True,
-            continue_handler: Literal[False] = False
-        ) -> NoReturn: ...
-    
-    @overload
-    async def send_text(
-            self,
-            text: str | None = None,
-            reply: bool = True,
-            continue_handler: Literal[True] = True
-        ) -> None: ...
     
     async def send_text(
             self,
@@ -507,28 +345,6 @@ class SendMsg:
             reply=reply,
             continue_handler = continue_handler
         )
-    
-    @overload
-    async def send_mixed_render(
-            self,
-            text_to_render: str,
-            text: str | None = None,
-            prompt_mode: bool = False,
-            document_end_comments: str = "",
-            reply: bool = True,
-            continue_handler: Literal[False] = False
-        ) -> NoReturn: ...
-    
-    @overload
-    async def send_mixed_render(
-            self,
-            text_to_render: str,
-            text: str | None = None,
-            prompt_mode: bool = False,
-            document_end_comments: str = "",
-            reply: bool = True,
-            continue_handler: Literal[True] = True
-        ) -> None: ...
     
     async def send_mixed_render(
             self,
@@ -577,24 +393,6 @@ class SendMsg:
                 continue_handler = continue_handler
             )
     
-    @overload
-    async def send_multiple_render(
-            self,
-            messages: list[str | Message],
-            document_end_comments: str = "",
-            reply: bool = False,
-            continue_handler: Literal[False] = False
-        ) -> NoReturn: ...
-
-    @overload
-    async def send_multiple_render(
-            self,
-            messages: list[str | Message],
-            document_end_comments: str = "",
-            reply: bool = False,
-            continue_handler: Literal[True] = True
-        ) -> None: ...
-
     async def send_multiple_render(
             self,
             messages: list[str | Message],
@@ -628,24 +426,6 @@ class SendMsg:
             continue_handler = continue_handler
         )
     
-    @overload
-    async def send_render(
-            self,
-            text: str,
-            document_end_comments: str = "",
-            reply: bool = True,
-            continue_handler: Literal[True] = True
-        ) -> None: ...
-    
-    @overload
-    async def send_render(
-            self,
-            text: str,
-            document_end_comments: str = "",
-            reply: bool = True,
-            continue_handler: Literal[False] = False
-        ) -> NoReturn: ...
-    
     async def send_render(
             self,
             text: str,
@@ -669,24 +449,6 @@ class SendMsg:
             reply=reply,
             continue_handler = continue_handler
         )
-    
-    @overload
-    async def send_tts(
-            self,
-            text: str,
-            send_error_message: bool = True,
-            reply: bool = False,
-            continue_handler: Literal[False] = False
-        ) -> NoReturn: ...
-
-    @overload
-    async def send_tts(
-            self,
-            text: str,
-            send_error_message: bool = True,
-            reply: bool = False,
-            continue_handler: Literal[True] = True
-        ) -> None: ...
     
     async def send_tts(
             self,
@@ -715,26 +477,6 @@ class SendMsg:
             await self.send_response(response, message = "TTS Error.")
         else:
             logger.error(f"Send TTS Error: {response.code} {response.text}")
-    
-    @overload
-    async def send_check_length(
-            self,
-            message: Message | str,
-            threshold: float = 1.0,
-            document_end_comments: str = "",
-            reply: bool = True,
-            continue_handler: Literal[False] = False
-        ) -> NoReturn: ...
-    
-    @overload
-    async def send_check_length(
-            self,
-            message: Message | str,
-            threshold: float = 1.0,
-            document_end_comments: str = "",
-            reply: bool = True,
-            continue_handler: Literal[True] = True
-        ) -> None: ...
     
     async def send_check_length(
             self,
@@ -765,26 +507,6 @@ class SendMsg:
                 continue_handler = continue_handler
             )
     
-    @overload
-    async def send_check_length_prompt(
-            self,
-            message: Message | str,
-            threshold: float = 1.0,
-            document_end_comments: bool = False,
-            reply: bool = True,
-            continue_handler: Literal[False] = False
-        ) -> NoReturn: ...
-    
-    @overload
-    async def send_check_length_prompt(
-            self,
-            message: Message | str,
-            threshold: float = 1.0,
-            document_end_comments: str = "",
-            reply: bool = True,
-            continue_handler: Literal[True] = True
-        ) -> None: ...
-    
     async def send_check_length_prompt(
             self,
             prompt: Message | str,
@@ -814,22 +536,6 @@ class SendMsg:
                 reply = reply,
                 continue_handler = continue_handler
             )
-    
-    @overload
-    async def send_any(
-            self,
-            message: str | Message | MessageSegment,
-            reply: bool = True,
-            continue_handler: Literal[False] = False
-        ) -> NoReturn: ...
-
-    @overload
-    async def send_any(
-            self,
-            message: str | Message | MessageSegment,
-            reply: bool = True,
-            continue_handler: Literal[True] = True
-        ) -> None: ...
     
     async def send_any(
             self,
@@ -879,22 +585,6 @@ class SendMsg:
             return message
         else:
             raise ValueError("Text is empty.")
-    
-    @overload
-    async def _send(
-            self,
-            message: str | Message | MessageSegment,
-            reply: bool = True,
-            continue_handler: Literal[False] = False
-        ) -> NoReturn: ...
-    
-    @overload
-    async def _send(
-            self,
-            message: str | Message | MessageSegment,  # 消息内容，可以是字符串、Message对象或MessageSegment对象
-            reply: bool = True,  # 是否回复消息，默认为True
-            continue_handler: Literal[True] = True  # 是否继续处理消息处理器，默认为True
-        ) -> None: ...  # 异步方法，不返回任何值
     
     async def _send(
             self,
