@@ -32,9 +32,7 @@ from .commands.nexus import *
 from .commands.variable_expansion import *
 
 # === UserDataFile === #
-from .commands.user_file import (
-    handle_send_user_data_file,
-)
+from .commands.user_file import *
 
 # === SessionID === #
 from .commands.get_namespace import handle_get_namespace
@@ -47,3 +45,6 @@ from .commands.annotation import handle_annotation
 
 # === Adaptation === #
 from .commands.adaptation import handle_adaptation
+
+# === Calculate Length Score === #
+from .commands.calculate_length_score import handle_calculate_length_score
