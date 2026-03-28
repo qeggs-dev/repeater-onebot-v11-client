@@ -403,6 +403,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `breakChatTask`            | `bct`    | `BreakChatTask`           | `STATUS`    | 4.4.4.0        | 中止当前所有生成任务         | 无                                         | 中止当前所有生成任务，中止后模型已生成内容将不会保存和显示 |
 | `renderDocBottomComment`   | `rdbc`   | `RenderDocBottomComment`  | `CONFIG`    | 4.4.4.0        | 渲染文档底部注释             | 文本内容                                   | 在渲染图片的底部添加一小段文本 |
 | `calculateLengthScore`     | `cls`    | `CalculateLengthScore`    | `OTHER`     | 4.4.4.0        | 计算长度评分                 | 文本内容                                   | 计算给定文本的长度评分值 |
+| `fastStatisticsTemplate`   | `fts`    | `FastStatisticsTemplate`  | `CONFIG`    | 4.4.5.0        | 快速统计模板                 | 模板内容                                   | 可以在生成的图片结尾展示一些统计数据 |
 
 PS：`CHAT`类型命令大部分都做到了支持视觉输入
 默认命令已支持全模态输入
