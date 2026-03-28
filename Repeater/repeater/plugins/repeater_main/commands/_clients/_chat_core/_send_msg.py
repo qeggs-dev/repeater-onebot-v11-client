@@ -37,10 +37,6 @@ class ChatSendMsg(SendMsg):
             self._error = None
     
     @property
-    def ai_generate_tip(self) -> str:
-        return storage_configs.ai_generate_tip
-    
-    @property
     def reasoning_content(self) -> str | None:
         if self._data.reasoning_content is not None:
             return self._reasoning_content_handler(self._data.reasoning_content)
@@ -72,6 +68,12 @@ class ChatSendMsg(SendMsg):
         
         if self._response.exception_info:
             await self.send_error(self._response.exception_info.exc_value)
+    
+    def _get_response_usage(self) -> str:
+        if self._data is None:
+            return ""
+        return self._data.request_statistics
+            
 
     async def send(self) -> NoReturn:
         self._check_response()
@@ -124,7 +126,7 @@ class ChatSendMsg(SendMsg):
                 message.append(
                     await self.render_text(
                         self.reasoning_content,
-                        document_end_comments = self.ai_generate_tip
+                        document_bottom_comment = self._get_response_usage()
                     )
                 )
             if self.content:
@@ -147,14 +149,14 @@ class ChatSendMsg(SendMsg):
                 message.append(
                     await self.render_text(
                         self.reasoning_content,
-                        document_end_comments = self.ai_generate_tip
+                        document_bottom_comment = self._get_response_usage()
                     )
                 )
             if self.content:
                 message.append(
                     await self.render_text(
                         self.content or text,
-                        document_end_comments = self.ai_generate_tip
+                        document_bottom_comment = self._get_response_usage()
                     )
                 )
             else:
