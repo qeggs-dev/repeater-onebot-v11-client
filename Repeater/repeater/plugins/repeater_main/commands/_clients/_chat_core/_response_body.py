@@ -1,6 +1,8 @@
+import math
+
+from ._request_log import RequestLogObject
 from pydantic import BaseModel, ConfigDict, Field
 from enum import StrEnum
-import math
 
 class FinishReason(StrEnum):
     STOP = "stop"
@@ -26,6 +28,7 @@ class ChatResponse(BaseModel):
     id: str = ""
     finish_reason_cause: str = ""
     finish_reason_code: FinishReason = FinishReason.STOP
+    request_log: RequestLogObject | None = None
     status: int = 200
 
 class TokensCount(BaseModel):
