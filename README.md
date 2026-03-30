@@ -375,7 +375,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `sessionBranchCloneFrom`   | `sbcf`   | `SessionBranchCloneFrom`  | `MIXED`     | 4.3.9.3        | 所有类型从指定分支克隆        | 源分支名称                                  | 所有类型的当前活动分支从指定分支复制 |
 | `sessionBranchBind`        | `sbb`    | `SessionBranchBind`       | `MIXED`     | 4.3.9.3        | 所有类型绑定指定分支          | 目标分支名称                                | 所有类型同时创建一个新分支，硬链接到当前活动分支 |
 | `sessionBranchBindFrom`    | `sbbf`   | `SessionBranchBindFrom`   | `MIXED`     | 4.3.9.3        | 所有类型绑定指定分支          | 源分支名称                                  | 所有类型同时删除活动分支数据，并从指定分支硬链接一份活动分支文件 |
-| `#` or `/`                 | `anot`   | `Annotation`              | `RESERVED`  | 4.3.9.3        | 注释，不会执行任何操作        | 无                                         | 保留的注释命令，不执行任何操作，直接忽略内容 |
+| `#` or `/`                 | `anot`   | `Annotation`              | `RESERVED`  | 4.3.9.3        | 注释，不会执行任何操作        | 无                                         | 不执行任何操作，直接忽略内容，由于命令前缀的存在，触发需要 `/#` 或 `//` |
 | `crossUserDataAccess`      | `cuda`   | `CrossUserDataAccess`     | `CONFIG`    | 4.3.10.3       | 允许跨用户数据访问            | `true`/`false`                            | 允许跨用户数据访问，如果设置为`false`则只能访问自己的数据 |
 | `newRequestsTextOnly`      | `nrto`   | `NewRequestsTextOnly`     | `CONFIG`    | 4.3.10.7       | 忽略请求里的非文本数据        | `true`/`false`                            | 如果设置为`true`，复读机将把所有消息当成普通文本消息处理 |
 | `adaptationInfo`           | `adai`   | `AdaptationInfo`          | `VERSION`   | 4.3.10.7       | 版本适配信息                 | 无                                         | 展示服务端和客户端的版本信息 |
