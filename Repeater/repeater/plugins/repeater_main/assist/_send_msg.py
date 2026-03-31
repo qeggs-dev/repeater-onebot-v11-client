@@ -233,11 +233,15 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
-        await self.send_text(
-            self.hello_content,
-            reply = reply,
-            continue_handler = continue_handler
-        )
+        hello_content = self.hello_content
+        if hello_content:
+            await self.send_text(
+                hello_content,
+                reply = reply,
+                continue_handler = continue_handler
+            )
+        else:
+            self.break_handler()
     
     @property
     def prompt_str(self) -> str:
@@ -556,7 +560,7 @@ class SendMsg:
             continue_handler = continue_handler
         )
     
-    async def break_handler(self) -> NoReturn:
+    def break_handler(self) -> NoReturn:
         """
         跳出当前处理函数
         """
@@ -613,7 +617,7 @@ class SendMsg:
             logger.info(
                 "Break handler"
             )
-            await self.break_handler()
+            self.break_handler()
     
     @staticmethod
     def text_length_score(text: str) -> float:
