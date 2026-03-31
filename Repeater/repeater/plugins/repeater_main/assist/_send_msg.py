@@ -240,7 +240,7 @@ class SendMsg:
                 reply = reply,
                 continue_handler = continue_handler
             )
-        else:
+        elif not continue_handler:
             self.break_handler()
     
     @property
@@ -564,6 +564,9 @@ class SendMsg:
         """
         跳出当前处理函数
         """
+        logger.info(
+            "Break handler"
+        )
         raise FinishedException
 
     async def render_text(self, text: str, direct_output: bool = False, document_bottom_comment: str = "") -> MessageSegment:
@@ -614,9 +617,6 @@ class SendMsg:
             message = send_msg
         )
         if not continue_handler:
-            logger.info(
-                "Break handler"
-            )
             self.break_handler()
     
     @staticmethod
