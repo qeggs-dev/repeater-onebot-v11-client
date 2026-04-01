@@ -45,17 +45,6 @@ class ChatSendMsg(SendMsg):
             return self._content_handler(self._data.content)
         return None
     
-    async def _send_error_message(self) -> NoReturn:
-        if self._data is None:
-            await self.send_response(
-                self._response
-            )
-        else:
-            await self.send_response(
-                self._response,
-                message = self.content
-            )
-    
     async def _check_response(self) -> None | NoReturn:
         if self.is_debug_mode:
             await self.send_debug_mode()
@@ -70,97 +59,72 @@ class ChatSendMsg(SendMsg):
         if self._data is None:
             return ""
         return self._data.request_statistics
-            
-
+    
     async def send(self) -> NoReturn:
         await self._check_response()
 
-        if self._response.code == 200:
-            score = self.text_length_score(self.content)
-            threshold = self.text_length_score_threshold
-            logger.info(f"Response content socre: {score}")
-            if score >= threshold:
-                logger.warning(f"Response content socre to high: {score}, Expected to be below {threshold} ")
-                logger.warning("The text will be rendered as an image output.")
-                await self.send_image_mode()
-            else:
-                await self.send_text_mode()
+        score = self.text_length_score(self.content)
+        threshold = self.text_length_score_threshold
+        logger.info(f"Response content socre: {score}")
+        if score >= threshold:
+            logger.warning(f"Response content socre to high: {score}, Expected to be below {threshold} ")
+            logger.warning("The text will be rendered as an image output.")
+            await self.send_image_mode()
         else:
-            await self.send_response(
-                self._response,
-                message = self.content
-            )
+            await self.send_text_mode()
     
     async def send_tts_mode(self, text: str | None = None) -> NoReturn:
         await self._check_response()
 
-        if self._response.code == 200:
-            if self.reasoning_content:
-                await self.send_render(
-                    self.reasoning_content,
-                    reply = True,
-                    continue_handler = True
-                )
-            if self.content:
-                await self.send_tts(
-                    text or self._data.content,
-                    reply = False,
-                    continue_handler = False
-                )
-        else:
-            await self.send_response(
-                self._response,
-                message = self.content
+        if self.reasoning_content:
+            await self.send_render(
+                self.reasoning_content,
+                reply = True,
+                continue_handler = True
+            )
+        if self.content:
+            await self.send_tts(
+                text or self._data.content,
+                reply = False,
+                continue_handler = False
             )
     
     async def send_text_mode(self, text: str | None = None) -> NoReturn:
         await self._check_response()
         
-        if self._response.code == 200:
-            message = Message()
-            # 推理内容必须渲染为图片
-            if self.reasoning_content:
-                message.append(
-                    await self.render_text(
-                        self.reasoning_content,
-                        document_bottom_comment = self._get_response_usage()
-                    )
+        message = Message()
+        # 推理内容必须渲染为图片
+        if self.reasoning_content:
+            message.append(
+                await self.render_text(
+                    self.reasoning_content,
+                    document_bottom_comment = self._get_response_usage()
                 )
-            if self.content:
-                message.append(text or self.content)
-            else:
-                message.append("[Message is empty.]")
-            await self._send(message)
-        else:
-            await self.send_response(
-                self._response,
-                message = self.content
             )
+        if self.content:
+            message.append(text or self.content)
+        else:
+            message.append("[Message is empty.]")
+        await self._send(message)
     
     async def send_image_mode(self, text: str | None = None) -> NoReturn:
         await self._check_response()
         
-        if self._response.code == 200:
-            message = Message()
-            if self.reasoning_content:
-                message.append(
-                    await self.render_text(
-                        self.reasoning_content,
-                        document_bottom_comment = self._get_response_usage()
-                    )
+        message = Message()
+        if self.reasoning_content:
+            message.append(
+                await self.render_text(
+                    self.reasoning_content,
+                    document_bottom_comment = self._get_response_usage()
                 )
-            if self.content:
-                message.append(
-                    await self.render_text(
-                        self.content or text,
-                        document_bottom_comment = self._get_response_usage()
-                    )
-                )
-            else:
-                message.append("[Message is empty.]")
-            await self._send(message)
-        else:
-            await self.send_response(
-                self._response,
-                message = self.content
             )
+        if self.content:
+            message.append(
+                await self.render_text(
+                    text or self.content,
+                    document_bottom_comment = self._get_response_usage()
+                )
+            )
+        else:
+            message.append("[Message is empty.]")
+        await self._send(message)
