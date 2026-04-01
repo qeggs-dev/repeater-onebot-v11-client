@@ -87,7 +87,7 @@ class Response(Generic[T_Response]):
             except Exception:
                 return None
     
-    def to_error(self) -> Response[ErrorResponse | None]:
+    def to_error(self) -> Response[ErrorResponse]:
         if self._httpx_response is None:
             raise ValueError("response not initialized")
         return Response(
