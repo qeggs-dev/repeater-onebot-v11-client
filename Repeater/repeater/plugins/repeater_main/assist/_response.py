@@ -17,6 +17,9 @@ class ExceptionInfo:
     exc_value: BaseException | None = None
     exc_traceback: TracebackType | None = None
 
+    def __bool__(self) -> bool:
+        return self.exc_type is not None and self.exc_value is not None and self.exc_traceback is not None
+
 class Response(Generic[T_Response]):
     def __init__(
             self,
