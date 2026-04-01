@@ -27,10 +27,7 @@ class ChatSendMsg(SendMsg):
         self._reasoning_content_handler = reasoning_content_handler
         self._content_handler = content_handler
         if self._response.initialized:
-            try:
-                self._data = self._response.get_data()
-            except ValidationError:
-                self._data = None
+            self._data = self._response.get_data()
             self._error = self._response.to_error()
         else:
             self._data = None
@@ -63,7 +60,7 @@ class ChatSendMsg(SendMsg):
         if self.is_debug_mode:
             await self.send_debug_mode()
         
-        if self._error is not None:
+        if self._response.code != 200:
             await self.send_error_response(self._error)
         
         if self._response.exception_info:
