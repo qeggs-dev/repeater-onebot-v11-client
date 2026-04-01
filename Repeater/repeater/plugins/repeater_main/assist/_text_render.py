@@ -2,6 +2,7 @@ from ..core_net_configs import *
 from pydantic import BaseModel
 from ._response import Response
 from ._namespace import Namespace
+from ..logger import logger
 import httpx
 
 class RendedImage(BaseModel):
@@ -43,6 +44,12 @@ class TextRender:
                 "document_bottom_comment": document_bottom_comment
             },
             timeout = self._timeout
+        )
+
+        logger.info(
+            "Render text:\n{text}",
+            text = text,
+            module = "text-render"
         )
         
         return Response(
