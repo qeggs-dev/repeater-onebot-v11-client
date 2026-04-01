@@ -73,7 +73,7 @@ class ChatSendMsg(SendMsg):
             
 
     async def send(self) -> NoReturn:
-        self._check_response()
+        await self._check_response()
 
         if self._response.code == 200:
             score = self.text_length_score(self.content)
@@ -92,7 +92,7 @@ class ChatSendMsg(SendMsg):
             )
     
     async def send_tts_mode(self, text: str | None = None) -> NoReturn:
-        self._check_response()
+        await self._check_response()
 
         if self._response.code == 200:
             if self.reasoning_content:
@@ -114,7 +114,7 @@ class ChatSendMsg(SendMsg):
             )
     
     async def send_text_mode(self, text: str | None = None) -> NoReturn:
-        self._check_response()
+        await self._check_response()
         
         if self._response.code == 200:
             message = Message()
@@ -138,7 +138,7 @@ class ChatSendMsg(SendMsg):
             )
     
     async def send_image_mode(self, text: str | None = None) -> NoReturn:
-        self._check_response()
+        await self._check_response()
         
         if self._response.code == 200:
             message = Message()
