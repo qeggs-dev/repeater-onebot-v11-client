@@ -22,7 +22,9 @@ from typing import (
 )
 from datetime import datetime
 from ._limit_speed import LimitSpeed
-from ..logger import logger
+from ..logger import logger as base_logger
+
+logger = base_logger.bind(module = "SendMsg")
 
 T_RESPONSE = TypeVar("T_RESPONSE")
 
@@ -98,6 +100,9 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
+        logger.info(
+            "Send Debug Message"
+        )
         await self._send(
             self._persona_info.reply + (
                 f"[{self._component}|{self._persona_info.namespace}|{self._persona_info.nickname}]: {self._persona_info.message}"
@@ -113,6 +118,13 @@ class SendMsg:
             reply: bool = True,
             continue_handler: bool = False,
         ):
+        logger.info(
+            "Send Response Check Code"
+        )
+        logger.info(
+            "Response Code Is {code}",
+            code = response.code
+        )
         if response.code != 200:
             await self.send_error_response(
                 response = response,
@@ -135,6 +147,9 @@ class SendMsg:
             reply: bool = True,
             continue_handler: bool = False,
         ):
+            logger.info(
+                "Send Error Response"
+            )
             if message is None:
                 error = response.get_error()
                 if error is not None:
@@ -169,6 +184,9 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
+        logger.info(
+            "Send Response"
+        )
         if callable(message):
             message = message(response)
         elif isinstance(message, str):
@@ -197,6 +215,9 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
+        logger.info(
+            "Send Multiple Responses"
+        )
         text_buffer: list[str] = []
         failed: int = 0
         for index, response in enumerate(responses, start=1):
@@ -233,6 +254,9 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
+        logger.info(
+            "Send Hello Message"
+        )
         hello_content = self.hello_content
         if hello_content:
             await self.send_text(
@@ -263,6 +287,9 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
+        logger.info(
+            "Send Prompt"
+        )
         if isinstance(prompt, Message):
             await self._send(
                 Message(
@@ -293,6 +320,9 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
+        logger.info(
+            "Send Error"
+        )
         if isinstance(error, Exception):
             await self.send_prompt(
                 (
@@ -323,6 +353,9 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
+        logger.info(
+            "Send Warning"
+        )
         await self.send_prompt(
             (
                 f"Warning: {warning}"
@@ -344,6 +377,9 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
+        logger.info(
+            "Send Text"
+        )
         await self._send(
             Message(text),
             reply=reply,
@@ -367,6 +403,9 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
+        logger.info(
+            "Send Mixed Render"
+        )
         image = await self.render_text(
             text_to_render,
             document_bottom_comment = document_bottom_comment
@@ -407,6 +446,9 @@ class SendMsg:
         """
         发送多个渲染文本
         """
+        logger.info(
+            "Send Multiple Render"
+        )
         message = Message()
         for msg in messages:
             if isinstance(msg, str):
@@ -444,6 +486,9 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
+        logger.info(
+            "Send Render"
+        )
         image = await self.render_text(
             text,
             document_bottom_comment = document_bottom_comment
@@ -468,6 +513,9 @@ class SendMsg:
         :param reply: 是否回复
         :param continue_handler: 是否继续处理流程
         """
+        logger.info(
+            "Send TTS"
+        )
         response = await self._chat_tts_api.text_to_speech(text)
         if response.code == 200:
             data = response.get_data()
@@ -490,6 +538,17 @@ class SendMsg:
             reply: bool = True,
             continue_handler: bool = False
         ):
+        """
+        发送长度检测后的文本
+
+        :param message: 消息
+        :param threshold: 长度阈值
+        :param reply: 是否回复
+        :param continue_handler: 是否继续处理流程
+        """
+        logger.info(
+            "Send Check Length"
+        )
         if isinstance(message, Message):
             text = message.extract_plain_text()
         elif isinstance(message, str):
@@ -519,6 +578,9 @@ class SendMsg:
             reply: bool = True,
             continue_handler: bool = False
         ):
+        logger.info(
+            "Send Check Length Prompt"
+        )
         if isinstance(prompt, Message):
             text = prompt.extract_plain_text()
         elif isinstance(prompt, str):
@@ -554,6 +616,9 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
+        logger.info(
+            "Send Any"
+        )
         await self._send(
             message,
             reply=reply,
@@ -575,6 +640,9 @@ class SendMsg:
 
         :param text: 渲染文本内容
         """
+        logger.info(
+            "Render Text"
+        )
         if text:
             render_response: Response[RendedImage] = await self._text_render.render(
                 text,
