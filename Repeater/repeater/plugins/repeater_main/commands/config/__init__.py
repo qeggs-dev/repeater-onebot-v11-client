@@ -1,7 +1,7 @@
 from ._data_command.auto_load_prompt import handle_set_auto_load_prompt
 from ._data_command.auto_save_context import handle_set_auto_save_context
 from ._data_command.auto_shrink_length import handle_set_auto_shrink_length
-from ._data_command.set_default_model_type import handle_set_default_model_type
+from ._data_command.set_default_model import handle_set_default_model
 from ._data_command.set_temperature import handle_set_temperature
 from ._data_command.set_frequency_penalty import handle_set_frequency_penalty
 from ._data_command.set_presence_penalty import handle_set_presence_penalty
@@ -18,8 +18,10 @@ from ._data_command.set_render_title import handle_set_render_title
 from ._data_command.set_save_text_only import handle_set_save_text_only
 from ._data_command.set_max_tokens import handle_set_max_tokens
 from ._data_command.set_model_timeout import handle_set_model_timeout
+from ._data_command.set_multiple_model import handle_set_multiple_model
 from ._data_command.set_timezone import handle_set_timezone
 from ._data_command.set_top_p import handle_set_top_p
+from ._data_command.set_stop_keywords import handle_set_stop_keywords
 from ._data_command.thinking_mode import handle_thinking_mode
 from ._data_command.write_user_profile import handle_write_user_profile
 
@@ -39,7 +41,7 @@ __all__ = [
     "handle_set_auto_load_prompt",
     "handle_set_auto_save_context",
     "handle_set_auto_shrink_length",
-    "handle_set_default_model_type",
+    "handle_set_default_model",
     "handle_set_temperature",
     "handle_set_frequency_penalty",
     "handle_set_presence_penalty",
@@ -58,8 +60,10 @@ __all__ = [
     "handle_change_config_branch",
     "handle_set_max_tokens",
     "handle_set_model_timeout",
+    "handle_set_multiple_model",
     "handle_set_timezone",
     "handle_set_top_p",
+    "handle_set_stop_keywords",
     "handle_thinking_mode",
     "handle_write_user_profile",
     "handle_config_branch_clone",
