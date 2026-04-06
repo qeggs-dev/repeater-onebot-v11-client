@@ -8,7 +8,7 @@ from nonebot.adapters import Bot
 from ..._clients import ContextCore, ContentRole
 from ....assist import PersonaInfo, SendMsg
 
-inject_system_content = on_command("injectSystemContent", aliases={"iuc", "inject_system_content", "Inject_System_Content", "InjectSystemContent"}, rule=to_me(), block=True)
+inject_system_content = on_command("injectSystemContent", aliases={"isc", "inject_system_content", "Inject_System_Content", "InjectSystemContent"}, rule=to_me(), block=True)
 
 @inject_system_content.handle()
 async def handle_inject_system_content(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
