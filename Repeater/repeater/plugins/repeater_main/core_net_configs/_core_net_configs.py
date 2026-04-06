@@ -12,7 +12,7 @@ BREAK_CHAT_TASK_ROUTE = f"/chat/break"
 # ==== CONTEXT API ==== #
 GET_CONTEXT_LENGTH_ROUTE = "/userdata/context/length"
 ROLE_STRUCTRUE_ROUTE = "/userdata/context/structure_check/role"
-INJECT_CONTEXT_ROUTE = "/session/inject"
+INJECT_CONTEXT_ROUTE = "/userdata/context/inject"
 WIHTDRAW_CONTEXT_ROUTE = "/userdata/context/withdraw"
 
 # ==== PROMPT API ==== #
