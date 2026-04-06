@@ -392,7 +392,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `setCustomName`            | `scn`    | `SetCustomName`           | `CONFIG`    | 4.3.12.1       | 设置个性化名称               | 用户名                                    | 设置后模型看到的将是设置的名称而非用户名 |
 | `thinkingMode`             | `tm`     | `ThinkingMode`            | `CONFIG`    | 4.3.14.0       | 设置思考模式                 | `true`/`false`/`null`                    | 用于在不指定 Thinking 参数时 启用/禁用/恢复默认 思考模式 |
 | `noReason`                 | `nr`     | `NoReason`                | `CHAT`      | 4.3.15.0       | 不使用 Thinking 进行对话     | 自然语言输入                              | 关闭 `thinking` 参数以阻止进入 Thinking 模式 |
-| `noPromptEcho`             | `npecho` | `NoPromptEcho`            | `ECHO`      | 4.3.16.0       | 无额外反应的Echo             | 任何内容                                  | 与 `echo` 命令相同，但不在未找到参数时显示等待提示词 |
+| `noPromptEcho`             | `npecho` | `NoPromptEcho`            | `ECHO`      | 4.3.16.0       | 无额外反应的 Echo            | 任何内容                                  | 与 `echo` 命令相同，但不在未找到参数时显示等待提示词 |
 | `getContextBranchsList`    | `gcbl`   | `GetContextBranchslist`   | `CONTEXT`   | 4.3.16.7       | 获取分支列表                 | 无                                        | 返回当前用户的上下文分支列表 |
 | `getPromptBranchList`      | `gpbl`   | `GetPromptBranchList`     | `PROMPT`    | 4.3.16.7       | 获取提示词分支列表           | 无                                        | 返回当前用户的提示词分支列表 |
 | `getConfigBranchList`      | `gcfgbl` | `GetConfigBranchList`     | `CONFIG`    | 4.3.16.7       | 获取当前上下文分支           | 无                                        | 获取当前上下文分支 |
@@ -409,6 +409,9 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `fastStatisticsTemplate`   | `fts`    | `FastStatisticsTemplate`  | `CONFIG`    | 4.4.5.0        | 快速统计模板                 | 模板内容                                   | 可以在生成的图片结尾展示一些统计数据 |
 | `setMultipleModel`         | `smm`    | `SetMultipleModel`        | `CONFIG`    | 4.4.6.0        | 设置多个模型                 | *多个模型名称*                              | 设置多个模型，当访问时随机选择一个模型 |
 | `setStopKeywords`          | `ssk`    | `SetStopKeywords`         | `CONFIG`    | 4.4.6.0        | 设置停止关键词               | *多个停止关键词*                            | 当模型生成出这个词时，暂停模型生成并即刻返回结果 |
+| `injectUserContent`        | `iuc`    | `InjectUserContent`       | `CONTEXT`   | 4.4.7.0        | 注入用户消息内容             | 消息内容                                   | 插入用户消息内容 |
+| `injectAssistantContent`   | `iac`    | `InjectAssistantContent`  | `CONTEXT`   | 4.4.7.0        | 插入 AI 消息内容             | 消息内容                                   | 插入 AI 消息内容 |
+| `injectSystemContent`      | `isc`    | `InjectSystemContent`     | `CONTEXT`   | 4.4.7.0        | 插入系统消息内容             | 消息内容                                   | 插入系统消息内容 |
 
 PS：`CHAT`类型命令大部分都做到了支持视觉输入
 默认命令已支持全模态输入
