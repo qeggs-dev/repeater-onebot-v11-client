@@ -25,6 +25,12 @@ async def handle_inject_user_content(bot: Bot, event: MessageEvent, args: Messag
     )
 
     if response:
-        await send_msg.send_prompt("Inject User Content Successful")
+        await send_msg.send_response(
+            response,
+            message = "Inject User Content Successful"
+        )
     else:
-        await send_msg.send_error("Inject User Content Failed")
+        await send_msg.send_response(
+            response,
+            message = "Inject User Content Failed"
+        )

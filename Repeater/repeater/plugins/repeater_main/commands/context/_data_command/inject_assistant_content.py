@@ -25,6 +25,12 @@ async def handle_inject_assistant_content(bot: Bot, event: MessageEvent, args: M
     )
 
     if response:
-        await send_msg.send_prompt("Inject Assistant Content Successful")
+        await send_msg.send_response(
+            response,
+            message = "Inject Assistant Content Successful"
+        )
     else:
-        await send_msg.send_error("Inject Assistant Content Failed")
+        await send_msg.send_response(
+            response,
+            message = "Inject Assistant Content Failed"
+        )

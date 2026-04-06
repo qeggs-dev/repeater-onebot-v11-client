@@ -25,6 +25,12 @@ async def handle_inject_system_content(bot: Bot, event: MessageEvent, args: Mess
     )
 
     if response:
-        await send_msg.send_prompt("Inject System Content Successful")
+        await send_msg.send_response(
+            response,
+            message = "Inject System Content Successful"
+        )
     else:
-        await send_msg.send_error("Inject System Content Failed")
+        await send_msg.send_response(
+            response,
+            message = "Inject System Content Failed"
+        )
