@@ -1,6 +1,9 @@
 from ._data_command.get_context_total_length import handle_total_context_length
 from ._data_command.withdraw import handle_withdraw
 from ._data_command.chenk_role_structure import handle_check_role_structure
+from ._data_command.inject_system_content import handle_inject_system_content
+from ._data_command.inject_user_content import handle_inject_user_content
+from ._data_command.inject_assistant_content import handle_inject_assistant_content
 
 from ._branch_command.del_context import handle_delete_context
 from ._branch_command.delete_psc import handle_delete_public_space_context
@@ -19,6 +22,9 @@ __all__ = [
     "handle_delete_context",
     "handle_total_context_length",
     "handle_check_role_structure",
+    "handle_inject_system_content",
+    "handle_inject_user_content",
+    "handle_inject_assistant_content",
     "handle_delete_public_space_context",
     "handle_withdraw",
     "handle_change_context_branch",
