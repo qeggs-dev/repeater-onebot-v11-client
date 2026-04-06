@@ -37,7 +37,7 @@ class ContextCore(UserDataCore):
         logger.info("Injecting {role} context", role = content)
         response = await self._httpx_client.post(
             f"{INJECT_CONTEXT_ROUTE}/{self._info.namespace_str}",
-            data={
+            json = {
                 "reasoning_content": reasoning_content,
                 "content": content,
                 "role": role.value
