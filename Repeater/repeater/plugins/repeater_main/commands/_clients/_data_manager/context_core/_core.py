@@ -14,6 +14,7 @@ from ._response import (
     RoleStructureCheckerResponse
 )
 from .._base_user_data_core import UserDataCore
+from ..._content_role import ContentRole
 
 logger = base_logger.bind(module = "Context.Core")
 
@@ -27,13 +28,19 @@ class ContextCore(UserDataCore):
         super().__init__(info, "context")
     
     # region inject context
-    async def inject_context(self, text: str, role: str) -> Response[None]:
-        logger.info("Injecting {role} context", role = role)
+    async def inject_context(
+            self,
+            reasoning_content: str = "",
+            content: str = "",
+            role: ContentRole = ContentRole.USER
+        ) -> Response[None]:
+        logger.info("Injecting {role} context", role = content)
         response = await self._httpx_client.post(
             f"{INJECT_CONTEXT_ROUTE}/{self._info.namespace_str}",
             data={
-                "text": text,
-                "role": role
+                "reasoning_content": reasoning_content,
+                "content": content,
+                "role": role.value
             }
         )
         return Response(response)
