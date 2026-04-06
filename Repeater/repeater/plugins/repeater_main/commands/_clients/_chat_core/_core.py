@@ -1,9 +1,9 @@
+import httpx
 import orjson
 from typing import (
     Any,
     AsyncIterator
 )
-import httpx
 from .._content_role import ContentRole
 from ._response_body import ChatResponse, StreamChatChunkResponse
 from ._break_response_body import BreakResponse
@@ -13,6 +13,9 @@ from ....assist import PersonaInfo, Response
 from ....core_net_configs import *
 from ._request_model import ChatRequestModel, ChatUserInfo, AdditionalData
 from ...._adaptation_info import __adaptation__, __adaptation_text__
+from ....logger import logger as base_logger
+
+logger = base_logger.bind(module = "chat_core")
 
 exit_register = ExitRegister()
 
@@ -129,11 +132,17 @@ class ChatCore:
             cross_user_data_routing = cross_user_data_routing,
             continue_completion = continue_completion,
         )
-        response = await self._chat_client.post(
-            url = url,
-            json = data.submit_body()
-        )
-            
+        try:
+            response = await self._chat_client.post(
+                url = url,
+                json = data.submit_body()
+            )
+        except Exception as e:
+            logger.error(
+                "Error sending message to chat core: {error}",
+                error = e
+            )
+            return Response(model=ChatResponse)
         return Response(
             response,
             ChatResponse
@@ -232,9 +241,16 @@ class ChatCore:
         """
         中断当前在线的任务
         """
-        response = await self._chat_client.post(
-            url = f"{BREAK_CHAT_TASK_ROUTE}/{self.namespace}"
-        )
+        try:
+            response = await self._chat_client.post(
+                url = f"{BREAK_CHAT_TASK_ROUTE}/{self.namespace}"
+            )
+        except Exception as e:
+            logger.error(
+                "Error sending message to chat core: {error}",
+                error = e
+            )
+            return Response(model=BreakResponse)
 
         return Response(
             httpx_response = response,

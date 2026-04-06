@@ -2,6 +2,7 @@ from ..core_net_configs import *
 from pydantic import BaseModel
 from ._response import Response
 from ._namespace import Namespace
+from ..logger import logger
 import httpx
 
 class RendedImage(BaseModel):
@@ -33,16 +34,22 @@ class TextRender:
             self,
             text: str,
             direct_output: bool | None = None,
-            document_end_comments: str = ""
+            document_bottom_comment: str = ""
         ) -> Response[RendedImage]:
         response = await self._client.post(
             f"{TEXT_RENDER_ROUTE}/{self.namespce}",
             json={
                 "text": text,
                 "direct_output": direct_output,
-                "document_end_comments": document_end_comments
+                "document_bottom_comment": document_bottom_comment
             },
             timeout = self._timeout
+        )
+
+        logger.info(
+            "Render text:\n{text}",
+            text = text,
+            module = "text-render"
         )
         
         return Response(

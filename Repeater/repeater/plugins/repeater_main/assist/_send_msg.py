@@ -17,13 +17,14 @@ from typing import (
     NoReturn,
     TypeVar,
     Type,
-    overload,
     Literal,
     ClassVar
 )
 from datetime import datetime
 from ._limit_speed import LimitSpeed
-from ..logger import logger
+from ..logger import logger as base_logger
+
+logger = base_logger.bind(module = "SendMsg")
 
 T_RESPONSE = TypeVar("T_RESPONSE")
 
@@ -88,20 +89,6 @@ class SendMsg:
         else:
             return storage_configs.hello_content
     
-    @overload
-    async def send_debug_mode(
-            self,
-            reply: bool = True,
-            continue_handler: Literal[False] = False,
-        ) -> NoReturn: ...
-
-    @overload
-    async def send_debug_mode(
-            self,
-            reply: bool = True,
-            continue_handler: Literal[True] = True,
-        ) -> None: ...
-    
     async def send_debug_mode(
             self,
             reply: bool = True,
@@ -113,6 +100,9 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
+        logger.info(
+            "Send Debug Message"
+        )
         await self._send(
             self._persona_info.reply + (
                 f"[{self._component}|{self._persona_info.namespace}|{self._persona_info.nickname}]: {self._persona_info.message}"
@@ -121,24 +111,6 @@ class SendMsg:
             continue_handler = continue_handler,
         )
     
-    @overload
-    async def send_response_check_code(
-            self,
-            response: Response[T_RESPONSE],
-            message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
-            reply: bool = True,
-            continue_handler: Literal[False] = False,
-        ) -> NoReturn: ...
-
-    @overload
-    async def send_response_check_code(
-            self,
-            response: Response[T_RESPONSE],
-            message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
-            reply: bool = True,
-            continue_handler: Literal[True] = True,
-        ) -> None: ...
-    
     async def send_response_check_code(
             self,
             response: Response[T_RESPONSE],
@@ -146,6 +118,13 @@ class SendMsg:
             reply: bool = True,
             continue_handler: bool = False,
         ):
+        logger.info(
+            "Send Response Check Code"
+        )
+        logger.info(
+            "Response Code Is {code}",
+            code = response.code
+        )
         if response.code != 200:
             await self.send_error_response(
                 response = response,
@@ -161,24 +140,6 @@ class SendMsg:
                 continue_handler = continue_handler,
             )
     
-    @overload
-    async def send_error_response(
-            self,
-            response: Response[T_RESPONSE],
-            message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
-            reply: bool = True,
-            continue_handler: Literal[False] = False,
-        ) -> NoReturn: ...
-
-    @overload
-    async def send_error_response(
-            self,
-            response: Response[T_RESPONSE],
-            message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
-            reply: bool = True,
-            continue_handler: Literal[True] = True,
-        ) -> None: ...
-    
     async def send_error_response(
             self,
             response: Response[T_RESPONSE],
@@ -186,6 +147,9 @@ class SendMsg:
             reply: bool = True,
             continue_handler: bool = False,
         ):
+            logger.info(
+                "Send Error Response"
+            )
             if message is None:
                 error = response.get_error()
                 if error is not None:
@@ -204,24 +168,6 @@ class SendMsg:
                 continue_handler = continue_handler,
             )
     
-    @overload
-    async def send_response(
-            self,
-            response: Response[T_RESPONSE],
-            message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
-            reply: bool = True,
-            continue_handler: Literal[False] = False,
-        ) -> NoReturn: ...
-
-    @overload
-    async def send_response(
-            self,
-            response: Response[T_RESPONSE],
-            message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
-            reply: bool = True,
-            continue_handler: Literal[True] = True,
-        ) -> None: ...
-    
     async def send_response(
             self,
             response: Response[T_RESPONSE],
@@ -238,6 +184,9 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
+        logger.info(
+            "Send Response"
+        )
         if callable(message):
             message = message(response)
         elif isinstance(message, str):
@@ -253,22 +202,6 @@ class SendMsg:
             continue_handler = continue_handler
         )
     
-    @overload
-    async def send_multiple_responses(
-            self,
-            *responses: Response[T_RESPONSE] | tuple[Response[T_RESPONSE], str],
-            reply: bool = True,
-            continue_handler: Literal[False] = False
-        ) -> NoReturn: ...
-    
-    @overload
-    async def send_multiple_responses(
-            self,
-            *responses: Response[T_RESPONSE] | tuple[Response[T_RESPONSE], str],
-            reply: bool = True,
-            continue_handler: Literal[True] = True
-        ) -> None: ...
-    
     async def send_multiple_responses(
             self,
             *responses: Response[T_RESPONSE] | tuple[Response[T_RESPONSE], str],
@@ -282,6 +215,9 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
+        logger.info(
+            "Send Multiple Responses"
+        )
         text_buffer: list[str] = []
         failed: int = 0
         for index, response in enumerate(responses, start=1):
@@ -307,20 +243,6 @@ class SendMsg:
             continue_handler = continue_handler
         )
     
-    @overload
-    async def send_hello(
-            self,
-            reply: bool = True,
-            continue_handler: Literal[False] = False,
-        ) -> NoReturn: ...
-    
-    @overload
-    async def send_hello(
-            self,
-            reply: bool = True,
-            continue_handler: Literal[True] = True,
-        ) -> None: ...
-    
     async def send_hello(
             self,
             reply: bool = True,
@@ -332,11 +254,18 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
-        await self.send_text(
-            self.hello_content,
-            reply = reply,
-            continue_handler = continue_handler
+        logger.info(
+            "Send Hello Message"
         )
+        hello_content = self.hello_content
+        if hello_content:
+            await self.send_text(
+                hello_content,
+                reply = reply,
+                continue_handler = continue_handler
+            )
+        elif not continue_handler:
+            self.break_handler()
     
     @property
     def prompt_str(self) -> str:
@@ -344,22 +273,6 @@ class SendMsg:
             f"==== {self._component} ====\n"
             f"> [{self._persona_info.namespace}]\n"
         )
-    
-    @overload
-    async def send_prompt(
-            self,
-            prompt: Message | str,
-            reply: bool = True,
-            continue_handler: Literal[False] = False,
-        ) -> NoReturn: ...
-
-    @overload
-    async def send_prompt(
-            self,
-            prompt: Message | str,
-            reply: bool = True,
-            continue_handler: Literal[True] = True,
-        ) -> None: ...
     
     async def send_prompt(
             self,
@@ -374,6 +287,9 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
+        logger.info(
+            "Send Prompt"
+        )
         if isinstance(prompt, Message):
             await self._send(
                 Message(
@@ -391,25 +307,9 @@ class SendMsg:
         else:
             raise TypeError("prompt must be str or Message")
     
-    @overload
     async def send_error(
             self,
-            error: str,
-            reply: bool = True,
-            continue_handler: Literal[False] = False,
-        ) -> NoReturn: ...
-
-    @overload
-    async def send_error(
-            self,
-            error: str,
-            reply: bool = True,
-            continue_handler: Literal[True] = True,
-        ) -> None: ...
-    
-    async def send_error(
-            self,
-            error: str,
+            error: str | Exception,
             reply: bool = True,
             continue_handler: bool = False
         ):
@@ -420,6 +320,9 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
+        logger.info(
+            "Send Error"
+        )
         if isinstance(error, Exception):
             await self.send_prompt(
                 (
@@ -437,22 +340,6 @@ class SendMsg:
                 continue_handler = continue_handler
             )
     
-    @overload
-    async def send_warning(
-            self,
-            warning: str,
-            reply: bool = True,
-            continue_handler: Literal[True] = True
-        ) -> None: ...
-
-    @overload
-    async def send_warning(
-            self,
-            warning: str,
-            reply: bool = True,
-            continue_handler: Literal[False] = False
-        ) -> NoReturn: ...
-    
     async def send_warning(
             self,
             warning: str,
@@ -466,6 +353,9 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
+        logger.info(
+            "Send Warning"
+        )
         await self.send_prompt(
             (
                 f"Warning: {warning}"
@@ -473,21 +363,6 @@ class SendMsg:
             reply = reply,
             continue_handler = continue_handler
         )
-    @overload
-    async def send_text(
-            self,
-            text: str | None = None,
-            reply: bool = True,
-            continue_handler: Literal[False] = False
-        ) -> NoReturn: ...
-    
-    @overload
-    async def send_text(
-            self,
-            text: str | None = None,
-            reply: bool = True,
-            continue_handler: Literal[True] = True
-        ) -> None: ...
     
     async def send_text(
             self,
@@ -502,40 +377,21 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
+        logger.info(
+            "Send Text"
+        )
         await self._send(
             Message(text),
             reply=reply,
             continue_handler = continue_handler
         )
     
-    @overload
     async def send_mixed_render(
             self,
             text_to_render: str,
             text: str | None = None,
             prompt_mode: bool = False,
-            document_end_comments: str = "",
-            reply: bool = True,
-            continue_handler: Literal[False] = False
-        ) -> NoReturn: ...
-    
-    @overload
-    async def send_mixed_render(
-            self,
-            text_to_render: str,
-            text: str | None = None,
-            prompt_mode: bool = False,
-            document_end_comments: str = "",
-            reply: bool = True,
-            continue_handler: Literal[True] = True
-        ) -> None: ...
-    
-    async def send_mixed_render(
-            self,
-            text_to_render: str,
-            text: str | None = None,
-            prompt_mode: bool = False,
-            document_end_comments: str = "",
+            document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: bool = False
         ):
@@ -547,9 +403,12 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
+        logger.info(
+            "Send Mixed Render"
+        )
         image = await self.render_text(
             text_to_render,
-            document_end_comments = document_end_comments
+            document_bottom_comment = document_bottom_comment
         )
 
         if text is None:
@@ -577,48 +436,33 @@ class SendMsg:
                 continue_handler = continue_handler
             )
     
-    @overload
     async def send_multiple_render(
             self,
             messages: list[str | Message],
-            document_end_comments: str = "",
-            reply: bool = False,
-            continue_handler: Literal[False] = False
-        ) -> NoReturn: ...
-
-    @overload
-    async def send_multiple_render(
-            self,
-            messages: list[str | Message],
-            document_end_comments: str = "",
-            reply: bool = False,
-            continue_handler: Literal[True] = True
-        ) -> None: ...
-
-    async def send_multiple_render(
-            self,
-            messages: list[str | Message],
-            document_end_comments: str = "",
+            document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: Literal[False] = False
         ) -> None:
         """
         发送多个渲染文本
         """
+        logger.info(
+            "Send Multiple Render"
+        )
         message = Message()
         for msg in messages:
             if isinstance(msg, str):
                 message.append(
                     await self.render_text(
                         msg,
-                        document_end_comments = document_end_comments
+                        document_bottom_comment = document_bottom_comment
                     )
                 )
             elif isinstance(msg, Message):
                 message.append(
                     await self.render_text(
                         msg.extract_plain_text(),
-                        document_end_comments = document_end_comments
+                        document_bottom_comment = document_bottom_comment
                     )
                 )
         
@@ -628,28 +472,10 @@ class SendMsg:
             continue_handler = continue_handler
         )
     
-    @overload
     async def send_render(
             self,
             text: str,
-            document_end_comments: str = "",
-            reply: bool = True,
-            continue_handler: Literal[True] = True
-        ) -> None: ...
-    
-    @overload
-    async def send_render(
-            self,
-            text: str,
-            document_end_comments: str = "",
-            reply: bool = True,
-            continue_handler: Literal[False] = False
-        ) -> NoReturn: ...
-    
-    async def send_render(
-            self,
-            text: str,
-            document_end_comments: str = "",
+            document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: bool = False
         ):
@@ -660,33 +486,18 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
+        logger.info(
+            "Send Render"
+        )
         image = await self.render_text(
             text,
-            document_end_comments = document_end_comments
+            document_bottom_comment = document_bottom_comment
         )
         await self._send(
             Message(image),
             reply=reply,
             continue_handler = continue_handler
         )
-    
-    @overload
-    async def send_tts(
-            self,
-            text: str,
-            send_error_message: bool = True,
-            reply: bool = False,
-            continue_handler: Literal[False] = False
-        ) -> NoReturn: ...
-
-    @overload
-    async def send_tts(
-            self,
-            text: str,
-            send_error_message: bool = True,
-            reply: bool = False,
-            continue_handler: Literal[True] = True
-        ) -> None: ...
     
     async def send_tts(
             self,
@@ -702,6 +513,9 @@ class SendMsg:
         :param reply: 是否回复
         :param continue_handler: 是否继续处理流程
         """
+        logger.info(
+            "Send TTS"
+        )
         response = await self._chat_tts_api.text_to_speech(text)
         if response.code == 200:
             data = response.get_data()
@@ -716,34 +530,25 @@ class SendMsg:
         else:
             logger.error(f"Send TTS Error: {response.code} {response.text}")
     
-    @overload
     async def send_check_length(
             self,
             message: Message | str,
             threshold: float = 1.0,
-            document_end_comments: str = "",
-            reply: bool = True,
-            continue_handler: Literal[False] = False
-        ) -> NoReturn: ...
-    
-    @overload
-    async def send_check_length(
-            self,
-            message: Message | str,
-            threshold: float = 1.0,
-            document_end_comments: str = "",
-            reply: bool = True,
-            continue_handler: Literal[True] = True
-        ) -> None: ...
-    
-    async def send_check_length(
-            self,
-            message: Message | str,
-            threshold: float = 1.0,
-            document_end_comments: str = "",
+            document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: bool = False
         ):
+        """
+        发送长度检测后的文本
+
+        :param message: 消息
+        :param threshold: 长度阈值
+        :param reply: 是否回复
+        :param continue_handler: 是否继续处理流程
+        """
+        logger.info(
+            "Send Check Length"
+        )
         if isinstance(message, Message):
             text = message.extract_plain_text()
         elif isinstance(message, str):
@@ -754,7 +559,7 @@ class SendMsg:
         if length_score >= threshold:
             await self.send_render(
                 text,
-                document_end_comments = document_end_comments,
+                document_bottom_comment = document_bottom_comment,
                 reply = reply,
                 continue_handler = continue_handler
             )
@@ -765,34 +570,17 @@ class SendMsg:
                 continue_handler = continue_handler
             )
     
-    @overload
-    async def send_check_length_prompt(
-            self,
-            message: Message | str,
-            threshold: float = 1.0,
-            document_end_comments: bool = False,
-            reply: bool = True,
-            continue_handler: Literal[False] = False
-        ) -> NoReturn: ...
-    
-    @overload
-    async def send_check_length_prompt(
-            self,
-            message: Message | str,
-            threshold: float = 1.0,
-            document_end_comments: str = "",
-            reply: bool = True,
-            continue_handler: Literal[True] = True
-        ) -> None: ...
-    
     async def send_check_length_prompt(
             self,
             prompt: Message | str,
             threshold: float = 1.0,
-            document_end_comments: str = "",
+            document_document_bottom_comments: str = "",
             reply: bool = True,
             continue_handler: bool = False
         ):
+        logger.info(
+            "Send Check Length Prompt"
+        )
         if isinstance(prompt, Message):
             text = prompt.extract_plain_text()
         elif isinstance(prompt, str):
@@ -804,7 +592,7 @@ class SendMsg:
             await self.send_mixed_render(
                 text,
                 self.prompt_str,
-                document_end_comments = document_end_comments,
+                document_bottom_comment = document_document_bottom_comments,
                 reply = reply,
                 continue_handler = continue_handler
             )
@@ -814,22 +602,6 @@ class SendMsg:
                 reply = reply,
                 continue_handler = continue_handler
             )
-    
-    @overload
-    async def send_any(
-            self,
-            message: str | Message | MessageSegment,
-            reply: bool = True,
-            continue_handler: Literal[False] = False
-        ) -> NoReturn: ...
-
-    @overload
-    async def send_any(
-            self,
-            message: str | Message | MessageSegment,
-            reply: bool = True,
-            continue_handler: Literal[True] = True
-        ) -> None: ...
     
     async def send_any(
             self,
@@ -844,29 +616,38 @@ class SendMsg:
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
+        logger.info(
+            "Send Any"
+        )
         await self._send(
             message,
             reply=reply,
             continue_handler = continue_handler
         )
     
-    async def break_handler(self) -> NoReturn:
+    def break_handler(self) -> NoReturn:
         """
         跳出当前处理函数
         """
+        logger.info(
+            "Break handler"
+        )
         raise FinishedException
 
-    async def render_text(self, text: str, direct_output: bool = False, document_end_comments: str = "") -> MessageSegment:
+    async def render_text(self, text: str, direct_output: bool = False, document_bottom_comment: str = "") -> MessageSegment:
         """
         渲染文本
 
         :param text: 渲染文本内容
         """
+        logger.info(
+            "Render Text"
+        )
         if text:
             render_response: Response[RendedImage] = await self._text_render.render(
                 text,
                 direct_output = direct_output,
-                document_end_comments = document_end_comments
+                document_bottom_comment = document_bottom_comment
             )
             if render_response.code == 200:
                 data = render_response.get_data()
@@ -879,22 +660,6 @@ class SendMsg:
             return message
         else:
             raise ValueError("Text is empty.")
-    
-    @overload
-    async def _send(
-            self,
-            message: str | Message | MessageSegment,
-            reply: bool = True,
-            continue_handler: Literal[False] = False
-        ) -> NoReturn: ...
-    
-    @overload
-    async def _send(
-            self,
-            message: str | Message | MessageSegment,  # 消息内容，可以是字符串、Message对象或MessageSegment对象
-            reply: bool = True,  # 是否回复消息，默认为True
-            continue_handler: Literal[True] = True  # 是否继续处理消息处理器，默认为True
-        ) -> None: ...  # 异步方法，不返回任何值
     
     async def _send(
             self,
@@ -920,10 +685,7 @@ class SendMsg:
             message = send_msg
         )
         if not continue_handler:
-            logger.info(
-                "Break handler"
-            )
-            await self.break_handler()
+            self.break_handler()
     
     @staticmethod
     def text_length_score(text: str) -> float:

@@ -92,10 +92,13 @@ PS: 此处的长度评分函数并非实际算法，仅为演示使用
 ---
 
 ## 配置部署
-**推荐Python3.11以上版本安装**
+**推荐 Python3.11 ~ Python3.12 的版本安装**
 > PS: 复读机可能会兼容Python3.11以前的版本
 > 但我们并未对其进行过测试
 > 此处3.11为开发环境版本
+> 同时由于 [`PEP 594`](https://peps.python.org/pep-0594/#imghdr) 移除了一些模块
+> 因此在本组件迁移之前建议不要超过 Python3.12
+> PS: 其他微服务组件不受影响
 
 在目录下执行 `setup.bat` 或 `bash setup.sh`
 #### 使用脚手架(nb-cli)创建项目环境
@@ -321,7 +324,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `varExpand`                | `ve`     | `VarExpand`               | `VAREXPAND` | 4.0 Beta       | 变量展开                       | 文本模板                                  | 变量展开 |
 | `setDefaultModel`          | `sdm`    | `SetDefaultModel`         | `CONFIG`    | 4.0 Beta       | 设置默认模型                   | 模型UID                                   | 设置默认使用的模型 |
 | `setTopP`                  | `stp`    | `SetTopP`                 | `CONFIG`    | 4.0.1 Beta     | 设置Top_P参数                  | 0\~1的浮点数<br/>或`0%`\~`100%`的百分比    | 设置Top_P参数 |
-| `setMaxTokens`             | `stm`    | `SetMaxTokens`            | `CONFIG`    | 4.0.1 Beta     | 设置最大生成tokens数           | 整数，通常最大可达模型上下文窗口长度的一半    | 设置最大生成tokens数 |
+| `setMaxTokens`             | `smt`    | `SetMaxTokens`            | `CONFIG`    | 4.0.1 Beta     | 设置最大生成tokens数           | 整数，通常最大可达模型上下文窗口长度的一半    | 设置最大生成tokens数 |
 | `getContextTotalLength`    | `gctl`   | `GetContextTotalLength`   | `CONTEXT`   | 4.0.1 Beta     | 获取上下文总长度               | 无                                         | 获取上下文总长度 |
 | `publicSpaceChat`          | `psc`    | `PublicSpaceChat`         | `CHAT`      | 4.0.2.1 Beta   | 公共空间聊天                   | 自然语言输入                                | 公共空间聊天 |
 | `deletePublicSpaceContext` | `dpsc`   | `DeletePublicSpaceContext`| `CONTEXT`   | 4.0.2.1 Beta   | 删除公共空间上下文             | 无                                         | 删除公共空间上下文 | 
@@ -372,7 +375,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `sessionBranchCloneFrom`   | `sbcf`   | `SessionBranchCloneFrom`  | `MIXED`     | 4.3.9.3        | 所有类型从指定分支克隆        | 源分支名称                                  | 所有类型的当前活动分支从指定分支复制 |
 | `sessionBranchBind`        | `sbb`    | `SessionBranchBind`       | `MIXED`     | 4.3.9.3        | 所有类型绑定指定分支          | 目标分支名称                                | 所有类型同时创建一个新分支，硬链接到当前活动分支 |
 | `sessionBranchBindFrom`    | `sbbf`   | `SessionBranchBindFrom`   | `MIXED`     | 4.3.9.3        | 所有类型绑定指定分支          | 源分支名称                                  | 所有类型同时删除活动分支数据，并从指定分支硬链接一份活动分支文件 |
-| `#` or `/`                 | `anot`   | `Annotation`              | `RESERVED`  | 4.3.9.3        | 注释，不会执行任何操作        | 无                                         | 保留的注释命令，不执行任何操作，直接忽略内容 |
+| `#` or `/`                 | `anot`   | `Annotation`              | `RESERVED`  | 4.3.9.3        | 注释，不会执行任何操作        | 无                                         | 不执行任何操作，直接忽略内容，由于命令前缀的存在，触发需要 `/#` 或 `//` |
 | `crossUserDataAccess`      | `cuda`   | `CrossUserDataAccess`     | `CONFIG`    | 4.3.10.3       | 允许跨用户数据访问            | `true`/`false`                            | 允许跨用户数据访问，如果设置为`false`则只能访问自己的数据 |
 | `newRequestsTextOnly`      | `nrto`   | `NewRequestsTextOnly`     | `CONFIG`    | 4.3.10.7       | 忽略请求里的非文本数据        | `true`/`false`                            | 如果设置为`true`，复读机将把所有消息当成普通文本消息处理 |
 | `adaptationInfo`           | `adai`   | `AdaptationInfo`          | `VERSION`   | 4.3.10.7       | 版本适配信息                 | 无                                         | 展示服务端和客户端的版本信息 |
@@ -403,6 +406,9 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `breakChatTask`            | `bct`    | `BreakChatTask`           | `STATUS`    | 4.4.4.0        | 中止当前所有生成任务         | 无                                         | 中止当前所有生成任务，中止后模型已生成内容将不会保存和显示 |
 | `renderDocBottomComment`   | `rdbc`   | `RenderDocBottomComment`  | `CONFIG`    | 4.4.4.0        | 渲染文档底部注释             | 文本内容                                   | 在渲染图片的底部添加一小段文本 |
 | `calculateLengthScore`     | `cls`    | `CalculateLengthScore`    | `OTHER`     | 4.4.4.0        | 计算长度评分                 | 文本内容                                   | 计算给定文本的长度评分值 |
+| `fastStatisticsTemplate`   | `fts`    | `FastStatisticsTemplate`  | `CONFIG`    | 4.4.5.0        | 快速统计模板                 | 模板内容                                   | 可以在生成的图片结尾展示一些统计数据 |
+| `setMultipleModel`         | `smm`    | `SetMultipleModel`        | `CONFIG`    | 4.4.6.0        | 设置多个模型                 | *多个模型名称*                              | 设置多个模型，当访问时随机选择一个模型 |
+| `setStopKeywords`          | `ssk`    | `SetStopKeywords`         | `CONFIG`    | 4.4.6.0        | 设置停止关键词               | *多个停止关键词*                            | 当模型生成出这个词时，暂停模型生成并即刻返回结果 |
 
 PS：`CHAT`类型命令大部分都做到了支持视觉输入
 默认命令已支持全模态输入
@@ -420,6 +426,13 @@ PS：`CHAT`类型命令大部分都做到了支持视觉输入
 `NEXUS` 系列命令操作的是当前活动分支
 所以在下载前请确保你的活动分支上没有重要数据
 
+当命令需要传入多个参数时
+参数需要通过指定分隔符进行拆分
+支持的分隔符为 `|`, `,`, `;`, `/`, `\n`
+分割时会按照最先出现的一个分隔符开始分割
+即使后面出现了其他分隔符，也会作为子字符串的一部分
+而不是也当成分隔符去切割子字符串
+
 所有命令都有变体
 多单词的命令格式有：
 
@@ -429,11 +442,12 @@ PS：`CHAT`类型命令大部分都做到了支持视觉输入
 - `Upper_Snake_Case`
 - `abr` (Abridge)
 
-而单个单词的命令只有：
+而单个单词的命令有些特殊：
 
 - `lowercase`
 - `Uppercase`
 - `s` (Single Character)
+- `slbc` (Syllabic abbreviations)
 
 通常来说，如果一个新命令
 缩写与旧命令有冲突
