@@ -603,6 +603,46 @@ class SendMsg:
                 continue_handler = continue_handler
             )
     
+    async def send_chat_response(
+            self,
+            reasoning_content: str = "",
+            content: str = "",
+            reply: bool = True,
+            continue_handler: bool = False
+        ):
+        logger.info(
+            "Send Chat Response"
+        )
+        message = Message()
+        if reasoning_content:
+            message.append(
+                await self.render_text(
+                    reasoning_content,
+                )
+            )
+        
+        if content:
+            if self.text_length_score(content) >= self.text_length_score_threshold:
+                message.append(
+                    await self.render_text(
+                        content,
+                    )
+                )
+            else:
+                message.append(
+                    MessageSegment.text(content)
+                )
+        else:
+            message.append(
+                MessageSegment.text("[Message is empty]")
+            )
+
+        await self._send(
+            message,
+            reply=reply,
+            continue_handler = continue_handler
+        )
+    
     async def send_any(
             self,
             message: str | Message | MessageSegment,
