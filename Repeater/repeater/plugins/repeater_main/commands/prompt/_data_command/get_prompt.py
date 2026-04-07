@@ -22,6 +22,9 @@ async def handle_get_prompt(bot: Bot, event: MessageEvent, args: Message = Comma
     prompt_core = PromptCore(persona_info)
     response = await prompt_core.get_prompt()
     if response:
-        await send_msg.send_render(response.text)
+        if response.text:
+            await send_msg.send_render(response.text)
+        else:
+            await send_msg.send_text("[No Prompt]")
     else:
         await send_msg.send_response(response)
