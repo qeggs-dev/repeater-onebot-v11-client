@@ -33,10 +33,13 @@ async def handle_get_configs(bot: Bot, event: MessageEvent, args: Message = Comm
     config_core = ConfigCore(persona_info)
     response = await config_core.get_configs()
     if response:
-        match format_type:
-            case FormatType.JSON:
-                await send_msg.send_check_length_prompt(json.dumps(response, ensure_ascii=False, indent=4))
-            case FormatType.YAML:
-                await send_msg.send_check_length_prompt(yaml.dump(response, allow_unicode=True))
+        try:
+            match format_type:
+                case FormatType.JSON:
+                    await send_msg.send_check_length_prompt(json.dumps(response.json(), ensure_ascii=False, indent=4))
+                case FormatType.YAML:
+                    await send_msg.send_check_length_prompt(yaml.safe_dump(response.json(), allow_unicode=True))
+        except json.JSONDecodeError as e:
+            await send_msg.send_error(f"Failed to decode JSON: {e}")
     else:
         await send_msg.send_response(response, "Failed to get configs.")
