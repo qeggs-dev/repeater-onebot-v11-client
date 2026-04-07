@@ -13,7 +13,7 @@ set_max_tokens = on_command("setMaxTokens", aliases={"smt", "set_max_tokens", "S
 @set_max_tokens.handle()
 async def handle_set_max_tokens(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     persona_info = PersonaInfo(bot=bot, event=event, args=args)
-    send_msg = SendMsg("Config.Set_Max_Tokens", persona_info, set_max_tokens, None)
+    send_msg = SendMsg("Config.Set_Max_Tokens", persona_info, set_max_tokens)
 
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()

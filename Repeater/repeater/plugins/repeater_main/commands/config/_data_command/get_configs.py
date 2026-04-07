@@ -21,7 +21,7 @@ class FormatType(StrEnum):
 @get_configs.handle()
 async def handle_get_configs(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     persona_info = PersonaInfo(bot=bot, event=event, args=args)
-    send_msg = SendMsg("Config.Get_Configs", persona_info, get_configs, None)
+    send_msg = SendMsg("Config.Get_Configs", persona_info, get_configs)
 
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
