@@ -18,7 +18,7 @@ async def handle_get_last_content(bot: Bot, event: MessageEvent, args: Message =
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     else:
-        context_core = ContextCore()
+        context_core = ContextCore(persona_info)
 
         response = await context_core.get_context()
         if response.code == 200:
