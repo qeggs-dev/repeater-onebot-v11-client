@@ -19,7 +19,7 @@ async def handle_get_chat_buffer(bot: Bot, event: MessageEvent, args: Message = 
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     else:
-        chat_core = ChatCore()
+        chat_core = ChatCore(persona_info)
         response = await chat_core.get_chat_buffer()
         if response:
             buffer = response.get_data()
