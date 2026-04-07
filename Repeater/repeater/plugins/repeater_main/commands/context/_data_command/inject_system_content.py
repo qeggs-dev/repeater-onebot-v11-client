@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from ..._clients import ContextCore, ContentRole
+from ..._clients import ContextCore, ContentRole, ContentUnit
 from ....assist import PersonaInfo, SendMsg
 
 inject_system_content = on_command("injectSystemContent", aliases={"isc", "inject_system_content", "Inject_System_Content", "InjectSystemContent"}, rule=to_me(), block=True)
@@ -20,8 +20,10 @@ async def handle_inject_system_content(bot: Bot, event: MessageEvent, args: Mess
     
     context_core = ContextCore(persona_info)
     response = await context_core.inject_context(
-        content = persona_info.message_striped_str,
-        role = ContentRole.SYSTEM
+        content_unit = ContentUnit(
+            content = persona_info.message_striped_str,
+            role = ContentRole.SYSTEM
+        )
     )
 
     if response:
