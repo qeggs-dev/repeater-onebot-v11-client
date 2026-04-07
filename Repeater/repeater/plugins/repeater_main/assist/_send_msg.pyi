@@ -340,6 +340,32 @@ class SendMsg:
         ) -> None: ...
     
     @overload
+    async def send_render_prompt(
+            self,
+            text: str,
+            document_bottom_comment: str = "",
+            reply: bool = True,
+            continue_handler: Literal[False] = False
+        ) -> NoReturn: ...
+    
+    @overload
+    async def send_render_prompt(
+            self,
+            text: str,
+            document_bottom_comment: str = "",
+            reply: bool = True,
+            continue_handler: Literal[True] = True
+        ) -> None: ...
+    
+    async def send_render_prompt(
+            self,
+            text: str,
+            document_bottom_comment: str = "",
+            reply: bool = True,
+            continue_handler: bool = False
+        ): ...
+    
+    @overload
     async def send_render(
             self,
             text: str,

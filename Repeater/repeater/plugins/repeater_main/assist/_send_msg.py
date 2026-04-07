@@ -472,6 +472,31 @@ class SendMsg:
             continue_handler = continue_handler
         )
     
+    async def send_render_prompt(
+            self,
+            text: str,
+            document_bottom_comment: str = "",
+            reply: bool = True,
+            continue_handler: bool = False
+        ):
+        logger.info(
+            "Send Render Prompt"
+        )
+        image = await self.render_text(
+            text,
+            document_bottom_comment = document_bottom_comment
+        )
+        await self._send(
+            Message(
+                [
+                    self.prompt_str,
+                    image
+                ]
+            ),
+            reply=reply,
+            continue_handler = continue_handler
+        )
+    
     async def send_render(
             self,
             text: str,
