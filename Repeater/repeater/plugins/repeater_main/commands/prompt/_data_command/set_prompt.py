@@ -12,7 +12,7 @@ setprompt = on_command("setPrompt", aliases={"sp", "set_prompt", "Set_Prompt", "
 
 
 @setprompt.handle()
-async def handle_setprompt(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
+async def handle_set_prompt(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     persona_info = PersonaInfo(bot=bot, event=event, args=args)
     send_msg = SendMsg("Prompt.Set_Prompt", setprompt, persona_info)
 
