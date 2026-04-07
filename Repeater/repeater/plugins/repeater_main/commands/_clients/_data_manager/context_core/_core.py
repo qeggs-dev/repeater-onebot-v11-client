@@ -67,6 +67,22 @@ class ContextCore(UserDataCore):
         )
     # endregion
 
+    # region get context
+    async def get_context(self) -> Response[list[ContentUnit]]:
+        logger.info("Getting context")
+        response = await self._httpx_client.get(
+            f"{GET_CONTEXT_ROUTE}/{self._info.namespace_str}"
+        )
+        data = response.json()
+        if isinstance(data, list):
+            return Response(
+                response,
+                parsed_data = [ContentUnit(**data) for data in data]
+            )
+        else:
+            return Response(response)
+    # endregion
+
     # region check role structure
     async def check_role_structure(self) -> Response[RoleStructureCheckerResponse]:
         logger.info("Checking role structure")
