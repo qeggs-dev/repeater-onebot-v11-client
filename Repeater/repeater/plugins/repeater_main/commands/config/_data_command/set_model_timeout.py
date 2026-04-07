@@ -13,7 +13,7 @@ set_model_timeout = on_command("setModelTimeout", aliases={"smto", "set_model_ti
 @set_model_timeout.handle()
 async def handle_set_model_timeout(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     persona_info = PersonaInfo(bot=bot, event=event, args=args)
-    send_msg = SendMsg("Config.Set_Model_Timeout", persona_info, set_model_timeout)
+    send_msg = SendMsg("Config.Set_Model_Timeout", set_model_timeout, persona_info)
 
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
