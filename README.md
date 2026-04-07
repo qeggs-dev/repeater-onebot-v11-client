@@ -354,7 +354,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `setSaveTextOnly`          | `ssto`   | `SetSaveTextOnly`         | `CONFIG`    | 4.3.6.0        | 在保存时丢弃除文本以外的内容   | `true`/`false`                           | 设为`true`可以更快速的保存与读取，但模型将无法再获取到上下文中的附加数据 |
 | `textRender`               | `tr`     | `TextRender`              | `RENDER`    | 4.3.7.0        | Markdown 文本渲染            | Markdown 文本                             | 将 Markdown 文本渲染为图片 |
 | `getModelList`             | `gml`    | `GetModelList`            | `MODEL`     | 4.3.7.4        | 获取模型列表                 | 模型类型(目前只有`chat`)                   | 获取模型列表 |
-| `generatePrompt`           | `gp`     | `GeneratePrompt`          | `MIXED`     | 4.3.7.5        | 生成提示词                   | 角色描述                                  | 生成提示词，并自动保存到用户提示词数据中 |
+| `generatePrompt`           | `genp`   | `GeneratePrompt`          | `MIXED`     | 4.3.7.5        | 生成提示词                   | 角色描述                                  | 生成提示词，并自动保存到用户提示词数据中 |
 | `summarizeAndContract`     | `sac`    | `SummarizeAndContract`    | `CHAT`      | 4.3.7.6        | 摘要并压缩                   | 自定义提示词，可以为空                      | 摘要并压缩对话，并自动删除多余的历史记录 |
 | `contextBranchClone`       | `cbc`    | `ContextBranchClone`      | `CONTEXT`   | 4.3.9.1        | 克隆上下文分支                | 目标分支名称                               | 将当前活动分支复制到一个新的分支下 |
 | `contextBranchCloneFrom`   | `cbcf`   | `ContextBranchCloneFrom`  | `CONTEXT`   | 4.3.9.1        | 从分支克隆上下文              | 源分支名称                                 | 将指定分支复制到当前活动分支下 |
@@ -415,6 +415,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `getChatBuffer`            | `gcb`    | `GetChatBuffer`           | `STATUS`    | 4.4.8.0        | 获取聊天缓冲区               | 无                                        | 获取当前会话的聊天缓冲区 |
 | `getLastContent`           | `glc`    | `GetLastContent`          | `CONTEXT`   | 4.4.8.0        | 获取最后一条消息内容          | 无                                        | 获取当前会话的最后一条消息内容 |
 | `getConfig`                | `gcfg`   | `GetConfig`               | `CONFIG`    | 4.4.8.0        | 获取配置                     | `JSON`/`YAML`                             | 获取当前会话的配置 |
+| `getPrompt`                | `gp`     | `GetPrompt`               | `PROMPT`    | 4.4.8.0        | 获取提示词                   | 无                                        | 获取当前会话的提示词 |
 
 PS：`CHAT`类型命令大部分都做到了支持视觉输入
 默认命令已支持全模态输入
@@ -458,6 +459,7 @@ PS：`CHAT`类型命令大部分都做到了支持视觉输入
 通常来说，如果一个新命令
 缩写与旧命令有冲突
 则尽量保持旧命令不变
+除非它是基础级别的命令
 
 ---
 
