@@ -4,6 +4,7 @@ from typing import (
     Any,
     AsyncIterator
 )
+from ._chat_buffer import ChatBuffer
 from .._content_role import ContentRole
 from ._response_body import ChatResponse, StreamChatChunkResponse
 from ._break_response_body import BreakResponse
@@ -256,7 +257,26 @@ class ChatCore:
             httpx_response = response,
             model = BreakResponse
         )
-     
+    
+    async def get_chat_buffer(self) -> Response[ChatBuffer]:
+        """
+        获取当前聊天缓冲区
+        """
+        try:
+            response = await self._chat_client.get(
+                url = f"{GET_CHAT_BUFFER_ROUTE}/{self.namespace}"
+            )
+        except Exception as e:
+            logger.error(
+                "Error sending message to chat core: {error}",
+                error = e
+            )
+            return Response(model=ChatBuffer)
+
+        return Response(
+            httpx_response = response,
+            model = ChatBuffer
+        )
     
     exit_register.register()
     async def close(self):
