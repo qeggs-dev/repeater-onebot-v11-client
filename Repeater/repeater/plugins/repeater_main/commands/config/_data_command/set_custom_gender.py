@@ -1,8 +1,8 @@
 from nonebot import on_command
 from nonebot.rule import to_me
 from nonebot.params import CommandArg
-from nonebot.adapters import Messgender
-from nonebot.adapters.onebot.v11 import MessgenderEvent
+from nonebot.adapters import Message
+from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
 from ..._clients import ConfigCore
@@ -11,7 +11,7 @@ from ....assist import PersonaInfo, SendMsg, str_to_bool
 set_custom_gender = on_command("setCustomGender", aliases={"sca", "set_custom_gender", "Set_Custom_Gender", "SetCustomGender"}, rule=to_me(), block=True)
 
 @set_custom_gender.handle()
-async def handle_set_custom_gender(bot: Bot, event: MessgenderEvent, args: Messgender = CommandArg()):
+async def handle_set_custom_gender(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     persona_info = PersonaInfo(bot=bot, event=event, args=args)
     send_msg = SendMsg("Config.Set_Custom_Gender", set_custom_gender, persona_info)
 
