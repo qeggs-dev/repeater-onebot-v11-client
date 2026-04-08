@@ -23,9 +23,6 @@ async def handle_set_auto_save_context(bot: Bot, event: MessageEvent, args: Mess
     except ValueError:
         await send_msg.send_error("Not a valid boolean value")
 
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
-        config_core = ConfigCore(persona_info)
-        response = await config_core.set_config("save_context", auto_save_context)
-        await send_msg.send_response_check_code(response, f"Auto Save Context set to {auto_save_context}")
+    config_core = ConfigCore(persona_info)
+    response = await config_core.set_config("save_context", auto_save_context)
+    await send_msg.send_response_check_code(response, f"Auto Save Context set to {auto_save_context}")

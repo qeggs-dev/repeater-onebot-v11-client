@@ -19,16 +19,13 @@ async def handle_check_role_structure(bot: Bot, event: MessageEvent, args: Messa
         await send_msg.send_debug_mode()
     
     context_core = ContextCore(persona_info)
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
-        response = await context_core.check_role_structure()
+    response = await context_core.check_role_structure()
 
-        if response.code == 200:
-            data = response.get_data()
-            if data is not None:
-                await send_msg.send_prompt(data.message)
-            else:
-                await send_msg.send_prompt("Check Role Structure Data is Invalid")
+    if response.code == 200:
+        data = response.get_data()
+        if data is not None:
+            await send_msg.send_prompt(data.message)
         else:
-            await send_msg.send_response_check_code(response, "Check Role Structure Failed")
+            await send_msg.send_prompt("Check Role Structure Data is Invalid")
+    else:
+        await send_msg.send_response_check_code(response, "Check Role Structure Failed")

@@ -19,25 +19,22 @@ async def handle_config_branchs_list(bot: Bot, event: MessageEvent, args: Messag
         await send_msg.send_debug_mode()
     
     config_core = ConfigCore(persona_info)
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
-        response = await config_core.get_branch_list()
-        if response.code == 200:
-            data = response.json()
-            if not isinstance(data, list):
-                await send_msg.send_error("Unable to process data.")
+    response = await config_core.get_branch_list()
+    if response.code == 200:
+        data = response.json()
+        if not isinstance(data, list):
+            await send_msg.send_error("Unable to process data.")
 
-            text_buffer: list[str] = []
-            text_buffer.append(f"Branch Type: Config")
-            text_buffer.append(f"User Name: {persona_info.display_name}")
-            if data:
-                text_buffer.append("Branchs:")
-                for branch_id in data:
-                    text_buffer.append(f"  - {branch_id}")
-            else:
-                text_buffer.append("No branchs found.")
-
-            await send_msg.send_check_length_prompt("\n".join(text_buffer))
+        text_buffer: list[str] = []
+        text_buffer.append(f"Branch Type: Config")
+        text_buffer.append(f"User Name: {persona_info.display_name}")
+        if data:
+            text_buffer.append("Branchs:")
+            for branch_id in data:
+                text_buffer.append(f"  - {branch_id}")
         else:
-            await send_msg.send_response_check_code(response, "Get Config branch list failed")
+            text_buffer.append("No branchs found.")
+
+        await send_msg.send_check_length_prompt("\n".join(text_buffer))
+    else:
+        await send_msg.send_response_check_code(response, "Get Config branch list failed")

@@ -21,8 +21,5 @@ async def handle_context_branch_bind(bot: Bot, event: MessageEvent, args: Messag
     msg = args.extract_plain_text().strip()
     
     context_core = ContextCore(persona_info)
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
-        response = await context_core.bind(msg)
-        await send_msg.send_response_check_code(response, f"Bind Context Branch to {msg}")
+    response = await context_core.bind(msg)
+    await send_msg.send_response_check_code(response, f"Bind Context Branch to {msg}")

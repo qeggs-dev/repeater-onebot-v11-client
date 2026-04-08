@@ -24,9 +24,6 @@ async def handle_set_remove_reasoning_prompt(bot: Bot, event: MessageEvent, args
         await send_msg.send_error("Not a valid boolean value")
     
     config_core = ConfigCore(persona_info)
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
-        response = await config_core.set_config("remove_reasoning_prompt", remove_reasoning_prompt)
-        await send_msg.send_response_check_code(response, f"Set Remove Reasoning Prompt to {remove_reasoning_prompt}")
+    response = await config_core.set_config("remove_reasoning_prompt", remove_reasoning_prompt)
+    await send_msg.send_response_check_code(response, f"Set Remove Reasoning Prompt to {remove_reasoning_prompt}")
         

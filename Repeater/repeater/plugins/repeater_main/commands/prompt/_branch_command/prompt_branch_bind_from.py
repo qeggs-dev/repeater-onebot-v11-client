@@ -21,8 +21,5 @@ async def handle_prompt_branch_bind_from(bot: Bot, event: MessageEvent, args: Me
     msg = args.extract_plain_text().strip()
     
     prompt_core = PromptCore(persona_info)
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
-        response = await prompt_core.bind_from(msg)
-        await send_msg.send_response_check_code(response, f"Bind Prompt Branch from {msg}")
+    response = await prompt_core.bind_from(msg)
+    await send_msg.send_response_check_code(response, f"Bind Prompt Branch from {msg}")

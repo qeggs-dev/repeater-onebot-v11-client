@@ -22,8 +22,5 @@ async def handle_set_prompt(bot: Bot, event: MessageEvent, args: Message = Comma
     msg = persona_info.message_striped_str
     
     prompt_core = PromptCore(persona_info)
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
-        response = await prompt_core.set_prompt(msg)
-        await send_msg.send_response_check_code(response, f"Set Prompt {'successfully' if response.code == 200 else 'failed'}")
+    response = await prompt_core.set_prompt(msg)
+    await send_msg.send_response_check_code(response, f"Set Prompt {'successfully' if response.code == 200 else 'failed'}")

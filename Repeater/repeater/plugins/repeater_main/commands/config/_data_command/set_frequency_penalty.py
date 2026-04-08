@@ -33,9 +33,6 @@ async def handle_set_frequency_penalty(bot: Bot, event: MessageEvent, args: Mess
 
 
     config_core = ConfigCore(persona_info)
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
-        response = await config_core.set_config("frequency_penalty", frequency_penalty)
-        await send_msg.send_response_check_code(response, f"Set Frequency_Penalty to {frequency_penalty}")
+    response = await config_core.set_config("frequency_penalty", frequency_penalty)
+    await send_msg.send_response_check_code(response, f"Set Frequency_Penalty to {frequency_penalty}")
         

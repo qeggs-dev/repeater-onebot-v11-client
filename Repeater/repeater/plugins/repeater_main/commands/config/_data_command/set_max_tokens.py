@@ -30,8 +30,5 @@ async def handle_set_max_tokens(bot: Bot, event: MessageEvent, args: Message = C
 
 
     config_core = ConfigCore(persona_info)
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
-        response = await config_core.set_config("max_tokens", max_tokens)
-        await send_msg.send_response_check_code(response, f"Set Max_Tokens to {max_tokens}")
+    response = await config_core.set_config("max_tokens", max_tokens)
+    await send_msg.send_response_check_code(response, f"Set Max_Tokens to {max_tokens}")

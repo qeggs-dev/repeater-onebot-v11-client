@@ -32,8 +32,5 @@ async def handle_set_temperature(bot: Bot, event: MessageEvent, args: Message = 
         await send_msg.send_error("Temperature is set incorrectly. Please enter a floating-point number or percentage between 0 and 2!")
 
     config_core = ConfigCore(persona_info)
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
-        response = await config_core.set_config("temperature", temperature)
-        await send_msg.send_response_check_code(response, f"Set Temperature to {temperature}")
+    response = await config_core.set_config("temperature", temperature)
+    await send_msg.send_response_check_code(response, f"Set Temperature to {temperature}")

@@ -27,18 +27,15 @@ async def handle_context_upload_to_nexus(bot: Bot, event: MessageEvent, args: Me
         except ValueError:
             await send_msg.send_error("Invalid timeout value")
 
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
-        response = await context_core.upload_to_nexus(timeout)
+    response = await context_core.upload_to_nexus(timeout)
 
-        if response.code == 200:
-            data = response.get_data()
-            if data is None:
-                await send_msg.send_error("Unable to process data.")
-            else:
-                await send_msg.send_prompt(
-                    f"Upload successful.\nFile ID: {data.resource_uuid}"
-                )
+    if response.code == 200:
+        data = response.get_data()
+        if data is None:
+            await send_msg.send_error("Unable to process data.")
         else:
-            await send_msg.send_response_check_code(response, "Unable to upload context to Nexus.")
+            await send_msg.send_prompt(
+                f"Upload successful.\nFile ID: {data.resource_uuid}"
+            )
+    else:
+        await send_msg.send_response_check_code(response, "Unable to upload context to Nexus.")

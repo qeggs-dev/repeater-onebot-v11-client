@@ -21,8 +21,5 @@ async def handle_set_render_style(bot: Bot, event: MessageEvent, args: Message =
     msg = persona_info.message_striped_str
 
     config_core = ConfigCore(persona_info)
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
-        response = await config_core.set_config("render_style", msg)
-        await send_msg.send_response_check_code(response, f"Set Render_Style to {msg}")
+    response = await config_core.set_config("render_style", msg)
+    await send_msg.send_response_check_code(response, f"Set Render_Style to {msg}")
