@@ -416,6 +416,8 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `getLastContent`           | `glc`    | `GetLastContent`          | `CONTEXT`   | 4.4.8.0        | 获取最后一条消息内容          | 无                                        | 获取当前会话的最后一条消息内容 |
 | `getConfig`                | `gcfg`   | `GetConfig`               | `CONFIG`    | 4.4.8.0        | 获取配置                     | `JSON`/`YAML`                             | 获取当前会话的配置 |
 | `getPrompt`                | `gp`     | `GetPrompt`               | `PROMPT`    | 4.4.8.0        | 获取提示词                   | 无                                        | 获取当前会话的提示词 |
+| `setCustomAge`             | `sca`    | `SetCustomAge`            | `CONFIG`    | 4.4.9.0        | 设置自定义年龄               | 年龄                                       | 设置自定义年龄 (需要提示词支持) |
+| `setCustomGender`          | `scg`    | `SetCustomGender`         | `CONFIG`    | 4.4.9.0        | 设置自定义性别               | 性别                                       | 设置自定义性别 (需要提示词支持) |
 
 PS：`CHAT`类型命令大部分都做到了支持视觉输入
 默认命令已支持全模态输入
