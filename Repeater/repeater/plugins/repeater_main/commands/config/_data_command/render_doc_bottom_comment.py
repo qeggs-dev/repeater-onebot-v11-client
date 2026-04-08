@@ -13,7 +13,7 @@ render_doc_bottom_comment = on_command("renderDocBottomComment", aliases={"rdbc"
 @render_doc_bottom_comment.handle()
 async def handle_render_doc_bottom_comment(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     persona_info = PersonaInfo(bot=bot, event=event, args=args)
-    send_msg = SendMsg("Config.Render_Doc_Bottom_Comment", persona_info, render_doc_bottom_comment, None)
+    send_msg = SendMsg("Config.Render_Doc_Bottom_Comment", render_doc_bottom_comment, persona_info)
 
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()

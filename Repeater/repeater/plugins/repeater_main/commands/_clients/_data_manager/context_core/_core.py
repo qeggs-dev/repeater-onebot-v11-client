@@ -14,7 +14,7 @@ from ._response import (
     RoleStructureCheckerResponse
 )
 from .._base_user_data_core import UserDataCore
-from ..._content_role import ContentRole
+from ._content_unit import ContentUnit
 
 logger = base_logger.bind(module = "Context.Core")
 
@@ -30,18 +30,12 @@ class ContextCore(UserDataCore):
     # region inject context
     async def inject_context(
             self,
-            reasoning_content: str = "",
-            content: str = "",
-            role: ContentRole = ContentRole.USER
+            content_unit: ContentUnit,
         ) -> Response[None]:
-        logger.info("Injecting {role} context", role = content)
+        logger.info("Injecting {role} context", role = content_unit.role)
         response = await self._httpx_client.post(
             f"{INJECT_CONTEXT_ROUTE}/{self._info.namespace_str}",
-            json = {
-                "reasoning_content": reasoning_content,
-                "content": content,
-                "role": role.value
-            }
+            json = content_unit.model_dump(),
         )
         return Response(response)
     # endregion
@@ -71,6 +65,22 @@ class ContextCore(UserDataCore):
             response,
             model = ContextTotalLengthResponse
         )
+    # endregion
+
+    # region get context
+    async def get_context(self) -> Response[list[ContentUnit]]:
+        logger.info("Getting context")
+        response = await self._httpx_client.get(
+            f"{GET_CONTEXT_ROUTE}/{self._info.namespace_str}"
+        )
+        data = response.json()
+        if isinstance(data, list):
+            return Response(
+                response,
+                parsed_data = [ContentUnit(**data) for data in data]
+            )
+        else:
+            return Response(response)
     # endregion
 
     # region check role structure

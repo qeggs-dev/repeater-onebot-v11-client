@@ -412,6 +412,9 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `injectUserContent`        | `iuc`    | `InjectUserContent`       | `CONTEXT`   | 4.4.7.0        | 注入用户消息内容             | 消息内容                                   | 插入用户消息内容 |
 | `injectAssistantContent`   | `iac`    | `InjectAssistantContent`  | `CONTEXT`   | 4.4.7.0        | 插入 AI 消息内容             | 消息内容                                   | 插入 AI 消息内容 |
 | `injectSystemContent`      | `isc`    | `InjectSystemContent`     | `CONTEXT`   | 4.4.7.0        | 插入系统消息内容             | 消息内容                                   | 插入系统消息内容 |
+| `getChatBuffer`            | `gcb`    | `GetChatBuffer`           | `STATUS`    | 4.4.8.0        | 获取聊天缓冲区               | 无                                        | 获取当前会话的聊天缓冲区 |
+| `getLastContent`           | `glc`    | `GetLastContent`          | `CONTEXT`   | 4.4.8.0        | 获取最后一条消息内容          | 无                                        | 获取当前会话的最后一条消息内容 |
+| `getConfig`                | `gcfg`   | `GetConfig`               | `CONFIG`    | 4.4.8.0        | 获取配置                     | `JSON`/`YAML`                             | 获取当前会话的配置 |
 
 PS：`CHAT`类型命令大部分都做到了支持视觉输入
 默认命令已支持全模态输入

@@ -9,6 +9,7 @@ from ._data_command.change_default_personality import handle_change_default_pers
 from ._data_command.cross_user_data_access import handle_cross_user_data_access
 from ._data_command.custom_name import handle_set_custom_name
 from ._data_command.fast_statistics_template import handle_fast_statistics_template
+from ._data_command.get_configs import handle_get_configs
 from ._data_command.new_requests_text_only import handle_new_requests_text_only
 from ._data_command.remove_resoning_prompt import handle_set_remove_reasoning_prompt
 from ._data_command.render_doc_bottom_comment import handle_render_doc_bottom_comment
@@ -49,6 +50,7 @@ __all__ = [
     "handle_cross_user_data_access",
     "handle_set_custom_name",
     "handle_fast_statistics_template",
+    "handle_get_configs",
     "handle_new_requests_text_only",
     "handle_set_remove_reasoning_prompt",
     "handle_render_doc_bottom_comment",

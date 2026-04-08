@@ -62,7 +62,7 @@ class ConfigCore(UserDataCore):
     # endregion
 
     # region get config
-    async def get_config(self) -> Response[Any | None]:
+    async def get_configs(self) -> Response[Any | None]:
         logger.info("Get {user} configs", user=self._info.namespace_str)
         response = await self._httpx_client.get(
             f"{GET_CONFIG_ROUTE}/{self._info.namespace_str}"
