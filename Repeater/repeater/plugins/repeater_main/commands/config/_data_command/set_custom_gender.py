@@ -8,7 +8,7 @@ from nonebot.adapters import Bot
 from ..._clients import ConfigCore
 from ....assist import PersonaInfo, SendMsg, str_to_bool
 
-set_custom_gender = on_command("setCustomGender", aliases={"sca", "set_custom_gender", "Set_Custom_Gender", "SetCustomGender"}, rule=to_me(), block=True)
+set_custom_gender = on_command("setCustomGender", aliases={"scg", "set_custom_gender", "Set_Custom_Gender", "SetCustomGender"}, rule=to_me(), block=True)
 
 @set_custom_gender.handle()
 async def handle_set_custom_gender(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
