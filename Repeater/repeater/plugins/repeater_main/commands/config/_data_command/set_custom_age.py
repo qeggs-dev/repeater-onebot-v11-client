@@ -15,9 +15,19 @@ async def handle_set_custom_age(bot: Bot, event: MessageEvent, args: Message = C
     persona_info = PersonaInfo(bot=bot, event=event, args=args)
     send_msg = SendMsg("Config.Set_Custom_Age", set_custom_age, persona_info)
 
+    msg = persona_info.message_striped_str
+
+    try:
+        age = int(msg)
+    except ValueError:
+        try:
+            age = float(msg)
+        except ValueError:
+            await send_msg.send_error("Please input a number.")
+
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     else:
         config_core = ConfigCore(persona_info)
-        response = await config_core.set_config("user_age", persona_info.message_striped_str)
+        response = await config_core.set_config("user_age", age)
         await send_msg.send_response_check_code(response, f"Custom Age seted")
