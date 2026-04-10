@@ -406,7 +406,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `breakChatTask`            | `bct`    | `BreakChatTask`           | `STATUS`    | 4.4.4.0        | 中止当前所有生成任务         | 无                                         | 中止当前所有生成任务，中止后模型已生成内容将不会保存和显示 |
 | `renderDocBottomComment`   | `rdbc`   | `RenderDocBottomComment`  | `CONFIG`    | 4.4.4.0        | 渲染文档底部注释             | 文本内容                                   | 在渲染图片的底部添加一小段文本 |
 | `calculateLengthScore`     | `cls`    | `CalculateLengthScore`    | `OTHER`     | 4.4.4.0        | 计算长度评分                 | 文本内容                                   | 计算给定文本的长度评分值 |
-| `fastStatisticsTemplate`   | `fts`    | `FastStatisticsTemplate`  | `CONFIG`    | 4.4.5.0        | 快速统计模板                 | 模板内容                                   | 可以在生成的图片结尾展示一些统计数据 |
+| `fastStatisticsTemplate`   | `fst`    | `FastStatisticsTemplate`  | `CONFIG`    | 4.4.5.0        | 快速统计模板                 | 模板内容                                   | 可以在生成的图片结尾展示一些统计数据 |
 | `setMultipleModel`         | `smm`    | `SetMultipleModel`        | `CONFIG`    | 4.4.6.0        | 设置多个模型                 | *多个模型名称*                              | 设置多个模型，当访问时随机选择一个模型 |
 | `setStopKeywords`          | `ssk`    | `SetStopKeywords`         | `CONFIG`    | 4.4.6.0        | 设置停止关键词               | *多个停止关键词*                            | 当模型生成出这个词时，暂停模型生成并即刻返回结果 |
 | `injectUserContent`        | `iuc`    | `InjectUserContent`       | `CONTEXT`   | 4.4.7.0        | 注入用户消息内容             | 消息内容                                   | 插入用户消息内容 |
