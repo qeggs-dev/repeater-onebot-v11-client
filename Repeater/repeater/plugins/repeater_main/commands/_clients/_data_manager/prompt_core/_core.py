@@ -32,3 +32,12 @@ class PromptCore(UserDataCore):
         )
         return Response(response)
     # endregion
+    
+    # region get prompt  
+    async def get_prompt(self) -> Response[str]:
+        logger.info("Getting prompt")
+        response = await self._httpx_client.get(
+            f"{GET_PROMPT_ROUTE}/{self._info.namespace_str}"
+        )
+        return Response(response)
+    # endregion

@@ -24,9 +24,5 @@ async def handle_new_requests_text_only(bot: Bot, event: MessageEvent, args: Mes
         await send_msg.send_error("Not a valid boolean value")
     
     config_core = ConfigCore(persona_info)
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
-        response = await config_core.set_config("new_requests_text_only", new_requests_text_only)
-        await send_msg.send_response_check_code(response, f"Set New Requests Text Only to {new_requests_text_only}")
-        
+    response = await config_core.set_config("new_requests_text_only", new_requests_text_only)
+    await send_msg.send_response_check_code(response, f"Set New Requests Text Only to {new_requests_text_only}")

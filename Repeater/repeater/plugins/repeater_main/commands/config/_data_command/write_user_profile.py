@@ -18,9 +18,6 @@ async def handle_write_user_profile(bot: Bot, event: MessageEvent, args: Message
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
 
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
-        config_core = ConfigCore(persona_info)
-        response = await config_core.set_config("user_profile", persona_info.message_striped_str)
-        await send_msg.send_response_check_code(response, f"User Profile seted")
+    config_core = ConfigCore(persona_info)
+    response = await config_core.set_config("user_profile", persona_info.message_striped_str)
+    await send_msg.send_response_check_code(response, f"User Profile seted")

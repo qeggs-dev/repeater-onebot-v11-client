@@ -21,11 +21,8 @@ async def handle_var_expand_image(bot: Bot, event: MessageEvent, args: Message =
     msg = args.extract_plain_text().strip()
 
     variable_expansion_core = VariableExpansionCore(persona_info)
-    if send_msg.is_debug_mode:
-        send_msg.send_debug_mode()
+    response = await variable_expansion_core.expand_variable(text=msg)
+    if response.code == 200:
+        await send_msg.send_render(response.text)
     else:
-        response = await variable_expansion_core.expand_variable(text=msg)
-        if response.code == 200:
-            await send_msg.send_render(response.text)
-        else:
-            await send_msg.send_response_check_code(response)
+        await send_msg.send_response_check_code(response)

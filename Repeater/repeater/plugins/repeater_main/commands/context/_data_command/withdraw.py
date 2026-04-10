@@ -19,30 +19,27 @@ async def handle_withdraw(bot: Bot, event: MessageEvent, args: Message = Command
         await send_msg.send_debug_mode()
 
     context_core = ContextCore(persona_info)
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
+    if persona_info.args_str:
+        try:
+            num = int(persona_info.args_str)
+        except ValueError:
+            await send_msg.send_error("Please input a valid number")
+        
+        if num < 1:
+            await send_msg.send_error("Please input a number greater than 0")
     else:
-        if persona_info.args_str:
-            try:
-                num = int(persona_info.args_str)
-            except ValueError:
-                await send_msg.send_error("Please input a valid number")
-            
-            if num < 1:
-                await send_msg.send_error("Please input a number greater than 0")
-        else:
-            num = 1
+        num = 1
 
-        response = await context_core.withdraw(num)
+    response = await context_core.withdraw(num)
 
-        if response.code == 200:
-            data = response.get_data()
-            if data is None:
-                await send_msg.send_error("Unable to process data.")
-            await send_msg.send_prompt(
-                f"Deleted: {data.deleted}\n"
-                f"Remaining: {len(data.context)}\n"
-            )
-            
-        else:
-            await send_msg.send_response_check_code(response, "Withdraw Failed")
+    if response.code == 200:
+        data = response.get_data()
+        if data is None:
+            await send_msg.send_error("Unable to process data.")
+        await send_msg.send_prompt(
+            f"Deleted: {data.deleted}\n"
+            f"Remaining: {len(data.context)}\n"
+        )
+        
+    else:
+        await send_msg.send_response_check_code(response, "Withdraw Failed")

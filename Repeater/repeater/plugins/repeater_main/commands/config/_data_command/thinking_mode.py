@@ -23,10 +23,7 @@ async def handle_thinking_mode(bot: Bot, event: MessageEvent, args: Message = Co
     except ValueError:
         await send_msg.send_error("Not a valid value")
 
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
-        config_core = ConfigCore(persona_info)
-        response = await config_core.set_config("thinking", thinking)
-        thinking_mode_str = "enabled" if thinking else "disabled"
-        await send_msg.send_response_check_code(response, f"Thinking Mode is {thinking_mode_str}")
+    config_core = ConfigCore(persona_info)
+    response = await config_core.set_config("thinking", thinking)
+    thinking_mode_str = "enabled" if thinking else "disabled"
+    await send_msg.send_response_check_code(response, f"Thinking Mode is {thinking_mode_str}")

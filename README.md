@@ -354,7 +354,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `setSaveTextOnly`          | `ssto`   | `SetSaveTextOnly`         | `CONFIG`    | 4.3.6.0        | 在保存时丢弃除文本以外的内容   | `true`/`false`                           | 设为`true`可以更快速的保存与读取，但模型将无法再获取到上下文中的附加数据 |
 | `textRender`               | `tr`     | `TextRender`              | `RENDER`    | 4.3.7.0        | Markdown 文本渲染            | Markdown 文本                             | 将 Markdown 文本渲染为图片 |
 | `getModelList`             | `gml`    | `GetModelList`            | `MODEL`     | 4.3.7.4        | 获取模型列表                 | 模型类型(目前只有`chat`)                   | 获取模型列表 |
-| `generatePrompt`           | `gp`     | `GeneratePrompt`          | `MIXED`     | 4.3.7.5        | 生成提示词                   | 角色描述                                  | 生成提示词，并自动保存到用户提示词数据中 |
+| `generatePrompt`           | `genp`   | `GeneratePrompt`          | `MIXED`     | 4.3.7.5        | 生成提示词                   | 角色描述                                  | 生成提示词，并自动保存到用户提示词数据中 |
 | `summarizeAndContract`     | `sac`    | `SummarizeAndContract`    | `CHAT`      | 4.3.7.6        | 摘要并压缩                   | 自定义提示词，可以为空                      | 摘要并压缩对话，并自动删除多余的历史记录 |
 | `contextBranchClone`       | `cbc`    | `ContextBranchClone`      | `CONTEXT`   | 4.3.9.1        | 克隆上下文分支                | 目标分支名称                               | 将当前活动分支复制到一个新的分支下 |
 | `contextBranchCloneFrom`   | `cbcf`   | `ContextBranchCloneFrom`  | `CONTEXT`   | 4.3.9.1        | 从分支克隆上下文              | 源分支名称                                 | 将指定分支复制到当前活动分支下 |
@@ -406,7 +406,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `breakChatTask`            | `bct`    | `BreakChatTask`           | `STATUS`    | 4.4.4.0        | 中止当前所有生成任务         | 无                                         | 中止当前所有生成任务，中止后模型已生成内容将不会保存和显示 |
 | `renderDocBottomComment`   | `rdbc`   | `RenderDocBottomComment`  | `CONFIG`    | 4.4.4.0        | 渲染文档底部注释             | 文本内容                                   | 在渲染图片的底部添加一小段文本 |
 | `calculateLengthScore`     | `cls`    | `CalculateLengthScore`    | `OTHER`     | 4.4.4.0        | 计算长度评分                 | 文本内容                                   | 计算给定文本的长度评分值 |
-| `fastStatisticsTemplate`   | `fts`    | `FastStatisticsTemplate`  | `CONFIG`    | 4.4.5.0        | 快速统计模板                 | 模板内容                                   | 可以在生成的图片结尾展示一些统计数据 |
+| `fastStatisticsTemplate`   | `fst`    | `FastStatisticsTemplate`  | `CONFIG`    | 4.4.5.0        | 快速统计模板                 | 模板内容                                   | 可以在生成的图片结尾展示一些统计数据 |
 | `setMultipleModel`         | `smm`    | `SetMultipleModel`        | `CONFIG`    | 4.4.6.0        | 设置多个模型                 | *多个模型名称*                              | 设置多个模型，当访问时随机选择一个模型 |
 | `setStopKeywords`          | `ssk`    | `SetStopKeywords`         | `CONFIG`    | 4.4.6.0        | 设置停止关键词               | *多个停止关键词*                            | 当模型生成出这个词时，暂停模型生成并即刻返回结果 |
 | `injectUserContent`        | `iuc`    | `InjectUserContent`       | `CONTEXT`   | 4.4.7.0        | 注入用户消息内容             | 消息内容                                   | 插入用户消息内容 |
@@ -415,6 +415,9 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `getChatBuffer`            | `gcb`    | `GetChatBuffer`           | `STATUS`    | 4.4.8.0        | 获取聊天缓冲区               | 无                                        | 获取当前会话的聊天缓冲区 |
 | `getLastContent`           | `glc`    | `GetLastContent`          | `CONTEXT`   | 4.4.8.0        | 获取最后一条消息内容          | 无                                        | 获取当前会话的最后一条消息内容 |
 | `getConfig`                | `gcfg`   | `GetConfig`               | `CONFIG`    | 4.4.8.0        | 获取配置                     | `JSON`/`YAML`                             | 获取当前会话的配置 |
+| `getPrompt`                | `gp`     | `GetPrompt`               | `PROMPT`    | 4.4.8.0        | 获取提示词                   | 无                                        | 获取当前会话的提示词 |
+| `setCustomAge`             | `sca`    | `SetCustomAge`            | `CONFIG`    | 4.4.9.0        | 设置自定义年龄               | 年龄                                       | 设置自定义年龄 (需要提示词支持) |
+| `setCustomGender`          | `scg`    | `SetCustomGender`         | `CONFIG`    | 4.4.9.0        | 设置自定义性别               | 性别                                       | 设置自定义性别 (需要提示词支持) |
 
 PS：`CHAT`类型命令大部分都做到了支持视觉输入
 默认命令已支持全模态输入
@@ -458,6 +461,7 @@ PS：`CHAT`类型命令大部分都做到了支持视觉输入
 通常来说，如果一个新命令
 缩写与旧命令有冲突
 则尽量保持旧命令不变
+除非它是基础级别的命令
 
 ---
 

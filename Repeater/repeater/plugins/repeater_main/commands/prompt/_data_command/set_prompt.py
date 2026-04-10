@@ -12,7 +12,7 @@ setprompt = on_command("setPrompt", aliases={"sp", "set_prompt", "Set_Prompt", "
 
 
 @setprompt.handle()
-async def handle_setprompt(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
+async def handle_set_prompt(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     persona_info = PersonaInfo(bot=bot, event=event, args=args)
     send_msg = SendMsg("Prompt.Set_Prompt", setprompt, persona_info)
 
@@ -22,8 +22,5 @@ async def handle_setprompt(bot: Bot, event: MessageEvent, args: Message = Comman
     msg = persona_info.message_striped_str
     
     prompt_core = PromptCore(persona_info)
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
-        response = await prompt_core.set_prompt(msg)
-        await send_msg.send_response_check_code(response, f"Set Prompt {'successfully' if response.code == 200 else 'failed'}")
+    response = await prompt_core.set_prompt(msg)
+    await send_msg.send_response_check_code(response, f"Set Prompt {'successfully' if response.code == 200 else 'failed'}")

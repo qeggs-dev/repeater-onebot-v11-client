@@ -32,9 +32,5 @@ async def handle_set_top_p(bot: Bot, event: MessageEvent, args: Message = Comman
         await send_msg.send_error("Top_P setting error, please enter a floating-point number or percentage between 0 and 1!")
 
     config_core = ConfigCore(persona_info)
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
-        response = await config_core.set_config("top_p", top_p)
-
-        await send_msg.send_response_check_code(response, f"Set Top_P to {top_p}")
+    response = await config_core.set_config("top_p", top_p)
+    await send_msg.send_response_check_code(response, f"Set Top_P to {top_p}")

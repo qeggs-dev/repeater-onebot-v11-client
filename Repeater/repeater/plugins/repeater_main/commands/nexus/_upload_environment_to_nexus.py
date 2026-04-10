@@ -27,18 +27,15 @@ async def handle_environment_upload_to_nexus(bot: Bot, event: MessageEvent, args
         except ValueError:
             await send_msg.send_error("Invalid timeout value")
 
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
-        response = await nexus_core.upload_environment_to_nexus(timeout)
+    response = await nexus_core.upload_environment_to_nexus(timeout)
 
-        if response.code == 200:
-            data = response.get_data()
-            if data is None:
-                await send_msg.send_error("Unable to process data.")
-            else:
-                await send_msg.send_prompt(
-                    f"Upload successful.\nFile ID: {data.resource_uuid}"
-                )
+    if response.code == 200:
+        data = response.get_data()
+        if data is None:
+            await send_msg.send_error("Unable to process data.")
         else:
-            await send_msg.send_response_check_code(response, "Unable to upload environment to Nexus.")
+            await send_msg.send_prompt(
+                f"Upload successful.\nFile ID: {data.resource_uuid}"
+            )
+    else:
+        await send_msg.send_response_check_code(response, "Unable to upload environment to Nexus.")

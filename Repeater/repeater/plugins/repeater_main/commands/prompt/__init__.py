@@ -1,4 +1,5 @@
-from ._data_command.set_prompt import handle_setprompt
+from ._data_command.set_prompt import handle_set_prompt
+from ._data_command.get_prompt import handle_get_prompt
 
 from ._branch_command.del_prompt import handle_delete_prompt
 from ._branch_command.change_prompt_branch import handle_change_prompt_branch
@@ -13,8 +14,9 @@ from ._nexus_command._upload_to_nexus import handle_prompt_upload_to_nexus
 from ._nexus_command._download_from_nexus import handle_prompt_download_from_nexus
 
 __all__ = [
+    "handle_set_prompt",
+    "handle_get_prompt",
     "handle_delete_prompt",
-    "handle_setprompt",
     "handle_change_prompt_branch",
     "handle_prompt_branch_clone",
     "handle_prompt_branch_clone_from",

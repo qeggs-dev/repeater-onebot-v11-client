@@ -23,15 +23,13 @@ async def handle_session_branch_clone(bot: Bot, event: MessageEvent, args: Messa
     context_core = ContextCore(persona_info)
     prompt_core = PromptCore(persona_info)
     config_core = ConfigCore(persona_info)
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
-        context_response = await context_core.clone(msg)
-        prompt_response = await prompt_core.clone(msg)
-        config_response = await config_core.clone(msg)
 
-        await send_msg.send_multiple_responses(
-            (context_response, "Context"),
-            (prompt_response, "Prompt"),
-            (config_response, "Config"),
-        )
+    context_response = await context_core.clone(msg)
+    prompt_response = await prompt_core.clone(msg)
+    config_response = await config_core.clone(msg)
+
+    await send_msg.send_multiple_responses(
+        (context_response, "Context"),
+        (prompt_response, "Prompt"),
+        (config_response, "Config"),
+    )

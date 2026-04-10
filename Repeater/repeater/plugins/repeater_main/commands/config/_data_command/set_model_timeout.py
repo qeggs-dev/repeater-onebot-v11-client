@@ -30,8 +30,5 @@ async def handle_set_model_timeout(bot: Bot, event: MessageEvent, args: Message 
             await send_msg.send_error("Set_Model_Timeout setting is incorrect, please enter an integer!")
 
     config_core = ConfigCore(persona_info)
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
-        response = await config_core.set_config("model_timeout", model_timeout)
-        await send_msg.send_response_check_code(response, f"Set Model Timeout to {model_timeout}")
+    response = await config_core.set_config("model_timeout", model_timeout)
+    await send_msg.send_response_check_code(response, f"Set Model Timeout to {model_timeout}")

@@ -21,8 +21,5 @@ async def handle_prompt_branch_clone_from(bot: Bot, event: MessageEvent, args: M
     msg = args.extract_plain_text().strip()
     
     prompt_core = PromptCore(persona_info)
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
-        response = await prompt_core.clone_from(msg)
-        await send_msg.send_response_check_code(response, f"Clone Prompt Branch from {msg}")
+    response = await prompt_core.clone_from(msg)
+    await send_msg.send_response_check_code(response, f"Clone Prompt Branch from {msg}")
