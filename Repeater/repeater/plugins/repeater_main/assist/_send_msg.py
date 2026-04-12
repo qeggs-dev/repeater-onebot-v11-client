@@ -742,13 +742,24 @@ class SendMsg:
         send_msg = self._prefix + message
         if reply:
             send_msg = self._persona_info.reply + send_msg
-        await self.limit_speed.submit(
-            self._matcher.send(send_msg)
-        )
         logger.info(
             "Send message: \n{message}",
             message = send_msg
         )
+        try:
+            await self.limit_speed.submit(
+                self._matcher.send(send_msg)
+            )
+        except Exception as error:
+            logger.error(
+                "Message Send Failed: \n{error}",
+                error = error
+            )
+            await self.limit_speed.submit(
+                self._matcher.send(
+                    f"Message Send Failed: \n{error}"
+                )
+            )
         if not continue_handler:
             self.break_handler()
     
