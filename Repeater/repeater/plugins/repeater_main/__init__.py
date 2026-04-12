@@ -49,5 +49,8 @@ from .commands.adaptation import handle_adaptation
 # === Calculate Length Score === #
 from .commands.calculate_length_score import handle_calculate_length_score
 
+# === Send Any Message === #
+from .commands.send_msg import handle_send_message
+
 # === Adaptation Info === #
 from ._adaptation_info import __adaptation__, __adaptation_text__
