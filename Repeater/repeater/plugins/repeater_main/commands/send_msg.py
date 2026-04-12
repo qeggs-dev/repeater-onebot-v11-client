@@ -4,7 +4,7 @@ from nonebot import on_command
 from nonebot.rule import to_me
 from nonebot.params import CommandArg
 from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent, Message
+from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
 from ..assist import PersonaInfo, SendMsg
@@ -16,7 +16,7 @@ send_message = on_command("sendMessage", aliases={"smsg", "send_message", "Send_
 @send_message.handle()
 async def handle_send_message(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     persona_info = PersonaInfo(bot, event, args)
-    send_msg = SendMsg("Send.Send_Message", send_msg, persona_info)
+    send_msg = SendMsg("Send.Send_Message", send_message, persona_info)
 
     if not storage_configs.allow_send_any_message:
         await send_msg.send_error("Send_Message is disabled")
@@ -26,10 +26,17 @@ async def handle_send_message(bot: Bot, event: MessageEvent, args: Message = Com
     except json.JSONDecodeError:
         await send_msg.send_error("Send_Message must enter a valid JSON")
     
-    if not isinstance(message_body, list):
-        message_body = [message_body]
-
     try:
+        if isinstance(message_body, list):
+            message_body = [MessageSegment(segment) for segment in message_body]
+        elif isinstance(message_body, str):
+            message_body = MessageSegment.text(message_body)
+        elif isinstance(message_body, dict):
+            message_body = MessageSegment(message_body)
+        else:
+            await send_msg.send_error("Please enter the correct content format.")
+            return
+        
         message = Message(message_body)
     except ValidationError as e:
         errors = e.errors()
