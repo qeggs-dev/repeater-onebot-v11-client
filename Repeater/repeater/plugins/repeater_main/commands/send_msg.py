@@ -28,11 +28,11 @@ async def handle_send_message(bot: Bot, event: MessageEvent, args: Message = Com
     
     try:
         if isinstance(message_body, list):
-            message_body = [MessageSegment(segment) for segment in message_body]
+            message_body = [MessageSegment(**segment) for segment in message_body]
         elif isinstance(message_body, str):
             message_body = MessageSegment.text(message_body)
         elif isinstance(message_body, dict):
-            message_body = MessageSegment(message_body)
+            message_body = MessageSegment(**message_body)
         else:
             await send_msg.send_error("Please enter the correct content format.")
             return
@@ -45,6 +45,8 @@ async def handle_send_message(bot: Bot, event: MessageEvent, args: Message = Com
             error_text = f"{'.'.join(error['loc'])}: {error['msg']}"
             text_buffer.append(error_text)
         await send_msg.send_error("\n".join(text_buffer))
+    except Exception as e:
+        await send_msg.send_error(str(e))
     
     await send_msg.send_any(
         message,
