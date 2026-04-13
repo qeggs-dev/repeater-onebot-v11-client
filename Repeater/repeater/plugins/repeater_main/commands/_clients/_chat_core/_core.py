@@ -76,7 +76,7 @@ class ChatCore:
         history_msg_role_map: dict[ContentRole, ContentRole | None] | None = None,
         cross_user_data_routing: CrossUserDataRouting | None = None,
         continue_completion: bool | None = None,
-        timeout: float | None = None
+        timeout: int | float | None = None
     ) -> Response[ChatResponse]:
         """
         发送消息到AI后端
@@ -134,6 +134,8 @@ class ChatCore:
             cross_user_data_routing = cross_user_data_routing,
             continue_completion = continue_completion,
         )
+        if timeout is None:
+            timeout = storage_configs.model_first_chunk_timeout
         try:
             task = asyncio.create_task(
                 self._chat_client.post(
