@@ -1,12 +1,12 @@
 import httpx
-import orjson
+import asyncio
+
 from typing import (
-    Any,
-    AsyncIterator
+    Any
 )
 from ._chat_buffer import ChatBuffer
 from .._content_role import ContentRole
-from ._response_body import ChatResponse, StreamChatChunkResponse
+from ._response_body import ChatResponse
 from ._break_response_body import BreakResponse
 from ._cross_user_data_routing import CrossUserDataRouting
 from ....exit_register import ExitRegister
@@ -76,6 +76,7 @@ class ChatCore:
         history_msg_role_map: dict[ContentRole, ContentRole | None] | None = None,
         cross_user_data_routing: CrossUserDataRouting | None = None,
         continue_completion: bool | None = None,
+        timeout: float | None = None
     ) -> Response[ChatResponse]:
         """
         发送消息到AI后端
@@ -134,10 +135,28 @@ class ChatCore:
             continue_completion = continue_completion,
         )
         try:
-            response = await self._chat_client.post(
-                url = url,
-                json = data.submit_body()
+            task = asyncio.create_task(
+                self._chat_client.post(
+                    url = url,
+                    json = data.submit_body()
+                )
             )
+            if timeout is not None:
+                while True:
+                    try:
+                        response = await asyncio.wait_for(task, timeout = timeout)
+                    except asyncio.TimeoutError:
+                        buffer_response = await self.get_chat_buffer()
+                        if buffer_response:
+                            buffer = buffer_response.get_data()
+                            if buffer is None:
+                                continue
+                            elif len(buffer) == 0:
+                                await self.break_chat_task()
+                            break
+                        else:
+                            continue
+            response = await task
         except Exception as e:
             logger.error(
                 "Error sending message to chat core: {error}",
@@ -148,95 +167,6 @@ class ChatCore:
             response,
             ChatResponse
         )
-    
-    async def send_stream_message(
-        self,
-        message: str,
-        add_metadata: bool = True,
-        role_name: str | None = None,
-        temporary_prompt: str | None = None,
-        model_uid: str | None = None,
-        thinking: bool | None = None,
-        extra_template_fields: dict[str, Any] | None = None,
-        image_url: str | list[str] | None = None,
-        video_url: str | list[str] | None = None,
-        audio_url: str | list[str] | None = None,
-        file_url: str | list[str] | None = None,
-        load_prompt: bool | None = None,
-        save_context: bool | None = None,
-        save_new_only: bool | None = None,
-        history_msg_role_map: dict[ContentRole, ContentRole | None] | None = None,
-        cross_user_data_routing: CrossUserDataRouting | None = None,
-        continue_completion: bool | None = None,
-    ) -> AsyncIterator[Any]:
-        """
-        发送消息到AI后端，并获取流式响应
-        
-        :param message: 消息内容
-        :param add_metadata: 是否添加元数据
-        :param role_name: 角色名称
-        :param temporary_prompt: 临时提示
-        :param model_uid: 模型UID
-        :param thinking: 思考模式
-        :param extra_template_fields: 额外模板字段
-        :param image_url: 图片URL
-        :param video_url: 视频URL
-        :param audio_url: 音频URL
-        :param file_url: 文件URL
-        :param load_prompt: 是否加载提示
-        :param save_context: 是否保存上下文
-        :param save_new_only: 是否只保存新内容
-        :param history_msg_role_map: 历史消息角色映射
-        :param cross_user_data_routing: 跨用户数据路由
-        :param continue_completion: 是否继续生成
-        :return: AI返回的消息
-        """
-        url = f"{CHAT_ROUTE}/{self.namespace}"
-        if cross_user_data_routing is None:
-            if self.merge_namespace:
-                cross_user_data_routing = CrossUserDataRouting()
-                cross_user_data_routing.context.fill_missing(self.merge_namespace)
-        self._add_extra_template_fields(extra_template_fields)
-        data = ChatRequestModel(
-            message = message,
-            user_info = ChatUserInfo(
-                username = self._persona_info.nickname,
-                nickname = self._persona_info.card,
-                gender = self._persona_info.gender,
-                age = self._persona_info.age,
-            ),
-            add_metadata = add_metadata,
-            role_name = role_name,
-            temporary_prompt = temporary_prompt,
-            model_uid = model_uid,
-            thinking = thinking,
-            extra_template_fields = extra_template_fields,
-            additional_data = AdditionalData(
-                image_url = image_url,
-                video_url = video_url,
-                audio_url = audio_url,
-                file_url = file_url,
-            ),
-            load_prompt = load_prompt,
-            save_context = save_context,
-            save_new_only = save_new_only,
-            history_msg_role_map = history_msg_role_map,
-            cross_user_data_routing = cross_user_data_routing,
-            continue_completion = continue_completion,
-            stream = True,
-        )
-        async with self._chat_client.stream(
-            method="POST",
-            url=url,
-            json=data.submit_body()
-        ) as response:
-            response.raise_for_status()
-            
-            async for line in response.aiter_lines():
-                if not line.strip():
-                    continue
-
-                yield StreamChatChunkResponse(**orjson.loads(line))
     
     async def break_chat_task(self) -> Response[BreakResponse]:
         """
