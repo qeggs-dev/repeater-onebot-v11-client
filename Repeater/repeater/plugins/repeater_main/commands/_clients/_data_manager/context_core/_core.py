@@ -41,12 +41,13 @@ class ContextCore(UserDataCore):
     # endregion
     
     # region withdraw
-    async def withdraw(self, context_pair_num: int = 1) -> Response[WithdrawResponse]:
+    async def withdraw(self, context_pair_num: int = 1, paired: bool = True) -> Response[WithdrawResponse]:
         logger.info("Withdrawing context")
         response = await self._httpx_client.post(
             f"{WIHTDRAW_CONTEXT_ROUTE}/{self._info.namespace_str}",
             data={
-                "context_pair_num": context_pair_num
+                "context_pair_num": context_pair_num,
+                "paired": paired
             }
         )
         return Response(
