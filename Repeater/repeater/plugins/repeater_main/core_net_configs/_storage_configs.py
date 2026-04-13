@@ -44,6 +44,7 @@ class StorageConfigs(BaseModel):
     branch_file_size_use_abbreviation: bool = True
     hash_user_id: bool = False
     allow_send_any_message: bool = False
+    model_first_chunk_timeout: int | float | None = 90.0
 
 loader: Loader[StorageConfigs] = Loader(
     model=StorageConfigs,
