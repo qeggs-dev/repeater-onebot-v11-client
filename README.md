@@ -247,6 +247,14 @@ main_api.json
 
     // 是否允许用户构造任意消息发送
     "allow_send_any_message": false,
+
+    // 模型生成的首字超时时间
+    // 当到达该时间时，模型并没有生成任何内容
+    // 缓冲区是空的
+    // 则认为本次请求无法开始生成
+    // Client 将向 Repeater Server 申请取消任务
+    // 将其设置为 null 可以忽略超时检查
+    "model_first_chunk_timeout": 90.0
 }
 ```
 配置了一些主要的参数，如文本长度评分、推理模型使用的UID、欢迎消息等。
@@ -422,6 +430,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `setCustomAge`             | `sca`    | `SetCustomAge`            | `CONFIG`    | 4.4.9.0        | 设置自定义年龄               | 年龄                                       | 设置自定义年龄 (需要提示词支持) |
 | `setCustomGender`          | `scg`    | `SetCustomGender`         | `CONFIG`    | 4.4.9.0        | 设置自定义性别               | 性别                                       | 设置自定义性别 (需要提示词支持) |
 | `sendMessage`              | `smsg`   | `SendMessage`             | `SENDMSG`   | 4.4.12.0       | 发送消息                    | OneBot 消息结构                             | 发送一条自定义消息（需要 `allow_send_any_message` 字段为 `true`） |
+| `singleWithdraw`           | `sw`     | `SingleWithdraw`          | `CONTEXT`   | 4.4.13.0       | 单条撤回                    | 消息条数                                    | 直接按条撤回消息（而不是按对撤回） |
 
 PS：`CHAT`类型命令大部分都做到了支持视觉输入
 默认命令已支持全模态输入
