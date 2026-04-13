@@ -43,7 +43,8 @@ class ConfigCore(UserDataCore):
                 item_type = "null"
             elif type(value) not in TYPES:
                 raise TypeError(f"Unsupported type: {type(value).__name__}")
-            item_type = TYPES[type(value)]
+            else:
+                item_type = TYPES[type(value)]
         else:
             if item_type not in TYPES:
                 raise TypeError(f"Unsupported type: {item_type}")
