@@ -147,6 +147,7 @@ class ChatCore:
                 while True:
                     try:
                         response = await asyncio.wait_for(task, timeout = timeout)
+                        break
                     except asyncio.TimeoutError:
                         buffer_response = await self.get_chat_buffer()
                         if buffer_response:
