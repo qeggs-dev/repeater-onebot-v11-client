@@ -39,7 +39,9 @@ class ConfigCore(UserDataCore):
         if item_type == "raw":
             item_type = "raw"
         if item_type == "auto":
-            if type(value) not in TYPES:
+            if value is None:
+                item_type = "null"
+            elif type(value) not in TYPES:
                 raise TypeError(f"Unsupported type: {type(value).__name__}")
             item_type = TYPES[type(value)]
         else:
