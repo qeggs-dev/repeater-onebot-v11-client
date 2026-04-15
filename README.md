@@ -431,6 +431,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `setCustomGender`          | `scg`    | `SetCustomGender`         | `CONFIG`    | 4.4.9.0        | 设置自定义性别               | 性别                                       | 设置自定义性别 (需要提示词支持) |
 | `sendMessage`              | `smsg`   | `SendMessage`             | `SENDMSG`   | 4.4.12.0       | 发送消息                    | OneBot 消息结构                             | 发送一条自定义消息（需要 `allow_send_any_message` 字段为 `true`） |
 | `singleWithdraw`           | `sw`     | `SingleWithdraw`          | `CONTEXT`   | 4.4.13.0       | 单条撤回                    | 消息条数                                    | 直接按条撤回消息（而不是按对撤回） |
+| `allowToolCalls`           | `atc`    | `AllowToolCalls`          | `CONFIG`    | 4.5.0.0        | 允许工具调用                | `true` 或 `false`                           | 允许工具调用（需要后端配置允许） |
 
 PS：`CHAT`类型命令大部分都做到了支持视觉输入
 默认命令已支持全模态输入
