@@ -26,4 +26,4 @@ async def handle_tool_calls(bot: Bot, event: MessageEvent, args: Message = Comma
     config_core = ConfigCore(persona_info)
     response = await config_core.set_config("allow_tool_calls", thinking)
     thinking_mode_str = "enabled" if thinking else "disabled"
-    await send_msg.send_response_check_code(response, f"Thinking Mode is {thinking_mode_str}")
+    await send_msg.send_response_check_code(response, f"Tool Calls is {thinking_mode_str}")
