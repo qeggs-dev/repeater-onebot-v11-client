@@ -1,3 +1,4 @@
+from ._data_command.allow_tool_calls import handle_tool_calls
 from ._data_command.auto_load_prompt import handle_set_auto_load_prompt
 from ._data_command.auto_save_context import handle_set_auto_save_context
 from ._data_command.auto_shrink_length import handle_set_auto_shrink_length
@@ -41,6 +42,7 @@ from ._nexus_command._upload_to_nexus import handle_config_upload_to_nexus
 from ._nexus_command._download_from_nexus import handle_config_download_from_nexus
 
 __all__ = [
+    "handle_tool_calls",
     "handle_set_auto_load_prompt",
     "handle_set_auto_save_context",
     "handle_set_auto_shrink_length",
