@@ -40,7 +40,8 @@ class ChatSendMsg(SendMsg):
             return None
         buffer: list[str] = []
         for content in self._data.context.context_list:
-            buffer.append(content.reasoning_content)
+            if content.role == ContentRole.ASSISTANT:
+                buffer.append(content.reasoning_content)
         return self._reasoning_content_handler("\n\n".join(buffer))
 
     @property
