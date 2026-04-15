@@ -58,7 +58,7 @@ async def handle_generate_candidate_reason(bot: Bot, event: MessageEvent, args: 
             ContentRole.USER: ContentRole.ASSISTANT,
             ContentRole.ASSISTANT: ContentRole.USER,
             ContentRole.SYSTEM: None,
-            ContentRole.FUNCTION: None
+            ContentRole.TOOLS: None
         },
         image_url = images,
         thinking = True,
