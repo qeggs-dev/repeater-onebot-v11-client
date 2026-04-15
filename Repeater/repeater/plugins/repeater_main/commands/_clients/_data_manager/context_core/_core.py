@@ -14,7 +14,7 @@ from ._response import (
     RoleStructureCheckerResponse
 )
 from .._base_user_data_core import UserDataCore
-from ._content_unit import ContentUnit
+from ..._content_unit import ContentUnit
 
 logger = base_logger.bind(module = "Context.Core")
 

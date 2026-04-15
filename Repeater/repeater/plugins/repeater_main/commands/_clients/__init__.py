@@ -10,3 +10,4 @@ from ._variable_expansion_core import *
 from ._version import *
 from ._licenses import *
 from ._content_role import ContentRole
+from ._content_unit import ContentUnit

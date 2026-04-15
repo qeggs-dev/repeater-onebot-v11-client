@@ -5,6 +5,7 @@ from pydantic import ValidationError
 
 from ....assist import PersonaInfo, Response, SendMsg
 from ._response_body import ChatResponse
+from .._content_role import ContentRole
 from ....chattts import ChatTTSAPI
 from ....logger import logger as base_logger
 from ....core_net_configs import storage_configs
@@ -35,15 +36,22 @@ class ChatSendMsg(SendMsg):
     
     @property
     def reasoning_content(self) -> str | None:
-        if self._data.reasoning_content is not None:
-            return self._reasoning_content_handler(self._data.reasoning_content)
-        return None
+        if self._data is None:
+            return None
+        buffer: list[str] = []
+        for content in self._data.context.context_list:
+            buffer.append(content.reasoning_content)
+        return self._reasoning_content_handler("\n\n".join(buffer))
 
     @property
     def content(self) -> str | None:
-        if self._data.content is not None:
-            return self._content_handler(self._data.content)
-        return None
+        if self._data is None:
+            return None
+        buffer: list[str] = []
+        for content in self._data.context.context_list:
+            if content.role == ContentRole.ASSISTANT:
+                buffer.append(content.content)
+        return self._content_handler("\n\n".join(buffer))
     
     async def _check_response(self) -> None | NoReturn:
         if self.is_debug_mode:
@@ -84,7 +92,7 @@ class ChatSendMsg(SendMsg):
             )
         if self.content:
             await self.send_tts(
-                text or self._data.content,
+                text or self.content,
                 reply = False,
                 continue_handler = False
             )

@@ -1,6 +1,7 @@
 import math
 
 from ._request_log import RequestLogObject
+from .._content_unit import ContentUnit
 from pydantic import BaseModel, ConfigDict, Field
 from enum import StrEnum
 
@@ -11,14 +12,16 @@ class FinishReason(StrEnum):
     TOOL_CALL = "tool_calls"
     INSUFFICIENT_SYSTEM_RESOURCE = "insufficient_system_resource"
 
+class ContextObject(BaseModel):
+    context_list: list[ContentUnit] = Field(default_factory=list)
+
 class ChatResponse(BaseModel):
     model_config = ConfigDict(
         validate_assignment=True,
         extra="allow",
     )
 
-    reasoning_content: str | None = None
-    content: str = ""
+    context: ContextObject = Field(default_factory=ContextObject)
     user_raw_input: str = ""
     model_group: str = ""
     model_name: str = ""
@@ -28,7 +31,7 @@ class ChatResponse(BaseModel):
     id: str = ""
     finish_reason_cause: str = ""
     finish_reason_code: FinishReason = FinishReason.STOP
-    request_log: RequestLogObject | None = None
+    request_log: list[RequestLogObject] | None = None
     request_statistics: str = ""
     status: int = 200
 
