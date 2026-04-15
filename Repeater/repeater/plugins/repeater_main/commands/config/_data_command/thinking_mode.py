@@ -25,5 +25,8 @@ async def handle_thinking_mode(bot: Bot, event: MessageEvent, args: Message = Co
 
     config_core = ConfigCore(persona_info)
     response = await config_core.set_config("thinking", thinking)
-    thinking_mode_str = "enabled" if thinking else "disabled"
+    if thinking is None:
+        thinking_mode_str = "default"
+    else:
+        thinking_mode_str = "enabled" if thinking else "disabled"
     await send_msg.send_response_check_code(response, f"Thinking Mode is {thinking_mode_str}")
