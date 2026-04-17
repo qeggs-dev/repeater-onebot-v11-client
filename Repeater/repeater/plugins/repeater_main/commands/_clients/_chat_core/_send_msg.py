@@ -42,7 +42,7 @@ class ChatSendMsg(SendMsg):
         for content in self._data.context.context_list:
             if content.role == ContentRole.ASSISTANT:
                 buffer.append(content.reasoning_content)
-        return self._reasoning_content_handler("\n\n".join(buffer).strip())
+        return self._reasoning_content_handler("\n\n---\n\n".join(buffer).strip())
 
     @property
     def content(self) -> str | None:
@@ -52,7 +52,7 @@ class ChatSendMsg(SendMsg):
         for content in self._data.context.context_list:
             if content.role == ContentRole.ASSISTANT:
                 buffer.append(content.content)
-        return self._content_handler("\n\n".join(buffer).strip())
+        return self._content_handler("\n\n---\n\n".join(buffer).strip())
     
     async def _check_response(self) -> None | NoReturn:
         if self.is_debug_mode:
