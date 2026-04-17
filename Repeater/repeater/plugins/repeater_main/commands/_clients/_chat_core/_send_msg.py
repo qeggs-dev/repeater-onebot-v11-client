@@ -41,7 +41,8 @@ class ChatSendMsg(SendMsg):
         buffer: list[str] = []
         for content in self._data.context.context_list:
             if content.role == ContentRole.ASSISTANT:
-                buffer.append(content.reasoning_content)
+                if content.reasoning_content.strip():
+                    buffer.append(content.reasoning_content)
         return self._reasoning_content_handler("\n\n---\n\n".join(buffer).strip())
 
     @property
@@ -51,7 +52,8 @@ class ChatSendMsg(SendMsg):
         buffer: list[str] = []
         for content in self._data.context.context_list:
             if content.role == ContentRole.ASSISTANT:
-                buffer.append(content.content)
+                if content.content.strip():
+                    buffer.append(content.content)
         return self._content_handler("\n\n---\n\n".join(buffer).strip())
     
     async def _check_response(self) -> None | NoReturn:
