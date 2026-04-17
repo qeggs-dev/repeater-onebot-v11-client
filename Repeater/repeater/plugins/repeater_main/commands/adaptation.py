@@ -27,7 +27,6 @@ async def handle_adaptation(bot: Bot, event: MessageEvent, args: Message = Comma
         await send_msg.send_prompt(
             (
                 f"Client Adaptation Version: {__adaptation__}\n"
-                f"Server Core Version: {version_data.core}\n"
-                f"Server API Version: {version_data.api}\n"
+                f"Server Core Version: {version_data.core}"
             )
         )
