@@ -1,7 +1,7 @@
-from .version_api import VersionAPICore
+from .version_api import VersionAPIClient
 from .version_model import VersionModel
 
 __all__ = [
-    "VersionAPICore",
+    "VersionAPIClient",
     "VersionModel",
 ]

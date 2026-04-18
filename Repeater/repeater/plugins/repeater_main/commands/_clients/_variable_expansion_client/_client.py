@@ -3,12 +3,12 @@ from typing import (
     Any
 )
 
-from ....core_net_configs import *
+from ....client_net_configs import *
 from ....assist import PersonaInfo, Response
 from ....logger import logger
 from ...._adaptation_info import __adaptation__, __adaptation_text__
 
-class VariableExpansionCore:
+class VariableExpansionClient:
     _httpx_client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.variable_expansion

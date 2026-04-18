@@ -11,16 +11,16 @@ from ._break_response_body import BreakResponse
 from ._cross_user_data_routing import CrossUserDataRouting
 from ....exit_register import ExitRegister
 from ....assist import PersonaInfo, Response
-from ....core_net_configs import *
+from ....client_net_configs import *
 from ._request_model import ChatRequestModel, ChatUserInfo, AdditionalData
 from ...._adaptation_info import __adaptation__, __adaptation_text__
 from ....logger import logger as base_logger
 
-logger = base_logger.bind(module = "chat_core")
+logger = base_logger.bind(module = "chat_client")
 
 exit_register = ExitRegister()
 
-class ChatCore:
+class ChatClient:
     _chat_client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.chat

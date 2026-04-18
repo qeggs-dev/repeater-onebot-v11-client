@@ -8,15 +8,15 @@ from typing import (
 
 from .....assist import Response, PersonaInfo
 # 服务端配置
-from .....core_net_configs import *
+from .....client_net_configs import *
 from .....exit_register import ExitRegister
 
-from .._base_user_data_core import UserDataCore
+from .._base_user_data_client import UserDataClient
 
 exit_register = ExitRegister()
 logger = base_logger.bind(module = "Config.Core")
 
-class ConfigCore(UserDataCore):
+class ConfigClient(UserDataClient):
     _httpx_client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.config
@@ -71,6 +71,9 @@ class ConfigCore(UserDataCore):
             f"{GET_CONFIG_ROUTE}/{self._info.namespace_str}"
         )
         return Response(response)
+    
+    def get_config_url(self) -> str:
+        return f"{GET_CONFIG_ROUTE}/{self._info.namespace_str}.json"
     # endregion
 
     # region remove config key

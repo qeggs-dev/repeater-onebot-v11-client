@@ -3,7 +3,7 @@ import httpx
 from abc import ABC
 from uuid import UUID
 
-from ....core_net_configs import *
+from ....client_net_configs import *
 from ....assist import Response, PersonaInfo
 from ._nexus_response import (
     NexusUploadResponse,
@@ -14,7 +14,7 @@ from ._branch_info import BranchInfo
 
 logger = base_logger.bind(module = "UserData.Core")
 
-class UserDataCore(ABC):
+class UserDataClient(ABC):
     _httpx_client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.data_manager,

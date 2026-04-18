@@ -4,11 +4,11 @@ from typing import (
     Union
 )
 
-from ....core_net_configs import *
+from ....client_net_configs import *
 from ....assist import PersonaInfo
 from ....logger import logger
 
-class UserFileCore:
+class UserFileClient:
     def __init__(self, info: PersonaInfo):
         self._info = info
     # region get_utl

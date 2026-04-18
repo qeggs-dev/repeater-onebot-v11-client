@@ -5,7 +5,7 @@ from typing import (
     Union
 )
 
-from .....core_net_configs import *
+from .....client_net_configs import *
 from .....assist import PersonaInfo, Response
 from .....logger import logger as base_logger
 from ._response import (
@@ -13,12 +13,12 @@ from ._response import (
     ContextTotalLengthResponse,
     RoleStructureCheckerResponse
 )
-from .._base_user_data_core import UserDataCore
+from .._base_user_data_client import UserDataClient
 from ..._content_unit import ContentUnit
 
 logger = base_logger.bind(module = "Context.Core")
 
-class ContextCore(UserDataCore):
+class ContextClient(UserDataClient):
     _httpx_client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.context
@@ -82,6 +82,9 @@ class ContextCore(UserDataCore):
             )
         else:
             return Response(response)
+    
+    def get_context_url(self) -> str | None:
+        return f"{GET_CONTEXT_ROUTE}/{self._info.namespace_str}.json"
     # endregion
 
     # region check role structure

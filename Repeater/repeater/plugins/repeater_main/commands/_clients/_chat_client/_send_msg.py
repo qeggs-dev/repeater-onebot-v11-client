@@ -8,7 +8,7 @@ from ._response_body import ChatResponse
 from .._content_role import ContentRole
 from ....chattts import ChatTTSAPI
 from ....logger import logger as base_logger
-from ....core_net_configs import storage_configs
+from ....client_net_configs import storage_configs
 
 logger = base_logger.bind(module = "Chat.SendMsg")
 

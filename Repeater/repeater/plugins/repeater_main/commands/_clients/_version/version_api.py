@@ -5,11 +5,11 @@ from typing import (
     Union
 )
 
-from ....core_net_configs import *
+from ....client_net_configs import *
 from ....assist import Response
 from .version_model import VersionModel
 
-class VersionAPICore:
+class VersionAPIClient:
     _httpx_client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.version

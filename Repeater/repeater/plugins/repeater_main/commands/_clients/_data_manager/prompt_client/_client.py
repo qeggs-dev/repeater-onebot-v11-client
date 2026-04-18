@@ -5,14 +5,14 @@ from typing import (
     Union
 )
 
-from .....core_net_configs import *
+from .....client_net_configs import *
 from .....assist import Response, PersonaInfo
 from .....logger import logger as base_logger
-from .._base_user_data_core import UserDataCore
+from .._base_user_data_client import UserDataClient
 
 logger = base_logger.bind(module = "Prompt.Core")
 
-class PromptCore(UserDataCore):
+class PromptClient(UserDataClient):
     _httpx_client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.prompt
@@ -40,4 +40,7 @@ class PromptCore(UserDataCore):
             f"{GET_PROMPT_ROUTE}/{self._info.namespace_str}"
         )
         return Response(response)
+    
+    def get_prompt_url(self) -> str | None:
+        return f"{GET_PROMPT_ROUTE}/{self._info.namespace_str}.md"
     # endregion

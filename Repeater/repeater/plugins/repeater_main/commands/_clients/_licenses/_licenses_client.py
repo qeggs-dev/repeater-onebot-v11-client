@@ -1,9 +1,9 @@
 import httpx
 
-from ....core_net_configs import *
+from ....client_net_configs import *
 from ....assist import Response
 
-class LicenseCore:
+class LicenseClient:
     _httpx_client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.licenses,

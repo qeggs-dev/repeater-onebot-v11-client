@@ -6,7 +6,7 @@ from typing import (
     Any,
 )
 
-from ....core_net_configs import *
+from ....client_net_configs import *
 from ....assist import Response
 from ....exit_register import ExitRegister
 from ._model_types import ModelType
@@ -17,7 +17,7 @@ from ._models import (
 exit_register = ExitRegister()
 logger = base_logger.bind(module = "Config.Core")
 
-class ModelInfoCore:
+class ModelInfoClient:
     def __init__(self):
         self._client = httpx.AsyncClient(
             base_url = BASE_URL,
