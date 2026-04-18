@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from ..._clients import ConfigCore
+from ..._clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg
 
 set_model_timeout = on_command("setModelTimeout", aliases={"smto", "set_model_timeout", "Set_Model_Timeout", "SetModelTimeout"}, rule=to_me(), block=True)
@@ -29,6 +29,6 @@ async def handle_set_model_timeout(bot: Bot, event: MessageEvent, args: Message 
         except ValueError:
             await send_msg.send_error("Set_Model_Timeout setting is incorrect, please enter an integer!")
 
-    config_core = ConfigCore(persona_info)
-    response = await config_core.set_config("model_timeout", model_timeout)
+    config_client = ConfigClient(persona_info)
+    response = await config_client.set_config("model_timeout", model_timeout)
     await send_msg.send_response_check_code(response, f"Set Model Timeout to {model_timeout}")

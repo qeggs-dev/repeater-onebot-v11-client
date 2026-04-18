@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
-from ..._clients import PromptCore
+from ..._clients import PromptClient
 from ....assist import PersonaInfo, SendMsg
 
 setprompt = on_command("setPrompt", aliases={"sp", "set_prompt", "Set_Prompt", "SetPrompt"}, rule=to_me(), block=True)
@@ -21,6 +21,6 @@ async def handle_set_prompt(bot: Bot, event: MessageEvent, args: Message = Comma
 
     msg = persona_info.message_striped_str
     
-    prompt_core = PromptCore(persona_info)
-    response = await prompt_core.set_prompt(msg)
+    prompt_client = PromptClient(persona_info)
+    response = await prompt_client.set_prompt(msg)
     await send_msg.send_response_check_code(response, f"Set Prompt {'successfully' if response.code == 200 else 'failed'}")

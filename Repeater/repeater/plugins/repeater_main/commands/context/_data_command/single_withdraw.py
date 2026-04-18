@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
-from ..._clients import ContextCore
+from ..._clients import ContextClient
 from ....assist import PersonaInfo, SendMsg
 
 single_withdraw = on_command("singleWithdraw", aliases={"sw", "single_withdraw", "Single_Withdraw", "SingleWithdraw"}, rule=to_me(), block=True)
@@ -18,7 +18,7 @@ async def handle_single_withdraw(bot: Bot, event: MessageEvent, args: Message = 
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
 
-    context_core = ContextCore(persona_info)
+    context_client = ContextClient(persona_info)
     if persona_info.args_str:
         try:
             num = int(persona_info.args_str)
@@ -30,7 +30,7 @@ async def handle_single_withdraw(bot: Bot, event: MessageEvent, args: Message = 
     else:
         num = 1
 
-    response = await context_core.withdraw(num, paired = False)
+    response = await context_client.withdraw(num, paired = False)
 
     if response.code == 200:
         data = response.get_data()

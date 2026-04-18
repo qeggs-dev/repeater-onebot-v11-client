@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
-from ..._clients import ConfigCore
+from ..._clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg
 
 config_upload_to_nexus = on_command("configUploadToNexus", aliases={"cfgutn", "config_upload_to_nexus", "Config_Upload_To_Nexus", "ConfigUploadToNexus"}, rule=to_me(), block=True)
@@ -18,7 +18,7 @@ async def handle_config_upload_to_nexus(bot: Bot, event: MessageEvent, args: Mes
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     
-    config_core = ConfigCore(persona_info)
+    config_client = ConfigClient(persona_info)
 
     timeout = None
     if persona_info.message_striped_str:
@@ -27,7 +27,7 @@ async def handle_config_upload_to_nexus(bot: Bot, event: MessageEvent, args: Mes
         except ValueError:
             await send_msg.send_error("Invalid timeout value")
     
-    response = await config_core.upload_to_nexus(timeout)
+    response = await config_client.upload_to_nexus(timeout)
 
     if response.code == 200:
         data = response.get_data()

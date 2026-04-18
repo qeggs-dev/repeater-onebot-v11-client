@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from ..._clients import ContextCore
+from ..._clients import ContextClient
 from ....assist import PersonaInfo, SendMsg
 
 change_context_branch = on_command("changeContextBranch", aliases={"ccb", "change_context_branch", "Change_Context_Branch", "ChangeContextBranch"}, rule=to_me(), block=True)
@@ -20,6 +20,6 @@ async def handle_change_context_branch(bot: Bot, event: MessageEvent, args: Mess
     
     msg = persona_info.message_striped_str
     
-    context_core = ContextCore(persona_info)
-    response = await context_core.change_branch(msg)
+    context_client = ContextClient(persona_info)
+    response = await context_client.change_branch(msg)
     await send_msg.send_response_check_code(response, f"Change Context Branch to {msg}")

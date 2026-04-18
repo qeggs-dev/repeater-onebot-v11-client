@@ -6,7 +6,7 @@ from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 from nonebot import logger
 
-from ..._clients import PromptCore, ChatCore
+from ..._clients import PromptClient, ChatClient
 from ....assist import PersonaInfo, SendMsg
 from ....storage import async_text_storage
 from ._default_meta_prompt import META_PROMPT
@@ -36,9 +36,9 @@ async def handle_generate_prompt(bot: Bot, event: MessageEvent, args: Message = 
             data = meta_prompt
         )
     
-    chat_core = ChatCore(persona_info, namespace="Prompt_Generater")
+    chat_client = ChatClient(persona_info, namespace="Prompt_Generater")
     image_url = await persona_info.get_images_url()
-    chat_response = await chat_core.send_message(
+    chat_response = await chat_client.send_message(
         message,
         add_metadata = False,
         save_context = False,
@@ -64,8 +64,8 @@ async def handle_generate_prompt(bot: Bot, event: MessageEvent, args: Message = 
             "No prompt content generated."
         )
     
-    prompt_core = PromptCore(persona_info)
-    prompt_response = await prompt_core.set_prompt(
+    prompt_client = PromptClient(persona_info)
+    prompt_response = await prompt_client.set_prompt(
         data.content
     )
     if prompt_response.code != 200:

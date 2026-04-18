@@ -4,7 +4,7 @@ from nonebot.params import CommandArg
 from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment
 
-from .._clients import ChatCore, ChatSendMsg
+from .._clients import ChatClient, ChatSendMsg
 from ...assist import PersonaInfo, SendMsg
 from ...logger import logger
 
@@ -28,9 +28,9 @@ async def handle_keep_reasoning(bot: Bot, event: MessageEvent):
         module = send_msg.component
     )
 
-    chat_core = ChatCore(persona_info)
+    chat_client = ChatClient(persona_info)
 
-    response = await chat_core.send_message(
+    response = await chat_client.send_message(
         thinking=True,
     )
     

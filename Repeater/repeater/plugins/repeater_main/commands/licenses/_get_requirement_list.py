@@ -6,7 +6,7 @@ from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment, Message
 from nonebot.adapters import Bot
 
 from ...assist import PersonaInfo, SendMsg
-from .._clients import LicenseCore
+from .._clients import LicenseClient
 
 get_requirement_list = on_command("getRequirementList", aliases={"grls", "get_requirement_list", "Get_Requirement_List", "GetRequirementList"}, rule=to_me(), block=True)
 
@@ -14,12 +14,12 @@ get_requirement_list = on_command("getRequirementList", aliases={"grls", "get_re
 async def handle_get_requirement_list(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     persona_info = PersonaInfo(bot, event, args)
     send_msg = SendMsg("Licenses.Get_Requirement_List", get_requirement_list, persona_info)
-    version_core = LicenseCore()
+    version_client = LicenseClient()
 
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     else:
-        server_requirements = await version_core.get_requirement_list()
+        server_requirements = await version_client.get_requirement_list()
         version_data = server_requirements.get_data()
         if not version_data:
             await send_msg.send_error("Server requirements data is invalid.")

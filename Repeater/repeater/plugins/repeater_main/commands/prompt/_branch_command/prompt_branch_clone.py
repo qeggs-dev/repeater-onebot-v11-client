@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
-from ..._clients import PromptCore
+from ..._clients import PromptClient
 from ....assist import PersonaInfo, SendMsg
 
 prompt_branch_clone = on_command("promptBranchClone", aliases={"pbc", "prompt_branch_clone", "Prompt_Branch_Clone", "PromptBranchClone"}, rule=to_me(), block=True)
@@ -20,6 +20,6 @@ async def handle_prompt_branch_clone(bot: Bot, event: MessageEvent, args: Messag
 
     msg = args.extract_plain_text().strip()
     
-    prompt_core = PromptCore(persona_info)
-    response = await prompt_core.clone(msg)
+    prompt_client = PromptClient(persona_info)
+    response = await prompt_client.clone(msg)
     await send_msg.send_response_check_code(response, f"Clone Prompt Branch to {msg}")

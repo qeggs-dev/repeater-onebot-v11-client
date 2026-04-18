@@ -7,7 +7,7 @@ from nonebot.params import CommandArg
 from pydantic import ValidationError
 
 from ...assist import PersonaInfo, SendMsg, MessageSource
-from .._clients import ChatCore, ChatSendMsg
+from .._clients import ChatClient, ChatSendMsg
 
 summary_chat_record = on_command("summaryChatRecord", aliases={"scr", "summary_chat_record", "Summary_Chat_Record", "SummaryChatRecord"}, rule=to_me(), block=True)
 
@@ -39,8 +39,8 @@ async def handle_summary_chat_record(bot: Bot, event: MessageEvent, args: Messag
         if text:
             text = f"{text}\n\n---\n\nPlease summarize the above chat record."
 
-        chat_core = ChatCore(persona_info)
-        response = await chat_core.send_message(
+        chat_client = ChatClient(persona_info)
+        response = await chat_client.send_message(
             add_metadata = False,
             message = text
         )

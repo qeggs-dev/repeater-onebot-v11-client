@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from ..._clients import ConfigCore
+from ..._clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg, str_to_bool
 
 set_remove_reasoning_prompt = on_command("removeReasoningPrompt", aliases={"rrp", "remove_reasoning_prompt", "Remove_Reasoning_Prompt", "RemoveReasoningPrompt"}, rule=to_me(), block=True)
@@ -23,7 +23,7 @@ async def handle_set_remove_reasoning_prompt(bot: Bot, event: MessageEvent, args
     except ValueError:
         await send_msg.send_error("Not a valid boolean value")
     
-    config_core = ConfigCore(persona_info)
-    response = await config_core.set_config("remove_reasoning_prompt", remove_reasoning_prompt)
+    config_client = ConfigClient(persona_info)
+    response = await config_client.set_config("remove_reasoning_prompt", remove_reasoning_prompt)
     await send_msg.send_response_check_code(response, f"Set Remove Reasoning Prompt to {remove_reasoning_prompt}")
         

@@ -9,7 +9,7 @@ from nonebot.adapters import Bot
 
 from ..assist import PersonaInfo, SendMsg
 from pydantic import ValidationError
-from ..core_net_configs import storage_configs
+from ..client_net_configs import storage_configs
 
 send_message = on_command("sendMessage", aliases={"smsg", "send_message", "Send_Message", "SendMessage"}, rule=to_me(), block=True)
 

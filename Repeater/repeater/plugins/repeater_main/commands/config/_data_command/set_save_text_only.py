@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from ..._clients import ConfigCore
+from ..._clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg, str_to_bool
 
 set_save_text_only = on_command("setSaveTextOnly", aliases={"ssto", "set_save_text_only", "Set_Save_Text_Only", "SetSaveTextOnly"}, rule=to_me(), block=True)
@@ -23,6 +23,6 @@ async def handle_set_save_text_only(bot: Bot, event: MessageEvent, args: Message
     except ValueError:
         await send_msg.send_error("Not a valid boolean value")
 
-    config_core = ConfigCore(persona_info)
-    response = await config_core.set_config("save_text_only", auto_save_context)
+    config_client = ConfigClient(persona_info)
+    response = await config_client.set_config("save_text_only", auto_save_context)
     await send_msg.send_response_check_code(response, f"Save Text Only set to {auto_save_context}")

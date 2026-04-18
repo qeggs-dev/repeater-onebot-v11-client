@@ -4,7 +4,7 @@ from nonebot.params import CommandArg
 from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment
 
-from .._clients import ChatCore, ChatSendMsg
+from .._clients import ChatClient, ChatSendMsg
 from ...assist import PersonaInfo, SendMsg
 from ...logger import logger
 
@@ -40,11 +40,11 @@ async def handle_public_space_chat(bot: Bot, event: MessageEvent, args: Message 
         else:
             message_text = reply_msgs_text
 
-    chat_core = ChatCore(persona_info, persona_info.namespace.public_space_id)
+    chat_client = ChatClient(persona_info, persona_info.namespace.public_space_id)
     
     images: list[str] = await persona_info.get_images_url()
 
-    response = await chat_core.send_message(
+    response = await chat_client.send_message(
         message_text,
         image_url = images
     )

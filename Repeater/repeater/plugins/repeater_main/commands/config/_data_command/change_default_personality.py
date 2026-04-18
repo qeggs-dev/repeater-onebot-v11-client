@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from ..._clients import ConfigCore
+from ..._clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg
 
 change_default_personality = on_command("changeDefaultPersonality", aliases={"cdp", "change_default_personality", "Change_Default_Personality", "ChangeDefaultPersonality"}, rule=to_me(), block=True)
@@ -18,7 +18,7 @@ async def handle_change_default_personality(bot: Bot, event: MessageEvent, args:
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     
-    config_core = ConfigCore(persona_info)
-    response = await config_core.set_config("preset_prompt_name", persona_info.message_striped_str)
+    config_client = ConfigClient(persona_info)
+    response = await config_client.set_config("preset_prompt_name", persona_info.message_striped_str)
     await send_msg.send_response_check_code(response, f"Change Default Personality to {persona_info.message_striped_str}")
         

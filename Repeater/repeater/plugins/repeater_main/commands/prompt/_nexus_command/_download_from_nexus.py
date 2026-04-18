@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
-from ..._clients import PromptCore
+from ..._clients import PromptClient
 from ....assist import PersonaInfo, SendMsg
 
 prompt_download_from_nexus = on_command("promptDownloadFromNexus", aliases={"pdfn", "prompt_download_from_nexus", "Prompt_Download_From_Nexus", "PromptDownloadFromNexus"}, rule=to_me(), block=True)
@@ -18,9 +18,9 @@ async def handle_prompt_download_from_nexus(bot: Bot, event: MessageEvent, args:
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     
-    prompt_core = PromptCore(persona_info)
+    prompt_client = PromptClient(persona_info)
     try:
-        response = await prompt_core.download_from_nexus(persona_info.message_striped_str)
+        response = await prompt_client.download_from_nexus(persona_info.message_striped_str)
     except ValueError as e:
         await send_msg.send_error(
             f"Invalid UUID: {persona_info.message_striped_str}"

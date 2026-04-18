@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
-from ..._clients import ContextCore, PromptCore, ConfigCore
+from ..._clients import ContextClient, PromptClient, ConfigClient
 from ....assist import PersonaInfo, SendMsg
 
 session_branch_clone = on_command("sessionBranchClone", aliases={"sbc", "session_branch_clone", "Session_Branch_Clone", "SessionBranchClone"}, rule=to_me(), block=True)
@@ -20,13 +20,13 @@ async def handle_session_branch_clone(bot: Bot, event: MessageEvent, args: Messa
 
     msg = args.extract_plain_text().strip()
     
-    context_core = ContextCore(persona_info)
-    prompt_core = PromptCore(persona_info)
-    config_core = ConfigCore(persona_info)
+    context_client = ContextClient(persona_info)
+    prompt_client = PromptClient(persona_info)
+    config_client = ConfigClient(persona_info)
 
-    context_response = await context_core.clone(msg)
-    prompt_response = await prompt_core.clone(msg)
-    config_response = await config_core.clone(msg)
+    context_response = await context_client.clone(msg)
+    prompt_response = await prompt_client.clone(msg)
+    config_response = await config_client.clone(msg)
 
     await send_msg.send_multiple_responses(
         (context_response, "Context"),

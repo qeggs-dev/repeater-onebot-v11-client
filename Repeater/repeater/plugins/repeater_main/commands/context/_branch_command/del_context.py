@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from ..._clients import ContextCore
+from ..._clients import ContextClient
 from ....assist import PersonaInfo, SendMsg
 
 delcontext = on_command("deleteContext", aliases={"dc", "delete_context", "Delete_Context", "DeleteContext"}, rule=to_me(), block=True)
@@ -18,6 +18,6 @@ async def handle_delete_context(bot: Bot, event: MessageEvent, args: Message = C
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     
-    context_core = ContextCore(persona_info)
-    response = await context_core.delete()
+    context_client = ContextClient(persona_info)
+    response = await context_client.delete()
     await send_msg.send_response_check_code(response, f"Delete Context from {persona_info.namespace_str}")

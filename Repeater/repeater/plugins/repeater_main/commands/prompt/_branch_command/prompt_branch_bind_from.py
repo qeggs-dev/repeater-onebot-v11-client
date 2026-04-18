@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
-from ..._clients import PromptCore
+from ..._clients import PromptClient
 from ....assist import PersonaInfo, SendMsg
 
 prompt_branch_bind_from = on_command("promptBranchBindFrom", aliases={"pbbf", "prompt_branch_bind_from", "Prompt_Branch_Bind_From", "PromptBranchBindFrom"}, rule=to_me(), block=True)
@@ -20,6 +20,6 @@ async def handle_prompt_branch_bind_from(bot: Bot, event: MessageEvent, args: Me
 
     msg = args.extract_plain_text().strip()
     
-    prompt_core = PromptCore(persona_info)
-    response = await prompt_core.bind_from(msg)
+    prompt_client = PromptClient(persona_info)
+    response = await prompt_client.bind_from(msg)
     await send_msg.send_response_check_code(response, f"Bind Prompt Branch from {msg}")

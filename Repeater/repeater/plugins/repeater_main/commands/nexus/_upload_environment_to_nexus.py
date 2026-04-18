@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
-from .._clients import NexusCore
+from .._clients import NexusClient
 from ...assist import PersonaInfo, SendMsg
 
 environment_upload_to_nexus = on_command("envUploadToNexus", aliases={"eutn", "env_upload_to_nexus", "Env_Upload_To_Nexus", "EnvUploadToNexus"}, rule=to_me(), block=True)
@@ -18,7 +18,7 @@ async def handle_environment_upload_to_nexus(bot: Bot, event: MessageEvent, args
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     
-    nexus_core = NexusCore(persona_info)
+    nexus_client = NexusClient(persona_info)
 
     timeout = None
     if persona_info.message_striped_str:
@@ -27,7 +27,7 @@ async def handle_environment_upload_to_nexus(bot: Bot, event: MessageEvent, args
         except ValueError:
             await send_msg.send_error("Invalid timeout value")
 
-    response = await nexus_core.upload_environment_to_nexus(timeout)
+    response = await nexus_client.upload_environment_to_nexus(timeout)
 
     if response.code == 200:
         data = response.get_data()

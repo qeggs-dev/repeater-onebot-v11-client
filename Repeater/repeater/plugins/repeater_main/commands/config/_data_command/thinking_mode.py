@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from ..._clients import ConfigCore
+from ..._clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg, str_to_bool
 
 thinking_mode = on_command("thinkingMode", aliases={"tm", "thinking_mode", "Thinking_Mode", "ThinkingMode"}, rule=to_me(), block=True)
@@ -23,8 +23,8 @@ async def handle_thinking_mode(bot: Bot, event: MessageEvent, args: Message = Co
     except ValueError:
         await send_msg.send_error("Not a valid value")
 
-    config_core = ConfigCore(persona_info)
-    response = await config_core.set_config("thinking", thinking)
+    config_client = ConfigClient(persona_info)
+    response = await config_client.set_config("thinking", thinking)
     if thinking is None:
         thinking_mode_str = "default"
     else:

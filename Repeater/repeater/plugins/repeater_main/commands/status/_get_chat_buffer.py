@@ -6,7 +6,7 @@ from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 from typing import Any
 
-from .._clients import ChatCore
+from .._clients import ChatClient
 from ...assist import PersonaInfo, SendMsg, str_to_bool
 
 get_chat_buffer = on_command("getChatBuffer", aliases={"gcb", "get_chat_buffer", "Get_Chat_Buffer", "GetChatBuffer"}, rule=to_me(), block=True)
@@ -19,8 +19,8 @@ async def handle_get_chat_buffer(bot: Bot, event: MessageEvent, args: Message = 
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     else:
-        chat_core = ChatCore(persona_info)
-        response = await chat_core.get_chat_buffer()
+        chat_client = ChatClient(persona_info)
+        response = await chat_client.get_chat_buffer()
         if response:
             buffer = response.get_data()
             if buffer is None:

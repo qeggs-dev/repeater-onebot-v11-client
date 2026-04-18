@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from ..._clients import ConfigCore
+from ..._clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg, str_to_bool
 
 allow_tool_calls = on_command("allowToolCalls", aliases={"atc", "allow_tool_calls", "Allow_Tool_Calls", "AllowToolCalls"}, rule=to_me(), block=True)
@@ -23,7 +23,7 @@ async def handle_tool_calls(bot: Bot, event: MessageEvent, args: Message = Comma
     except ValueError:
         await send_msg.send_error("Not a valid value")
 
-    config_core = ConfigCore(persona_info)
-    response = await config_core.set_config("allow_tool_calls", thinking)
+    config_client = ConfigClient(persona_info)
+    response = await config_client.set_config("allow_tool_calls", thinking)
     thinking_mode_str = "enabled" if thinking else "disabled"
     await send_msg.send_response_check_code(response, f"Tool Calls is {thinking_mode_str}")

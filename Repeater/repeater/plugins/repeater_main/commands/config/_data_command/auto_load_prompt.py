@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from ..._clients import ConfigCore
+from ..._clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg, str_to_bool
 
 set_auto_load_prompt = on_command("setAutoLoadPrompt", aliases={"salp", "set_auto_load_prompt", "Set_Auto_Load_Prompt", "SetAutoLoadPrompt"}, rule=to_me(), block=True)
@@ -23,6 +23,6 @@ async def handle_set_auto_load_prompt(bot: Bot, event: MessageEvent, args: Messa
     except ValueError:
         await send_msg.send_error("Not a valid boolean value")
 
-    config_core = ConfigCore(persona_info)
-    response = await config_core.set_config("load_prompt", auto_load_prompt)
+    config_client = ConfigClient(persona_info)
+    response = await config_client.set_config("load_prompt", auto_load_prompt)
     await send_msg.send_response_check_code(response, f"Auto Load Prompt set to {auto_load_prompt}")

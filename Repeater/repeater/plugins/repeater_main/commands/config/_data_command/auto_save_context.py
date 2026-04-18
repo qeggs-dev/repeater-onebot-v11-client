@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from ..._clients import ConfigCore
+from ..._clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg, str_to_bool
 
 set_auto_save_context = on_command("setAutoSaveContext", aliases={"sasc", "set_auto_save_context", "Set_Auto_Save_Context", "SetAutoSaveContext"}, rule=to_me(), block=True)
@@ -23,6 +23,6 @@ async def handle_set_auto_save_context(bot: Bot, event: MessageEvent, args: Mess
     except ValueError:
         await send_msg.send_error("Not a valid boolean value")
 
-    config_core = ConfigCore(persona_info)
-    response = await config_core.set_config("save_context", auto_save_context)
+    config_client = ConfigClient(persona_info)
+    response = await config_client.set_config("save_context", auto_save_context)
     await send_msg.send_response_check_code(response, f"Auto Save Context set to {auto_save_context}")

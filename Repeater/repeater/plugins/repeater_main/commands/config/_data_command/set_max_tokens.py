@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from ..._clients import ConfigCore
+from ..._clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg
 
 set_max_tokens = on_command("setMaxTokens", aliases={"smt", "set_max_tokens", "Set_Max_Tokens", "SetMaxTokens"}, rule=to_me(), block=True)
@@ -29,6 +29,6 @@ async def handle_set_max_tokens(bot: Bot, event: MessageEvent, args: Message = C
         await send_msg.send_error("Max_Tokens setting is incorrect, please enter an integer between 1 and 8192!")
 
 
-    config_core = ConfigCore(persona_info)
-    response = await config_core.set_config("max_tokens", max_tokens)
+    config_client = ConfigClient(persona_info)
+    response = await config_client.set_config("max_tokens", max_tokens)
     await send_msg.send_response_check_code(response, f"Set Max_Tokens to {max_tokens}")

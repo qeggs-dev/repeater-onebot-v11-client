@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
-from ..._clients import ConfigCore
+from ..._clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg
 
 config_branch_info = on_command("configBranchInfo", aliases={"cfgbi", "config_branch_info", "Config_Branch_Info", "ConfigBranchInfo"}, rule=to_me(), block=True)
@@ -18,8 +18,8 @@ async def handle_config_branch_info(bot: Bot, event: MessageEvent, args: Message
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     
-    config_core = ConfigCore(persona_info)
-    response = await config_core.branch_info()
+    config_client = ConfigClient(persona_info)
+    response = await config_client.branch_info()
     if response.code == 200:
         data = response.get_data()
         if data is None:

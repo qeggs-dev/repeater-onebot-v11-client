@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from ..._clients import ConfigCore
+from ..._clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg, str_to_bool
 
 set_cross_user_data_access = on_command("crossUserDataAccess", aliases={"cuda", "cross_user_data_access", "Cross_User_Data_Access", "CrossUserDataAccess"}, rule=to_me(), block=True)
@@ -23,7 +23,7 @@ async def handle_cross_user_data_access(bot: Bot, event: MessageEvent, args: Mes
     except ValueError:
         await send_msg.send_error("Not a valid boolean value")
     
-    config_core = ConfigCore(persona_info)
-    response = await config_core.set_config("cross_user_data_access", cross_user_data_access)
+    config_client = ConfigClient(persona_info)
+    response = await config_client.set_config("cross_user_data_access", cross_user_data_access)
     await send_msg.send_response_check_code(response, f"Set Cross User Data Access to {cross_user_data_access}")
         

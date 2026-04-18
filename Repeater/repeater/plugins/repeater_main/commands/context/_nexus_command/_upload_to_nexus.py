@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
-from ..._clients import ContextCore
+from ..._clients import ContextClient
 from ....assist import PersonaInfo, SendMsg
 
 context_upload_to_nexus = on_command("contextUploadToNexus", aliases={"cutn", "context_upload_to_nexus", "Context_Upload_To_Nexus", "ContextUploadToNexus"}, rule=to_me(), block=True)
@@ -18,7 +18,7 @@ async def handle_context_upload_to_nexus(bot: Bot, event: MessageEvent, args: Me
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     
-    context_core = ContextCore(persona_info)
+    context_client = ContextClient(persona_info)
 
     timeout = None
     if persona_info.message_striped_str:
@@ -27,7 +27,7 @@ async def handle_context_upload_to_nexus(bot: Bot, event: MessageEvent, args: Me
         except ValueError:
             await send_msg.send_error("Invalid timeout value")
 
-    response = await context_core.upload_to_nexus(timeout)
+    response = await context_client.upload_to_nexus(timeout)
 
     if response.code == 200:
         data = response.get_data()

@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from .._clients import ModelInfoCore, MODEL_TYPES, ModelType, ModelInfo
+from .._clients import ModelInfoClient, MODEL_TYPES, ModelType, ModelInfo
 from ...assist import PersonaInfo, SendMsg, str_to_bool
 
 get_model_list = on_command("getModelList", aliases={"gml", "get_model_list", "Get_Model_List", "GetModelList"}, rule=to_me(), block=True)
@@ -18,14 +18,14 @@ async def handle_get_model_list(bot: Bot, event: MessageEvent, args: Message = C
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     else:
-        model_info_core = ModelInfoCore()
+        model_info_client = ModelInfoClient()
         model_type_str = persona_info.message_striped_str
         if model_type_str in MODEL_TYPES:
             model_type = ModelType(model_type_str)
         else:
             await send_msg.send_error("Not a valid model type")
 
-        response = await model_info_core.get_model_list(model_type)
+        response = await model_info_client.get_model_list(model_type)
         if response.code == 200:
             model_info = response.get_data()
             if model_info is None:

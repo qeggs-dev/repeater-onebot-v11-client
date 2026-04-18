@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from ..._clients import ConfigCore
+from ..._clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg
 
 set_top_p = on_command("setTopP", aliases={"stp", "set_top_p", "Set_Top_P", "SetTopP"}, rule=to_me(), block=True)
@@ -31,6 +31,6 @@ async def handle_set_top_p(bot: Bot, event: MessageEvent, args: Message = Comman
     if top_p < -2 or top_p > 2:
         await send_msg.send_error("Top_P setting error, please enter a floating-point number or percentage between 0 and 1!")
 
-    config_core = ConfigCore(persona_info)
-    response = await config_core.set_config("top_p", top_p)
+    config_client = ConfigClient(persona_info)
+    response = await config_client.set_config("top_p", top_p)
     await send_msg.send_response_check_code(response, f"Set Top_P to {top_p}")

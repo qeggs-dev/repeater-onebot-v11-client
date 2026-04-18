@@ -8,7 +8,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from ..._clients import ConfigCore
+from ..._clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg
 from enum import StrEnum
 
@@ -30,8 +30,8 @@ async def handle_get_configs(bot: Bot, event: MessageEvent, args: Message = Comm
     except ValueError:
         await send_msg.send_error("Format type is not supported. Please use 'json' or 'yaml'.")
     
-    config_core = ConfigCore(persona_info)
-    response = await config_core.get_configs()
+    config_client = ConfigClient(persona_info)
+    response = await config_client.get_configs()
     if response:
         try:
             match format_type:

@@ -5,7 +5,7 @@ from nonebot.params import CommandArg
 
 from ...assist import PersonaInfo, SendMsg
 from ...chattts import ChatTTSAPI
-from .._clients import ChatCore, ChatSendMsg
+from .._clients import ChatClient, ChatSendMsg
 from ...logger import logger
 
 api = ChatTTSAPI()
@@ -42,7 +42,7 @@ async def handle_tts_chat(bot: Bot, event: MessageEvent, args: Message = Command
         else:
             message_text = reply_msgs_text
 
-    core = ChatCore(persona_info)
+    core = ChatClient(persona_info)
 
     images: list[str] = await persona_info.get_images_url()
 

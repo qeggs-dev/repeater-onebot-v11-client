@@ -4,7 +4,7 @@ from nonebot.rule import to_me
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent
 from ...logger import logger
 
-from .._clients import ChatCore, ChatSendMsg
+from .._clients import ChatClient, ChatSendMsg
 from ...assist import PersonaInfo, SendMsg, MessageSource
 
 smart_at: type[Matcher] = on_message(rule=to_me(), priority=100, block=True)
@@ -31,7 +31,7 @@ async def handle_smart_at(bot: Bot, event: MessageEvent):
         else:
             return
     
-    core = ChatCore(persona_info)
+    core = ChatClient(persona_info)
 
     message = persona_info.message
     if not message:

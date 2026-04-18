@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
-from ..._clients import ConfigCore
+from ..._clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg
 
 config_branch_clone_from = on_command("configBranchCloneFrom", aliases={"cfgbcf", "config_branch_clone_from", "Config_Branch_Clone_From", "ConfigBranchCloneFrom"}, rule=to_me(), block=True)
@@ -20,6 +20,6 @@ async def handle_config_branch_clone_from(bot: Bot, event: MessageEvent, args: M
 
     msg = args.extract_plain_text().strip()
     
-    config_core = ConfigCore(persona_info)
-    response = await config_core.clone_from(msg)
+    config_client = ConfigClient(persona_info)
+    response = await config_client.clone_from(msg)
     await send_msg.send_response_check_code(response, f"Clone Config Branch from {msg}")

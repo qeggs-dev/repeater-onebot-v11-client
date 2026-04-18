@@ -2,10 +2,8 @@ from nonebot import on_command
 from nonebot.rule import to_me
 from nonebot.params import CommandArg
 from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
+from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
-from typing import Optional
-import asyncio
 
 get_namespace = on_command("getNamespace", aliases={"gns", "get_namespace", "Get_Namespace", "GetNamespace"}, rule=to_me(), block=True)
 
@@ -32,12 +30,12 @@ async def handle_get_namespace(bot: Bot, event: MessageEvent, args: Message = Co
         group_id = persona_info.group_id
         namespace = persona_info.namespace
         if mentioned_id is None:
-            await send_msg.send_prompt(namespace.namespace)
+            await send_msg.send_prompt(namespace.namespace_str)
         else:
             await send_msg.send_prompt(
                 Namespace(
                     mode = namespace.mode,
                     group_id = group_id,
                     user_id = mentioned_id
-                ).namespace
+                ).namespace_str
             )

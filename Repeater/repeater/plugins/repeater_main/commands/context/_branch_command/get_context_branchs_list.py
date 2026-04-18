@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
-from ..._clients import ContextCore
+from ..._clients import ContextClient
 from ....assist import PersonaInfo, SendMsg
 
 get_context_branchs_list = on_command("getContextBranchsList", aliases={"gcbl", "get_context_branchs_list", "Get_Context_Branchs_List", "GetContextBranchsList"}, rule=to_me(), block=True)
@@ -18,8 +18,8 @@ async def handle_context_branchs_list(bot: Bot, event: MessageEvent, args: Messa
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     
-    context_core = ContextCore(persona_info)
-    response = await context_core.get_branch_list()
+    context_client = ContextClient(persona_info)
+    response = await context_client.get_branch_list()
     if response.code == 200:
         data = response.json()
         if not isinstance(data, list):

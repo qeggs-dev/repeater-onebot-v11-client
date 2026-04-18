@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
-from ..._clients import PromptCore
+from ..._clients import PromptClient
 from ....assist import PersonaInfo, SendMsg
 
 prompt_upload_to_nexus = on_command("promptUploadToNexus", aliases={"putn", "prompt_upload_to_nexus", "Prompt_Upload_To_Nexus", "PromptUploadToNexus"}, rule=to_me(), block=True)
@@ -18,7 +18,7 @@ async def handle_prompt_upload_to_nexus(bot: Bot, event: MessageEvent, args: Mes
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     
-    prompt_core = PromptCore(persona_info)
+    prompt_client = PromptClient(persona_info)
 
     timeout = None
     if persona_info.message_striped_str:
@@ -27,7 +27,7 @@ async def handle_prompt_upload_to_nexus(bot: Bot, event: MessageEvent, args: Mes
         except ValueError:
             await send_msg.send_error("Invalid timeout value")
     
-    response = await prompt_core.upload_to_nexus(timeout)
+    response = await prompt_client.upload_to_nexus(timeout)
 
     if response.code == 200:
         data = response.get_data()

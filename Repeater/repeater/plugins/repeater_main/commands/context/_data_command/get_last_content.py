@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from ..._clients import ContextCore
+from ..._clients import ContextClient
 from ....assist import PersonaInfo, SendMsg
 
 get_last_content = on_command("getLastContent", aliases={"glc", "get_last_content", "Get_Last_Content", "GetLastContent"}, rule=to_me(), block=True)
@@ -18,9 +18,9 @@ async def handle_get_last_content(bot: Bot, event: MessageEvent, args: Message =
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     else:
-        context_core = ContextCore(persona_info)
+        context_client = ContextClient(persona_info)
 
-        response = await context_core.get_context()
+        response = await context_client.get_context()
         if response.code == 200:
             context = response.get_data()
             if context is None:

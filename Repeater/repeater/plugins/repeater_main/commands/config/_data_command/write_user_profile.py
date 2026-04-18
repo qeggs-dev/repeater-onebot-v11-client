@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from ..._clients import ConfigCore
+from ..._clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg, str_to_bool
 
 write_user_profile = on_command("writeUserProfile", aliases={"wup", "write_user_profile", "Write_User_Profile", "WriteUserProfile"}, rule=to_me(), block=True)
@@ -18,6 +18,6 @@ async def handle_write_user_profile(bot: Bot, event: MessageEvent, args: Message
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
 
-    config_core = ConfigCore(persona_info)
-    response = await config_core.set_config("user_profile", persona_info.message_striped_str)
+    config_client = ConfigClient(persona_info)
+    response = await config_client.set_config("user_profile", persona_info.message_striped_str)
     await send_msg.send_response_check_code(response, f"User Profile seted")

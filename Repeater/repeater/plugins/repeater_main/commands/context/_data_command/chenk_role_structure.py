@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
-from ..._clients import ContextCore
+from ..._clients import ContextClient
 from ....assist import PersonaInfo, SendMsg
 
 check_role_structure = on_command("checkRoleStructure", aliases={"crs", "check_role_structure", "Check_Role_Structure", "CheckRoleStructure"}, rule=to_me(), block=True)
@@ -18,8 +18,8 @@ async def handle_check_role_structure(bot: Bot, event: MessageEvent, args: Messa
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     
-    context_core = ContextCore(persona_info)
-    response = await context_core.check_role_structure()
+    context_client = ContextClient(persona_info)
+    response = await context_client.check_role_structure()
 
     if response.code == 200:
         data = response.get_data()

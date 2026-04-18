@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
-from ..._clients import PromptCore
+from ..._clients import PromptClient
 from ....assist import PersonaInfo, SendMsg
 
 get_prompt = on_command("getPrompt", aliases={"gp", "get_prompt", "Get_Prompt", "GetPrompt"}, rule=to_me(), block=True)
@@ -19,8 +19,8 @@ async def handle_get_prompt(bot: Bot, event: MessageEvent, args: Message = Comma
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     
-    prompt_core = PromptCore(persona_info)
-    response = await prompt_core.get_prompt()
+    prompt_client = PromptClient(persona_info)
+    response = await prompt_client.get_prompt()
     if response:
         if response.text:
             await send_msg.send_render_prompt(response.text)

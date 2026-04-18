@@ -6,9 +6,9 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent
 from ...logger import logger
 
-from .._clients import ChatCore, ChatSendMsg
+from .._clients import ChatClient, ChatSendMsg
 from ...assist import PersonaInfo, SendMsg
-from ...core_net_configs import storage_configs
+from ...client_net_configs import storage_configs
 
 summarize_and_contract: type[Matcher] = on_command("summarizeAndContract", aliases={"sac", "summarize_and_contract", "Summarize_And_Contract", "SummarizeAndContract"}, rule=to_me(), block=True)
 
@@ -44,7 +44,7 @@ async def handle_summarize_and_contract(bot: Bot, event: MessageEvent, args: Mes
         else:
             message_text = reply_msgs_text
 
-    core = ChatCore(persona_info)
+    core = ChatClient(persona_info)
 
     images: list[str] = await persona_info.get_images_url()
 

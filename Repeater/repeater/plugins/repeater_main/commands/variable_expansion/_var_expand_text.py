@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
-from .._clients import VariableExpansionCore
+from .._clients import VariableExpansionClient
 from ...assist import PersonaInfo, SendMsg
 
 var_expand_text = on_command("varExpandText", aliases={"vet", "var_expand_text", "Var_Expand_Text", "VarExpandText"}, rule=to_me(), block=True)
@@ -20,8 +20,8 @@ async def handle_var_expand_text(bot: Bot, event: MessageEvent, args: Message = 
 
     msg = args.extract_plain_text().strip()
 
-    variable_expansion_core = VariableExpansionCore(persona_info)
-    response = await variable_expansion_core.expand_variable(text=msg)
+    variable_expansion_client = VariableExpansionClient(persona_info)
+    response = await variable_expansion_client.expand_variable(text=msg)
     if response.code == 200:
         await send_msg.send_text(response.text)
     else:

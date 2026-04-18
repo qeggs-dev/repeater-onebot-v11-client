@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
-from ..._clients import PromptCore
+from ..._clients import PromptClient
 from ....assist import PersonaInfo, SendMsg
 
 delprompt = on_command("deletePrompt", aliases={"dp", "delete_prompt", "Delete_Prompt", "DeletePrompt"}, rule=to_me(), block=True)
@@ -18,6 +18,6 @@ async def handle_delete_prompt(bot: Bot, event: MessageEvent, args: Message = Co
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     
-    prompt_core = PromptCore(persona_info)
-    response = await prompt_core.delete()
+    prompt_client = PromptClient(persona_info)
+    response = await prompt_client.delete()
     await send_msg.send_response_check_code(response, f"Delete Prompt from {persona_info.namespace_str}")

@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
-from ..._clients import ContextCore
+from ..._clients import ContextClient
 from ....assist import PersonaInfo, SendMsg
 
 get_context_total_length = on_command("getContextTotalLength", aliases={"gctl", "get_context_total_length", "Get_Context_Total_Length", "GetContextTotalLength"}, rule=to_me(), block=True)
@@ -18,8 +18,8 @@ async def handle_total_context_length(bot: Bot, event: MessageEvent, args: Messa
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     
-    context_core = ContextCore(persona_info)
-    response = await context_core.get_context_total_length()
+    context_client = ContextClient(persona_info)
+    response = await context_client.get_context_total_length()
 
     if response.code == 200:
         data = response.get_data()

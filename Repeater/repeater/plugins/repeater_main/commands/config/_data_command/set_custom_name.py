@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from ..._clients import ConfigCore
+from ..._clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg, str_to_bool
 
 set_custom_name = on_command("setCustomName", aliases={"scn", "set_custom_name", "Set_Custom_Name", "SetCustomName"}, rule=to_me(), block=True)
@@ -18,6 +18,6 @@ async def handle_set_custom_name(bot: Bot, event: MessageEvent, args: Message = 
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
 
-    config_core = ConfigCore(persona_info)
-    response = await config_core.set_config("user_name", persona_info.message_striped_str)
+    config_client = ConfigClient(persona_info)
+    response = await config_client.set_config("user_name", persona_info.message_striped_str)
     await send_msg.send_response_check_code(response, f"Custom Name seted")

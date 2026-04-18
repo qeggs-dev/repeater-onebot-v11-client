@@ -6,7 +6,7 @@ from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 from typing import Any
 
-from .._clients import ChatCore
+from .._clients import ChatClient
 from ...assist import PersonaInfo, SendMsg
 
 break_chat_task = on_command("breakChatTask", aliases={"bct", "break_chat_task", "Break_Chat_Task", "BreakChatTask"}, rule=to_me(), block=True)
@@ -16,7 +16,7 @@ async def handle_break_chat_task(bot: Bot, event: MessageEvent, args: Message = 
     persona_info = PersonaInfo(bot=bot, event=event, args=args)
     send_msg = SendMsg("Status.Break_Chat_Task", break_chat_task, persona_info)
 
-    core = ChatCore(persona_info)
+    core = ChatClient(persona_info)
 
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()

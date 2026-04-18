@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from ..._clients import ConfigCore
+from ..._clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg
 
 change_config_branch = on_command("changeConfigBranch", aliases={"ccfgb", "change_config_branch", "Change_Config_Branch", "ChangeConfigBranch"}, rule=to_me(), block=True)
@@ -18,6 +18,6 @@ async def handle_change_config_branch(bot: Bot, event: MessageEvent, args: Messa
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
 
-    config_core = ConfigCore(persona_info)
-    response = await config_core.change_branch(persona_info.message_striped_str)
+    config_client = ConfigClient(persona_info)
+    response = await config_client.change_branch(persona_info.message_striped_str)
     await send_msg.send_response_check_code(response, f"Config branch changed to {persona_info.message_striped_str}")

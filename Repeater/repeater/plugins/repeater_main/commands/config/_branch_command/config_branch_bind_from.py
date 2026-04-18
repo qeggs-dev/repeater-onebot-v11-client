@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
-from ..._clients import ConfigCore
+from ..._clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg
 
 config_branch_bind_from = on_command("configBranchBindFrom", aliases={"cfgbbf", "config_branch_bind_from", "Config_Branch_Bind_From", "ConfigBranchBindFrom"}, rule=to_me(), block=True)
@@ -20,6 +20,6 @@ async def handle_config_branch_bind_from(bot: Bot, event: MessageEvent, args: Me
 
     msg = args.extract_plain_text().strip()
     
-    config_core = ConfigCore(persona_info)
-    response = await config_core.bind_from(msg)
+    config_client = ConfigClient(persona_info)
+    response = await config_client.bind_from(msg)
     await send_msg.send_response_check_code(response, f"Bind Config Branch from {msg}")

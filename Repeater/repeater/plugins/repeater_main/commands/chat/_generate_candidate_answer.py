@@ -8,7 +8,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent
 from ...logger import logger
 
-from .._clients import ChatCore, ChatSendMsg, ContentRole
+from .._clients import ChatClient, ChatSendMsg, ContentRole
 from ...assist import PersonaInfo, SendMsg
 
 generate_candidate_answer: type[Matcher] = on_command("generateCandidateAnswer", aliases={"gca", "generate_candidate_answer", "Generate_Candidate_Answer", "GenerateCandidateAnswer"}, rule=to_me(), block=True)
@@ -41,7 +41,7 @@ async def handle_generate_candidate_answer(bot: Bot, event: MessageEvent, args: 
         reply_msgs_text = persona_info.generates_text_from_messages_list(reply_msgs)
         reply_msgs_text = reply_msgs_text.replace("\n", "\n> ")
 
-    core = ChatCore(persona_info)
+    core = ChatClient(persona_info)
 
     images: list[str] = await persona_info.get_images_url()
 

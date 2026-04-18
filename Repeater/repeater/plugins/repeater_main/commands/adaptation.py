@@ -6,7 +6,7 @@ from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
 from ..assist import PersonaInfo, SendMsg
-from ._clients import VersionAPICore
+from ._clients import VersionAPIClient
 from .._adaptation_info import __adaptation__
 
 adaptation_info = on_command("adaptationInfo", aliases={"adai", "adaptation_info", "Adaptation_Info", "AdaptationInfo"}, rule=to_me(), block=True)
@@ -15,12 +15,12 @@ adaptation_info = on_command("adaptationInfo", aliases={"adai", "adaptation_info
 async def handle_adaptation(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     persona_info = PersonaInfo(bot, event, args)
     send_msg = SendMsg("Version.Adaptation_Info", adaptation_info, persona_info)
-    version_core = VersionAPICore()
+    version_client = VersionAPIClient()
 
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     else:
-        server_version = await version_core.get_version()
+        server_version = await version_client.get_version()
         version_data = server_version.get_data()
         if version_data is None:
             await send_msg.send_error("Server Version Data is Invalid")

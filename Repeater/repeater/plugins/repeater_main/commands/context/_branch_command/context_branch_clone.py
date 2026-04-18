@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
-from ..._clients import ContextCore
+from ..._clients import ContextClient
 from ....assist import PersonaInfo, SendMsg
 
 context_branch_clone = on_command("contextBranchClone", aliases={"cbc", "context_branch_clone", "Context_Branch_Clone", "ContextBranchClone"}, rule=to_me(), block=True)
@@ -20,6 +20,6 @@ async def handle_context_branch_clone(bot: Bot, event: MessageEvent, args: Messa
 
     msg = args.extract_plain_text().strip()
     
-    context_core = ContextCore(persona_info)
-    response = await context_core.clone(msg)
+    context_client = ContextClient(persona_info)
+    response = await context_client.clone(msg)
     await send_msg.send_response_check_code(response, f"Clone Context Branch to {msg}")

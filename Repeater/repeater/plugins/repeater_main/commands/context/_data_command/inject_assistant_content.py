@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from ..._clients import ContextCore, ContentRole, ContentUnit
+from ..._clients import ContextClient, ContentRole, ContentUnit
 from ....assist import PersonaInfo, SendMsg
 
 inject_assistant_content = on_command("injectAssistantContent", aliases={"iac", "inject_assistant_content", "Inject_Assistant_Content", "InjectAssistantContent"}, rule=to_me(), block=True)
@@ -18,8 +18,8 @@ async def handle_inject_assistant_content(bot: Bot, event: MessageEvent, args: M
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     
-    context_core = ContextCore(persona_info)
-    response = await context_core.inject_context(
+    context_client = ContextClient(persona_info)
+    response = await context_client.inject_context(
         content_unit = ContentUnit(
             role = ContentRole.ASSISTANT,
             content = persona_info.message_striped_str

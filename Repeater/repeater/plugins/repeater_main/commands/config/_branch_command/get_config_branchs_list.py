@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
-from ..._clients import ConfigCore
+from ..._clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg
 
 get_config_branchs_list = on_command("getConfigBranchsList", aliases={"gcfgbl", "get_config_branchs_list", "Get_Config_Branchs_List", "GetConfigBranchsList"}, rule=to_me(), block=True)
@@ -18,8 +18,8 @@ async def handle_config_branchs_list(bot: Bot, event: MessageEvent, args: Messag
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     
-    config_core = ConfigCore(persona_info)
-    response = await config_core.get_branch_list()
+    config_client = ConfigClient(persona_info)
+    response = await config_client.get_branch_list()
     if response.code == 200:
         data = response.json()
         if not isinstance(data, list):

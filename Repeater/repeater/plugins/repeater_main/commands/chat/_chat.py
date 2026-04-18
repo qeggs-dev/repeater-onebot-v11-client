@@ -6,7 +6,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent
 from ...logger import logger
 
-from .._clients import ChatCore, ChatSendMsg
+from .._clients import ChatClient, ChatSendMsg
 from ...assist import PersonaInfo, SendMsg
 
 chat: type[Matcher] = on_command("chat", aliases={"c", "Chat"}, rule=to_me(), block=True)
@@ -41,7 +41,7 @@ async def handle_chat(bot: Bot, event: MessageEvent, args: Message = CommandArg(
         else:
             message_text = reply_msgs_text
 
-    core = ChatCore(persona_info)
+    core = ChatClient(persona_info)
 
     images: list[str] = await persona_info.get_images_url()
 

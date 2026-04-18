@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
-from ..._clients import ContextCore
+from ..._clients import ContextClient
 from ....assist import PersonaInfo, SendMsg
 
 context_branch_bind_from = on_command("contextBranchBindFrom", aliases={"cbbf", "context_branch_bind_from", "Context_Branch_Bind_From", "ContextBranchBindFrom"}, rule=to_me(), block=True)
@@ -20,6 +20,6 @@ async def handle_context_branch_bind_from(bot: Bot, event: MessageEvent, args: M
 
     msg = args.extract_plain_text().strip()
     
-    context_core = ContextCore(persona_info)
-    response = await context_core.bind_from(msg)
+    context_client = ContextClient(persona_info)
+    response = await context_client.bind_from(msg)
     await send_msg.send_response_check_code(response, f"Bind Context Branch from {msg}")

@@ -9,7 +9,7 @@ from nonebot.adapters import Bot
 from dataclasses import dataclass, field as dataclass_field
 from typing import Callable, Type, Any
 
-from ..._clients import ConfigCore
+from ..._clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg
 
 @dataclass
@@ -61,12 +61,12 @@ class BatchRegistration:
             if send_msg.is_debug_mode:
                 await send_msg.send_debug_mode()
             
-            chat_core = ConfigCore(persona_info)
+            chat_client = ConfigClient(persona_info)
             if callable(command.type_converter):
                 value = command.type_converter(persona_info)
             else:
                 value = persona_info.message_striped_str
-            response = await chat_core.set_config(command.config_key, value)
+            response = await chat_client.set_config(command.config_key, value)
             if callable(command.prompt):
                 prompt = command.prompt(persona_info)
             else:

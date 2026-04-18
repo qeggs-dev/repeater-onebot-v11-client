@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from ..._clients import ConfigCore
+from ..._clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg, parse_delimited_string
 
 set_multiple_model = on_command("setMultipleModel", aliases={"smm", "set_multiple_model", "Set_Multiple_Model", "SetMultipleModel"}, rule=to_me(), block=True)
@@ -24,6 +24,6 @@ async def handle_set_multiple_model(bot: Bot, event: MessageEvent, args: Message
     if not model_uids:
         await send_msg.send_error("Please enter at least one model_uid")
 
-    config_core = ConfigCore(persona_info)
-    response = await config_core.set_config("model_uid", model_uids)
+    config_client = ConfigClient(persona_info)
+    response = await config_client.set_config("model_uid", model_uids)
     await send_msg.send_response_check_code(response, f"Set Multiple Model to {', '.join(model_uids)}")

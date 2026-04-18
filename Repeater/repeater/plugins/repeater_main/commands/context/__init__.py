@@ -6,6 +6,7 @@ from ._data_command.chenk_role_structure import handle_check_role_structure
 from ._data_command.inject_system_content import handle_inject_system_content
 from ._data_command.inject_user_content import handle_inject_user_content
 from ._data_command.inject_assistant_content import handle_inject_assistant_content
+from ._data_command.send_context_file import handle_send_context_file
 
 from ._branch_command.del_context import handle_delete_context
 from ._branch_command.delete_psc import handle_delete_public_space_context
@@ -29,6 +30,7 @@ __all__ = [
     "handle_inject_system_content",
     "handle_inject_user_content",
     "handle_inject_assistant_content",
+    "handle_send_context_file",
     "handle_delete_context",
     "handle_delete_public_space_context",
     "handle_change_context_branch",

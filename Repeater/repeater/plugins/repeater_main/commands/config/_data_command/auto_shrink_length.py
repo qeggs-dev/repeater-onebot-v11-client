@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from ..._clients import ConfigCore
+from ..._clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg
 
 set_auto_shrink_length = on_command("setAutoShrinkLength", aliases={"sasl", "set_auto_shrink_length", "Set_Auto_Shrink_Length", "SetAutoShrinkLength"}, rule=to_me(), block=True)
@@ -23,6 +23,6 @@ async def handle_set_auto_shrink_length(bot: Bot, event: MessageEvent, args: Mes
     except ValueError:
         await send_msg.send_error("Message must be a number")
 
-    config_core = ConfigCore(persona_info)
-    response = await config_core.set_config("context_shrink_limit", auto_shrink_length)
+    config_client = ConfigClient(persona_info)
+    response = await config_client.set_config("context_shrink_limit", auto_shrink_length)
     await send_msg.send_response_check_code(response, f"Auto shrink length set to {auto_shrink_length}")

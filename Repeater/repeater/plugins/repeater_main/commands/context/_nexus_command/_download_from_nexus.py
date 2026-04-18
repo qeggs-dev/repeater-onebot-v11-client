@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
 from nonebot.adapters import Bot
 
-from ..._clients import ContextCore
+from ..._clients import ContextClient
 from ....assist import PersonaInfo, SendMsg
 
 context_download_from_nexus = on_command("contextDownloadFromNexus", aliases={"cdfn", "context_download_from_nexus", "Context_Download_From_Nexus", "ContextDownloadFromNexus"}, rule=to_me(), block=True)
@@ -18,9 +18,9 @@ async def handle_context_download_from_nexus(bot: Bot, event: MessageEvent, args
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     
-    context_core = ContextCore(persona_info)
+    context_client = ContextClient(persona_info)
     try:
-        response = await context_core.download_from_nexus(persona_info.message_striped_str)
+        response = await context_client.download_from_nexus(persona_info.message_striped_str)
     except ValueError as e:
         await send_msg.send_error(
             f"Invalid UUID: {persona_info.message_striped_str}"

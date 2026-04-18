@@ -5,7 +5,7 @@ from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
-from ..._clients import ConfigCore
+from ..._clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg
 
 set_temperature = on_command("setTemperature", aliases={"st", "set_temperature", "Set_Temperature", "SetTemperature"}, rule=to_me(), block=True)
@@ -31,6 +31,6 @@ async def handle_set_temperature(bot: Bot, event: MessageEvent, args: Message = 
     if temperature < 0 or temperature > 2:
         await send_msg.send_error("Temperature is set incorrectly. Please enter a floating-point number or percentage between 0 and 2!")
 
-    config_core = ConfigCore(persona_info)
-    response = await config_core.set_config("temperature", temperature)
+    config_client = ConfigClient(persona_info)
+    response = await config_client.set_config("temperature", temperature)
     await send_msg.send_response_check_code(response, f"Set Temperature to {temperature}")
