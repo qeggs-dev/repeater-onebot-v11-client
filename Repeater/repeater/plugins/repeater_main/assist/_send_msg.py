@@ -3,7 +3,7 @@ from nonebot.internal.matcher.matcher import Matcher
 from nonebot.exception import FinishedException
 
 from ._text_render import RendedImage
-from ..core_net_configs import RepeaterDebugMode, storage_configs
+from ..client_net_configs import RepeaterDebugMode, storage_configs
 from ._http_code import HTTP_Code
 from ._persona_info import PersonaInfo
 from ._namespace import MessageSource

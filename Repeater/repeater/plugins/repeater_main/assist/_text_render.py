@@ -1,4 +1,4 @@
-from ..core_net_configs import *
+from ..client_net_configs import *
 from pydantic import BaseModel
 from ._response import Response
 from ._namespace import Namespace
@@ -25,7 +25,7 @@ class TextRender:
         if isinstance(namespace, str):
             self.namespce = namespace
         elif isinstance(namespace, Namespace):
-            self.namespce = namespace.namespace
+            self.namespce = namespace.namespace_str
         else:
             raise TypeError(f"namespace must be str or Namespace, not {type(namespace)}")
         self._timeout = timeout

@@ -4,7 +4,7 @@ from ._assist_func import (
     handle_at_with_name,
     image_to_text
 )
-from ..core_net_configs import storage_configs
+from ..client_net_configs import storage_configs
 from ._namespace import MessageSource, Namespace
 from ._image_downloader import ImageDownloader
 from nonebot import logger
@@ -108,7 +108,7 @@ class PersonaInfo:
     
     @property
     def namespace_str(self):
-        return self.namespace.namespace
+        return self.namespace.namespace_str
     
     @property
     def public_namespace_str(self) -> str:
