@@ -26,4 +26,4 @@ class FileSender:
                 await self.persona_info.bot.upload_private_file(**data)
         except ActionFailed as e:
             logger.error(f"Failed to upload file: {e}")
-            self.send_msg.send_error("Failed to upload file.")
+            await self.send_msg.send_error("Failed to upload file.")
