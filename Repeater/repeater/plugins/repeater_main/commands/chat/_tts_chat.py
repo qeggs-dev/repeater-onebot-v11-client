@@ -4,7 +4,7 @@ from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Message
 from nonebot.params import CommandArg
 
 from ...assist import PersonaInfo, SendMsg
-from ...chattts import ChatTTSAPI
+from ...assist import ChatTTSAPI
 from .._clients import ChatClient, ChatSendMsg
 from ...logger import logger
 

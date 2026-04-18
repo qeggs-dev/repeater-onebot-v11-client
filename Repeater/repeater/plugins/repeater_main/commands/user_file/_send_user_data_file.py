@@ -20,6 +20,9 @@ async def handle_send_user_data_file(bot: Bot, event: MessageEvent):
     if send_msg.is_debug_mode:
         await send_msg.send_debug_mode()
     else:
-        file_sender = FileSender(persona_info)
+        file_sender = FileSender(
+            persona_info = persona_info,
+            send_msg = send_msg,
+        )
 
         await file_sender.send_file(file_url, f"{persona_info.namespace_str}_UserDataFile.zip")
