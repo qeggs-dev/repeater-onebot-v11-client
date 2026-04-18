@@ -1,9 +1,9 @@
 import random
 
 from pydantic import BaseModel, Field
-from ..config_loader import Loader, Mode
+from ...config_loader import Loader, Mode
 
-class API_ARGS(BaseModel):
+class APIArgs(BaseModel):
     voice: str = ""
     speed: int = 6
     tts_prompt: str = "[break_6]"
@@ -20,7 +20,7 @@ class API_ARGS(BaseModel):
 
 class TTSConfig(BaseModel):
     base_url: str = "http://127.0.0.1:8123"
-    api_args: API_ARGS = Field(default_factory=API_ARGS)
+    api_args: APIArgs = Field(default_factory=APIArgs)
     timeout: float = 60.0
 
 loader: Loader[TTSConfig] = Loader(

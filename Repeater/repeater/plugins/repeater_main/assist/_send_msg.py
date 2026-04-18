@@ -9,8 +9,7 @@ from ._persona_info import PersonaInfo
 from ._namespace import MessageSource
 from ._text_render import TextRender
 from ._response import Response
-from ._error_response import ErrorResponse
-from ..chattts import ChatTTSAPI
+from .chattts import ChatTTSAPI
 from typing import (
     Callable,
     Any,

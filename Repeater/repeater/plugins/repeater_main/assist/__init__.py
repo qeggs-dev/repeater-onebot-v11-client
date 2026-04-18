@@ -16,3 +16,33 @@ from ._image_downloader import ImageDownloader
 from ._error_response import ErrorResponse
 from ._format_carry_duration import format_carry_duration
 from ._parse_delimited_string import parse_delimited_string
+from .chattts import (
+    ChatTTSAPI,
+    TTSResponse,
+    AudioFiles
+)
+
+__all__ = [
+    "handle_at_with_name",
+    "get_first_mentioned_user",
+    "image_to_text",
+    "PersonaInfo",
+    "FileSender",
+    "MessageSource",
+    "Namespace",
+    "Response",
+    "ExceptionInfo",
+    "TextRender",
+    "RendedImage",
+    "FileUrl",
+    "SendMsg",
+    "HTTP_Code",
+    "str_to_bool",
+    "ImageDownloader",
+    "ErrorResponse",
+    "format_carry_duration",
+    "parse_delimited_string",
+    "ChatTTSAPI",
+    "TTSResponse",
+    "AudioFiles"
+]

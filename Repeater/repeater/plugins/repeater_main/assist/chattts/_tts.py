@@ -1,5 +1,5 @@
 from ._config import tts_config
-from ..assist import Response
+from .._response import Response
 from ._tts_response import TTSResponse
 import httpx
 
