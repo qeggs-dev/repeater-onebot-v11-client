@@ -1,10 +1,6 @@
-import json
 import httpx
-from typing import (
-    Optional,
-    Union
-)
 
+from urllib.parse import urljoin
 from .....client_net_configs import *
 from .....assist import PersonaInfo, Response
 from .....logger import logger as base_logger
@@ -84,7 +80,7 @@ class ContextClient(UserDataClient):
             return Response(response)
     
     def get_context_url(self) -> str | None:
-        return f"{GET_CONTEXT_ROUTE}/{self._info.namespace_str}.json"
+        return urljoin(BASE_URL, f"{GET_CONTEXT_ROUTE}/{self._info.namespace_str}.json")
     # endregion
 
     # region check role structure

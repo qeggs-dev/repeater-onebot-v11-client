@@ -1,10 +1,6 @@
-import json
 import httpx
-from typing import (
-    Optional,
-    Union
-)
 
+from urllib.parse import urljoin
 from .....client_net_configs import *
 from .....assist import Response, PersonaInfo
 from .....logger import logger as base_logger
@@ -42,5 +38,5 @@ class PromptClient(UserDataClient):
         return Response(response)
     
     def get_prompt_url(self) -> str | None:
-        return f"{GET_PROMPT_ROUTE}/{self._info.namespace_str}.md"
+        return urljoin(BASE_URL, f"{GET_PROMPT_ROUTE}/{self._info.namespace_str}.md")
     # endregion

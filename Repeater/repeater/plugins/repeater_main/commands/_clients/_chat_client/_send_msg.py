@@ -6,7 +6,7 @@ from pydantic import ValidationError
 from ....assist import PersonaInfo, Response, SendMsg
 from ._response_body import ChatResponse
 from .._content_role import ContentRole
-from ....chattts import ChatTTSAPI
+from ....assist import ChatTTSAPI
 from ....logger import logger as base_logger
 from ....client_net_configs import storage_configs
 

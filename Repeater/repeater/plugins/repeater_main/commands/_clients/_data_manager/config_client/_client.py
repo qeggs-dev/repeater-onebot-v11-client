@@ -1,11 +1,10 @@
 import httpx
+
+from urllib.parse import urljoin
 from .....logger import logger as base_logger
 from typing import (
-    Optional,
-    Union,
     Any,
 )
-
 from .....assist import Response, PersonaInfo
 # 服务端配置
 from .....client_net_configs import *
@@ -73,7 +72,7 @@ class ConfigClient(UserDataClient):
         return Response(response)
     
     def get_config_url(self) -> str:
-        return f"{GET_CONFIG_ROUTE}/{self._info.namespace_str}.json"
+        return urljoin(BASE_URL, f"{GET_CONFIG_ROUTE}/{self._info.namespace_str}.json")
     # endregion
 
     # region remove config key
