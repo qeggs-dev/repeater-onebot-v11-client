@@ -6,7 +6,7 @@ from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
 from ..._clients import ConfigClient
-from ....assist import PersonaInfo, SendMsg, str_to_bool
+from ....assist import PersonaInfo, SendMsg
 
 set_custom_age = on_command("setCustomAge", aliases={"sca", "set_custom_age", "Set_Custom_Age", "SetCustomAge"}, rule=to_me(), block=True)
 

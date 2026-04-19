@@ -6,7 +6,7 @@ from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
 from .._clients import ModelInfoClient, MODEL_TYPES, ModelType, ModelInfo
-from ...assist import PersonaInfo, SendMsg, str_to_bool
+from ...assist import PersonaInfo, SendMsg
 
 get_model_list = on_command("getModelList", aliases={"gml", "get_model_list", "Get_Model_List", "GetModelList"}, rule=to_me(), block=True)
 

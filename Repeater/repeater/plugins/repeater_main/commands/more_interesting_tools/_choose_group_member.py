@@ -3,11 +3,9 @@ import asyncio
 from typing import Any
 from nonebot import on_command
 from nonebot.rule import to_me
-from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent, MessageSegment
+from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent
 from nonebot.params import (
-    CommandArg,
-    ArgPlainText,
-    Arg
+    CommandArg
 )
 from ...assist import PersonaInfo, MessageSource, SendMsg
 

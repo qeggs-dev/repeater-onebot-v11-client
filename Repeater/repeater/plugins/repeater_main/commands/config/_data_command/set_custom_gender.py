@@ -6,7 +6,7 @@ from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
 from ..._clients import ConfigClient
-from ....assist import PersonaInfo, SendMsg, str_to_bool
+from ....assist import PersonaInfo, SendMsg
 
 set_custom_gender = on_command("setCustomGender", aliases={"scg", "set_custom_gender", "Set_Custom_Gender", "SetCustomGender"}, rule=to_me(), block=True)
 

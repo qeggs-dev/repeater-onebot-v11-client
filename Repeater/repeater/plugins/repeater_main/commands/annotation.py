@@ -6,5 +6,5 @@ from nonebot.params import CommandArg
 comment = on_command("#", aliases={"/", "anot", "annotation", "Annotation"}, rule=to_me(), block=True)
 
 @comment.handle()
-async def handle_annotation(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
+async def handle_annotation():
     return

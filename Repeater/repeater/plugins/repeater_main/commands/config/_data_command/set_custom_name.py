@@ -6,7 +6,7 @@ from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
 
 from ..._clients import ConfigClient
-from ....assist import PersonaInfo, SendMsg, str_to_bool
+from ....assist import PersonaInfo, SendMsg
 
 set_custom_name = on_command("setCustomName", aliases={"scn", "set_custom_name", "Set_Custom_Name", "SetCustomName"}, rule=to_me(), block=True)
 

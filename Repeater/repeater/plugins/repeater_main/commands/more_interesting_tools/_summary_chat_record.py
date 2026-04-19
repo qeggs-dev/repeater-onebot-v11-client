@@ -1,10 +1,8 @@
 import asyncio
-from datetime import datetime
 from nonebot import on_command
 from nonebot.rule import to_me
 from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent
 from nonebot.params import CommandArg
-from pydantic import ValidationError
 
 from ...assist import PersonaInfo, SendMsg, MessageSource
 from .._clients import ChatClient, ChatSendMsg

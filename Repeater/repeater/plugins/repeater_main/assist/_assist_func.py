@@ -1,5 +1,4 @@
 from nonebot.adapters.onebot.v11 import Message, MessageEvent, MessageSegment
-from nonebot import on_message
 from nonebot.adapters import Bot
 from typing import Optional
 

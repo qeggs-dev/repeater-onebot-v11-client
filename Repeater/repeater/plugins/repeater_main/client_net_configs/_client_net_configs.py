@@ -32,8 +32,8 @@ GET_MODEL_INFO = "/model/info"
 GET_MODEL_TYPES = "/model/types"
 
 # ==== Download User Data File ==== #
-
 DOWNLOAD_USER_DATA_FILE_ROUTE = "/userdata/file"
+PACKAGE_USER_SPACE_ROUTE = "/userdata/package_space"
 
 # ==== RENDER API ==== #
 TEXT_RENDER_ROUTE = "/render"

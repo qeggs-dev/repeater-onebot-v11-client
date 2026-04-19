@@ -7,7 +7,7 @@ from nonebot.adapters import Bot
 from typing import Any
 
 from .._clients import StatusClient
-from ...assist import PersonaInfo, SendMsg, str_to_bool
+from ...assist import PersonaInfo, SendMsg
 
 get_client_task_status = on_command("getCoreTaskStatus", aliases={"gcts", "get_client_task_status", "Get_client_Task_Status", "GetCoreTaskStatus"}, rule=to_me(), block=True)
 

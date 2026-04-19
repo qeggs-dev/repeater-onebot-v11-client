@@ -4,7 +4,6 @@ from nonebot.params import CommandArg
 from nonebot.adapters import Message
 from nonebot.adapters.onebot.v11 import MessageEvent
 from nonebot.adapters import Bot
-from typing import Any
 
 from .._clients import ChatClient
 from ...assist import PersonaInfo, SendMsg

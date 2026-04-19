@@ -4,12 +4,9 @@ from pydantic import ValidationError
 from nonebot import on_command
 from nonebot.rule import to_me
 from nonebot.adapters import Message
-from nonebot.matcher import Matcher
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent
 from nonebot.params import (
-    CommandArg,
-    ArgPlainText,
-    Arg
+    CommandArg
 )
 from ...assist import PersonaInfo, MessageSource, SendMsg
 
