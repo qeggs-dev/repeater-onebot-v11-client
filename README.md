@@ -432,6 +432,10 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `sendMessage`              | `smsg`   | `SendMessage`             | `SENDMSG`   | 4.4.12.0       | 发送消息                    | OneBot 消息结构                             | 发送一条自定义消息（需要 `allow_send_any_message` 字段为 `true`） |
 | `singleWithdraw`           | `sw`     | `SingleWithdraw`          | `CONTEXT`   | 4.4.13.0       | 单条撤回                    | 消息条数                                    | 直接按条撤回消息（而不是按对撤回） |
 | `allowToolCalls`           | `atc`    | `AllowToolCalls`          | `CONFIG`    | 4.5.0.0        | 允许工具调用                | `true` 或 `false`                           | 允许工具调用（需要后端配置允许） |
+| `sendContextFile`          | `scf`    | `SendContextFile`         | `CONTEXT`   | 4.5.5.0-beta   | 发送聊天记录文件             | 无                                          | 获取当前活动分支的聊天记录文件 |
+| `sendPromptFile`           | `spf`    | `SendPromptFile`          | `PROMPT`    | 4.5.5.0-beta   | 获取提示词文件               | 无                                          | 获取当前活动分支的提示词文件 |
+| `sendConfigFile`           | `scfgf`  | `SendConfigFile`          | `CONFIG`    | 4.5.5.0-beta   | 获取配置文件                 | 无                                          | 获取当前活动分支的配置文件 |
+| `packageUserSpace`         | `pus`    | `PackageUserSpace`        | `USERFILE`  | 4.5.5.0        | 打包用户空间                 | 无                                          | 与 `sendUserDataFile` 类似，但它会打包所有分支 |
 
 PS：`CHAT`类型命令大部分都做到了支持视觉输入
 默认命令已支持全模态输入
