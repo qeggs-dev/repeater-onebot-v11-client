@@ -133,12 +133,20 @@ class PersonaInfo:
             return Message()
     
     @property
+    def event_message_str(self) -> str:
+        return self.event_message.extract_plain_text()
+    
+    @property
     def message_str(self) -> str:
         return self.message.extract_plain_text()
     
     @property
     def message_striped_str(self) -> str:
         return self.message_str.strip()
+    
+    @property
+    def event_message_striped_str(self) -> str:
+        return self.event_message_str.strip()
     
     @property
     def args_str(self) -> str:
