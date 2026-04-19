@@ -1,19 +1,13 @@
-from nonebot import on_message
-from nonebot.internal.matcher.matcher import Matcher
 from nonebot.rule import to_me
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent
+from typing import NoReturn
 from ...logger import logger
 
 from .._clients import ChatClient, ChatSendMsg
-from ...assist import PersonaInfo, SendMsg, MessageSource
-from ...command_register import CommandCaller, CommandPackage, ListenType
+from ...assist import PersonaInfo, SendMsg
+from ...command_register import CommandPackage
 
-@CommandCaller.register
-class SmartAt(CommandPackage):
-    listen_type: ListenType = ListenType.Message
-    component = "Chat.Smart_at"
+class BaseChat(CommandPackage):
     rule = to_me()
-    priority = 100
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         logger.info(
@@ -22,14 +16,6 @@ class SmartAt(CommandPackage):
             namespace = persona_info.namespace_str,
             module = send_msg.component
         )
-        
-        if not persona_info:
-            if persona_info.source == MessageSource.GROUP:
-                await send_msg.send_hello()
-            else:
-                return
-        
-        core = ChatClient(persona_info)
 
         message = persona_info.message
         if not message:
@@ -64,12 +50,17 @@ class SmartAt(CommandPackage):
         if not images:
             if not message_text:
                 message = str(message)
+        
+        client = self.get_client(persona_info)
 
-        response = await core.send_message(
+        response = await self.send_message(
+            client = client,
+            images = images,
+            audios = audios,
+            videos = videos,
             message = message_text,
-            image_url = images,
-            audio_url = audios,
-            video_url = videos,
+            persona_info = persona_info,
+            send_msg = send_msg
         )
         
         chat_send_msg = ChatSendMsg(
@@ -78,4 +69,29 @@ class SmartAt(CommandPackage):
             send_msg.matcher,
             response
         )
+        await self.send_chat_send_msg(chat_send_msg)
+    
+    def get_client(self, persona_info: PersonaInfo) -> ChatClient:
+        client = ChatClient(persona_info)
+        return client
+    
+    async def send_message(
+        self,
+        client: ChatClient,
+        images: list[str],
+        audios: list[str],
+        videos: list[str],
+        message: str,
+        persona_info: PersonaInfo,
+        send_msg: SendMsg
+    ) -> str:
+        response = await client.send_message(
+            message = message,
+            image_url = images,
+            audio_url = audios,
+            video_url = videos,
+        )
+        return response
+    
+    async def send_chat_send_msg(self, chat_send_msg: ChatSendMsg) -> NoReturn:
         await chat_send_msg.send()
