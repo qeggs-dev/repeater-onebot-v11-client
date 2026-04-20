@@ -1,23 +1,24 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent
-from nonebot.adapters import Bot
+from ....assist import PersonaInfo, SendMsg, Response
+from ....command_register import CommandCaller
+from ..._bases import BaseConfig
 
-from ..._clients import ConfigClient
-from ....assist import PersonaInfo, SendMsg, str_to_bool
 
-write_user_profile = on_command("writeUserProfile", aliases={"wup", "write_user_profile", "Write_User_Profile", "WriteUserProfile"}, rule=to_me(), block=True)
+@CommandCaller.register
+class WriteUserProfile(BaseConfig):
+    cmd = "writeUserProfile"
+    aliases = {
+        "wup",
+        "WUP",
+        "write_user_profile",
+        "Write_User_Profile",
+        "WriteUserProfile",
+        "WRITE_USER_PROFILE",
+    }
+    field = "user_profile"
 
-@write_user_profile.handle()
-async def handle_write_user_profile(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    persona_info = PersonaInfo(bot=bot, event=event, args=args)
-    send_msg = SendMsg("Config.Write_User_Profile", write_user_profile, persona_info)
+    # 字符串类型，不需要重写 parse_value
 
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-
-    config_client = ConfigClient(persona_info)
-    response = await config_client.set_config("user_profile", persona_info.message_striped_str)
-    await send_msg.send_response_check_code(response, f"User Profile seted")
+    async def finish_message(
+        self, persona_info: PersonaInfo, send_msg: SendMsg, response: Response, value: str
+    ) -> None:
+        await send_msg.send_response_check_code(response, f"User Profile set to {value}")

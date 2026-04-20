@@ -1,29 +1,35 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent
-from nonebot.adapters import Bot
-
 from ..assist import PersonaInfo, SendMsg
+from ..command_register import CommandCaller, CommandPackage
 from ._clients import VersionAPIClient
 from .._adaptation_info import __adaptation__
 
-adaptation_info = on_command("adaptationInfo", aliases={"adai", "adaptation_info", "Adaptation_Info", "AdaptationInfo"}, rule=to_me(), block=True)
 
-@adaptation_info.handle()
-async def handle_adaptation(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    persona_info = PersonaInfo(bot, event, args)
-    send_msg = SendMsg("Version.Adaptation_Info", adaptation_info, persona_info)
-    version_client = VersionAPIClient()
+@CommandCaller.register
+class AdaptationInfo(CommandPackage):
+    cmd = "adaptationInfo"
+    aliases = {
+        "adai",
+        "ADAI",
+        "adaptation_info",
+        "Adaptation_Info",
+        "AdaptationInfo",
+        "ADAPTATION_INFO",
+    }
 
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
+    @property
+    def component(self) -> str:
+        return f"Version.{self.__class__.__name__}"
+
+    async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
+        if send_msg.is_debug_mode:
+            await send_msg.send_debug_mode()
+
+        version_client = VersionAPIClient()
         server_version = await version_client.get_version()
         version_data = server_version.get_data()
         if version_data is None:
             await send_msg.send_error("Server Version Data is Invalid")
+            return
         await send_msg.send_prompt(
             (
                 f"Client Adaptation Version: {__adaptation__}\n"

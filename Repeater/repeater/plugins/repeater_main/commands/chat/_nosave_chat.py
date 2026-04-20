@@ -1,6 +1,6 @@
 from .._clients import ChatClient
 from ...command_register import CommandCaller
-from ._chat_base_pkg import BaseChat
+from .._bases import BaseChat
 from ...assist import PersonaInfo, SendMsg
 
 @CommandCaller.register
@@ -8,11 +8,12 @@ class NoSaveChat(BaseChat):
     cmd = "noSaveChat"
     aliases = {
         "nsc",
+        "NSC",
         "no_save_chat",
         "NoSaveChat",
-        "No_Save_Chat"
+        "No_Save_Chat",
+        "NO_SAVE_CHAT"
     }
-    component = "Chat.NoSaveChat"
     
     async def send_message(
         self,

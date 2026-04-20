@@ -1,1 +1,5 @@
-from ._model_info import handle_get_model_list
+from ._model_info import GetModelList
+
+__all__ = [
+    "GetModelList"
+]

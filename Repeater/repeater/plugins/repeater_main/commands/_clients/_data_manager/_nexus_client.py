@@ -21,7 +21,7 @@ class NexusClient:
         self._info = info
     
     # region upload to nexus
-    async def upload_environment_to_nexus(self, timeout: int | None = None) -> Response[NexusUploadResponse]:
+    async def upload_to_nexus(self, timeout: int | None = None) -> Response[NexusUploadResponse]:
         response = await self._httpx_client.post(
             f"/nexus/upload/{self._info.namespace_str}/environment",
             json = {
@@ -35,7 +35,7 @@ class NexusClient:
     # endregion
     
     # region download from nexus
-    async def download_environment_from_nexus(self, uuid: str) -> Response[NexusDownloadResponse]:
+    async def download_from_nexus(self, uuid: str) -> Response[NexusDownloadResponse]:
         try:
             uuid = UUID(uuid)
         except ValueError:

@@ -1,54 +1,65 @@
 import json
 
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent
-from nonebot.adapters import Bot
+from nonebot.adapters.onebot.v11 import Message, MessageSegment
+from pydantic import ValidationError
 
 from ..assist import PersonaInfo, SendMsg
-from pydantic import ValidationError
+from ..command_register import CommandCaller, CommandPackage
 from ..client_net_configs import storage_configs
 
-send_message = on_command("sendMessage", aliases={"smsg", "send_message", "Send_Message", "SendMessage"}, rule=to_me(), block=True)
 
-@send_message.handle()
-async def handle_send_message(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    persona_info = PersonaInfo(bot, event, args)
-    send_msg = SendMsg("Send.Send_Message", send_message, persona_info)
+@CommandCaller.register
+class SendMessage(CommandPackage):
+    cmd = "sendMessage"
+    aliases = {
+        "smsg",
+        "SMSG",
+        "send_message",
+        "Send_Message",
+        "SendMessage",
+        "SEND_MESSAGE",
+    }
 
-    if not storage_configs.allow_send_any_message:
-        await send_msg.send_error("Send_Message is disabled")
-    
-    try:
-        message_body = json.loads(persona_info.message_striped_str)
-    except json.JSONDecodeError:
-        await send_msg.send_error("Send_Message must enter a valid JSON")
-    
-    try:
-        if isinstance(message_body, list):
-            message_body = [MessageSegment(**segment) for segment in message_body]
-        elif isinstance(message_body, str):
-            message_body = MessageSegment.text(message_body)
-        elif isinstance(message_body, dict):
-            message_body = MessageSegment(**message_body)
-        else:
-            await send_msg.send_error("Please enter the correct content format.")
+    @property
+    def component(self) -> str:
+        return f"Send.{self.__class__.__name__}"
+
+    async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
+        if send_msg.is_debug_mode:
+            await send_msg.send_debug_mode()
+
+        if not storage_configs.allow_send_any_message:
+            await send_msg.send_error("Send_Message is disabled")
             return
-        
-        message = Message(message_body)
-    except ValidationError as e:
-        errors = e.errors()
-        text_buffer: list[str] = []
-        for error in errors:
-            error_text = f"{'.'.join(error['loc'])}: {error['msg']}"
-            text_buffer.append(error_text)
-        await send_msg.send_error("\n".join(text_buffer))
-    except Exception as e:
-        await send_msg.send_error(str(e))
-    
-    await send_msg.send_any(
-        message,
-        reply = False
-    )
+
+        try:
+            message_body = json.loads(persona_info.message_striped_str)
+        except json.JSONDecodeError:
+            await send_msg.send_error("Send_Message must enter a valid JSON")
+            return
+
+        try:
+            if isinstance(message_body, list):
+                message_body = [MessageSegment(**segment) for segment in message_body]
+            elif isinstance(message_body, str):
+                message_body = MessageSegment.text(message_body)
+            elif isinstance(message_body, dict):
+                message_body = MessageSegment(**message_body)
+            else:
+                await send_msg.send_error("Please enter the correct content format.")
+                return
+
+            message = Message(message_body)
+        except ValidationError as e:
+            errors = e.errors()
+            text_buffer: list[str] = []
+            for error in errors:
+                error_text = f"{'.'.join(error['loc'])}: {error['msg']}"
+                text_buffer.append(error_text)
+            await send_msg.send_error("\n".join(text_buffer))
+            return
+        except Exception as e:
+            await send_msg.send_error(str(e))
+            return
+
+        await send_msg.send_any(message, reply=False)

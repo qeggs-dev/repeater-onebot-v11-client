@@ -9,6 +9,10 @@ from ...command_register import CommandPackage
 class BaseChat(CommandPackage):
     rule = to_me()
 
+    @property
+    def component(self) -> str:
+        return f"Chat.{self.__class__.__name__}"
+
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         logger.info(
             "Received a message {message} from {namespace}",

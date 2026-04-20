@@ -1,9 +1,9 @@
-from ._var_expand import handle_var_expand
-from ._var_expand_text import handle_var_expand_text
-from ._var_expand_image import handle_var_expand_image
+from ._var_expand import VarExpand
+from ._var_expand_text import VarExpandText
+from ._var_expand_image import VarExpandImage
 
 __all__ = [
-    "handle_var_expand",
-    "handle_var_expand_text",
-    "handle_var_expand_image",
+    "VarExpand",
+    "VarExpandText",
+    "VarExpandImage",
 ]

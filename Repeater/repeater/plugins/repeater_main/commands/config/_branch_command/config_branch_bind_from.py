@@ -1,25 +1,20 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent
-from nonebot.adapters import Bot
-
+from ....assist import PersonaInfo
+from ....command_register import CommandCaller
+from ..._bases import BindBranchFrom
 from ..._clients import ConfigClient
-from ....assist import PersonaInfo, SendMsg
 
-config_branch_bind_from = on_command("configBranchBindFrom", aliases={"cfgbbf", "config_branch_bind_from", "Config_Branch_Bind_From", "ConfigBranchBindFrom"}, rule=to_me(), block=True)
 
-@config_branch_bind_from.handle()
-async def handle_config_branch_bind_from(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    persona_info = PersonaInfo(bot=bot, event=event, args=args)
-    send_msg = SendMsg("Config.Config_Branch_Bind_From", config_branch_bind_from, persona_info)
+@CommandCaller.register
+class ConfigBranchBindFrom(BindBranchFrom):
+    cmd = "configBranchBindFrom"
+    aliases = {
+        "cfgbbf",
+        "CFGBBF",
+        "config_branch_bind_from",
+        "Config_Branch_Bind_From",
+        "ConfigBranchBindFrom",
+        "CONFIG_BRANCH_BIND_FROM",
+    }
 
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-
-    msg = args.extract_plain_text().strip()
-    
-    config_client = ConfigClient(persona_info)
-    response = await config_client.bind_from(msg)
-    await send_msg.send_response_check_code(response, f"Bind Config Branch from {msg}")
+    def get_client(self, persona_info: PersonaInfo) -> ConfigClient:
+        return ConfigClient(persona_info)

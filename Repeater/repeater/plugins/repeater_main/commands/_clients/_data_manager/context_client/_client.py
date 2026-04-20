@@ -20,8 +20,8 @@ class ContextClient(UserDataClient):
         timeout = storage_configs.server_api_timeout.context
     )
 
-    def __init__(self, info: PersonaInfo):
-        super().__init__(info, "context")
+    def __init__(self, info: PersonaInfo, namespace: str | None = None):
+        super().__init__(info, "context", namespace)
     
     # region inject context
     async def inject_context(
@@ -30,7 +30,7 @@ class ContextClient(UserDataClient):
         ) -> Response[None]:
         logger.info("Injecting {role} context", role = content_unit.role)
         response = await self._httpx_client.post(
-            f"{INJECT_CONTEXT_ROUTE}/{self._info.namespace_str}",
+            f"{INJECT_CONTEXT_ROUTE}/{self.namespace_str}",
             json = content_unit.model_dump(),
         )
         return Response(response)
@@ -40,7 +40,7 @@ class ContextClient(UserDataClient):
     async def withdraw(self, context_pair_num: int = 1, paired: bool = True) -> Response[WithdrawResponse]:
         logger.info("Withdrawing context")
         response = await self._httpx_client.post(
-            f"{WIHTDRAW_CONTEXT_ROUTE}/{self._info.namespace_str}",
+            f"{WIHTDRAW_CONTEXT_ROUTE}/{self.namespace_str}",
             data={
                 "context_pair_num": context_pair_num,
                 "paired": paired
@@ -56,7 +56,7 @@ class ContextClient(UserDataClient):
     async def get_context_total_length(self) -> Response[ContextTotalLengthResponse]:
         logger.info("Getting context total length")
         response = await self._httpx_client.get(
-            f"{GET_CONTEXT_LENGTH_ROUTE}/{self._info.namespace_str}"
+            f"{GET_CONTEXT_LENGTH_ROUTE}/{self.namespace_str}"
         )
         return Response(
             response,
@@ -68,7 +68,7 @@ class ContextClient(UserDataClient):
     async def get_context(self) -> Response[list[ContentUnit]]:
         logger.info("Getting context")
         response = await self._httpx_client.get(
-            f"{GET_CONTEXT_ROUTE}/{self._info.namespace_str}"
+            f"{GET_CONTEXT_ROUTE}/{self.namespace_str}"
         )
         data = response.json()
         if isinstance(data, list):
@@ -87,7 +87,7 @@ class ContextClient(UserDataClient):
     async def check_role_structure(self) -> Response[RoleStructureCheckerResponse]:
         logger.info("Checking role structure")
         response = await self._httpx_client.get(
-            f"{ROLE_STRUCTRUE_ROUTE}/{self._info.namespace_str}"
+            f"{ROLE_STRUCTRUE_ROUTE}/{self.namespace_str}"
         )
         return Response(
             response,

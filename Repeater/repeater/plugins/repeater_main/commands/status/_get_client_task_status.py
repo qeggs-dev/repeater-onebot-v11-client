@@ -1,24 +1,29 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent
-from nonebot.adapters import Bot
 from typing import Any
-
-from .._clients import StatusClient
 from ...assist import PersonaInfo, SendMsg
+from ...command_register import CommandCaller, CommandPackage
+from .._clients import StatusClient
 
-get_client_task_status = on_command("getCoreTaskStatus", aliases={"gcts", "get_client_task_status", "Get_client_Task_Status", "GetCoreTaskStatus"}, rule=to_me(), block=True)
 
-@get_client_task_status.handle()
-async def handle_get_client_task_status(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    persona_info = PersonaInfo(bot=bot, event=event, args=args)
-    send_msg = SendMsg("Status.Get_client_Task_Status", get_client_task_status, persona_info)
+@CommandCaller.register
+class GetCoreTaskStatus(CommandPackage):
+    cmd = "getCoreTaskStatus"
+    aliases = {
+        "gcts",
+        "GCTS",
+        "get_client_task_status",
+        "Get_Client_Task_Status",
+        "GetCoreTaskStatus",
+        "GET_CORE_TASK_STATUS",
+    }
 
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
+    @property
+    def component(self) -> str:
+        return f"Status.{self.__class__.__name__}"
+
+    async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
+        if send_msg.is_debug_mode:
+            await send_msg.send_debug_mode()
+
         status_client = StatusClient()
         response = await status_client.get_client_task_status(persona_info.namespace_str)
         if response.code == 200:
@@ -35,8 +40,7 @@ async def handle_get_client_task_status(bot: Bot, event: MessageEvent, args: Mes
                     else:
                         prefix = ("  " * index) + "└ "
                     text_buffer.append(prefix + status)
-                
+
                 await send_msg.send_check_length_prompt("\n".join(text_buffer))
         else:
             await send_msg.send_response_check_code(response)
-

@@ -1,18 +1,19 @@
 from .._clients import ChatClient
 from ...assist import PersonaInfo, SendMsg
 from ...command_register import CommandCaller
-from ._chat_base_pkg import BaseChat
+from .._bases import BaseChat
 
 @CommandCaller.register
 class RawChat(BaseChat):
     cmd = "raw"
     aliases = {
+        "RAW",
         "rawchat",
         "raw_chat",
         "Raw_Chat",
-        "RawChat"
+        "RawChat",
+        "RAW_CHAT"
     }
-    component = "Chat.Raw"
     
     async def send_message(
         self,

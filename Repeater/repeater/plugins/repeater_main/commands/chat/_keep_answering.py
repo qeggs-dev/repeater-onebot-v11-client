@@ -1,18 +1,20 @@
 from .._clients import ChatClient, ChatSendMsg
 from ...assist import PersonaInfo, SendMsg
 from ...logger import logger
-from ...command_register import CommandCaller, CommandPackage
+from ...command_register import CommandCaller
+from .._bases import BaseChat
 
 @CommandCaller.register
-class ChatKeepAnswering(CommandPackage):
+class ChatKeepAnswering(BaseChat):
     cmd = "keepAnswering"
     aliases = {
         "ka",
+        "KA",
         "keep_answering",
         "Keep_Answering",
-        "KeepAnswering"
+        "KeepAnswering",
+        "KEEP_ANSWERING"
     }
-    component = "Chat.KeepAnswering"
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

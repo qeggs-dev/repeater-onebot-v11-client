@@ -1,16 +1,17 @@
 from ...assist import PersonaInfo, SendMsg
 from .._clients import ChatClient
 from ...command_register import CommandCaller
-from ._chat_base_pkg import BaseChat
+from .._bases import BaseChat
 
 @CommandCaller.register
 class Reason(BaseChat):
     cmd = "reason"
     aliases = {
         "r",
-        "Reason"
+        "R",
+        "Reason",
+        "REASON"
     }
-    component = "Chat.Reason"
     
     async def send_message(
         self,

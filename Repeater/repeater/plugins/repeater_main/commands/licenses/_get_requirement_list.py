@@ -1,30 +1,35 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent, Message
-from nonebot.adapters import Bot
-
 from ...assist import PersonaInfo, SendMsg
+from ...command_register import CommandCaller, CommandPackage
 from .._clients import LicenseClient
 
-get_requirement_list = on_command("getRequirementList", aliases={"grls", "get_requirement_list", "Get_Requirement_List", "GetRequirementList"}, rule=to_me(), block=True)
 
-@get_requirement_list.handle()
-async def handle_get_requirement_list(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    persona_info = PersonaInfo(bot, event, args)
-    send_msg = SendMsg("Licenses.Get_Requirement_List", get_requirement_list, persona_info)
-    version_client = LicenseClient()
+@CommandCaller.register
+class GetRequirementList(CommandPackage):
+    cmd = "getRequirementList"
+    aliases = {
+        "grls",
+        "GRLS",
+        "get_requirement_list",
+        "Get_Requirement_List",
+        "GetRequirementList",
+        "GET_REQUIREMENT_LIST",
+    }
 
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
-        server_requirements = await version_client.get_requirement_list()
+    @property
+    def component(self) -> str:
+        return f"Licenses.{self.__class__.__name__}"
+
+    async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
+        if send_msg.is_debug_mode:
+            await send_msg.send_debug_mode()
+
+        license_client = LicenseClient()
+        server_requirements = await license_client.get_requirement_list()
         version_data = server_requirements.get_data()
         if not version_data:
             await send_msg.send_error("Server requirements data is invalid.")
         else:
             text_buffer: list[str] = []
-            for index, requirement in enumerate(version_data, start = 1):
+            for index, requirement in enumerate(version_data, start=1):
                 text_buffer.append(f"{index}. {requirement}")
             await send_msg.send_check_length("\n".join(text_buffer))

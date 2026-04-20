@@ -1,33 +1,36 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.matcher import Matcher
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Message
-from nonebot.params import (
-    CommandArg,
-    Arg
-)
-from ...assist import PersonaInfo, FileSender, FileUrl, SendMsg
+from ...assist import PersonaInfo, SendMsg, FileSender, FileUrl
+from ...command_register import CommandCaller, CommandPackage
 import time
 
-audio_to_file = on_command("audioToFile", aliases={"a2f", "audio_to_file", "Audio_To_File", "AudioToFile"}, rule=to_me(), block=True)
 
-@audio_to_file.handle()
-async def audio_to_file_handle(matcher: Matcher, args: Message = CommandArg()):
-    if "record" in args:
-        matcher.set_arg("echo_text", args)
+@CommandCaller.register
+class AudioToFile(CommandPackage):
+    cmd = "audioToFile"
+    aliases = {
+        "a2f",
+        "A2F",
+        "audio_to_file",
+        "Audio_To_File",
+        "AudioToFile",
+        "AUDIO_TO_FILE",
+    }
 
-@audio_to_file.got("record", prompt="Please send an audio message...")
-async def audio_to_file_got(bot: Bot, event: MessageEvent, message: Message = Arg("record")):
-    persona_info = PersonaInfo(bot = bot, event = event, args = message)
-    send_msg = SendMsg("Other.Audio_To_File", audio_to_file, persona_info)
-    for message_segment in persona_info.message:
-        if message_segment.type == "record":
-            file_sender = FileSender(
-                persona_info = persona_info,
-                send_msg = send_msg
-            )
-            fileurl = FileUrl(message_segment.data["url"])
-            await file_sender.send_file(
-                url = str(fileurl),
-                file_name = f"{persona_info.nickname}_{time.strftime('%Y%m%d_%H%M%S', time.localtime())}{fileurl.path.suffix}"
-            )
+    @property
+    def component(self) -> str:
+        return f"Other.{self.__class__.__name__}"
+
+    async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
+        if send_msg.is_debug_mode:
+            await send_msg.send_debug_mode()
+
+        for message_segment in persona_info.message:
+            if message_segment.type == "record":
+                file_sender = FileSender(
+                    persona_info=persona_info,
+                    send_msg=send_msg
+                )
+                fileurl = FileUrl(message_segment.data["url"])
+                await file_sender.send_file(
+                    url=str(fileurl),
+                    file_name=f"{persona_info.nickname}_{time.strftime('%Y%m%d_%H%M%S', time.localtime())}{fileurl.path.suffix}"
+                )

@@ -1,5 +1,5 @@
 from .._clients import ChatClient
-from ._chat_base_pkg import BaseChat
+from .._bases import BaseChat
 from ...command_register import CommandCaller
 from ...assist import PersonaInfo, SendMsg
 
@@ -8,11 +8,12 @@ class NPChat(BaseChat):
     cmd = "npChat"
     aliases = {
         "np",
+        "NP",
         "no_prompt_chat",
         "No_Prompt_Chat",
-        "NoPromptChat"
+        "NoPromptChat",
+        "NO_PROMPT_CHAT"
     }
-    component = "Chat.No_Prompt_Chat"
     
     async def send_message(
         self,

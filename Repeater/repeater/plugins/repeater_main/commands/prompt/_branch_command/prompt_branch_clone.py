@@ -1,25 +1,20 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent
-from nonebot.adapters import Bot
-
-from ..._clients import PromptClient
 from ....assist import PersonaInfo, SendMsg
+from ....command_register import CommandCaller
+from ..._bases import CloneBranch
+from ..._clients import PromptClient
 
-prompt_branch_clone = on_command("promptBranchClone", aliases={"pbc", "prompt_branch_clone", "Prompt_Branch_Clone", "PromptBranchClone"}, rule=to_me(), block=True)
 
-@prompt_branch_clone.handle()
-async def handle_prompt_branch_clone(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    persona_info = PersonaInfo(bot=bot, event=event, args=args)
-    send_msg = SendMsg("Prompt.Prompt_Branch_Clone", prompt_branch_clone, persona_info)
+@CommandCaller.register
+class PromptBranchClone(CloneBranch):
+    cmd = "promptBranchClone"
+    aliases = {
+        "pbc",
+        "PBC",
+        "prompt_branch_clone",
+        "Prompt_Branch_Clone",
+        "PromptBranchClone",
+        "PROMPT_BRANCH_CLONE",
+    }
 
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-
-    msg = args.extract_plain_text().strip()
-    
-    prompt_client = PromptClient(persona_info)
-    response = await prompt_client.clone(msg)
-    await send_msg.send_response_check_code(response, f"Clone Prompt Branch to {msg}")
+    def get_client(self, persona_info: PersonaInfo) -> PromptClient:
+        return PromptClient(persona_info)

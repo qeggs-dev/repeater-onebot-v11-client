@@ -21,11 +21,11 @@ class ConfigClient(UserDataClient):
         timeout = storage_configs.server_api_timeout.config
     )
 
-    def __init__(self, info: PersonaInfo):
-        super().__init__(info, "config")
+    def __init__(self, info: PersonaInfo, namespace: str | None = None):
+        super().__init__(info, "config", namespace)
     
     # region set config
-    async def set_config(self, config_key: str, value: Any, item_type: str = "auto") -> Response[Any | None]:
+    async def set_config(self, config_key: str, value: Any, item_type: str = "auto") -> Response[Any]:
         TYPES = {
             int: "int",
             float: "float",
@@ -54,7 +54,7 @@ class ConfigClient(UserDataClient):
             item_type=item_type
         )
         response = await self._httpx_client.put(
-            f"{SET_CONFIG_ROUTE}/{self._info.namespace_str}/{config_key}",
+            f"{SET_CONFIG_ROUTE}/{self.namespace_str}/{config_key}",
             json={
                 "type": item_type,
                 "value": value
@@ -65,21 +65,21 @@ class ConfigClient(UserDataClient):
 
     # region get config
     async def get_configs(self) -> Response[Any | None]:
-        logger.info("Get {user} configs", user=self._info.namespace_str)
+        logger.info("Get {user} configs", user=self.namespace_str)
         response = await self._httpx_client.get(
-            f"{GET_CONFIG_ROUTE}/{self._info.namespace_str}"
+            f"{GET_CONFIG_ROUTE}/{self.namespace_str}"
         )
         return Response(response)
     
-    def get_config_url(self) -> str:
-        return urljoin(BASE_URL, f"{GET_CONFIG_ROUTE}/{self._info.namespace_str}.json")
+    def get_configs_url(self) -> str:
+        return urljoin(BASE_URL, f"{GET_CONFIG_ROUTE}/{self.namespace_str}.json")
     # endregion
 
     # region remove config key
     async def remove_config_key(self, config_key: str) -> Response[None]:
         logger.info("Remove config key: {config_key}", config_key=config_key)
         response = await self._httpx_client.delete(
-            f"{REMOVE_CONFIG_KEY_ROUTE}/{self._info.namespace_str}/{config_key}"
+            f"{REMOVE_CONFIG_KEY_ROUTE}/{self.namespace_str}/{config_key}"
         )
         return Response(response)
     # endregion

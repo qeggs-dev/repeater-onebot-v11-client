@@ -1,25 +1,22 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent
-from nonebot.adapters import Bot
+from ....assist import PersonaInfo, SendMsg, Response
+from ....command_register import CommandCaller
+from ..._bases import BaseConfig
 
-from ..._clients import ConfigClient
-from ....assist import PersonaInfo, SendMsg
 
-set_html_template = on_command("setHtmlTemplate", aliases={"sht", "set_html_template", "Set_Html_Template", "SetHtmlTemplate"}, rule=to_me(), block=True)
+@CommandCaller.register
+class SetHtmlTemplate(BaseConfig):
+    cmd = "setHtmlTemplate"
+    aliases = {
+        "sht",
+        "SHT",
+        "set_html_template",
+        "Set_Html_Template",
+        "SetHtmlTemplate",
+        "SET_HTML_TEMPLATE",
+    }
+    field = "render_html_template"
 
-@set_html_template.handle()
-async def handle_set_html_template(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    persona_info = PersonaInfo(bot=bot, event=event, args=args)
-    send_msg = SendMsg("Config.Set_Html_Template", set_html_template, persona_info)
-
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-
-    msg = persona_info.message_striped_str
-
-    config_client = ConfigClient(persona_info)
-    response = await config_client.set_config("render_html_template", msg)
-    await send_msg.send_response_check_code(response, f"Set Html Template to {msg}")
+    async def finish_message(
+        self, persona_info: PersonaInfo, send_msg: SendMsg, response: Response, value: str
+    ) -> None:
+        await send_msg.send_response_check_code(response, f"Set Html Template to {value}")

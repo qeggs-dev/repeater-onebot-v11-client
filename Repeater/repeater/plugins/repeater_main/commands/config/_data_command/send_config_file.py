@@ -1,26 +1,33 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.adapters.onebot.v11 import MessageEvent
-from nonebot.adapters import Bot
+from ....assist import PersonaInfo, SendMsg, Response, FileSender
+from ....command_register import CommandCaller
+from ..._bases import BaseConfig, OperationType
 
-from ..._clients import ConfigClient
-from ....assist import PersonaInfo, FileSender, SendMsg
 
-send_config_file = on_command("sendConfigFile", aliases={"scfgf", "send_config_file", "Send_Config_File", "SendConfigFile"}, rule=to_me(), block=True)
+@CommandCaller.register
+class SendConfigFile(BaseConfig):
+    cmd = "sendConfigFile"
+    aliases = {
+        "scfgf",
+        "SCFGF",
+        "send_config_file",
+        "Send_Config_File",
+        "SendConfigFile",
+        "SCFGF"
+    }
+    operation = OperationType.GET_FILE_URL
 
-@send_config_file.handle()
-async def handle_send_config_file(bot: Bot, event: MessageEvent):
-    persona_info = PersonaInfo(bot=bot, event=event)
-    send_msg = SendMsg("Config.Send_Config_File", send_config_file, persona_info)
+    async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> None:
+        return None
 
-    user_file_client = ConfigClient(persona_info)
-    file_url = user_file_client.get_config_url()
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
-        file_sender = FileSender(
-            persona_info = persona_info,
-            send_msg = send_msg
-        )
-
-        await file_sender.send_file(file_url, f"{persona_info.namespace_str}_User_Config.json")
+    async def finish_message(
+        self, persona_info: PersonaInfo, send_msg: SendMsg, response: Response | None, value: str
+    ) -> None:
+        # value is the config file URL from GET_FILE_URL operation
+        if value:
+            file_sender = FileSender(
+                persona_info=persona_info,
+                send_msg=send_msg
+            )
+            await file_sender.send_file(value, f"{persona_info.namespace_str}_User_Config.json")
+        else:
+            await send_msg.send_error("Failed to get config file URL")

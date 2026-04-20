@@ -1,25 +1,20 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent
-from nonebot.adapters import Bot
-
-from ..._clients import ContextClient
 from ....assist import PersonaInfo, SendMsg
+from ....command_register import CommandCaller
+from ..._bases import ChangeBranch
+from ..._clients import ContextClient
 
-change_context_branch = on_command("changeContextBranch", aliases={"ccb", "change_context_branch", "Change_Context_Branch", "ChangeContextBranch"}, rule=to_me(), block=True)
 
-@change_context_branch.handle()
-async def handle_change_context_branch(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    persona_info = PersonaInfo(bot=bot, event=event, args=args)
-    send_msg = SendMsg("Context.Change_Context_Branch", change_context_branch, persona_info)
+@CommandCaller.register
+class ChangeContextBranch(ChangeBranch):
+    cmd = "changeContextBranch"
+    aliases = {
+        "ccb",
+        "CCB",
+        "change_context_branch",
+        "Change_Context_Branch",
+        "ChangeContextBranch",
+        "CHANGE_CONTEXT_BRANCH",
+    }
 
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    
-    msg = persona_info.message_striped_str
-    
-    context_client = ContextClient(persona_info)
-    response = await context_client.change_branch(msg)
-    await send_msg.send_response_check_code(response, f"Change Context Branch to {msg}")
+    def get_client(self, persona_info: PersonaInfo) -> ContextClient:
+        return ContextClient(persona_info)

@@ -1,16 +1,17 @@
 from ...assist import PersonaInfo, SendMsg
 from .._clients import ChatClient, DataRoutingField, CrossUserDataRouting
 from ...command_register import CommandCaller
-from ._chat_base_pkg import BaseChat
+from .._bases import BaseChat
 
 @CommandCaller.register
 class Reference(BaseChat):
     cmd = "reference"
     aliases = {
         "ref",
-        "Reference"
+        "REF",
+        "Reference",
+        "REFERENCE"
     }
-    component = "Chat.Reference"
     
     async def send_message(
         self,

@@ -1,4 +1,4 @@
-from ._chat_base_pkg import BaseChat
+from .._bases import BaseChat
 from .._clients import ChatSendMsg
 from ...command_register import CommandCaller
 
@@ -7,11 +7,12 @@ class TTSChat(BaseChat):
     cmd = "tts_chat"
     aliases = {
         "ttsc",
+        "TTSC",
         "tts_Chat",
         "TTS_Chat",
-        "TTSChat"
+        "TTSChat",
+        "TTS_CHAT",
     }
-    component = "Chat.TTS_Chat"
 
     async def send_chat_send_msg(
         self,

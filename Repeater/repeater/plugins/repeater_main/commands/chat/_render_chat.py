@@ -1,4 +1,4 @@
-from ._chat_base_pkg import BaseChat
+from .._bases import BaseChat
 from .._clients import ChatSendMsg
 from ...command_register import CommandCaller
 
@@ -7,11 +7,12 @@ class RenderChat(BaseChat):
     cmd = "renderChat"
     aliases = {
         "rc",
+        "RC",
         "render_chat",
         "Render_Chat",
-        "RenderChat"
+        "RenderChat",
+        "RENDER_CHAT"
     }
-    component = "Chat.Render_Chat"
 
     async def send_chat_send_msg(
         self,

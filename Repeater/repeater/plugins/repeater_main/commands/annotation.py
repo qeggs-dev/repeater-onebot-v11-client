@@ -1,10 +1,22 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Message
-from nonebot.params import CommandArg
+from ..command_register import CommandCaller, CommandPackage
 
-comment = on_command("#", aliases={"/", "anot", "annotation", "Annotation"}, rule=to_me(), block=True)
 
-@comment.handle()
-async def handle_annotation():
-    return
+@CommandCaller.register
+class Annotation(CommandPackage):
+    cmd = "#"
+    aliases = {
+        "/",
+        "anot",
+        "annotation",
+        "Annotation",
+        "ANNOTATION",
+    }
+
+    @property
+    def component(self) -> str:
+        return f"Annotation.{self.__class__.__name__}"
+
+    empty_handler = True
+
+    async def handler(self, persona_info, send_msg):
+        pass

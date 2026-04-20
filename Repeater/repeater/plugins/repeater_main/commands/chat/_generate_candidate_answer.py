@@ -3,18 +3,20 @@ from ...logger import logger
 
 from .._clients import ChatClient, ChatSendMsg, ContentRole
 from ...assist import PersonaInfo, SendMsg
-from ...command_register import CommandCaller, CommandPackage
+from ...command_register import CommandCaller
+from .._bases import BaseChat
 
 @CommandCaller.register
-class GenerateCandidateAnswer(CommandPackage):
+class GenerateCandidateAnswer(BaseChat):
     cmd = "generateCandidateAnswer"
     aliases = {
         "gca",
+        "GCA",
         "generate_candidate_answer",
         "Generate_Candidate_Answer",
-        "GenerateCandidateAnswer"
+        "GenerateCandidateAnswer",
+        "GENERATE_CANDIDATE_ANSWER"
     }
-    component = "Chat.Generate_Candidate_Answer"
 
     metadata_pattern = re.compile(r"> Message\s*?Metadata:.*?---(?:\r?\n)+", re.DOTALL | re.IGNORECASE)
 

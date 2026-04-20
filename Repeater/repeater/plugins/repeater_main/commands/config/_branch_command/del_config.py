@@ -1,23 +1,20 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent
-from nonebot.adapters import Bot
-
+from ....assist import PersonaInfo
+from ....command_register import CommandCaller
+from ..._bases import DeleteBranch
 from ..._clients import ConfigClient
-from ....assist import PersonaInfo, SendMsg
 
-del_config = on_command("delConfig", aliases={"dcfg", "delete_config", "Delete_Config", "DeleteConfig"}, rule=to_me(), block=True)
 
-@del_config.handle()
-async def handle_del_config(bot: Bot, event: MessageEvent):
-    persona_info = PersonaInfo(bot, event)
-    send_msg = SendMsg("Config.Delete_Config", del_config, persona_info)
+@CommandCaller.register
+class DelConfig(DeleteBranch):
+    cmd = "delConfig"
+    aliases = {
+        "dcfg",
+        "DCFG",
+        "delete_config",
+        "Delete_Config",
+        "DeleteConfig",
+        "DELETE_CONFIG",
+    }
 
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-
-    config_client = ConfigClient(persona_info)
-    response = await config_client.delete()
-    await send_msg.send_response_check_code(response, f"Delete Config {persona_info.namespace_str}")
+    def get_client(self, persona_info: PersonaInfo) -> ConfigClient:
+        return ConfigClient(persona_info)

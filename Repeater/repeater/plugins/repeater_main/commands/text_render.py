@@ -1,16 +1,25 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent
-from nonebot.adapters import Bot
-
 from ..assist import PersonaInfo, SendMsg
+from ..command_register import CommandCaller, CommandPackage
 
-text_render = on_command("textRender", aliases={"tr", "text_render", "Text_Render", "TextRender"}, rule=to_me(), block=True)
 
-@text_render.handle()
-async def handle_text_render(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    persona_info = PersonaInfo(bot, event, args)
-    send_msg = SendMsg("Render.Markdown", text_render, persona_info)
-    await send_msg.send_render(persona_info.message_striped_str)
+@CommandCaller.register
+class TextRender(CommandPackage):
+    cmd = "textRender"
+    aliases = {
+        "tr",
+        "TR",
+        "text_render",
+        "Text_Render",
+        "TextRender",
+        "TEXT_RENDER",
+    }
+
+    @property
+    def component(self) -> str:
+        return f"Render.{self.__class__.__name__}"
+
+    async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
+        if send_msg.is_debug_mode:
+            await send_msg.send_debug_mode()
+
+        await send_msg.send_render(persona_info.message_striped_str)

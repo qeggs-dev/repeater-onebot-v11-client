@@ -20,9 +20,17 @@ class UserDataClient(ABC):
         timeout = storage_configs.server_api_timeout.data_manager,
     )
 
-    def __init__(self, info: PersonaInfo, data_type: str):
+    def __init__(self, info: PersonaInfo, data_type: str, namespace: str | None = None):
         self._info = info
         self._data_type = data_type
+        self._namespace = namespace
+    
+    @property
+    def namespace_str(self) -> str:
+        if self._namespace is None:
+            return self._info.namespace_str
+        else:
+            return self._namespace
 
     # region change subsession
     async def change_branch(self, new_branch_id: str) -> Response[None]:

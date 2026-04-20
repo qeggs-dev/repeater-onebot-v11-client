@@ -1,30 +1,36 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment, Message
-from nonebot.adapters import Bot
-
+from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from ...assist import PersonaInfo, SendMsg
+from ...command_register import CommandCaller, CommandPackage
 from .._clients import LicenseClient
 
-get_server_licenses = on_command("getServerLicenses", aliases={"gsl", "get_server_licenses", "Get_Server_License", "GetServerLicense"}, rule=to_me(), block=True)
 
-@get_server_licenses.handle()
-async def handle_get_server_licenses(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    persona_info = PersonaInfo(bot, event, args)
-    send_msg = SendMsg("Licenses.Get_Server_License", get_server_licenses, persona_info)
-    version_client = LicenseClient()
+@CommandCaller.register
+class GetServerLicenses(CommandPackage):
+    cmd = "getServerLicenses"
+    aliases = {
+        "gsl",
+        "GSL",
+        "get_server_licenses",
+        "Get_Server_Licenses",
+        "GetServerLicenses",
+        "GET_SERVER_LICENSES",
+    }
 
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
-        server_version = await version_client.get_server_licenses()
+    @property
+    def component(self) -> str:
+        return f"Licenses.{self.__class__.__name__}"
+
+    async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
+        if send_msg.is_debug_mode:
+            await send_msg.send_debug_mode()
+
+        license_client = LicenseClient()
+        server_version = await license_client.get_server_licenses()
         version_data = server_version.get_data()
         if version_data is None:
             await send_msg.send_error("Server License Data is Invalid.")
         message = Message()
         for name, license in version_data.items():
             message.append(MessageSegment.text(f"{name}:\n"))
-            message.append(await send_msg.render_text(license, direct_output = True))
+            message.append(await send_msg.render_text(license, direct_output=True))
         await send_msg.send_prompt(message)

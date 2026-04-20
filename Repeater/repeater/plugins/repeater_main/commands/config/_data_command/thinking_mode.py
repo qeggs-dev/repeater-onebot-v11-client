@@ -1,32 +1,33 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent
-from nonebot.adapters import Bot
+from ....assist import PersonaInfo, SendMsg, Response, str_to_bool
+from ....command_register import CommandCaller
+from ..._bases import BaseConfig
 
-from ..._clients import ConfigClient
-from ....assist import PersonaInfo, SendMsg, str_to_bool
 
-thinking_mode = on_command("thinkingMode", aliases={"tm", "thinking_mode", "Thinking_Mode", "ThinkingMode"}, rule=to_me(), block=True)
+@CommandCaller.register
+class ThinkingMode(BaseConfig):
+    cmd = "thinkingMode"
+    aliases = {
+        "tm",
+        "TM",
+        "thinking_mode",
+        "Thinking_Mode",
+        "ThinkingMode",
+        "THINKING_MODE",
+    }
+    field = "thinking"
 
-@thinking_mode.handle()
-async def handle_thinking_mode(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    persona_info = PersonaInfo(bot=bot, event=event, args=args)
-    send_msg = SendMsg("Config.Thinking_Mode", thinking_mode, persona_info)
+    async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> bool | None:
+        try:
+            value = str_to_bool(persona_info.message_striped_str, optional=True)
+        except ValueError:
+            await send_msg.send_error("Not a valid value")
+        return value
 
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-
-    try:
-        thinking = str_to_bool(persona_info.message_striped_str, optional = True)
-    except ValueError:
-        await send_msg.send_error("Not a valid value")
-
-    config_client = ConfigClient(persona_info)
-    response = await config_client.set_config("thinking", thinking)
-    if thinking is None:
-        thinking_mode_str = "default"
-    else:
-        thinking_mode_str = "enabled" if thinking else "disabled"
-    await send_msg.send_response_check_code(response, f"Thinking Mode is {thinking_mode_str}")
+    async def finish_message(
+        self, persona_info: PersonaInfo, send_msg: SendMsg, response: Response, value: bool | None
+    ) -> None:
+        if value is None:
+            mode_str = "default"
+        else:
+            mode_str = "enabled" if value else "disabled"
+        await send_msg.send_response_check_code(response, f"Thinking Mode is {mode_str}")

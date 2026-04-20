@@ -14,14 +14,14 @@ class PromptClient(UserDataClient):
         timeout = storage_configs.server_api_timeout.prompt
     )
 
-    def __init__(self, info: PersonaInfo):
-        super().__init__(info, "prompt")
+    def __init__(self, info: PersonaInfo, namespace: str | None = None):
+        super().__init__(info, "prompt", namespace)
     
     # region set prompt  
     async def set_prompt(self, prompt: str) -> Response[None]:
         logger.info("Setting prompt")
         response = await self._httpx_client.put(
-            f"{SET_PROMPT_ROUTE}/{self._info.namespace_str}",
+            f"{SET_PROMPT_ROUTE}/{self.namespace_str}",
             data={
                 "prompt": prompt
             }
@@ -33,10 +33,10 @@ class PromptClient(UserDataClient):
     async def get_prompt(self) -> Response[str]:
         logger.info("Getting prompt")
         response = await self._httpx_client.get(
-            f"{GET_PROMPT_ROUTE}/{self._info.namespace_str}"
+            f"{GET_PROMPT_ROUTE}/{self.namespace_str}"
         )
         return Response(response)
     
     def get_prompt_url(self) -> str | None:
-        return urljoin(BASE_URL, f"{GET_PROMPT_ROUTE}/{self._info.namespace_str}.md")
+        return urljoin(BASE_URL, f"{GET_PROMPT_ROUTE}/{self.namespace_str}.md")
     # endregion

@@ -1,18 +1,20 @@
 from .._clients import ChatClient, ChatSendMsg
 from ...assist import PersonaInfo, SendMsg
 from ...logger import logger
-from ...command_register import CommandCaller, CommandPackage
+from ...command_register import CommandCaller
+from .._bases import BaseChat
 
 @CommandCaller.register
-class ChatKeepReasoning(CommandPackage):
+class ChatKeepReasoning(BaseChat):
     cmd = "keepReasoning"
     aliases = {
         "kr",
+        "KR",
         "keep_reasoning",
         "Keep_Reasoning",
-        "KeepReasoning"
+        "KeepReasoning",
+        "KEEP_REASONING"
     }
-    component = "Chat.KeepReasoning"
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

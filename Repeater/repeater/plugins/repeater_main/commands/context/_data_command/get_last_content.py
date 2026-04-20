@@ -1,23 +1,28 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent
-from nonebot.adapters import Bot
-
-from ..._clients import ContextClient
 from ....assist import PersonaInfo, SendMsg
+from ....command_register import CommandCaller, CommandPackage
+from ..._clients import ContextClient
 
-get_last_content = on_command("getLastContent", aliases={"glc", "get_last_content", "Get_Last_Content", "GetLastContent"}, rule=to_me(), block=True)
 
-@get_last_content.handle()
-async def handle_get_last_content(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    persona_info = PersonaInfo(bot=bot, event=event, args=args)
-    send_msg = SendMsg("Context.Get_Last_Content", get_last_content, persona_info)
+@CommandCaller.register
+class GetLastContent(CommandPackage):
+    cmd = "getLastContent"
+    aliases = {
+        "glc",
+        "GLC",
+        "get_last_content",
+        "Get_Last_Content",
+        "GetLastContent",
+        "GET_LAST_CONTENT",
+    }
 
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    else:
+    @property
+    def component(self) -> str:
+        return f"Context.{self.__class__.__name__}"
+
+    async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
+        if send_msg.is_debug_mode:
+            await send_msg.send_debug_mode()
+
         context_client = ContextClient(persona_info)
 
         response = await context_client.get_context()
@@ -35,4 +40,3 @@ async def handle_get_last_content(bot: Bot, event: MessageEvent, args: Message =
                 await send_msg.send_error("Error: Context Data is Empty")
         else:
             await send_msg.send_response_check_code(response)
-

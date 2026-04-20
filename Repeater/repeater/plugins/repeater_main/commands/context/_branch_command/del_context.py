@@ -1,23 +1,20 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent
-from nonebot.adapters import Bot
-
-from ..._clients import ContextClient
 from ....assist import PersonaInfo, SendMsg
+from ....command_register import CommandCaller
+from ..._bases import DeleteBranch
+from ..._clients import ContextClient
 
-delcontext = on_command("deleteContext", aliases={"dc", "delete_context", "Delete_Context", "DeleteContext"}, rule=to_me(), block=True)
 
-@delcontext.handle()
-async def handle_delete_context(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    persona_info = PersonaInfo(bot=bot, event=event, args=args)
-    send_msg = SendMsg("Context.Delete_Context", delcontext, persona_info)
+@CommandCaller.register
+class DeleteContext(DeleteBranch):
+    cmd = "deleteContext"
+    aliases = {
+        "dc",
+        "DC",
+        "delete_context",
+        "Delete_Context",
+        "DeleteContext",
+        "DELETE_CONTEXT",
+    }
 
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    
-    context_client = ContextClient(persona_info)
-    response = await context_client.delete()
-    await send_msg.send_response_check_code(response, f"Delete Context from {persona_info.namespace_str}")
+    def get_client(self, persona_info: PersonaInfo) -> ContextClient:
+        return ContextClient(persona_info)

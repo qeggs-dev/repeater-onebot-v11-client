@@ -1,6 +1,6 @@
 from .._clients import ChatClient
 from ...command_register import CommandCaller
-from ._chat_base_pkg import BaseChat
+from .._bases import BaseChat
 from ...assist import PersonaInfo, SendMsg
 
 @CommandCaller.register
@@ -8,11 +8,12 @@ class SummarizeAndContract(BaseChat):
     cmd = "summarizeAndContract"
     aliases = {
         "sac",
+        "SAC",
         "summarize_and_contract",
         "Summarize_And_Contract",
-        "SummarizeAndContract"
+        "SummarizeAndContract",
+        "SUMARAIZE_AND_CONTRACT"
     }
-    component = "Chat.Summarize_And_Contract"
     
     async def send_message(
         self,

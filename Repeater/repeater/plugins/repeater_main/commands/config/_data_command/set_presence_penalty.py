@@ -1,37 +1,36 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent
-from nonebot.adapters import Bot
-
-from ..._clients import ConfigClient
-from ....assist import PersonaInfo, SendMsg
-
-set_presence_penalty = on_command("setPresencePenalty", aliases={"spp", "set_presence_penalty", "Set_Presence_Penalty", "SetPresencePpenalty"}, rule=to_me(), block=True)
-
-@set_presence_penalty.handle()
-async def handle_set_presence_penalty(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    persona_info = PersonaInfo(bot=bot, event=event, args=args)
-    send_msg = SendMsg("Config.Set_Presence_Penalty", set_presence_penalty, persona_info)
-
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-
-    msg = persona_info.message_striped_str
-
-    try:
-        if msg.endswith("%"):
-            msg = msg[:-1]
-            presence_penalty = float(msg) / 100
-        else:
-            presence_penalty = float(msg)
-    except ValueError:
-        await send_msg.send_error("Presence_Penalty is set incorrectly. Please enter a floating-point number or percentage between -2 and 2!")
-    if presence_penalty < -2 or presence_penalty > 2:
-        await send_msg.send_error("Presence_Penalty is set incorrectly. Please enter a floating-point number or percentage between -2 and 2!")
+from ....assist import PersonaInfo, SendMsg, Response
+from ....command_register import CommandCaller
+from ..._bases import BaseConfig
 
 
-    config_client = ConfigClient(persona_info)
-    response = await config_client.set_config("presence_penalty", presence_penalty)
-    await send_msg.send_response_check_code(response, f"Set Presence_Penalty to {presence_penalty}")
+@CommandCaller.register
+class SetPresencePenalty(BaseConfig):
+    cmd = "setPresencePenalty"
+    aliases = {
+        "spp",
+        "SPP",
+        "set_presence_penalty",
+        "Set_Presence_Penalty",
+        "SetPresencePenalty",
+        "SET_PRESENCE_PENALTY",
+    }
+    field = "presence_penalty"
+
+    async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> float:
+        msg = persona_info.message_striped_str
+        try:
+            if msg.endswith("%"):
+                msg = msg[:-1]
+                value = float(msg) / 100
+            else:
+                value = float(msg)
+        except ValueError:
+            await send_msg.send_error("Presence_Penalty is set incorrectly. Please enter a floating-point number or percentage between -2 and 2!")
+        if value < -2 or value > 2:
+            await send_msg.send_error("Presence_Penalty is set incorrectly. Please enter a floating-point number or percentage between -2 and 2!")
+        return value
+
+    async def finish_message(
+        self, persona_info: PersonaInfo, send_msg: SendMsg, response: Response, value: float
+    ) -> None:
+        await send_msg.send_response_check_code(response, f"Set Presence_Penalty to {value}")
