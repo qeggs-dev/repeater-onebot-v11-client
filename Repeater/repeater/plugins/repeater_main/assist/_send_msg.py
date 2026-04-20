@@ -754,9 +754,12 @@ class SendMsg:
                 "Message Send Failed: \n{error}",
                 error = error
             )
+            error_msg = f"Message Send Failed: \n{error}"
+            if reply:
+                error_msg = self._persona_info.reply + error_msg
             await self.limit_speed.submit(
                 self._matcher.send(
-                    f"Message Send Failed: \n{error}"
+                    error_msg
                 )
             )
         if not continue_handler:
