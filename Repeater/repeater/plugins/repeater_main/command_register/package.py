@@ -9,13 +9,13 @@ from nonebot.rule import Rule
 from nonebot.permission import Permission
 from nonebot.dependencies import Dependent
 from nonebot.exception import NoneBotException
-from typing import Any
+from typing import Any, Iterable
 
 class CommandPackage(ABC):
     cmd: str | tuple[str, ...]
     listen_type: ListenType = ListenType.Command
     rule: T_RuleChecker | Rule | None = None
-    aliases: set[str | tuple[str, ...]] | None = None
+    aliases: Iterable[str | tuple[str, ...]] | None = None
     force_whitespace: str | bool | None = None
     permission: T_PermissionChecker | Permission | None = None
     handlers: list[T_Handler | Dependent[Any]] | None = None
@@ -25,16 +25,21 @@ class CommandPackage(ABC):
     block: bool = True
     state: T_State | None = None
     component: str = None
+    enabled: bool = True
+    empty_handler: bool = False
 
     @abstractmethod
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         pass
 
-    async def on_nb_error(self, exception: NoneBotException, persona_info: PersonaInfo, send_msg: SendMsg):
-        return True
+    async def on_debug_mode(self, persona_info: PersonaInfo, send_msg: SendMsg):
+        await send_msg.send_debug_mode()
 
     async def on_error(self, exception: Exception, persona_info: PersonaInfo, send_msg: SendMsg):
-        await send_msg.send_error(exception)
+        if isinstance(exception, NoneBotException):
+            raise
+        else:
+            await send_msg.send_error(exception)
     
     def __init__(self, *args, **kwargs):
         if self.component is None:
