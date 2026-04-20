@@ -8,7 +8,7 @@ from nonebot.params import (
     Arg
 )
 
-no_promot_echo = on_command("noPromptEcho", aliases={"npecho", "no_prompt_echo", "No_Prompt_Echo", "NoPromptEcho"}, rule=to_me(), block=True)
+no_promot_echo = on_command("noPromptEcho", aliases={"npecho", "NPECHO", "no_prompt_echo", "No_Prompt_Echo", "NoPromptEcho"}, rule=to_me(), block=True)
 
 @no_promot_echo.handle()
 async def np_echo_handle(matcher: Matcher, args: Message = CommandArg()):
