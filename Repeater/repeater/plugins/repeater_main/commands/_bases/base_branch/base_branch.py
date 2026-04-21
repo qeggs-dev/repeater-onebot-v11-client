@@ -23,4 +23,4 @@ class BaseBranch(CommandPackage):
         msg = persona_info.message_striped_str
 
         config_client = self.get_client(persona_info)
-        await self.parser(msg, config_client)
+        await self.parser(msg, config_client, send_msg)
