@@ -136,36 +136,31 @@ class ChatClient:
         )
         if timeout is None:
             timeout = storage_configs.model_first_chunk_timeout
-        try:
-            task = asyncio.create_task(
-                self._chat_client.post(
-                    url = url,
-                    json = data.submit_body()
-                )
+        
+        task = asyncio.create_task(
+            self._chat_client.post(
+                url = url,
+                json = data.submit_body()
             )
-            if timeout is not None:
-                while True:
-                    try:
-                        response = await asyncio.wait_for(task, timeout = timeout)
-                        break
-                    except asyncio.TimeoutError:
-                        buffer_response = await self.get_chat_buffer()
-                        if buffer_response:
-                            buffer = buffer_response.get_data()
-                            if buffer is None:
-                                continue
-                            elif len(buffer) == 0:
-                                await self.break_chat_task()
-                            break
-                        else:
+        )
+        if timeout is not None:
+            while True:
+                try:
+                    response = await asyncio.wait_for(task, timeout = timeout)
+                    break
+                except asyncio.TimeoutError:
+                    buffer_response = await self.get_chat_buffer()
+                    if buffer_response:
+                        buffer = buffer_response.get_data()
+                        if buffer is None:
                             continue
-            response = await task
-        except Exception as e:
-            logger.error(
-                "Error sending message to chat core: {error}",
-                error = e
-            )
-            return Response(model=ChatResponse)
+                        elif len(buffer) == 0:
+                            await self.break_chat_task()
+                        break
+                    else:
+                        continue
+        response = await task
+        
         return Response(
             response,
             ChatResponse
