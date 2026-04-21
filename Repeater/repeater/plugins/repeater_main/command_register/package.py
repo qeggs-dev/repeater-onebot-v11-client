@@ -10,9 +10,11 @@ from nonebot.rule import Rule
 from nonebot.permission import Permission
 from nonebot.dependencies import Dependent
 from nonebot.exception import NoneBotException
-from typing import Any, Iterable, Type
+from typing import Any, Iterable, Type, TypeVar, Generic
 
-class CommandPackage(ABC):
+T = TypeVar("T")
+
+class CommandPackage(ABC, Generic[T]):
     """
     Command Package Base Class
     """
@@ -71,18 +73,56 @@ class CommandPackage(ABC):
         :param bot: Bot object
         :param event: MessageEvent object
         :param matcher: Matcher object
+        :return: PersonaInfo object, SendMsg object
         """
-        persona_info = PersonaInfo(bot, event)
-        send_msg = SendMsg(self.component, matcher, persona_info)
+        persona_info = PersonaInfo.from_message(
+            bot = bot,
+            event = event
+        )
+        send_msg = SendMsg(
+            component = self.component,
+            persona_info = persona_info,
+            matcher = matcher
+        )
         return persona_info, send_msg
 
     async def command_enter(self, bot: Bot, event: MessageEvent, args: Message, matcher: Type[Matcher]) -> tuple[PersonaInfo, SendMsg]:
-        persona_info = PersonaInfo(bot, event, args)
-        send_msg = SendMsg(self.component, matcher, persona_info)
+        """
+        When you register a Command Handler, the Repeater will call this section before starting to get the abstraction layer object.
+        
+        You can intercept and do whatever you want here.
+
+        :param bot: Bot object
+        :param event: MessageEvent object
+        :param args: Message object
+        :param matcher: Matcher object
+        :return: PersonaInfo object, SendMsg object
+        """
+        persona_info = PersonaInfo.from_command(
+            bot = bot,
+            event = event,
+            args = args,
+        )
+        send_msg = SendMsg(
+            component = self.component,
+            persona_info = persona_info,
+            matcher = matcher
+        )
         return persona_info, send_msg
+    
+    async def horizontal_enter(self, persona_info: PersonaInfo, send_msg: SendMsg) -> tuple[PersonaInfo, SendMsg]:
+        """
+        This method is called when the call comes from another Handler other than the framework.
+
+        :param persona_info: PersonaInfo object
+        :param send_msg: SendMsg object
+        :return: PersonaInfo object, SendMsg object
+        """
+        persona_info_copy = PersonaInfo.from_horizontal(persona_info)
+        return persona_info_copy, send_msg
 
     @abstractmethod
-    async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
+    async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T:
         """
         Override this method to begin writing your business logic.
 

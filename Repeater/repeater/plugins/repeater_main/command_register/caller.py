@@ -1,7 +1,8 @@
 import json
 from .package import CommandPackage
+from ..assist import PersonaInfo, SendMsg
 from ..client_net_configs import storage_configs
-from typing import Type, Callable, Awaitable
+from typing import Type, Callable, Awaitable, TypeVar
 from nonebot import on_command, on_message
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg
@@ -9,53 +10,60 @@ from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Message
 from .listen_type import ListenType
 from nonebot import logger
 
-class CommandCaller:
-    commands: list[CommandPackage] = []
+T_Handler_Result = TypeVar("T_Handler_Result")
 
-    @staticmethod
-    def get_command_handler(package: CommandPackage, matcher: Type[Matcher]) -> Callable[[Bot, MessageEvent, Message], Awaitable[None]]:
+class CommandCaller:
+    commands: dict[Type[CommandPackage[T_Handler_Result]], CommandPackage[T_Handler_Result]] = {}
+
+    @classmethod
+    def get_command_handler(cls, package: CommandPackage[T_Handler_Result], matcher: Type[Matcher]) -> Callable[[Bot, MessageEvent, Message], Awaitable[T_Handler_Result]]:
         if package.empty_handler:
             async def command_handler(bot: Bot, event: MessageEvent, args: Message = CommandArg()) -> None:
                 pass
         else:
-            async def command_handler(bot: Bot, event: MessageEvent, args: Message = CommandArg()) -> None:
+            async def command_handler(bot: Bot, event: MessageEvent, args: Message = CommandArg()) -> T_Handler_Result:
                 logger.info(
                     "Run command handler: {name}",
                     name = package.component,
                 )
                 persona_info ,send_msg = await package.command_enter(bot, event, args, matcher)
-                try:
-                    await package.handler(persona_info, send_msg)
-                except Exception as e:
-                    await package.on_error(e, persona_info, send_msg)
-                finally:
-                    await package.handler_exit(persona_info, send_msg)
+                return await cls.enter_handler(package, persona_info, send_msg)
         return command_handler
     
-    @staticmethod
-    def get_message_handler(package: CommandPackage, matcher: Type[Matcher]) -> Callable[[Bot, MessageEvent], Awaitable[None]]:
+    @classmethod
+    def get_message_handler(cls, package: CommandPackage[T_Handler_Result], matcher: Type[Matcher]) -> Callable[[Bot, MessageEvent], Awaitable[T_Handler_Result]]:
         if package.empty_handler:
             async def message_handler(bot: Bot, event: MessageEvent):
                 pass
         else:
-            async def message_handler(bot: Bot, event: MessageEvent):
+            async def message_handler(bot: Bot, event: MessageEvent) -> T_Handler_Result:
                 logger.info(
                     "Run message handler: {name}",
                     name = package.component,
                 )
                 persona_info ,send_msg = await package.message_enter(bot, event, matcher)
-                try:
-                    if send_msg.is_debug_mode:
-                        await package.on_debug_mode(persona_info, send_msg)
-                    await package.handler(persona_info, send_msg)
-                except Exception as e:
-                    await package.on_error(e, persona_info, send_msg)
-                finally:
-                    await package.handler_exit(persona_info, send_msg)
+                return await cls.enter_handler(package, persona_info, send_msg)
         return message_handler
+    
+    @staticmethod
+    async def enter_handler(package: CommandPackage[T_Handler_Result], persona_info: PersonaInfo, send_msg: SendMsg) -> T_Handler_Result:
+        try:
+            if send_msg.is_debug_mode:
+                await package.on_debug_mode(persona_info, send_msg)
+            return await package.handler(persona_info, send_msg)
+        except Exception as e:
+            await package.on_error(e, persona_info, send_msg)
+        finally:
+            await package.handler_exit(persona_info, send_msg)
+    
+    @classmethod
+    async def horizontal_call(cls, package: Type[CommandPackage[T_Handler_Result]], persona_info: PersonaInfo[T_Handler_Result], send_msg: SendMsg | None = None):
+        package_instance = cls.commands[package]
+        persona_info_copy, send_msg_copy = await package_instance.horizontal_enter(persona_info, send_msg)
+        return await cls.enter_handler(package_instance, persona_info_copy, send_msg_copy)
 
     @classmethod
-    def register(cls, package: Type[CommandPackage]) -> None:
+    def register(cls, package: Type[CommandPackage[T_Handler_Result]]) -> None:
         if package.enabled:
             package.on_before_instantiate()
             package_instance = package()
@@ -82,7 +90,7 @@ class CommandCaller:
                     raise ValueError(f"{package_instance.listen_type} is not supported")
             
             matcher.append_handler(handler)
-            cls.commands.append(package_instance)
+            cls.commands[package] = package
             package_instance.on_registed()
         return package
     
