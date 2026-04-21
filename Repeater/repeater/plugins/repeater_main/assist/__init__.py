@@ -3,6 +3,7 @@ from ._assist_func import (
     get_first_mentioned_user,
     image_to_text
 )
+from ._enter_type import EnterType
 from ._persona_info import PersonaInfo
 from ._file_sender import FileSender
 from ._namespace import MessageSource, Namespace
@@ -26,6 +27,7 @@ __all__ = [
     "handle_at_with_name",
     "get_first_mentioned_user",
     "image_to_text",
+    "EnterType",
     "PersonaInfo",
     "FileSender",
     "MessageSource",

@@ -1,3 +1,5 @@
+from __future__ import annotations
+from nonebot import get_bots
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment, Message
 from typing import Literal, Container
 from ._assist_func import (
@@ -10,6 +12,7 @@ from ._image_downloader import ImageDownloader
 from nonebot import logger
 from datetime import datetime
 from pydantic import ValidationError
+from ._enter_type import EnterType
 
 class PersonaInfo:
     def __init__(self, bot: Bot, event: MessageEvent, args: Message | None = None):
@@ -18,8 +21,8 @@ class PersonaInfo:
         self._args: Message | None = args
         self._group_id: int | None = None
         self._source: MessageSource = MessageSource.GROUP
-        
         self._source = MessageSource(event.message_type.strip().lower())
+        self._enter_type: EnterType = EnterType.Command
 
         if self._source == MessageSource.GROUP:
             try:
@@ -30,6 +33,39 @@ class PersonaInfo:
                 raise ValueError("Is Group, But Group ID is Not Found")
         
         self._superusers: set[int] = set(int(user) for user in self._bot.config.superusers)
+    
+    @classmethod
+    def from_command(cls, bot: Bot, event: MessageEvent, args: Message | None = None):
+        persona_info = cls(
+            bot = bot,
+            event = event,
+            args = args
+        )
+        persona_info._enter_type = EnterType.Command
+        return persona_info
+    
+    @classmethod
+    def from_message(cls, bot: Bot, event: MessageEvent):
+        persona_info = cls(
+            bot = bot,
+            event = event
+        )
+        persona_info._enter_type = EnterType.Message
+        return persona_info
+    
+    @classmethod
+    def from_horizontal(cls, persona_info: PersonaInfo):
+        persona_info = cls(
+            bot = persona_info.bot,
+            event = persona_info.event,
+            args = persona_info.args
+        )
+        persona_info._enter_type = EnterType.Horizontal
+        return persona_info
+    
+    @property
+    def enter_type(self) -> EnterType:
+        return self._enter_type
     
     def __bool__(self) -> bool:
         for message in self.message:
@@ -91,6 +127,14 @@ class PersonaInfo:
     @property
     def bot(self):
         return self._bot
+    
+    @property
+    def bots(self):
+        return get_bots()
+    
+    @property
+    def event(self):
+        return self._message_event
 
     @property
     def namespace(self):
