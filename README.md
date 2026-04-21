@@ -254,7 +254,11 @@ main_api.json
     // 则认为本次请求无法开始生成
     // Client 将向 Repeater Server 申请取消任务
     // 将其设置为 null 可以忽略超时检查
-    "model_first_chunk_timeout": 90.0
+    "model_first_chunk_timeout": 90.0,
+    
+    // 是否在注册时打印 Handler 信息
+    // 默认为 false
+    "print_handler_info": false
 }
 ```
 配置了一些主要的参数，如文本长度评分、推理模型使用的UID、欢迎消息等。
@@ -467,14 +471,18 @@ PS：`CHAT`类型命令大部分都做到了支持视觉输入
 - `UpperCamelCase`
 - `snake_case`
 - `Upper_Snake_Case`
+- `UPPER_CASE`
 - `abr` (Abridge)
+- `ABR` (UPPER ABRIDGE)
 
 而单个单词的命令有些特殊：
 
 - `lowercase`
 - `Uppercase`
 - `s` (Single Character)
+- `S` (UPPER SINGLE CHARACTER)
 - `slbc` (Syllabic abbreviations)
+- `SLBC` (UPPER SYLLABIC ABBREVIATIONS)
 
 通常来说，如果一个新命令
 缩写与旧命令有冲突
