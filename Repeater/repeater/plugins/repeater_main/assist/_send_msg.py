@@ -34,18 +34,18 @@ class SendMsg:
     def __init__(
             self,
             component: str,
-            matcher: Type[Matcher],
             persona_info: PersonaInfo,
+            matcher: Type[Matcher] | None = None,
         ):
         self._component: str = component
         self._persona_info: PersonaInfo = persona_info
-        self._matcher: Type[Matcher] = matcher
         self._text_render = TextRender(
             namespace = self._persona_info.namespace,
             timeout = storage_configs.server_api_timeout.render
         )
         self._prefix: Message = Message()
         self._chat_tts_api = ChatTTSAPI()
+        self.matcher: Type[Matcher] | None = matcher
     
     def add_prefix(self, prefix: MessageSegment | str):
         self._prefix.append(prefix)
@@ -60,10 +60,6 @@ class SendMsg:
     @property
     def persona_info(self) -> PersonaInfo:
         return self._persona_info
-    
-    @property
-    def matcher(self) -> Type[Matcher]:
-        return self._matcher
     
     @property
     def component(self) -> str:
@@ -747,23 +743,59 @@ class SendMsg:
         )
         try:
             await self.limit_speed.submit(
-                self._matcher.send(send_msg)
+                self._send_auto(send_msg)
             )
         except Exception as error:
             logger.error(
                 "Message Send Failed: \n{error}",
                 error = error
             )
-            error_msg = f"Message Send Failed: \n{error}"
-            if reply:
-                error_msg = self._persona_info.reply + error_msg
-            await self.limit_speed.submit(
-                self._matcher.send(
-                    error_msg
-                )
-            )
+            raise
         if not continue_handler:
             self.break_handler()
+    
+    async def _send_auto(
+        self,
+        message: str | Message | MessageSegment,
+        *args,
+        **kwargs
+    ):
+        if self.matcher is not None:
+            await self._send_to_matcher(message, *args, **kwargs)
+        else:
+            await self._send_to_api(message, *args, **kwargs)
+    
+    async def _send_to_matcher(
+        self,
+        message: str | Message | MessageSegment,
+        *args,
+        **kwargs
+    ):
+        self.matcher.send(message, *args, **kwargs)
+    
+    async def _send_to_api(
+        self,
+        message: str | Message | MessageSegment,
+        *args,
+        **kwargs
+    ):
+        bot = self._persona_info.bot
+        if self._persona_info.source == MessageSource.GROUP:
+            await bot.send_group_msg(
+                self._persona_info.group_id,
+                message,
+                *args,
+                **kwargs
+            )
+        elif self._persona_info.source == MessageSource.PRIVATE:
+            await bot.send_private_msg(
+                self._persona_info.user_id,
+                message,
+                *args,
+                **kwargs
+            )
+        else:
+            raise ValueError("Invalid Message Source")
     
     @staticmethod
     def text_length_score(text: str) -> float:

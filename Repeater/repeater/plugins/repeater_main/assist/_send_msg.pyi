@@ -557,6 +557,27 @@ class SendMsg:
         ):
         ...
     
+    async def _send_auto(
+        self,
+        message: str | Message | MessageSegment,
+        *args,
+        **kwargs
+    ):...
+    
+    async def _send_to_matcher(
+        self,
+        message: str | Message | MessageSegment,
+        *args,
+        **kwargs
+    ):...
+    
+    async def _send_to_api(
+        self,
+        message: str | Message | MessageSegment,
+        *args,
+        **kwargs
+    ):...
+    
     @staticmethod
     def text_length_score(text: str) -> float: ...
     
