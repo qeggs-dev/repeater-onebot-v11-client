@@ -30,6 +30,6 @@ class NPChat(BaseChat):
             image_url = images,
             audio_url = audios,
             video_url = videos,
-            save_context = False
+            load_prompt = False
         )
         return response
