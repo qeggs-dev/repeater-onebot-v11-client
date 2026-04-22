@@ -57,7 +57,7 @@ class CommandCaller:
             await package.handler_exit(persona_info, send_msg)
     
     @classmethod
-    async def horizontal_call(cls, package: Type[CommandPackage[T_Handler_Result]], persona_info: PersonaInfo[T_Handler_Result], send_msg: SendMsg | None = None):
+    async def horizontal_call(cls, package: Type[CommandPackage[T_Handler_Result]], persona_info: PersonaInfo, send_msg: SendMsg | None = None):
         package_instance = cls.commands[package]
         persona_info_copy, send_msg_copy = await package_instance.horizontal_enter(persona_info, send_msg)
         return await cls.enter_handler(package_instance, persona_info_copy, send_msg_copy)
