@@ -6,7 +6,7 @@ from datetime import datetime, timedelta
 from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent
 from nonebot.matcher import Matcher
 from nonebot.typing import T_RuleChecker, T_PermissionChecker, T_State, T_Handler
-from nonebot.rule import Rule
+from nonebot.rule import Rule, to_me
 from nonebot.permission import Permission
 from nonebot.dependencies import Dependent
 from nonebot.exception import NoneBotException
@@ -26,7 +26,7 @@ class CommandPackage(ABC, Generic[T]):
     listen_type: ListenType = ListenType.Command
     """Listen Type (Command or Message)"""
 
-    rule: T_RuleChecker | Rule | None = None
+    rule: T_RuleChecker | Rule | None = to_me()
     """Matcher Rule"""
     
     aliases: Iterable[str | tuple[str, ...]] | None = None

@@ -1,4 +1,3 @@
-from nonebot.rule import to_me
 from abc import abstractmethod
 
 from ..._clients import UserDataClient
@@ -6,7 +5,6 @@ from ....assist import PersonaInfo, SendMsg
 from ....command_register import CommandPackage
 
 class BaseNexus(CommandPackage):
-    rule = to_me()
 
     @property
     def component(self) -> str:

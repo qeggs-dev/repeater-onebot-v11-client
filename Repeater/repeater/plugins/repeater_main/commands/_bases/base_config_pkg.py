@@ -1,5 +1,4 @@
 from abc import abstractmethod
-from nonebot.rule import to_me
 from typing import Any, TypeVar
 
 from .._clients import ConfigClient
@@ -15,7 +14,6 @@ class OperationType(Enum):
     GET_FILE_URL = auto()
 
 class BaseConfig(CommandPackage):
-    rule = to_me()
     field: str = ""
     operation: OperationType = OperationType.SET
 

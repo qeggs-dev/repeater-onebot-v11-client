@@ -1,6 +1,3 @@
-from nonebot.rule import to_me
-from abc import abstractmethod
-
 from ....assist import PersonaInfo, SendMsg
 from .base_branch import BaseBranch
 from ..._clients import UserDataClient

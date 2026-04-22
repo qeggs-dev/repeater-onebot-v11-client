@@ -1,6 +1,5 @@
 from nonebot import on_message
 from nonebot.internal.matcher.matcher import Matcher
-from nonebot.rule import to_me
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent
 from ...logger import logger
 
@@ -12,7 +11,6 @@ from ...command_register import CommandCaller, CommandPackage, ListenType
 class SmartAt(CommandPackage):
     listen_type: ListenType = ListenType.Message
     component = "Chat.Smart_at"
-    rule = to_me()
     priority = 100
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):

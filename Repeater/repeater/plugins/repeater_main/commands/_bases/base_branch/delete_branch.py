@@ -1,4 +1,3 @@
-from nonebot.rule import to_me
 from abc import abstractmethod
 
 from ....assist import PersonaInfo, SendMsg

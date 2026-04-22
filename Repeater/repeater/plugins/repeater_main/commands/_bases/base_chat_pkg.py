@@ -1,4 +1,3 @@
-from nonebot.rule import to_me
 from typing import NoReturn
 from ...logger import logger
 
@@ -7,8 +6,6 @@ from ...assist import PersonaInfo, SendMsg
 from ...command_register import CommandPackage
 
 class BaseChat(CommandPackage):
-    rule = to_me()
-
     @property
     def component(self) -> str:
         return f"Chat.{self.__class__.__name__}"
