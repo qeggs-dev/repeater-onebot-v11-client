@@ -22,7 +22,11 @@ class ChatSendMsg(SendMsg):
             reasoning_content_handler: Callable[[str], str] = lambda t: t,
             content_handler: Callable[[str], str] = lambda t: t
         ):
-        super().__init__(component, matcher, persona_info)
+        super().__init__(
+            component = component,
+            persona_info = persona_info,
+            matcher = matcher,
+        )
         self._response: Response[ChatResponse] = response
         self._chat_tts_api = ChatTTSAPI()
         self._reasoning_content_handler = reasoning_content_handler
