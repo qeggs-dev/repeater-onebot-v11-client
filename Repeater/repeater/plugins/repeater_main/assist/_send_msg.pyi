@@ -18,8 +18,8 @@ class SendMsg:
     def __init__(
             self,
             component: str,
-            matcher: Type[Matcher],
             persona_info: PersonaInfo,
+            matcher: Type[Matcher] | None = None,
         ): ...
     
     def add_prefix(self, prefix: MessageSegment | str):
