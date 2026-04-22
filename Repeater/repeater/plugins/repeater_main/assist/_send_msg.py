@@ -771,7 +771,7 @@ class SendMsg:
         *args,
         **kwargs
     ):
-        self.matcher.send(message, *args, **kwargs)
+        await self.matcher.send(message, *args, **kwargs)
     
     async def _send_to_api(
         self,
