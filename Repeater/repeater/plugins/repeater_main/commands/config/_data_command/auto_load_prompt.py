@@ -14,7 +14,7 @@ class SetAutoLoadPrompt(BaseConfig):
         "SetAutoLoadPrompt",
         "SET_AUTO_LOAD_PROMPT",
     }
-    field = "auto_load_prompt"
+    field = "load_prompt"
 
     async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> bool:
         try:
