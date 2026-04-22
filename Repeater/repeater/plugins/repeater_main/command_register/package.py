@@ -10,6 +10,7 @@ from nonebot.rule import Rule
 from nonebot.permission import Permission
 from nonebot.dependencies import Dependent
 from nonebot.exception import NoneBotException
+from nonebot import logger
 from typing import Any, Iterable, Type, TypeVar, Generic
 
 T = TypeVar("T")
@@ -157,6 +158,7 @@ class CommandPackage(ABC, Generic[T]):
         if isinstance(exception, NoneBotException):
             raise
         else:
+            logger.exception(f"Error: {exception}")
             await send_msg.send_error(exception)
     
     async def handler_exit(self, persona_info: PersonaInfo, send_msg: SendMsg):
