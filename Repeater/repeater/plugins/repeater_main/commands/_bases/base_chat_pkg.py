@@ -68,10 +68,10 @@ class BaseChat(CommandPackage):
         )
         
         chat_send_msg = ChatSendMsg(
-            send_msg.component,
-            persona_info,
-            send_msg.matcher,
-            response
+            component = send_msg.component,
+            persona_info = persona_info,
+            matcher = send_msg.matcher,
+            response = response
         )
         await self.send_chat_send_msg(chat_send_msg)
     
