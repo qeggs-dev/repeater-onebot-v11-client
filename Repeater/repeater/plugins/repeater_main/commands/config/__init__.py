@@ -13,6 +13,7 @@ from ._data_command.get_configs import GetConfigs
 from ._data_command.new_requests_text_only import SetNewRequestsTextOnly
 from ._data_command.remove_reasoning_prompt import RemoveReasoningPrompt
 from ._data_command.render_doc_bottom_comment import RenderDocBottomComment
+from ._data_command.reset_field import ResetField
 from ._data_command.send_config_file import SendConfigFile
 from ._data_command.set_custom_age import SetCustomAge
 from ._data_command.set_custom_gender import SetCustomGender
@@ -60,6 +61,7 @@ __all__ = [
     "SetNewRequestsTextOnly",
     "RemoveReasoningPrompt",
     "RenderDocBottomComment",
+    "ResetField",
     "SendConfigFile",
     "SetCustomAge",
     "SetCustomGender",
