@@ -46,7 +46,7 @@ class GetConfigs(BaseConfig):
         ):
         if response:
             try:
-                data = response.get_data()
+                data = response.json()
                 match value:
                     case FormatType.JSON:
                         await send_msg.send_check_length_prompt(
