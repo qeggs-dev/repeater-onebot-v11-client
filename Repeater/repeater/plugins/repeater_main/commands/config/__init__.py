@@ -29,6 +29,7 @@ from ._data_command.set_top_p import SetTopP
 from ._data_command.set_stop_keywords import SetStopKeywords
 from ._data_command.thinking_mode import ThinkingMode
 from ._data_command.write_user_profile import WriteUserProfile
+from ._data_command.set_reasoning_effort import SetReasoningEffort
 
 from ._branch_command.del_config import DelConfig
 from ._branch_command.change_config_branch import ChangeConfigBranch
@@ -75,6 +76,7 @@ __all__ = [
     "SetStopKeywords",
     "ThinkingMode",
     "WriteUserProfile",
+    "SetReasoningEffort",
 
     # Branch commands
     "DelConfig",
