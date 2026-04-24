@@ -33,8 +33,8 @@ class BaseConfig(CommandPackage):
         persona_info: PersonaInfo,
         send_msg: SendMsg,
         response: Response[Any] | None,
-        field: str,
-        value: T
+        field: str | None,
+        value: T | None
     ) -> None:
         pass
     
@@ -44,12 +44,30 @@ class BaseConfig(CommandPackage):
                 field, value = await self.parse_value_free(persona_info, send_msg)
                 client = ConfigClient(persona_info)
                 response: Response[Any] = await client.set_config(field, value)
-                await self.finish_message(persona_info, send_msg, response, value)
+                await self.finish_message(
+                    persona_info = persona_info,
+                    send_msg = send_msg,
+                    response = response,
+                    field = field,
+                    value = value
+                )
             case OperationType.GET:
                 client = ConfigClient(persona_info)
                 response: Response[Any] = await client.get_configs()
-                await self.finish_message(persona_info, send_msg, response, None)
+                await self.finish_message(
+                    persona_info = persona_info,
+                    send_msg = send_msg,
+                    response = response,
+                    field = None,
+                    value = None
+                )
             case OperationType.GET_FILE_URL:
                 client = ConfigClient(persona_info)
                 url = client.get_configs_url()
-                await self.finish_message(persona_info, send_msg, None, url)
+                await self.finish_message(
+                    send_msg = send_msg,
+                    response = response,
+                    response = None,
+                    field = None,
+                    value = url
+                )
