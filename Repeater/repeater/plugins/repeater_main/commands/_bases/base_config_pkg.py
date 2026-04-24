@@ -39,35 +39,23 @@ class BaseConfig(CommandPackage):
         pass
     
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg) -> None:
+        field, value = await self.parse_value_free(persona_info, send_msg)
         match self.operation:
             case OperationType.SET:
-                field, value = await self.parse_value_free(persona_info, send_msg)
                 client = ConfigClient(persona_info)
                 response: Response[Any] = await client.set_config(field, value)
-                await self.finish_message(
-                    persona_info = persona_info,
-                    send_msg = send_msg,
-                    response = response,
-                    field = field,
-                    value = value
-                )
             case OperationType.GET:
                 client = ConfigClient(persona_info)
                 response: Response[Any] = await client.get_configs()
-                await self.finish_message(
-                    persona_info = persona_info,
-                    send_msg = send_msg,
-                    response = response,
-                    field = None,
-                    value = None
-                )
             case OperationType.GET_FILE_URL:
                 client = ConfigClient(persona_info)
-                url = client.get_configs_url()
-                await self.finish_message(
-                    persona_info = persona_info,
-                    send_msg = send_msg,
-                    response = None,
-                    field = None,
-                    value = url
-                )
+                response = None
+                value = client.get_configs_url()
+        
+        await self.finish_message(
+            persona_info = persona_info,
+            send_msg = send_msg,
+            response = response,
+            field = field,
+            value = value
+        )
