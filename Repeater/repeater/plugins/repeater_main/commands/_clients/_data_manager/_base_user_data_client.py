@@ -60,7 +60,7 @@ class UserDataClient(ABC):
 
     # region clone
     async def clone(self, dst_branch_id: str) -> Response[None]:
-        response = await self._httpx_client.post(
+        response = await self._httpx_client.put(
             f"/userdata/{self._data_type}/clone/{self._info.namespace_str}",
             data={
                 "dst_branch_id": dst_branch_id
@@ -71,7 +71,7 @@ class UserDataClient(ABC):
 
     # region clone from
     async def clone_from(self, src_branch_id: str) -> Response[None]:
-        response = await self._httpx_client.post(
+        response = await self._httpx_client.put(
             f"/userdata/{self._data_type}/clone_from/{self._info.namespace_str}",
             data={
                 "src_branch_id": src_branch_id
@@ -82,7 +82,7 @@ class UserDataClient(ABC):
 
     # region bind
     async def bind(self, dst_branch_id: str) -> Response[None]:
-        response = await self._httpx_client.post(
+        response = await self._httpx_client.put(
             f"/userdata/{self._data_type}/bind/{self._info.namespace_str}",
             data={
                 "dst_branch_id": dst_branch_id
@@ -93,7 +93,7 @@ class UserDataClient(ABC):
 
     # region bind from
     async def bind_from(self, src_branch_id: str) -> Response[None]:
-        response = await self._httpx_client.post(
+        response = await self._httpx_client.put(
             f"/userdata/{self._data_type}/bind_from/{self._info.namespace_str}",
             data={
                 "src_branch_id": src_branch_id
