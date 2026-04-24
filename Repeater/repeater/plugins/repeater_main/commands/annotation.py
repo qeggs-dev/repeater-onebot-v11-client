@@ -7,6 +7,7 @@ class Annotation(CommandPackage):
     aliases = {
         "/",
         "anot",
+        "ANOT",
         "annotation",
         "Annotation",
         "ANNOTATION",
