@@ -15,6 +15,7 @@ from ....client_net_configs import *
 from ._request_model import ChatRequestModel, ChatUserInfo, AdditionalData
 from ...._adaptation_info import __adaptation__, __adaptation_text__
 from ....logger import logger as base_logger
+from ....command_register import BreakWithErrorMessage
 
 logger = base_logger.bind(module = "chat_client")
 
@@ -146,6 +147,7 @@ class ChatClient:
                 json = data.submit_body()
             )
         )
+        last_buffer_length: int | None = None
         if timeout is not None:
             while True:
                 try:
@@ -155,13 +157,19 @@ class ChatClient:
                     buffer_response = await self.get_chat_buffer()
                     if buffer_response:
                         buffer = buffer_response.get_data()
-                        if buffer is None:
-                            continue
-                        elif len(buffer) == 0:
-                            await self.break_chat_task()
-                        break
-                    else:
-                        continue
+                        if buffer is not None:
+                            if last_buffer_length is None:
+                                last_buffer_length = len(buffer)
+                                if last_buffer_length == 0:
+                                    await self.break_chat_task()
+                                    raise BreakWithErrorMessage("The build task has been actively aborted because the buffer did not find anything.")
+                            else:
+                                now_buffer_length = len(buffer)
+                                if now_buffer_length == last_buffer_length:
+                                    await self.break_chat_task()
+                                    raise BreakWithErrorMessage("The build task has been actively aborted because this check buffer is the same length as the last time.")
+                                else:
+                                    last_buffer_length = now_buffer_length
         response = await task
         
         return Response(
