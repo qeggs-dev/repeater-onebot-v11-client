@@ -47,7 +47,7 @@ class BaseConfig(CommandPackage):
                 await self.finish_message(persona_info, send_msg, response, value)
             case OperationType.GET:
                 client = ConfigClient(persona_info)
-                response: Response[Any] = await client.get_configs(self.field)
+                response: Response[Any] = await client.get_configs()
                 await self.finish_message(persona_info, send_msg, response, None)
             case OperationType.GET_FILE_URL:
                 client = ConfigClient(persona_info)
