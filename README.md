@@ -441,6 +441,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `sendConfigFile`           | `scfgf`  | `SendConfigFile`          | `CONFIG`    | 4.5.5.0-beta   | 获取配置文件                 | 无                                          | 获取当前活动分支的配置文件 |
 | `packageUserSpace`         | `pus`    | `PackageUserSpace`        | `USERFILE`  | 4.5.5.0        | 打包用户空间                 | 无                                          | 与 `sendUserDataFile` 类似，但它会打包所有分支 |
 | `setReasoningEffort`       | `sre`    | `SetReasoningEffort`      | `CONFIG`    | 4.5.6.0        | 设置推理强度                 | `low`/`medium`/`high`/`xhigh`/`max`         | 设置推理强度 (需要模型支持) |
+| `resetConfigField`         | `rcf`    | `ResetConfigField`        | `CONFIG`    | 4.5.6.0        | 重置配置字段                 | 配置字段名称                                 | 设置指定配置字段到 null |
 
 PS：`CHAT`类型命令大部分都做到了支持视觉输入
 默认命令已支持全模态输入
