@@ -20,6 +20,7 @@ class AdditionalData(BaseModel):
 class ChatRequestModel(BaseModel):
     message: str | None = None
     user_info: ChatUserInfo | None = None
+    allow_tool_calls: bool | None = None
     add_metadata: bool = True
     role_name: str | None = None
     extra_template_fields: dict[str, Any] | None = None

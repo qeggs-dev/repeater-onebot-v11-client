@@ -65,6 +65,7 @@ class ChatClient:
         temporary_prompt: str | None = None,
         model_uid: str | None = None,
         thinking: bool | None = None,
+        allow_tool_calls: bool | None = None,
         extra_template_fields: dict[str, Any] | None = None,
         image_url: str | list[str] | None = None,
         video_url: str | list[str] | None = None,
@@ -87,6 +88,7 @@ class ChatClient:
         :param temporary_prompt: 临时提示
         :param model_uid: 模型UID
         :param thinking: 思考模式
+        :param allow_tool_calls: 是否允许工具调用
         :param extra_template_fields: 额外模板字段
         :param image_url: 图片URL
         :param video_url: 视频URL
@@ -120,6 +122,7 @@ class ChatClient:
             temporary_prompt = temporary_prompt,
             model_uid = model_uid,
             thinking = thinking,
+            allow_tool_calls = allow_tool_calls,
             extra_template_fields = extra_template_fields,
             additional_data = AdditionalData(
                 image_url = image_url,
