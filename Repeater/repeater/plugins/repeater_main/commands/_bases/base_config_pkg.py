@@ -23,6 +23,9 @@ class BaseConfig(CommandPackage):
 
     async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T:
         return persona_info.message_striped_str
+    
+    async def parse_value_free(self, persona_info: PersonaInfo, send_msg: SendMsg) -> tuple[str, T]:
+        return self.field, await self.parse_value(persona_info, send_msg)
 
     @abstractmethod
     async def finish_message(
@@ -30,6 +33,7 @@ class BaseConfig(CommandPackage):
         persona_info: PersonaInfo,
         send_msg: SendMsg,
         response: Response[Any] | None,
+        field: str,
         value: T
     ) -> None:
         pass
@@ -37,9 +41,9 @@ class BaseConfig(CommandPackage):
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg) -> None:
         match self.operation:
             case OperationType.SET:
-                value: T = await self.parse_value(persona_info, send_msg)
+                field, value = await self.parse_value_free(persona_info, send_msg)
                 client = ConfigClient(persona_info)
-                response: Response[Any] = await client.set_config(self.field, value)
+                response: Response[Any] = await client.set_config(field, value)
                 await self.finish_message(persona_info, send_msg, response, value)
             case OperationType.GET:
                 client = ConfigClient(persona_info)
