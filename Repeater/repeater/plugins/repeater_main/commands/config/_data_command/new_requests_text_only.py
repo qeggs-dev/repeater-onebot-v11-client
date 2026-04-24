@@ -5,14 +5,14 @@ from ..._bases import BaseConfig
 
 @CommandCaller.register
 class SetNewRequestsTextOnly(BaseConfig):
-    cmd = "setNewRequestsTextOnly"
+    cmd = "newRequestsTextOnly"
     aliases = {
         "nrto",
         "NRTO",
-        "set_new_requests_text_only",
-        "Set_New_Requests_Text_Only",
-        "SetNewRequestsTextOnly",
-        "SET_NEW_REQUESTS_TEXT_ONLY",
+        "new_requests_text_only",
+        "New_Requests_Text_Only",
+        "NewRequestsTextOnly",
+        "NEW_REQUESTS_TEXT_ONLY",
     }
     field = "new_requests_text_only"
 
