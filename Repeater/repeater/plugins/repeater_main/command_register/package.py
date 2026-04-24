@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 
 from ..assist import PersonaInfo, SendMsg
 from .listen_type import ListenType
+from .exceptions import *
 from datetime import datetime, timedelta
 from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent
 from nonebot.matcher import Matcher
@@ -157,6 +158,11 @@ class CommandPackage(ABC, Generic[T]):
         """
         if isinstance(exception, NoneBotException):
             raise
+        elif isinstance(exception, RepeaterCommandException):
+            if isinstance(exception, BreakHandler) or isinstance(exception, ExitHandler):
+                pass
+            elif isinstance(exception, BreakWithErrorMessage):
+                await send_msg.send_error(str(exception))
         else:
             logger.exception(f"Error: {exception}")
             await send_msg.send_error(exception)
