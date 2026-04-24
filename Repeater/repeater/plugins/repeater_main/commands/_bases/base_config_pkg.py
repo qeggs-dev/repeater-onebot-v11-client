@@ -65,8 +65,8 @@ class BaseConfig(CommandPackage):
                 client = ConfigClient(persona_info)
                 url = client.get_configs_url()
                 await self.finish_message(
+                    persona_info = persona_info,
                     send_msg = send_msg,
-                    response = response,
                     response = None,
                     field = None,
                     value = url
