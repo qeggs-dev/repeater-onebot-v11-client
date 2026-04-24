@@ -15,8 +15,13 @@ class SetRenderStyle(BaseConfig):
         "SET_RENDER_STYLE",
     }
     field = "render_style"
-
+    
     async def finish_message(
-        self, persona_info: PersonaInfo, send_msg: SendMsg, response: Response, value: str
-    ) -> None:
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            response: Response,
+            field: str,
+            value: bool
+        ):
         await send_msg.send_response_check_code(response, f"Set Render_Style to {value}")

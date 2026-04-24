@@ -29,8 +29,13 @@ class SetTemperature(BaseConfig):
         if value < 0 or value > 2:
             await send_msg.send_error("Temperature is set incorrectly. Please enter a floating-point number or percentage between 0 and 2!")
         return value
-
+    
     async def finish_message(
-        self, persona_info: PersonaInfo, send_msg: SendMsg, response: Response, value: float
-    ) -> None:
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            response: Response,
+            field: str,
+            value: bool
+        ):
         await send_msg.send_response_check_code(response, f"Set Temperature to {value}")

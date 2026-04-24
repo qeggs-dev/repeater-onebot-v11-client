@@ -15,8 +15,13 @@ class SetCustomGender(BaseConfig):
         "SET_CUSTOM_GENDER",
     }
     field = "user_gender"
-
+    
     async def finish_message(
-        self, persona_info: PersonaInfo, send_msg: SendMsg, response: Response, value: str
-    ) -> None:
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            response: Response,
+            field: str,
+            value: bool
+        ):
         await send_msg.send_response_check_code(response, f"Custom Gender set to {value}")

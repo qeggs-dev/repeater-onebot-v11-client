@@ -29,8 +29,13 @@ class SetFrequencyPenalty(BaseConfig):
         if value < -2 or value > 2:
             await send_msg.send_error("Frequency_Penalty setting is incorrect, please enter a floating-point number or percentage between -2 and 2!")
         return value
-
+    
     async def finish_message(
-        self, persona_info: PersonaInfo, send_msg: SendMsg, response: Response, value: float
-    ) -> None:
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            response: Response,
+            field: str,
+            value: bool
+        ):
         await send_msg.send_response_check_code(response, f"Set Frequency_Penalty to {value}")

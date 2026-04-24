@@ -26,8 +26,13 @@ class SetModelTimeout(BaseConfig):
             except ValueError:
                 await send_msg.send_error("Model Timeout setting is incorrect, please enter a number!")
         return value
-
+    
     async def finish_message(
-        self, persona_info: PersonaInfo, send_msg: SendMsg, response: Response, value: float
-    ) -> None:
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            response: Response,
+            field: str,
+            value: bool
+        ):
         await send_msg.send_response_check_code(response, f"Set Model Timeout to {value}")

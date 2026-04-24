@@ -22,10 +22,15 @@ class ThinkingMode(BaseConfig):
         except ValueError:
             await send_msg.send_error("Not a valid value")
         return value
-
+    
     async def finish_message(
-        self, persona_info: PersonaInfo, send_msg: SendMsg, response: Response, value: bool | None
-    ) -> None:
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            response: Response,
+            field: str,
+            value: bool
+        ):
         if value is None:
             mode_str = "default"
         else:

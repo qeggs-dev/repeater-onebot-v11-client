@@ -23,8 +23,10 @@ class SetReasoningEffort(BaseConfig):
         XHIGH = "xhigh"
         MAX = "max"
 
-    async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> str:
+    async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> str | None:
         msg = persona_info.message_striped_str
+        if msg.lower() in ["null", "none"]:
+            return None
         try:
             value = self.ReasoningEffort(msg)
         except ValueError:
@@ -34,8 +36,13 @@ class SetReasoningEffort(BaseConfig):
             )
 
         return value.value
-
+    
     async def finish_message(
-        self, persona_info: PersonaInfo, send_msg: SendMsg, response: Response, value: str
-    ) -> None:
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            response: Response,
+            field: str,
+            value: bool
+        ):
         await send_msg.send_response_check_code(response, f"Set Reasoning Effort to {value}")

@@ -35,10 +35,15 @@ class GetConfigs(BaseConfig):
         except ValueError:
             await send_msg.send_error("Format type is not supported. Please use 'json' or 'yaml'.")
         return format_type
-
+    
     async def finish_message(
-        self, persona_info: PersonaInfo, send_msg: SendMsg, response: Response | None, value: str
-    ) -> None:
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            response: Response,
+            field: str,
+            value: bool
+        ):
         if response:
             try:
                 data = response.get_data()

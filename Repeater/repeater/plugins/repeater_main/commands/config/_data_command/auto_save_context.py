@@ -22,8 +22,13 @@ class SetAutoSaveContext(BaseConfig):
         except ValueError:
             await send_msg.send_error("Not a valid boolean value")
         return value
-
+    
     async def finish_message(
-        self, persona_info: PersonaInfo, send_msg: SendMsg, response: Response, value: bool
-    ) -> None:
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            response: Response,
+            field: str,
+            value: bool
+        ):
         await send_msg.send_response_check_code(response, f"Auto Save Context set to {value}")

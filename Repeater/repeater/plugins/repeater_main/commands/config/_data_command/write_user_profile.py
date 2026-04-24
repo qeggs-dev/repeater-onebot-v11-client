@@ -17,8 +17,13 @@ class WriteUserProfile(BaseConfig):
     field = "user_profile"
 
     # 字符串类型，不需要重写 parse_value
-
+    
     async def finish_message(
-        self, persona_info: PersonaInfo, send_msg: SendMsg, response: Response, value: str
-    ) -> None:
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            response: Response,
+            field: str,
+            value: bool
+        ):
         await send_msg.send_response_check_code(response, f"User Profile set to {value}")

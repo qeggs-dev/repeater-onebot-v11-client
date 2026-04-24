@@ -22,8 +22,13 @@ class SetAutoShrinkLength(BaseConfig):
         except ValueError:
             await send_msg.send_error("Message must be a number")
         return value
-
+    
     async def finish_message(
-        self, persona_info: PersonaInfo, send_msg: SendMsg, response: Response, value: int
-    ) -> None:
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            response: Response,
+            field: str,
+            value: bool
+        ):
         await send_msg.send_response_check_code(response, f"Auto shrink length set to {value}")

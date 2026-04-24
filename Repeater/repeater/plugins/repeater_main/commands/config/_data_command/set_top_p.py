@@ -29,8 +29,13 @@ class SetTopP(BaseConfig):
         if value < 0 or value > 1:
             await send_msg.send_error("Top_P setting error, please enter a floating-point number or percentage between 0 and 1!")
         return value
-
+    
     async def finish_message(
-        self, persona_info: PersonaInfo, send_msg: SendMsg, response: Response, value: float
-    ) -> None:
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            response: Response,
+            field: str,
+            value: bool
+        ):
         await send_msg.send_response_check_code(response, f"Set Top_P to {value}")

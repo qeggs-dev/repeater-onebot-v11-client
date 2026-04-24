@@ -15,8 +15,13 @@ class RenderDocBottomComment(BaseConfig):
         "RENDER_DOC_BOTTOM_COMMENT",
     }
     field = "render_document_bottom_comment"
-
+    
     async def finish_message(
-        self, persona_info: PersonaInfo, send_msg: SendMsg, response: Response, value: str
-    ) -> None:
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            response: Response,
+            field: str,
+            value: bool
+        ):
         await send_msg.send_response_check_code(response, f"Set Render Document Bottom Comments to {value}")

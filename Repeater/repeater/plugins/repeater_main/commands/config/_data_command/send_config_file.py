@@ -18,11 +18,15 @@ class SendConfigFile(BaseConfig):
 
     async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> None:
         return None
-
+    
     async def finish_message(
-        self, persona_info: PersonaInfo, send_msg: SendMsg, response: Response | None, value: str
-    ) -> None:
-        # value is the config file URL from GET_FILE_URL operation
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            response: Response,
+            field: str,
+            value: bool
+        ):
         if value:
             file_sender = FileSender(
                 persona_info=persona_info,

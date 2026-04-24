@@ -15,8 +15,13 @@ class SetCustomName(BaseConfig):
         "SET_CUSTOM_NAME",
     }
     field = "user_name"
-
+    
     async def finish_message(
-        self, persona_info: PersonaInfo, send_msg: SendMsg, response: Response, value: str
-    ) -> None:
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            response: Response,
+            field: str,
+            value: bool
+        ):
         await send_msg.send_response_check_code(response, f"Custom Name set to {value}")

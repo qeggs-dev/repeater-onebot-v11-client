@@ -22,8 +22,13 @@ class SetMultipleModel(BaseConfig):
         if not value:
             await send_msg.send_error("Please enter at least one model_uid")
         return value
-
+    
     async def finish_message(
-        self, persona_info: PersonaInfo, send_msg: SendMsg, response: Response, value: list[str]
-    ) -> None:
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            response: Response,
+            field: str,
+            value: bool
+        ):
         await send_msg.send_response_check_code(response, f"Set Multiple Model to {', '.join(value)}")

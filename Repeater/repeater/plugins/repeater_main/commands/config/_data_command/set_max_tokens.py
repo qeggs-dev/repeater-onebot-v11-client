@@ -25,8 +25,13 @@ class SetMaxTokens(BaseConfig):
         if value < 1 or value > 8192:
             await send_msg.send_error("Max_Tokens setting is incorrect, please enter an integer between 1 and 8192!")
         return value
-
+    
     async def finish_message(
-        self, persona_info: PersonaInfo, send_msg: SendMsg, response: Response, value: int
-    ) -> None:
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            response: Response,
+            field: str,
+            value: bool
+        ):
         await send_msg.send_response_check_code(response, f"Set Max_Tokens to {value}")
