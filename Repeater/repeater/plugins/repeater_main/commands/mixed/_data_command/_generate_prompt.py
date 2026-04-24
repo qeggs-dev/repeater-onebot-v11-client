@@ -40,10 +40,11 @@ class GeneratePrompt(CommandPackage):
         image_url = await persona_info.get_images_url()
         chat_response = await chat_client.send_message(
             message,
-            add_metadata=False,
-            save_context=False,
-            image_url=image_url,
-            temporary_prompt=meta_prompt
+            add_metadata = False,
+            save_context = False,
+            allow_tool_calls = False,
+            image_url = image_url,
+            temporary_prompt = meta_prompt
         )
 
         if chat_response.code != 200:
