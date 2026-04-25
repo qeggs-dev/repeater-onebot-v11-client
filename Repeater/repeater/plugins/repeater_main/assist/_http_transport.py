@@ -1,9 +1,9 @@
 import curlify2
 
-from httpx import AsyncBaseTransport, Request, Response
+from httpx import AsyncHTTPTransport, Request, Response
 from loguru import logger
 
-class AsyncHTTPTransport(AsyncBaseTransport):
+class HTTPTransport(AsyncHTTPTransport):
     async def handle_async_request(self, request: Request) -> Response:
         curlify = curlify2.Curlify(request)
         logger.info(

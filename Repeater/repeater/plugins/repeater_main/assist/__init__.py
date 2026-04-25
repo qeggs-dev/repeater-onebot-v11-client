@@ -12,7 +12,7 @@ from ._text_render import TextRender, RendedImage
 from ._file_url import FileUrl
 from ._send_msg import SendMsg
 from ._http_code import HTTP_Code
-from ._http_transport import AsyncHTTPTransport
+from ._http_transport import HTTPTransport
 from ._str_to_bool import str_to_bool
 from ._image_downloader import ImageDownloader
 from ._error_response import ErrorResponse
@@ -40,7 +40,7 @@ __all__ = [
     "FileUrl",
     "SendMsg",
     "HTTP_Code",
-    "AsyncHTTPTransport",
+    "HTTPTransport",
     "str_to_bool",
     "ImageDownloader",
     "ErrorResponse",

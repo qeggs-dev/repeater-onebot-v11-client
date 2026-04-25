@@ -4,7 +4,7 @@ from nonebot.adapters.onebot.v11 import Message
 import base64
 import asyncio
 from typing import AsyncGenerator, Generator
-from ._http_transport import AsyncHTTPTransport
+from ._http_transport import HTTPTransport
 import imghdr
 
 class ImageDownloader:
@@ -12,7 +12,7 @@ class ImageDownloader:
         self._message = message
         self._client = httpx.AsyncClient(
             timeout = timeout,
-            transport = AsyncHTTPTransport()
+            transport = HTTPTransport()
         )
     
     @staticmethod

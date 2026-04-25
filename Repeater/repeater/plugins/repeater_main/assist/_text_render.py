@@ -1,6 +1,6 @@
 import httpx
 
-from ..assist import AsyncHTTPTransport
+from ._http_transport import HTTPTransport
 from ..client_net_configs import *
 from pydantic import BaseModel
 from ._response import Response
@@ -20,7 +20,7 @@ class TextRender:
     _client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.render,
-        transport = AsyncHTTPTransport()
+        transport = HTTPTransport()
     )
 
     def __init__(self, namespace: str | Namespace, timeout:float = 60.0):
