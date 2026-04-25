@@ -5,7 +5,7 @@ from .....logger import logger as base_logger
 from typing import (
     Any,
 )
-from .....assist import Response, PersonaInfo
+from .....assist import Response, PersonaInfo, AsyncHTTPTransport
 # 服务端配置
 from .....client_net_configs import *
 from .....exit_register import ExitRegister
@@ -18,7 +18,8 @@ logger = base_logger.bind(module = "Config.Core")
 class ConfigClient(UserDataClient):
     _httpx_client = httpx.AsyncClient(
         base_url = BASE_URL,
-        timeout = storage_configs.server_api_timeout.config
+        timeout = storage_configs.server_api_timeout.config,
+        transport = AsyncHTTPTransport()
     )
 
     def __init__(self, info: PersonaInfo, namespace: str | None = None):

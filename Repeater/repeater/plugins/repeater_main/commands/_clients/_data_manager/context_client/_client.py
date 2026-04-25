@@ -2,7 +2,7 @@ import httpx
 
 from urllib.parse import urljoin
 from .....client_net_configs import *
-from .....assist import PersonaInfo, Response
+from .....assist import PersonaInfo, Response, AsyncHTTPTransport
 from .....logger import logger as base_logger
 from ._response import (
     WithdrawResponse,
@@ -17,7 +17,8 @@ logger = base_logger.bind(module = "Context.Core")
 class ContextClient(UserDataClient):
     _httpx_client = httpx.AsyncClient(
         base_url = BASE_URL,
-        timeout = storage_configs.server_api_timeout.context
+        timeout = storage_configs.server_api_timeout.context,
+        transport = AsyncHTTPTransport()
     )
 
     def __init__(self, info: PersonaInfo, namespace: str | None = None):

@@ -10,7 +10,7 @@ from ._response_body import ChatResponse
 from ._break_response_body import BreakResponse
 from ._cross_user_data_routing import CrossUserDataRouting
 from ....exit_register import ExitRegister
-from ....assist import PersonaInfo, Response
+from ....assist import PersonaInfo, Response, AsyncHTTPTransport
 from ....client_net_configs import *
 from ._request_model import ChatRequestModel, ChatUserInfo, AdditionalData
 from ...._adaptation_info import __adaptation__, __adaptation_text__
@@ -24,7 +24,8 @@ exit_register = ExitRegister()
 class ChatClient:
     _chat_client = httpx.AsyncClient(
         base_url = BASE_URL,
-        timeout = storage_configs.server_api_timeout.chat
+        timeout = storage_configs.server_api_timeout.chat,
+        transport = AsyncHTTPTransport()
     )
     
     def __init__(self, persona_info: PersonaInfo, namespace: str | None = None):

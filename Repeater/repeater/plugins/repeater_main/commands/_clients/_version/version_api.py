@@ -6,13 +6,14 @@ from typing import (
 )
 
 from ....client_net_configs import *
-from ....assist import Response
+from ....assist import Response, AsyncHTTPTransport
 from .version_model import VersionModel
 
 class VersionAPIClient:
     _httpx_client = httpx.AsyncClient(
         base_url = BASE_URL,
-        timeout = storage_configs.server_api_timeout.version
+        timeout = storage_configs.server_api_timeout.version,
+        transport = AsyncHTTPTransport()
     )
 
     async def get_version(self) -> Response[VersionModel]:
