@@ -1,7 +1,7 @@
 import httpx
 from uuid import UUID
 
-from ....assist import AsyncHTTPTransport
+from ....assist import HTTPTransport
 from ....client_net_configs import *
 from ....assist import Response, PersonaInfo
 from ._nexus_response import (
@@ -16,7 +16,7 @@ class NexusClient:
     _httpx_client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.data_manager,
-        transport = AsyncHTTPTransport()
+        transport = HTTPTransport()
     )
 
     def __init__(self, info: PersonaInfo):

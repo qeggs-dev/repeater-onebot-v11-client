@@ -7,7 +7,7 @@ from typing import (
 )
 
 from ....client_net_configs import *
-from ....assist import Response, AsyncHTTPTransport
+from ....assist import Response, HTTPTransport
 from ....exit_register import ExitRegister
 from ._model_types import ModelType
 from ._models import (
@@ -22,7 +22,7 @@ class ModelInfoClient:
         self._client = httpx.AsyncClient(
             base_url = BASE_URL,
             timeout = storage_configs.server_api_timeout.model_info,
-            transport = AsyncHTTPTransport()
+            transport = HTTPTransport()
         )
 
     
