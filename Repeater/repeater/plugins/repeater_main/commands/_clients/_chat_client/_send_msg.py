@@ -45,7 +45,7 @@ class ChatSendMsg(SendMsg):
         buffer: list[str] = []
         for content in self._data.context.context_list:
             if content.role == ContentRole.ASSISTANT:
-                if content.reasoning_content.strip():
+                if content.reasoning_content and content.reasoning_content.strip():
                     buffer.append(content.reasoning_content)
         return self._reasoning_content_handler("\n\n---\n\n".join(buffer).strip())
 
@@ -56,7 +56,7 @@ class ChatSendMsg(SendMsg):
         buffer: list[str] = []
         for content in self._data.context.context_list:
             if content.role == ContentRole.ASSISTANT:
-                if content.content.strip():
+                if content.content and content.content.strip():
                     buffer.append(content.content)
         return self._content_handler("\n\n---\n\n".join(buffer).strip())
     
