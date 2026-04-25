@@ -1,12 +1,18 @@
+import httpx
+
+from ...assist import AsyncHTTPTransport
 from ._config import tts_config
 from .._response import Response
 from ._tts_response import TTSResponse
-import httpx
 
 class ChatTTSAPI:
     def __init__(self):
         url = tts_config.base_url.rstrip("/")
-        self.client = httpx.AsyncClient(base_url = url, timeout = tts_config.timeout)
+        self.client = httpx.AsyncClient(
+            base_url = url,
+            timeout = tts_config.timeout,
+            transport = AsyncHTTPTransport()
+        )
     
     async def text_to_speech(self, text: str) -> Response[TTSResponse]:
         api_args = tts_config.api_args.model_dump()
