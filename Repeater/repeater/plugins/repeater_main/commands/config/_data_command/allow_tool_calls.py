@@ -1,27 +1,28 @@
-from ....assist import PersonaInfo, SendMsg, Response, str_to_bool
+import json
+from ....assist import PersonaInfo, SendMsg, Response, parse_delimited_string
 from ....command_register import CommandCaller
 from ..._bases import BaseConfig
 
 @CommandCaller.register
-class AllowToolCalls(BaseConfig):
-    cmd = "allowToolCalls"
+class AllowedToolCalls(BaseConfig):
+    cmd = "allowedToolCalls"
     aliases= {
         "atc",
         "ATC",
-        "allow_tool_calls",
-        "Allow_Tool_Calls",
-        "AllowToolCalls",
-        "ALLOW_TOOL_CALLS",
+        "allowed_tool_calls",
+        "Allowed_Tool_Calls",
+        "AllowedToolCalls",
+        "ALLOWED_TOOL_CALLS",
     }
-    field = "allow_tool_calls"
+    field = "allowed_tool_calls"
 
-    async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> bool:
-        try:
-            thinking = str_to_bool(persona_info.message_striped_str)
-        except ValueError:
-            await send_msg.send_error("Not a valid boolean value")
+    async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> list[str]:
+        msg = persona_info.message_striped_str
+        value = await parse_delimited_string(msg)
+        if value is None:
+            await send_msg.send_error("Invalid value, must be a list of tool names.")
         
-        return thinking
+        return value
     
     async def finish_message(
             self,
@@ -29,6 +30,6 @@ class AllowToolCalls(BaseConfig):
             send_msg: SendMsg,
             response: Response,
             field: str,
-            value: bool
+            value: list[str]
         ):
-        await send_msg.send_response_check_code(response, f"Tool Calls is {value}")
+        await send_msg.send_response_check_code(response, f"Set Allowed Tool Calls to {json.dumps(value, ensure_ascii = False)}")
