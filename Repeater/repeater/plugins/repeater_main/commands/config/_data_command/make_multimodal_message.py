@@ -4,15 +4,15 @@ from ..._bases import BaseConfig
 
 
 @CommandCaller.register
-class SetNewRequestsTextOnly(BaseConfig):
-    cmd = "newRequestsTextOnly"
+class MakeMultimodalMessage(BaseConfig):
+    cmd = "makeMultimodalMessage"
     aliases = {
-        "nrto",
-        "NRTO",
-        "new_requests_text_only",
-        "New_Requests_Text_Only",
-        "NewRequestsTextOnly",
-        "NEW_REQUESTS_TEXT_ONLY",
+        "mmm",
+        "MMM",
+        "make_multimodal_message",
+        "Make_Multimodal_Message",
+        "MakeMultimodalMessage",
+        "MAKE_MULTIMODAL_MESSAGE",
     }
     field = "new_requests_text_only"
 
@@ -31,4 +31,4 @@ class SetNewRequestsTextOnly(BaseConfig):
             field: str,
             value: bool
         ):
-        await send_msg.send_response_check_code(response, f"New Requests Text Only set to {value}")
+        await send_msg.send_response_check_code(response, f"Make Multimodal Message set to {value}")
