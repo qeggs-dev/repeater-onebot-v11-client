@@ -14,7 +14,7 @@ class MakeMultimodalMessage(BaseConfig):
         "MakeMultimodalMessage",
         "MAKE_MULTIMODAL_MESSAGE",
     }
-    field = "new_requests_text_only"
+    field = "make_multimodal_message"
 
     async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> bool:
         try:
