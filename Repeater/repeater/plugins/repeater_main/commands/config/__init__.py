@@ -1,4 +1,4 @@
-from ._data_command.allow_tool_calls import AllowToolCalls
+from ._data_command.allow_tool_calls import AllowedToolCalls
 from ._data_command.auto_load_prompt import SetAutoLoadPrompt
 from ._data_command.auto_save_context import SetAutoSaveContext
 from ._data_command.auto_shrink_length import SetAutoShrinkLength
@@ -10,7 +10,7 @@ from ._data_command.change_default_personality import ChangeDefaultPersonality
 from ._data_command.cross_user_data_access import CrossUserDataAccess
 from ._data_command.fast_statistics_template import FastStatisticsTemplate
 from ._data_command.get_configs import GetConfigs
-from ._data_command.new_requests_text_only import SetNewRequestsTextOnly
+from ._data_command.make_multimodal_message import MakeMultimodalMessage
 from ._data_command.remove_reasoning_prompt import RemoveReasoningPrompt
 from ._data_command.render_doc_bottom_comment import RenderDocBottomComment
 from ._data_command.reset_field import ResetField
@@ -46,7 +46,7 @@ from ._nexus_command._download_from_nexus import ConfigDownloadFromNexus
 
 __all__ = [
     # Data commands
-    "AllowToolCalls",
+    "AllowedToolCalls",
     "SetAutoLoadPrompt",
     "SetAutoSaveContext",
     "SetAutoShrinkLength",
@@ -58,7 +58,7 @@ __all__ = [
     "CrossUserDataAccess",
     "FastStatisticsTemplate",
     "GetConfigs",
-    "SetNewRequestsTextOnly",
+    "MakeMultimodalMessage",
     "RemoveReasoningPrompt",
     "RenderDocBottomComment",
     "ResetField",
