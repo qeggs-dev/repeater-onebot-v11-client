@@ -2,7 +2,6 @@ from ...assist import PersonaInfo, SendMsg
 from ...command_register import CommandCaller, CommandPackage
 from .._clients import ModelInfoClient, ModelInfo
 
-
 @CommandCaller.register
 class GetModelList(CommandPackage):
     cmd = "getModelList"
