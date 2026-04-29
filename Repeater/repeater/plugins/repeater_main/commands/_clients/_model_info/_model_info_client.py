@@ -1,15 +1,13 @@
 import httpx
+from urllib.parse import quote
 from ....logger import logger as base_logger
 from typing import (
-    Optional,
-    Union,
     Any,
 )
 
 from ....client_net_configs import *
 from ....assist import Response, HTTPTransport
 from ....exit_register import ExitRegister
-from ._model_types import ModelType
 from ._models import (
     ModelsResponse,
 )
@@ -24,12 +22,11 @@ class ModelInfoClient:
             timeout = storage_configs.server_api_timeout.model_info,
             transport = HTTPTransport()
         )
-
     
-    # region get model list
-    async def get_model_list(self, type: ModelType) -> Response[ModelsResponse]:
+    # region get all models
+    async def get_all_models(self) -> Response[ModelsResponse]:
         response = await self._client.get(
-            f"{GET_MODEL_UID_LIST}/{type.value}",
+            f"{GET_MODEL_UID_LIST}",
         )
         return Response(
             httpx_response = response,
@@ -37,15 +34,16 @@ class ModelInfoClient:
         )
     # endregion
 
-    # region get model info
-    async def get_model_info(self, type: ModelType, uid: str) -> Response[ModelsResponse]:
+    # region get models
+    async def get_models(self, model_uid: str) -> Response[ModelsResponse]:
         response = await self._client.get(
-            f"{GET_MODEL_INFO}/{type.value}/{uid}",
+            f"{GET_MODEL_UID_LIST}/{quote(model_uid)}",
         )
         return Response(
-            response,
-            model = ModelsResponse
+            httpx_response = response,
+            model = ModelsResponse,
         )
+    # endregion
 
     # region close
     def close(self) -> None:
