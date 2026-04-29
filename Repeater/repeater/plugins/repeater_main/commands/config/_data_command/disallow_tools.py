@@ -4,15 +4,15 @@ from ....command_register import CommandCaller
 from ..._bases import BaseConfig, OperationType
 
 @CommandCaller.register
-class AllowTools(BaseConfig):
-    cmd = "allowTools"
+class DisallowTools(BaseConfig):
+    cmd = "disallowTools"
     aliases= {
-        "at",
-        "AT",
-        "allow_tools",
-        "Allow_Tools",
-        "AllowTools",
-        "ALLOW_TOOLS",
+        "dt",
+        "DT",
+        "disallow_tools",
+        "Disallow_Tools",
+        "DisallowTools",
+        "DISALLOW_TOOLS",
     }
     field = "allowed_tool_calls"
     operation = OperationType.GET_AND_SET

@@ -1,3 +1,5 @@
+from ._data_command.allow_tools import AllowTools
+from ._data_command.disallow_tools import DisallowTools
 from ._data_command.allowed_tool_calls import AllowedToolCalls
 from ._data_command.auto_load_prompt import SetAutoLoadPrompt
 from ._data_command.auto_save_context import SetAutoSaveContext
@@ -46,6 +48,8 @@ from ._nexus_command._download_from_nexus import ConfigDownloadFromNexus
 
 __all__ = [
     # Data commands
+    "AllowTools",
+    "DisallowTools",
     "AllowedToolCalls",
     "SetAutoLoadPrompt",
     "SetAutoSaveContext",
