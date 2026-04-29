@@ -51,6 +51,8 @@ class GetModelList(CommandPackage):
                     text_buffer.append("\n".join(sub_buffer))
                 text = "\n\n".join(text_buffer)
 
+                if not text:
+                    await send_msg.send_prompt("Warning: No Model Data")
                 await send_msg.send_render(text)
         else:
             await send_msg.send_response_check_code(response)
