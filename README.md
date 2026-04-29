@@ -444,6 +444,8 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `resetConfigField`         | `rcf`    | `ResetConfigField`        | `CONFIG`    | 4.5.6.0        | 重置配置字段                 | 配置字段名称                                 | 设置指定配置字段到 null |
 | `makeMultimodalMessage`    | `mmm`    | `MakeMultimodalMessage`   | `CONFIG`    | 4.5.8.0        | 是否创建多模态消息            | `true`/`false`                              | 设置是否创建多模态消息 |
 | `allowedToolCalls`         | `atc`    | `AllowedToolCalls`        | `CONFIG`    | 4.5.8.0        | 批准使用工具                 | *\*多个工具注册名*                           | 指定 AI 能使用哪些工具 |
+| `allowTools`               | `at`     | `AllowTools`              | `CONFIG`    | 4.5.8.0        | 允许使用工具                 | *\*多个工具注册名*                           | 增加工具使用权限 |
+| `disallowTools`            | `dt`     | `DisallowTools`           | `CONFIG`    | 4.5.8.0        | 禁止使用工具                 | *\*多个工具注册名*                           | 移除工具使用权限 |
 
 PS：`CHAT`类型命令大部分都做到了支持视觉输入
 默认命令已支持全模态输入
