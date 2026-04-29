@@ -38,14 +38,15 @@ class GetModelList(CommandPackage):
                     model_maps[model.parent_id].append(model)
 
                 text_buffer: list[str] = []
-                for uid, models in model_maps.items():
+                for parent_id, models in model_maps.items():
                     sub_buffer: list[str] = []
-                    sub_buffer.append(f"### {uid}")
+                    sub_buffer.append(f"### {parent_id}")
                     sub_buffer.append("")
                     for model in models:
                         sub_buffer.append(f"**{model.name}**")
-                        sub_buffer.append(f"  - id: `{model.parent}`")
                         sub_buffer.append(f"  - uid: `{model.uid}`")
+                        sub_buffer.append(f"  - parent: `{model.parent}`")
+                        sub_buffer.append(f"  - parent_id: `{model.parent_id}`")
                         sub_buffer.append(f"  - timeout: {model.timeout}")
                     text_buffer.append("\n".join(sub_buffer))
                 text = "\n\n".join(text_buffer)
