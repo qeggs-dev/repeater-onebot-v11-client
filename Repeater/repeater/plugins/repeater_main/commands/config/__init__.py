@@ -1,4 +1,4 @@
-from ._data_command.allow_tool_calls import AllowedToolCalls
+from ._data_command.allowed_tool_calls import AllowedToolCalls
 from ._data_command.auto_load_prompt import SetAutoLoadPrompt
 from ._data_command.auto_save_context import SetAutoSaveContext
 from ._data_command.auto_shrink_length import SetAutoShrinkLength

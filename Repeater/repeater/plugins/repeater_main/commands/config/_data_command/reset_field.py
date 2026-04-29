@@ -1,7 +1,7 @@
 from ....assist import PersonaInfo, SendMsg, Response
 from ....command_register import CommandCaller
 from ..._bases import BaseConfig
-
+from typing import Any
 
 @CommandCaller.register
 class ResetField(BaseConfig):
@@ -15,7 +15,12 @@ class ResetField(BaseConfig):
         "RESET_CONFIG_FIELD",
     }
 
-    async def parse_value_free(self, persona_info: PersonaInfo, send_msg: SendMsg):
+    async def parse_value_free(
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            raw_value: Any | None = None,
+        ):
         field = persona_info.message_striped_str
         return field, None
     

@@ -24,11 +24,14 @@ class AllowTools(BaseConfig):
             raw_value: list[str] | None = None
         ):
         if raw_value is None:
-            tools = []
+            tools = set()
+        else:
+            tools = set(raw_value)
         msg = persona_info.message_striped_str
         add_tools = parse_delimited_string(msg)
-        tools.extend(add_tools)
-        return self.field, tools
+        for tool in add_tools:
+            tools.discard(tool)
+        return self.field, list(raw_value)
     
     async def finish_message(
             self,
