@@ -12,6 +12,7 @@ class OperationType(Enum):
     SET = auto()
     GET = auto()
     GET_FILE_URL = auto()
+    GET_AND_SET = auto()
 
 class BaseConfig(CommandPackage):
     field: str = ""
@@ -24,7 +25,12 @@ class BaseConfig(CommandPackage):
     async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T:
         return persona_info.message_striped_str
     
-    async def parse_value_free(self, persona_info: PersonaInfo, send_msg: SendMsg) -> tuple[str, T]:
+    async def parse_value_free(
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            raw_value: Any | None = None
+        ) -> tuple[str, T]:
         return self.field, await self.parse_value(persona_info, send_msg)
 
     @abstractmethod
@@ -39,16 +45,24 @@ class BaseConfig(CommandPackage):
         pass
     
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg) -> None:
-        field, value = await self.parse_value_free(persona_info, send_msg)
+        client = ConfigClient(persona_info)
+        raw_value = None
+        if self.operation in [OperationType.GET, OperationType.GET_AND_SET]:
+            configs = await client.get_configs()
+            if self.field in configs:
+                raw_value = configs[self.field]
+        
+        field, value = await self.parse_value_free(
+            persona_info,
+            send_msg,
+            raw_value
+        )
         match self.operation:
             case OperationType.SET:
-                client = ConfigClient(persona_info)
                 response: Response[Any] = await client.set_config(field, value)
             case OperationType.GET:
-                client = ConfigClient(persona_info)
                 response: Response[Any] = await client.get_configs()
             case OperationType.GET_FILE_URL:
-                client = ConfigClient(persona_info)
                 response = None
                 value = client.get_configs_url()
         
