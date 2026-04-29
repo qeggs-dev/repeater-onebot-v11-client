@@ -1,6 +1,6 @@
 from ...assist import PersonaInfo, SendMsg
 from ...command_register import CommandCaller, CommandPackage
-from .._clients import ModelInfoClient, MODEL_TYPES, ModelType, ModelInfo
+from .._clients import ModelInfoClient, ModelInfo
 
 
 @CommandCaller.register
@@ -34,9 +34,9 @@ class GetModelList(CommandPackage):
             else:
                 model_maps: dict[str, list[ModelInfo]] = {}
                 for model in model_info.models:
-                    if model.parent not in model_maps:
-                        model_maps[model.parent] = []
-                    model_maps[model.parent].append(model)
+                    if model.parent_id not in model_maps:
+                        model_maps[model.parent_id] = []
+                    model_maps[model.parent_id].append(model)
 
                 text_buffer: list[str] = []
                 for uid, models in model_maps.items():
@@ -45,7 +45,7 @@ class GetModelList(CommandPackage):
                     sub_buffer.append("")
                     for model in models:
                         sub_buffer.append(f"**{model.name}**")
-                        sub_buffer.append(f"  - id: `{model.id}`")
+                        sub_buffer.append(f"  - id: `{model.parent}`")
                         sub_buffer.append(f"  - uid: `{model.uid}`")
                         sub_buffer.append(f"  - timeout: {model.timeout}")
                     text_buffer.append("\n".join(sub_buffer))
