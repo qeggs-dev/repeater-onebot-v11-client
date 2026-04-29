@@ -24,14 +24,9 @@ class GetModelList(CommandPackage):
             await send_msg.send_debug_mode()
 
         model_info_client = ModelInfoClient()
-        model_type_str = persona_info.message_striped_str
-        if model_type_str in MODEL_TYPES:
-            model_type = ModelType(model_type_str)
-        else:
-            await send_msg.send_error("Not a valid model type")
-            return
+        model_uid = persona_info.message_striped_str
 
-        response = await model_info_client.get_model_list(model_type)
+        response = await model_info_client.get_models(model_uid)
         if response.code == 200:
             model_info = response.get_data()
             if model_info is None:
@@ -54,7 +49,8 @@ class GetModelList(CommandPackage):
                         sub_buffer.append(f"  - uid: `{model.uid}`")
                         sub_buffer.append(f"  - timeout: {model.timeout}")
                     text_buffer.append("\n".join(sub_buffer))
+                text = "\n\n".join(text_buffer)
 
-                await send_msg.send_multiple_render(text_buffer)
+                await send_msg.send_render(text)
         else:
             await send_msg.send_response_check_code(response)
