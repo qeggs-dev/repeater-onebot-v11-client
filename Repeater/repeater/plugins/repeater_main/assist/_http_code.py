@@ -173,7 +173,7 @@ class HTTPCode:
         elif self._code in range(500, 600):
             return "Server Error 5xx"
         else:
-            return "(Undefined)"
+            return "[Undefined]"
     
     @property
     def rfc_link(self) -> str:
