@@ -4,7 +4,7 @@ from nonebot.exception import FinishedException
 
 from ._text_render import RendedImage
 from ..client_net_configs import RepeaterDebugMode, storage_configs
-from ._http_code import HTTP_Code
+from ._http_code import HTTPCode
 from ._persona_info import PersonaInfo
 from ._namespace import MessageSource
 from ._text_render import TextRender
@@ -191,7 +191,7 @@ class SendMsg:
         await self.send_prompt(
             (
                 f"{message}\n"
-                f"HTTP Code: {response.code}({HTTP_Code(response.code)})"
+                f"HTTP Code: {response.code}({HTTPCode(response.code)})"
             ),
             reply = reply,
             continue_handler = continue_handler
@@ -217,11 +217,11 @@ class SendMsg:
         failed: int = 0
         for index, response in enumerate(responses, start=1):
             if isinstance(response, tuple):
-                text_buffer.append(f"[{response[1]}] HTTP Code: {response[0].code}({HTTP_Code(response[0].code)})")
+                text_buffer.append(f"[{response[1]}] HTTP Code: {response[0].code}({HTTPCode(response[0].code)})")
                 if response[0].code != 200:
                     failed += 1
             elif isinstance(response, Response):
-                text_buffer.append(f"[{index}] HTTP Code: {response.code}({HTTP_Code(response.code)})")
+                text_buffer.append(f"[{index}] HTTP Code: {response.code}({HTTPCode(response.code)})")
                 if response.code != 200:
                     failed += 1
             else:
