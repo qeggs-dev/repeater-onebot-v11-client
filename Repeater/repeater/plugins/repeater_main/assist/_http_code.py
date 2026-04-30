@@ -149,7 +149,7 @@ class HTTPCode:
         """
         **The message of the HTTP Status Code.**
         """
-        return self._now_map.get(self._code, "(Undefined)")
+        return self._now_map.get(self._code, "[Undefined]")
     
     def is_valid(self) -> bool:
         """
