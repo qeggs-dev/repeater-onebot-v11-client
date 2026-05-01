@@ -23,15 +23,12 @@ class DisallowTools(BaseConfig):
             send_msg: SendMsg,
             raw_value: list[str] | None = None
         ):
-        if raw_value is None:
-            tools = set()
-        else:
-            tools = set(raw_value)
-        msg = persona_info.message_striped_str
-        add_tools = parse_delimited_string(msg)
-        for tool in add_tools:
-            tools.discard(tool)
-        return self.field, list(raw_value)
+        disable_tools = set(parse_delimited_string(persona_info.message_striped_str))
+        disabled_tools: list[str] = []
+        for tool in raw_value or []:
+            if tool not in disable_tools:
+                disabled_tools.append(tool)
+        return disabled_tools
     
     async def finish_message(
             self,
@@ -41,4 +38,4 @@ class DisallowTools(BaseConfig):
             field: str,
             value: list[str] | None
         ):
-            await send_msg.send_response_check_code(response, f"Added Tool Calls to {json.dumps(value, ensure_ascii = False)}")
+            await send_msg.send_response_check_code(response, f"Set Tool Calls to {json.dumps(value, ensure_ascii = False)}")

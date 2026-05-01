@@ -38,4 +38,4 @@ class AllowTools(BaseConfig):
             field: str,
             value: list[str] | None
         ):
-            await send_msg.send_response_check_code(response, f"Added Tool Calls to {json.dumps(value, ensure_ascii = False)}")
+            await send_msg.send_response_check_code(response, f"Set Tool Calls to {json.dumps(value, ensure_ascii = False)}")
