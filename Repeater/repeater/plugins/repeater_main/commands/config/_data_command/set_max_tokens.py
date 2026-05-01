@@ -16,7 +16,12 @@ class SetMaxTokens(BaseConfig):
     }
     field = "max_tokens"
 
-    async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> int:
+    async def parse_value(
+        self,
+        persona_info: PersonaInfo,
+        send_msg: SendMsg,
+        raw_value: int | None,
+    )  -> int:
         msg = persona_info.message_striped_str
         try:
             value = int(msg)

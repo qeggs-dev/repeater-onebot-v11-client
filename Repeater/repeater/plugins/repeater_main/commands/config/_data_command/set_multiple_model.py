@@ -16,7 +16,12 @@ class SetMultipleModel(BaseConfig):
     }
     field = "model_uid"
 
-    async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> list[str]:
+    async def parse_value(
+        self,
+        persona_info: PersonaInfo,
+        send_msg: SendMsg,
+        raw_value: list[str] | None,
+    )  -> list[str]:
         msg = persona_info.message_striped_str
         value = parse_delimited_string(msg)
         if not value:

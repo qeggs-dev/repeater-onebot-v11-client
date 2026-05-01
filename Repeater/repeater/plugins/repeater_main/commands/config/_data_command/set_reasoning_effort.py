@@ -23,7 +23,12 @@ class SetReasoningEffort(BaseConfig):
         XHIGH = "xhigh"
         MAX = "max"
 
-    async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> str | None:
+    async def parse_value(
+        self,
+        persona_info: PersonaInfo,
+        send_msg: SendMsg,
+        raw_value: str | None | None,
+    )  -> str | None:
         msg = persona_info.message_striped_str
         if msg.lower() in ["null", "none"]:
             return None

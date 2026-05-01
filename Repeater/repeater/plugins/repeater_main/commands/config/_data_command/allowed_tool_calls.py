@@ -2,6 +2,7 @@ import json
 from ....assist import PersonaInfo, SendMsg, Response, parse_delimited_string
 from ....command_register import CommandCaller
 from ..._bases import BaseConfig
+from typing import Any
 
 @CommandCaller.register
 class AllowedToolCalls(BaseConfig):

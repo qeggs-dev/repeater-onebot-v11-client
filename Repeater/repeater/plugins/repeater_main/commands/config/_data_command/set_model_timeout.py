@@ -16,7 +16,12 @@ class SetModelTimeout(BaseConfig):
     }
     field = "model_timeout"
 
-    async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> float:
+    async def parse_value(
+        self,
+        persona_info: PersonaInfo,
+        send_msg: SendMsg,
+        raw_value: float | None,
+    )  -> float:
         msg = persona_info.message_striped_str
         try:
             value = int(msg)

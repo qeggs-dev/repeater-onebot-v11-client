@@ -16,7 +16,12 @@ class SetAutoShrinkLength(BaseConfig):
     }
     field = "context_shrink_limit"
 
-    async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> int:
+    async def parse_value(
+        self,
+        persona_info: PersonaInfo,
+        send_msg: SendMsg,
+        raw_value: int | None,
+    )  -> int:
         try:
             value = int(persona_info.message_striped_str)
         except ValueError:

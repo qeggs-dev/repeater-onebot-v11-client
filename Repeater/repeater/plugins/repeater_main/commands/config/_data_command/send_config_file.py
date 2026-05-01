@@ -16,7 +16,12 @@ class SendConfigFile(BaseConfig):
     }
     operation = OperationType.GET_FILE_URL
 
-    async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> None:
+    async def parse_value(
+        self,
+        persona_info: PersonaInfo,
+        send_msg: SendMsg,
+        raw_value: None | None,
+    )  -> None:
         return None
     
     async def finish_message(

@@ -17,18 +17,18 @@ class DisallowTools(BaseConfig):
     field = "allowed_tool_calls"
     operation = OperationType.GET_AND_SET
 
-    async def parse_value_free(
-            self,
-            persona_info: PersonaInfo,
-            send_msg: SendMsg,
-            raw_value: list[str] | None = None
-        ):
+    async def parse_value(
+        self,
+        persona_info: PersonaInfo,
+        send_msg: SendMsg,
+        raw_value: list[str] | None = None
+    ):
         disable_tools = set(parse_delimited_string(persona_info.message_striped_str))
         disabled_tools: list[str] = []
         for tool in raw_value or []:
             if tool not in disable_tools:
                 disabled_tools.append(tool)
-        return self.field, disabled_tools
+        return disabled_tools
     
     async def finish_message(
             self,

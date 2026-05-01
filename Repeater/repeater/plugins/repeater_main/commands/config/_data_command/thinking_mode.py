@@ -16,7 +16,12 @@ class ThinkingMode(BaseConfig):
     }
     field = "thinking"
 
-    async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> bool | None:
+    async def parse_value(
+        self,
+        persona_info: PersonaInfo,
+        send_msg: SendMsg,
+        raw_value: bool | None | None,
+    )  -> bool | None:
         try:
             value = str_to_bool(persona_info.message_striped_str, optional=True)
         except ValueError:

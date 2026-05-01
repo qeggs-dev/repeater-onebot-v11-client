@@ -16,7 +16,12 @@ class SetTopP(BaseConfig):
     }
     field = "top_p"
 
-    async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> float:
+    async def parse_value(
+        self,
+        persona_info: PersonaInfo,
+        send_msg: SendMsg,
+        raw_value: float | None,
+    )  -> float:
         msg = persona_info.message_striped_str
         try:
             if msg.endswith("%"):

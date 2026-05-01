@@ -16,7 +16,12 @@ class RemoveReasoningPrompt(BaseConfig):
     }
     field = "remove_reasoning_prompt"
 
-    async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> bool:
+    async def parse_value(
+        self,
+        persona_info: PersonaInfo,
+        send_msg: SendMsg,
+        raw_value: bool | None,
+    )  -> bool:
         try:
             value = str_to_bool(persona_info.message_striped_str)
         except ValueError:

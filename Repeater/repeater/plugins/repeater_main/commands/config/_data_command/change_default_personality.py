@@ -16,7 +16,12 @@ class ChangeDefaultPersonality(BaseConfig):
     }
     field = "preset_prompt_name"
 
-    async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> str:
+    async def parse_value(
+        self,
+        persona_info: PersonaInfo,
+        send_msg: SendMsg,
+        raw_value: str | None,
+    )  -> str:
         return persona_info.message_striped_str
     
     async def finish_message(

@@ -26,7 +26,12 @@ class GetConfigs(BaseConfig):
     }
     operation = OperationType.GET
 
-    async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> FormatType:
+    async def parse_value(
+        self,
+        persona_info: PersonaInfo,
+        send_msg: SendMsg,
+        raw_value: FormatType | None,
+    )  -> FormatType:
         msg = persona_info.message_striped_str.strip()
         if not msg:
             return FormatType.JSON  # default to JSON
