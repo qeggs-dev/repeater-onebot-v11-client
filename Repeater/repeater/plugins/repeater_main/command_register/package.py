@@ -1,18 +1,45 @@
-from abc import ABC, abstractmethod
+from abc import (
+    ABC,
+    abstractmethod
+)
 
-from ..assist import PersonaInfo, SendMsg
+from ..assist import (
+    PersonaInfo,
+    SendMsg
+)
 from .listen_type import ListenType
 from .exceptions import *
-from datetime import datetime, timedelta
-from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent
+from datetime import (
+    datetime,
+    timedelta
+)
+from nonebot.adapters.onebot.v11 import (
+    Bot,
+    Message,
+    MessageEvent
+)
 from nonebot.matcher import Matcher
-from nonebot.typing import T_RuleChecker, T_PermissionChecker, T_State, T_Handler
-from nonebot.rule import Rule, to_me
+from nonebot.typing import (
+    T_RuleChecker,
+    T_PermissionChecker,
+    T_State,
+    T_Handler
+)
+from nonebot.rule import (
+    Rule,
+    to_me
+)
 from nonebot.permission import Permission
 from nonebot.dependencies import Dependent
 from nonebot.exception import NoneBotException
 from nonebot import logger
-from typing import Any, Iterable, Type, TypeVar, Generic
+from typing import (
+    Any,
+    Iterable,
+    Type,
+    TypeVar,
+    Generic,
+)
 
 T = TypeVar("T")
 

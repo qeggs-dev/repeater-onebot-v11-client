@@ -5,6 +5,7 @@ from ..client_net_configs import *
 from pydantic import BaseModel
 from ._response import Response
 from ._namespace import Namespace
+from ._ssl import get_ssl_context
 from ..logger import logger
 
 class RendedImage(BaseModel):
@@ -20,7 +21,8 @@ class TextRender:
     _client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.render,
-        transport = HTTPTransport()
+        transport = HTTPTransport(),
+        verify = get_ssl_context()
     )
 
     def __init__(self, namespace: str | Namespace, timeout:float = 60.0):

@@ -2,7 +2,7 @@ import httpx
 
 from urllib.parse import urljoin
 from .....client_net_configs import *
-from .....assist import PersonaInfo, Response, HTTPTransport
+from .....assist import PersonaInfo, Response, HTTPTransport, get_ssl_context
 from .....logger import logger as base_logger
 from ._response import (
     WithdrawResponse,
@@ -18,7 +18,8 @@ class ContextClient(UserDataClient):
     _httpx_client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.context,
-        transport = HTTPTransport()
+        transport = HTTPTransport(),
+        verify = get_ssl_context()
     )
 
     def __init__(self, info: PersonaInfo, namespace: str | None = None):

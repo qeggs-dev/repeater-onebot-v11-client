@@ -1,13 +1,14 @@
 import httpx
 
 from ....client_net_configs import *
-from ....assist import Response, HTTPTransport
+from ....assist import Response, HTTPTransport, get_ssl_context
 
 class StatusClient:
     _httpx_client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.status,
-        transport = HTTPTransport()
+        transport = HTTPTransport(),
+        verify = get_ssl_context()
     )
 
     async def get_client_task_status(self, namespace: str) -> Response[list[str]]:

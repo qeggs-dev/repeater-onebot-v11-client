@@ -16,7 +16,12 @@ class AllowedToolCalls(BaseConfig):
     }
     field = "allowed_tool_calls"
 
-    async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> list[str] | None:
+    async def parse_value(
+        self,
+        persona_info: PersonaInfo,
+        send_msg: SendMsg,
+        raw_value: Any | None = None
+    ) -> list[str] | None:
         msg = persona_info.message_striped_str
         value = parse_delimited_string(msg)
         if not value:

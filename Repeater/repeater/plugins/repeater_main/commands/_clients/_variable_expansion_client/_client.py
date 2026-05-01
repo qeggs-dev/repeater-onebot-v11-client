@@ -4,7 +4,7 @@ from typing import (
 )
 
 from ....client_net_configs import *
-from ....assist import PersonaInfo, Response, HTTPTransport
+from ....assist import PersonaInfo, Response, HTTPTransport, get_ssl_context
 from ....logger import logger
 from ...._adaptation_info import __adaptation__, __adaptation_text__
 
@@ -12,7 +12,8 @@ class VariableExpansionClient:
     _httpx_client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.variable_expansion,
-        transport = HTTPTransport()
+        transport = HTTPTransport(),
+        verify = get_ssl_context()
     )
 
     def __init__(self, info: PersonaInfo):
