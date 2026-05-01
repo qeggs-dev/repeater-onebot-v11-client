@@ -35,7 +35,7 @@ try:
     from .commands.nexus import *
 
     # === Var Expand === #
-    from .commands.variable_expansion import *
+    from .commands.template_render import *
 
     # === UserDataFile === #
     from .commands.user_file import *
@@ -44,7 +44,7 @@ try:
     from .commands.get_namespace import GetNamespace
 
     # === TextRender === #
-    from .commands.text_render import TextRender
+    from .commands.markdown_render import TextRender
 
     # === Comment === #
     from .commands.annotation import Annotation

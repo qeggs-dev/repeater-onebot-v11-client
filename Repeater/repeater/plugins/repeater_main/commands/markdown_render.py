@@ -4,14 +4,14 @@ from ..command_register import CommandCaller, CommandPackage
 
 @CommandCaller.register
 class TextRender(CommandPackage):
-    cmd = "textRender"
+    cmd = "markdownRender"
     aliases = {
-        "tr",
-        "TR",
-        "text_render",
-        "Text_Render",
-        "TextRender",
-        "TEXT_RENDER",
+        "mr",
+        "MR",
+        "markdown_render",
+        "Markdown_Render",
+        "MarkdownRender",
+        "MARKDOWN_RENDER",
     }
 
     @property
