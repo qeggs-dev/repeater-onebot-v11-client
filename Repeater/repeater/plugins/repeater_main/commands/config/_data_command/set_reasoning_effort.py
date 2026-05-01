@@ -27,7 +27,7 @@ class SetReasoningEffort(BaseConfig):
         self,
         persona_info: PersonaInfo,
         send_msg: SendMsg,
-        raw_value: str | None | None,
+        raw_value: str | None,
     )  -> str | None:
         msg = persona_info.message_striped_str
         if msg.lower() in ["null", "none"]:

@@ -20,7 +20,7 @@ class SendConfigFile(BaseConfig):
         self,
         persona_info: PersonaInfo,
         send_msg: SendMsg,
-        raw_value: None | None,
+        raw_value: None,
     )  -> None:
         return None
     

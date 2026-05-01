@@ -20,7 +20,7 @@ class ThinkingMode(BaseConfig):
         self,
         persona_info: PersonaInfo,
         send_msg: SendMsg,
-        raw_value: bool | None | None,
+        raw_value: bool | None,
     )  -> bool | None:
         try:
             value = str_to_bool(persona_info.message_striped_str, optional=True)
