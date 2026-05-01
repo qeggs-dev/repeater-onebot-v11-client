@@ -28,7 +28,7 @@ class DisallowTools(BaseConfig):
         for tool in raw_value or []:
             if tool not in disable_tools:
                 disabled_tools.append(tool)
-        return disabled_tools
+        return self.field, disabled_tools
     
     async def finish_message(
             self,
