@@ -22,16 +22,21 @@ class BaseConfig(CommandPackage):
     def component(self) -> str:
         return f"Config.{self.__class__.__name__}"
 
-    async def parse_value(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T:
+    async def parse_value(
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            raw_value: Any | None
+        ) -> T:
         return persona_info.message_striped_str
     
     async def parse_value_free(
             self,
             persona_info: PersonaInfo,
             send_msg: SendMsg,
-            raw_value: Any | None = None
+            raw_value: Any | None
         ) -> tuple[str, T]:
-        return self.field, await self.parse_value(persona_info, send_msg)
+        return self.field, self.parse_value(persona_info, send_msg, raw_value)
 
     @abstractmethod
     async def finish_message(
