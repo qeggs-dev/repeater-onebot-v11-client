@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import ClassVar
 
-class HTTP_Code:
+class HTTPCode:
     """
     **HTTP Status Code to Message**
 
@@ -68,12 +68,20 @@ class HTTP_Code:
         504: "Gateway Timeout",
         505: "HTTP Version Not Supported",
     }
+
     def __init__(self, code: int):
         """
         :param code: HTTP Status Code
         """
-        self.code = code
+        self._code = code
         self._local_map: dict[int, str] | None = None
+    
+    @property
+    def code(self) -> int:
+        """
+        :return: HTTP Status Code
+        """
+        return self._code
     
     def expand_code_map(self, code_map: dict[int, str]) -> dict[int, str]:
         """
@@ -106,7 +114,7 @@ class HTTP_Code:
         return self._CODE_MAP
     
     @classmethod
-    def from_code(cls, code: int) -> HTTP_Code:
+    def from_code(cls, code: int) -> HTTPCode:
         """
         **Create an instance from the HTTP Status Code.**
         
@@ -134,55 +142,38 @@ class HTTP_Code:
         return self.message
     
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({repr(self.code)})"
+        return f"{self.__class__.__name__}({repr(self._code)})"
     
     @property
     def message(self) -> str:
         """
         **The message of the HTTP Status Code.**
         """
-        return self._now_map.get(self.code, "(Undefined)")
-    
-    def __hash__(self) -> int:
-        """
-        **Hash the HTTP Status Code.**
-        """
-        return hash(self.code) ^ hash(self.__class__.__name__)
-    
-    def __eq__(self, other: object) -> bool:
-        """
-        **Compare the HTTP Status Code.**
-        """
-        if isinstance(other, int):
-            return self.code == other
-        elif isinstance(other, self.__class__):
-            return self.code == other.code
-        else:
-            return False
+        return self._now_map.get(self._code, "[Undefined]")
     
     def is_valid(self) -> bool:
         """
         **Check if the HTTP Status Code is valid.**
         """
-        return self.code in self._now_map
+        return self._code in self._now_map
     
     @property
     def code_range(self) -> str:
         """
         **The range of the HTTP Status Code.**
         """
-        if self.code in range(100, 200):
+        if self._code in range(100, 200):
             return "Informational 1xx"
-        elif self.code in range(200, 300):
+        elif self._code in range(200, 300):
             return "Successful 2xx"
-        elif self.code in range(300, 400):
+        elif self._code in range(300, 400):
             return "Redirection 3xx"
-        elif self.code in range(400, 500):
+        elif self._code in range(400, 500):
             return "Client Error 4xx"
-        elif self.code in range(500, 600):
+        elif self._code in range(500, 600):
             return "Server Error 5xx"
         else:
-            return "(Undefined)"
+            return "[Undefined]"
     
     @property
     def rfc_link(self) -> str:
@@ -190,35 +181,35 @@ class HTTP_Code:
         **The link to the RFC document.**
         """
         url = "https://www.rfc-editor.org/rfc/rfc9110.html"
-        index = f"name-{self.code}-{self.code_range.lower().replace(' ', '-')}"
+        index = f"name-{self._code}-{self.code_range.lower().replace(' ', '-')}"
         return f"{url}#{index}"
     
     def is_informational(self) -> bool:
         """
         **Check if the HTTP Status Code is informational.**
         """
-        return self.code in range(100, 200)
+        return self._code in range(100, 200)
 
     def is_success(self) -> bool:
         """
         **Check if the HTTP Status Code is successful.**
         """
-        return self.code in range(200, 300)
+        return self._code in range(200, 300)
 
     def is_redirect(self) -> bool:
         """
         **Check if the HTTP Status Code is redirect.**
         """
-        return self.code in range(300, 400)
+        return self._code in range(300, 400)
 
     def is_client_error(self) -> bool:
         """
         **Check if the HTTP Status Code is client error.**
         """
-        return self.code in range(400, 500)
+        return self._code in range(400, 500)
 
     def is_server_error(self) -> bool:
         """
         **Check if the HTTP Status Code is server error.**
         """
-        return self.code in range(500, 600)
+        return self._code in range(500, 600)

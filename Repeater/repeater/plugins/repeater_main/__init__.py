@@ -1,53 +1,69 @@
-# === Chat === #
-from .commands.chat import *
+import time as _time
+from nonebot import logger as _logger
 
-# === Context === #
-from .commands.context import *
+start_import_time = _time.perf_counter_ns()
 
-# === Prompt === #
-from .commands.prompt import *
+try:
+    # === Chat === #
+    from .commands.chat import *
 
-# === Config === #
-from .commands.config import *
+    # === Context === #
+    from .commands.context import *
 
-# === Mixed === #
-from .commands.mixed import *
+    # === Prompt === #
+    from .commands.prompt import *
 
-# === Model Info === #
-from .commands.model_info import *
+    # === Config === #
+    from .commands.config import *
 
-# === Status === #
-from .commands.status import *
+    # === Mixed === #
+    from .commands.mixed import *
 
-# === Licenses === #
-from .commands.licenses import *
+    # === Model Info === #
+    from .commands.model_info import *
 
-# === More Interesting Tools === #
-from .commands.more_interesting_tools import *
+    # === Status === #
+    from .commands.status import *
 
-# === Nexus === #
-from .commands.nexus import *
+    # === Licenses === #
+    from .commands.licenses import *
 
-# === Var Expand === #
-from .commands.variable_expansion import *
+    # === More Interesting Tools === #
+    from .commands.more_interesting_tools import *
 
-# === UserDataFile === #
-from .commands.user_file import *
+    # === Nexus === #
+    from .commands.nexus import *
 
-# === SessionID === #
-from .commands.get_namespace import handle_get_namespace
+    # === Var Expand === #
+    from .commands.template_render import *
 
-# === TextRender === #
-from .commands.text_render import handle_text_render
+    # === UserDataFile === #
+    from .commands.user_file import *
 
-# === Comment === #
-from .commands.annotation import handle_annotation
+    # === SessionID === #
+    from .commands.get_namespace import GetNamespace
 
-# === Adaptation === #
-from .commands.adaptation import handle_adaptation
+    # === TextRender === #
+    from .commands.markdown_render import TextRender
 
-# === Calculate Length Score === #
-from .commands.calculate_length_score import handle_calculate_length_score
+    # === Comment === #
+    from .commands.annotation import Annotation
 
-# === Adaptation Info === #
-from ._adaptation_info import __adaptation__, __adaptation_text__
+    # === Adaptation === #
+    from .commands.adaptation import AdaptationInfo
+
+    # === Calculate Length Score === #
+    from .commands.calculate_length_score import CalculateLengthScore
+
+    # === Send Any Message === #
+    from .commands.send_msg import SendMessage
+
+    # === Adaptation Info === #
+    from ._adaptation_info import __adaptation__, __adaptation_text__
+
+finally:
+    end_import_time = _time.perf_counter_ns()
+    _logger.info(
+        "Import time: {import_time:.2f}s",
+        import_time = (end_import_time - start_import_time) / 1e9
+    )

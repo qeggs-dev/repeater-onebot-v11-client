@@ -1,34 +1,43 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent
-from nonebot.adapters import Bot
+from ....assist import PersonaInfo, SendMsg, Response
+from ....command_register import CommandCaller
+from ..._bases import BaseConfig
 
-from ..._clients import ConfigCore
-from ....assist import PersonaInfo, SendMsg
 
-set_model_timeout = on_command("setModelTimeout", aliases={"smto", "set_model_timeout", "Set_Model_Timeout", "SetModelTimeout"}, rule=to_me(), block=True)
+@CommandCaller.register
+class SetModelTimeout(BaseConfig):
+    cmd = "setModelTimeout"
+    aliases = {
+        "smto",
+        "SMTO",
+        "set_model_timeout",
+        "Set_Model_Timeout",
+        "SetModelTimeout",
+        "SET_MODEL_TIMEOUT",
+    }
+    field = "model_timeout"
 
-@set_model_timeout.handle()
-async def handle_set_model_timeout(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    persona_info = PersonaInfo(bot=bot, event=event, args=args)
-    send_msg = SendMsg("Config.Set_Model_Timeout", set_model_timeout, persona_info)
-
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-
-    msg = persona_info.message_striped_str
-    model_timeout = 600.0
-    
-    try:
-        model_timeout = int(msg)
-    except ValueError:
+    async def parse_value(
+        self,
+        persona_info: PersonaInfo,
+        send_msg: SendMsg,
+        raw_value: float | None,
+    )  -> float:
+        msg = persona_info.message_striped_str
         try:
-            model_timeout = float(msg)
+            value = int(msg)
         except ValueError:
-            await send_msg.send_error("Set_Model_Timeout setting is incorrect, please enter an integer!")
-
-    config_core = ConfigCore(persona_info)
-    response = await config_core.set_config("model_timeout", model_timeout)
-    await send_msg.send_response_check_code(response, f"Set Model Timeout to {model_timeout}")
+            try:
+                value = float(msg)
+            except ValueError:
+                await send_msg.send_error("Model Timeout setting is incorrect, please enter a number!")
+        return value
+    
+    async def finish_message(
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            response: Response,
+            field: str,
+            value: bool
+        ):
+        await send_msg.send_response_check_code(response, f"Set Model Timeout to {value}")

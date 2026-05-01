@@ -1,0 +1,41 @@
+import json
+from ....assist import PersonaInfo, SendMsg, Response, parse_delimited_string
+from ....command_register import CommandCaller
+from ..._bases import BaseConfig, OperationType
+
+@CommandCaller.register
+class AllowTools(BaseConfig):
+    cmd = "allowTools"
+    aliases= {
+        "at",
+        "AT",
+        "allow_tools",
+        "Allow_Tools",
+        "AllowTools",
+        "ALLOW_TOOLS",
+    }
+    field = "allowed_tool_calls"
+    operation = OperationType.GET_AND_SET
+
+    async def parse_value(
+        self,
+        persona_info: PersonaInfo,
+        send_msg: SendMsg,
+        raw_value: list[str] | None = None
+    ):
+        if raw_value is None:
+            tools = []
+        msg = persona_info.message_striped_str
+        add_tools = parse_delimited_string(msg)
+        tools.extend(add_tools)
+        return tools
+    
+    async def finish_message(
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            response: Response,
+            field: str,
+            value: list[str] | None
+        ):
+            await send_msg.send_response_check_code(response, f"Set Tool Calls to {json.dumps(value, ensure_ascii = False)}")

@@ -1,5 +1,5 @@
-from ._licenses_core import LicenseCore
+from ._licenses_client import LicenseClient
 
 __all__ = [
-    "LicenseCore",
+    "LicenseClient",
 ]

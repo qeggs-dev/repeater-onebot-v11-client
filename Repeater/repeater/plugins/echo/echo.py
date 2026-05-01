@@ -8,7 +8,7 @@ from nonebot.params import (
     Arg
 )
 
-echo = on_command("echo", aliases={"Echo"}, rule=to_me(), block=True)
+echo = on_command("echo", aliases={"Echo", "ECHO"}, rule=to_me(), block=True)
 
 @echo.handle()
 async def echo_handle(matcher: Matcher, args: Message = CommandArg()):

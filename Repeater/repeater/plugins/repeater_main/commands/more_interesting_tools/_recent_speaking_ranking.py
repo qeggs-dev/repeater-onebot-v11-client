@@ -1,79 +1,85 @@
 import asyncio
 from typing import Any
 from pydantic import ValidationError
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.adapters import Message
-from nonebot.matcher import Matcher
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment
-from nonebot.params import (
-    CommandArg,
-    ArgPlainText,
-    Arg
-)
-from ...assist import PersonaInfo, MessageSource, SendMsg
+from nonebot.adapters.onebot.v11 import MessageEvent
+from ...assist import PersonaInfo, SendMsg, MessageSource
+from ...command_register import CommandCaller, CommandPackage
 
-recent_speaking_ranking = on_command("recentSpeakingRanking", aliases={"rsr","recent_speaking_ranking", "Recent_Speaking_Ranking", "RecentSpeakingRanking"}, rule=to_me(), block=True)
 
-def recent_speaking_ranking_worker(message_list: list[dict[str, Any]]):
-    member_speech_count: dict[str, int] = {}
-    validation_failure_counter: int = 0
-    total_effective: int = 0
-    for message in message_list["messages"]:
-        try:
-            event = MessageEvent(**message)
-            member_name = event.sender.card or event.sender.nickname
-            total_effective += 1
-        except ValidationError:
+@CommandCaller.register
+class RecentSpeakingRanking(CommandPackage):
+    cmd = "recentSpeakingRanking"
+    aliases = {
+        "rsr",
+        "RSR",
+        "recent_speaking_ranking",
+        "Recent_Speaking_Ranking",
+        "RecentSpeakingRanking",
+        "RECENT_SPEAKING_RANKING",
+    }
+
+    @property
+    def component(self) -> str:
+        return f"More.{self.__class__.__name__}"
+
+    @staticmethod
+    def recent_speaking_ranking_worker(message_list: dict[str, Any]) -> tuple[str, int, int]:
+        member_speech_count: dict[str, int] = {}
+        validation_failure_counter: int = 0
+        total_effective: int = 0
+        for message in message_list["messages"]:
             try:
-                member_name = message["sender"]["card"] or message["sender"]["nickname"]
+                event = MessageEvent(**message)
+                member_name = event.sender.card or event.sender.nickname
                 total_effective += 1
-            except KeyError:
-                validation_failure_counter += 1
-                continue
-        if member_name not in member_speech_count:
-            member_speech_count[member_name] = 1
+            except ValidationError:
+                try:
+                    member_name = message["sender"]["card"] or message["sender"]["nickname"]
+                    total_effective += 1
+                except KeyError:
+                    validation_failure_counter += 1
+                    continue
+            if member_name not in member_speech_count:
+                member_speech_count[member_name] = 1
+            else:
+                member_speech_count[member_name] += 1
+
+        member_speech_count_list = list(member_speech_count.items())
+        sorted_member_speech_count_list = sorted(member_speech_count_list, key=lambda x: x[1], reverse=True)
+
+        text_list: list[str] = []
+        for index, (name, speech_count) in enumerate(sorted_member_speech_count_list, start=1):
+            text_list.append(f"{index}. {name}: {speech_count}({speech_count / total_effective:.2%})")
+        text = "\n".join(text_list)
+
+        return text, total_effective, validation_failure_counter
+
+    async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
+        if send_msg.is_debug_mode:
+            await send_msg.send_debug_mode()
+
+        if persona_info.source == MessageSource.PRIVATE:
+            await send_msg.send_error("The current feature cannot be used in private chat.")
+
+        group_id = persona_info.group_id
+
+        try:
+            n = int(persona_info.message_striped_str)
+        except (ValueError, TypeError):
+            await send_msg.send_error("Please enter a valid number.")
+
+        if n > 0:
+            message_list = await persona_info.bot.get_group_msg_history(
+                group_id=group_id,
+                count=n
+            )
+
+            text, total_effective, validation_failure_counter = await asyncio.to_thread(
+                self.recent_speaking_ranking_worker, message_list
+            )
+
+            if validation_failure_counter > 0:
+                await send_msg.send_warning(f"Warning: There are {validation_failure_counter} message verification failures.\n")
+            await send_msg.send_check_length_prompt(text)
         else:
-            member_speech_count[member_name] += 1
-    
-    member_speech_count_list = list(member_speech_count.items())
-    sorted_member_speech_count_list = sorted(member_speech_count_list, key=lambda x: x[1], reverse=True)
-
-    text_list: list[str] = []
-    for index, (name, speech_count) in enumerate(sorted_member_speech_count_list, start = 1):
-        text_list.append(f"{index}. {name}: {speech_count}({speech_count / total_effective:.2%})")
-    text = "\n".join(text_list)
-
-    return text, total_effective, validation_failure_counter
-
-
-@recent_speaking_ranking.handle()
-async def recent_speaking_ranking_handle(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    persona_info = PersonaInfo(bot, event, args)
-    send_msg = SendMsg("More.Recent_Speaking_Ranking", recent_speaking_ranking, persona_info)
-
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    
-    if persona_info.source == MessageSource.PRIVATE:
-        await send_msg.send_error("The current feature cannot be used in private chat.")
-    
-    group_id = persona_info.group_id
-    
-    try:
-        n = int(args.extract_plain_text())
-    except (ValueError, TypeError):
-        await send_msg.send_error("Please enter a valid number.")
-    if n > 0:
-        message_list = await bot.get_group_msg_history(
-            group_id = group_id,
-            count = n
-        )
-
-        text, total_effective, validation_failure_counter = await asyncio.to_thread(recent_speaking_ranking_worker, message_list)
-
-        if validation_failure_counter > 0:
-            await send_msg.send_warning(f"Warning: There are {validation_failure_counter} message verification failures.\n")
-            await send_msg.send_check_length_prompt(send_msg.prompt_str + text)
-    else:
-        await send_msg.send_error("The input must be a positive integer!")
+            await send_msg.send_error("The input must be a positive integer!")

@@ -1,83 +1,100 @@
-from ._data_command.auto_load_prompt import handle_set_auto_load_prompt
-from ._data_command.auto_save_context import handle_set_auto_save_context
-from ._data_command.auto_shrink_length import handle_set_auto_shrink_length
-from ._data_command.set_default_model import handle_set_default_model
-from ._data_command.set_temperature import handle_set_temperature
-from ._data_command.set_frequency_penalty import handle_set_frequency_penalty
-from ._data_command.set_presence_penalty import handle_set_presence_penalty
-from ._data_command.change_default_personality import handle_change_default_personality
-from ._data_command.cross_user_data_access import handle_cross_user_data_access
-from ._data_command.fast_statistics_template import handle_fast_statistics_template
-from ._data_command.get_configs import handle_get_configs
-from ._data_command.new_requests_text_only import handle_new_requests_text_only
-from ._data_command.remove_resoning_prompt import handle_set_remove_reasoning_prompt
-from ._data_command.render_doc_bottom_comment import handle_render_doc_bottom_comment
-from ._data_command.set_custom_age import handle_set_custom_age
-from ._data_command.set_custom_gender import handle_set_custom_gender
-from ._data_command.set_custom_name import handle_set_custom_name
-from ._data_command.set_html_template import handle_set_html_template
-from ._data_command.set_render_style import handle_set_render_style
-from ._data_command.set_render_title import handle_set_render_title
-from ._data_command.set_save_text_only import handle_set_save_text_only
-from ._data_command.set_max_tokens import handle_set_max_tokens
-from ._data_command.set_model_timeout import handle_set_model_timeout
-from ._data_command.set_multiple_model import handle_set_multiple_model
-from ._data_command.set_timezone import handle_set_timezone
-from ._data_command.set_top_p import handle_set_top_p
-from ._data_command.set_stop_keywords import handle_set_stop_keywords
-from ._data_command.thinking_mode import handle_thinking_mode
-from ._data_command.write_user_profile import handle_write_user_profile
+from ._data_command.allow_tools import AllowTools
+from ._data_command.disallow_tools import DisallowTools
+from ._data_command.allowed_tool_calls import AllowedToolCalls
+from ._data_command.auto_load_prompt import SetAutoLoadPrompt
+from ._data_command.auto_save_context import SetAutoSaveContext
+from ._data_command.auto_shrink_length import SetAutoShrinkLength
+from ._data_command.set_default_model import SetDefaultModel
+from ._data_command.set_temperature import SetTemperature
+from ._data_command.set_frequency_penalty import SetFrequencyPenalty
+from ._data_command.set_presence_penalty import SetPresencePenalty
+from ._data_command.change_default_personality import ChangeDefaultPersonality
+from ._data_command.cross_user_data_access import CrossUserDataAccess
+from ._data_command.fast_statistics_template import FastStatisticsTemplate
+from ._data_command.get_configs import GetConfigs
+from ._data_command.make_multimodal_message import MakeMultimodalMessage
+from ._data_command.remove_reasoning_prompt import RemoveReasoningPrompt
+from ._data_command.render_doc_bottom_comment import RenderDocBottomComment
+from ._data_command.reset_field import ResetField
+from ._data_command.send_config_file import SendConfigFile
+from ._data_command.set_custom_age import SetCustomAge
+from ._data_command.set_custom_gender import SetCustomGender
+from ._data_command.set_custom_name import SetCustomName
+from ._data_command.set_html_template import SetHtmlTemplate
+from ._data_command.set_render_style import SetRenderStyle
+from ._data_command.set_render_title import SetRenderTitle
+from ._data_command.set_save_text_only import SetSaveTextOnly
+from ._data_command.set_max_tokens import SetMaxTokens
+from ._data_command.set_model_timeout import SetModelTimeout
+from ._data_command.set_multiple_model import SetMultipleModel
+from ._data_command.set_timezone import SetTimezone
+from ._data_command.set_top_p import SetTopP
+from ._data_command.set_stop_keywords import SetStopKeywords
+from ._data_command.thinking_mode import ThinkingMode
+from ._data_command.write_user_profile import WriteUserProfile
+from ._data_command.set_reasoning_effort import SetReasoningEffort
 
-from ._branch_command.del_config import handle_del_config
-from ._branch_command.change_config_branch import handle_change_config_branch
-from ._branch_command.config_branch_clone import handle_config_branch_clone
-from ._branch_command.config_branch_clone_from import handle_config_branch_clone_from
-from ._branch_command.config_branch_bind import handle_config_branch_bind
-from ._branch_command.config_branch_bind_from import handle_config_branch_bind_from
-from ._branch_command.config_branch_info import handle_config_branch_info
-from ._branch_command.get_config_branchs_list import handle_config_branchs_list
+from ._branch_command.del_config import DelConfig
+from ._branch_command.change_config_branch import ChangeConfigBranch
+from ._branch_command.config_branch_clone import ConfigBranchClone
+from ._branch_command.config_branch_clone_from import ConfigBranchCloneFrom
+from ._branch_command.config_branch_bind import ConfigBranchBind
+from ._branch_command.config_branch_bind_from import ConfigBranchBindFrom
+from ._branch_command.config_branch_info import ConfigBranchInfo
+from ._branch_command.get_config_branchs_list import GetConfigBranchsList
 
-from ._nexus_command._upload_to_nexus import handle_config_upload_to_nexus
-from ._nexus_command._download_from_nexus import handle_config_download_from_nexus
+from ._nexus_command._upload_to_nexus import ConfigUploadToNexus
+from ._nexus_command._download_from_nexus import ConfigDownloadFromNexus
 
 __all__ = [
-    "handle_set_auto_load_prompt",
-    "handle_set_auto_save_context",
-    "handle_set_auto_shrink_length",
-    "handle_set_default_model",
-    "handle_set_temperature",
-    "handle_set_frequency_penalty",
-    "handle_set_presence_penalty",
-    "handle_change_default_personality",
-    "handle_cross_user_data_access",
-    "handle_fast_statistics_template",
-    "handle_get_configs",
-    "handle_new_requests_text_only",
-    "handle_set_remove_reasoning_prompt",
-    "handle_render_doc_bottom_comment",
-    "handle_set_custom_age",
-    "handle_set_custom_gender",
-    "handle_set_custom_name",
-    "handle_set_html_template",
-    "handle_del_config",
-    "handle_set_render_style",
-    "handle_set_render_title",
-    "handle_set_save_text_only",
-    "handle_change_config_branch",
-    "handle_set_max_tokens",
-    "handle_set_model_timeout",
-    "handle_set_multiple_model",
-    "handle_set_timezone",
-    "handle_set_top_p",
-    "handle_set_stop_keywords",
-    "handle_thinking_mode",
-    "handle_write_user_profile",
-    "handle_config_branch_clone",
-    "handle_config_branch_clone_from",
-    "handle_config_branch_bind",
-    "handle_config_branch_bind_from",
-    "handle_config_branch_info",
-    "handle_config_branchs_list",
-    "handle_config_upload_to_nexus",
-    "handle_config_download_from_nexus",
+    # Data commands
+    "AllowTools",
+    "DisallowTools",
+    "AllowedToolCalls",
+    "SetAutoLoadPrompt",
+    "SetAutoSaveContext",
+    "SetAutoShrinkLength",
+    "SetDefaultModel",
+    "SetTemperature",
+    "SetFrequencyPenalty",
+    "SetPresencePenalty",
+    "ChangeDefaultPersonality",
+    "CrossUserDataAccess",
+    "FastStatisticsTemplate",
+    "GetConfigs",
+    "MakeMultimodalMessage",
+    "RemoveReasoningPrompt",
+    "RenderDocBottomComment",
+    "ResetField",
+    "SendConfigFile",
+    "SetCustomAge",
+    "SetCustomGender",
+    "SetCustomName",
+    "SetHtmlTemplate",
+    "SetRenderStyle",
+    "SetRenderTitle",
+    "SetSaveTextOnly",
+    "SetMaxTokens",
+    "SetModelTimeout",
+    "SetMultipleModel",
+    "SetTimezone",
+    "SetTopP",
+    "SetStopKeywords",
+    "ThinkingMode",
+    "WriteUserProfile",
+    "SetReasoningEffort",
+
+    # Branch commands
+    "DelConfig",
+    "ChangeConfigBranch",
+    "ConfigBranchClone",
+    "ConfigBranchCloneFrom",
+    "ConfigBranchBind",
+    "ConfigBranchBindFrom",
+    "ConfigBranchInfo",
+    "GetConfigBranchsList",
+    
+    # Nexus commands
+    "ConfigUploadToNexus",
+    "ConfigDownloadFromNexus",
 ]

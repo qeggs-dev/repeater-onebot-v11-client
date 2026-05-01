@@ -1,26 +1,30 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
-from nonebot.adapters import Bot
-
-from ..._clients import PromptCore
 from ....assist import PersonaInfo, SendMsg
+from ....command_register import CommandCaller, CommandPackage
+from ..._clients import PromptClient
 
-setprompt = on_command("setPrompt", aliases={"sp", "set_prompt", "Set_Prompt", "SetPrompt"}, rule=to_me(), block=True)
 
+@CommandCaller.register
+class SetPrompt(CommandPackage):
+    cmd = "setPrompt"
+    aliases = {
+        "sp",
+        "SP",
+        "set_prompt",
+        "Set_Prompt",
+        "SetPrompt",
+        "SET_PROMPT",
+    }
 
-@setprompt.handle()
-async def handle_set_prompt(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    persona_info = PersonaInfo(bot=bot, event=event, args=args)
-    send_msg = SendMsg("Prompt.Set_Prompt", setprompt, persona_info)
+    @property
+    def component(self) -> str:
+        return f"Prompt.{self.__class__.__name__}"
 
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
+    async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
+        if send_msg.is_debug_mode:
+            await send_msg.send_debug_mode()
 
-    msg = persona_info.message_striped_str
-    
-    prompt_core = PromptCore(persona_info)
-    response = await prompt_core.set_prompt(msg)
-    await send_msg.send_response_check_code(response, f"Set Prompt {'successfully' if response.code == 200 else 'failed'}")
+        msg = persona_info.message_striped_str
+
+        prompt_client = PromptClient(persona_info)
+        response = await prompt_client.set_prompt(msg)
+        await send_msg.send_response_check_code(response, f"Set Prompt {'successfully' if response.code == 200 else 'failed'}")

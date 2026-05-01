@@ -1,35 +1,40 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
-from nonebot.adapters import Bot
-
-from ..._clients import ContextCore, PromptCore, ConfigCore
 from ....assist import PersonaInfo, SendMsg
+from ....command_register import CommandCaller, CommandPackage
+from ..._clients import ContextClient, PromptClient, ConfigClient
 
-session_branch_clone_from = on_command("sessionBranchCloneFrom", aliases={"sbcf", "session_branch_clone_from", "Session_Branch_Clone_From", "SessionBranchCloneFrom"}, rule=to_me(), block=True)
 
-@session_branch_clone_from.handle()
-async def handle_session_branch_clone_from(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    persona_info = PersonaInfo(bot=bot, event=event, args=args)
-    send_msg = SendMsg("Session.Session_Branch_Clone_From", session_branch_clone_from, persona_info)
+@CommandCaller.register
+class SessionBranchCloneFrom(CommandPackage):
+    cmd = "sessionBranchCloneFrom"
+    aliases = {
+        "sbcf",
+        "SBCF",
+        "session_branch_clone_from",
+        "Session_Branch_Clone_From",
+        "SessionBranchCloneFrom",
+        "SESSION_BRANCH_CLONE_FROM",
+    }
 
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
+    @property
+    def component(self) -> str:
+        return f"Session.{self.__class__.__name__}"
 
-    msg = args.extract_plain_text().strip()
-    
-    context_core = ContextCore(persona_info)
-    prompt_core = PromptCore(persona_info)
-    config_core = ConfigCore(persona_info)
-    
-    context_response = await context_core.clone_from(msg)
-    prompt_response = await prompt_core.clone_from(msg)
-    config_response = await config_core.clone_from(msg)
+    async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
+        if send_msg.is_debug_mode:
+            await send_msg.send_debug_mode()
 
-    await send_msg.send_multiple_responses(
-        (context_response, "Context"),
-        (prompt_response, "Prompt"),
-        (config_response, "Config"),
-    )
+        msg = persona_info.message_striped_str
+
+        context_client = ContextClient(persona_info)
+        prompt_client = PromptClient(persona_info)
+        config_client = ConfigClient(persona_info)
+
+        context_response = await context_client.clone_from(msg)
+        prompt_response = await prompt_client.clone_from(msg)
+        config_response = await config_client.clone_from(msg)
+
+        await send_msg.send_multiple_responses(
+            (context_response, "Context"),
+            (prompt_response, "Prompt"),
+            (config_response, "Config"),
+        )

@@ -1,31 +1,36 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment
-from nonebot.adapters import Bot
-
-from ..._clients import ContextCore
 from ....assist import PersonaInfo, SendMsg
+from ....command_register import CommandCaller, CommandPackage
+from ..._clients import ContextClient
 
-check_role_structure = on_command("checkRoleStructure", aliases={"crs", "check_role_structure", "Check_Role_Structure", "CheckRoleStructure"}, rule=to_me(), block=True)
 
-@check_role_structure.handle()
-async def handle_check_role_structure(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    persona_info = PersonaInfo(bot=bot, event=event, args=args)
-    send_msg = SendMsg("Context.Check_Role_Structure", check_role_structure, persona_info)
+@CommandCaller.register
+class CheckRoleStructure(CommandPackage):
+    cmd = "checkRoleStructure"
+    aliases = {
+        "crs",
+        "CRS",
+        "check_role_structure",
+        "Check_Role_Structure",
+        "CheckRoleStructure",
+        "CHECK_ROLE_STRUCTURE",
+    }
 
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    
-    context_core = ContextCore(persona_info)
-    response = await context_core.check_role_structure()
+    @property
+    def component(self) -> str:
+        return f"Context.{self.__class__.__name__}"
 
-    if response.code == 200:
-        data = response.get_data()
-        if data is not None:
-            await send_msg.send_prompt(data.message)
+    async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
+        if send_msg.is_debug_mode:
+            await send_msg.send_debug_mode()
+
+        context_client = ContextClient(persona_info)
+        response = await context_client.check_role_structure()
+
+        if response.code == 200:
+            data = response.get_data()
+            if data is not None:
+                await send_msg.send_prompt(data.message)
+            else:
+                await send_msg.send_prompt("Check Role Structure Data is Invalid")
         else:
-            await send_msg.send_prompt("Check Role Structure Data is Invalid")
-    else:
-        await send_msg.send_response_check_code(response, "Check Role Structure Failed")
+            await send_msg.send_response_check_code(response, "Check Role Structure Failed")

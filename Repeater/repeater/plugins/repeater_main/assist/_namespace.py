@@ -1,7 +1,7 @@
 import hashlib
 from pydantic import BaseModel, ConfigDict
 from enum import Enum
-from ..core_net_configs import storage_configs
+from ..client_net_configs import storage_configs
 
 class MessageSource(Enum):
     """
@@ -32,7 +32,7 @@ class Namespace(BaseModel):
             return f"UnknownSource_{self.user_id}"
     
     @property
-    def namespace(self):
+    def namespace_str(self):
         if storage_configs.hash_user_id:
             return hashlib.sha3_256(
                 self._namespace.encode("utf-8")
@@ -81,4 +81,4 @@ class Namespace(BaseModel):
             return self._public_space_id
     
     def __str__(self) -> str:
-        return self.namespace
+        return self.namespace_str

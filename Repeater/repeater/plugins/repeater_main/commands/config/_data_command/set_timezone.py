@@ -1,25 +1,29 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent
-from nonebot.adapters import Bot
+from ....assist import PersonaInfo, SendMsg, Response
+from ....command_register import CommandCaller
+from ..._bases import BaseConfig
 
-from ..._clients import ConfigCore
-from ....assist import PersonaInfo, SendMsg
 
-set_timezone = on_command("setTimezone", aliases={"stz", "set_timezone", "Set_Timezone", "SetTimezone"}, rule=to_me(), block=True)
+@CommandCaller.register
+class SetTimezone(BaseConfig):
+    cmd = "setTimezone"
+    aliases = {
+        "stz",
+        "STZ",
+        "set_timezone",
+        "Set_Timezone",
+        "SetTimezone",
+        "SET_TIMEZONE",
+    }
+    field = "timezone"
 
-@set_timezone.handle()
-async def handle_set_timezone(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    persona_info = PersonaInfo(bot=bot, event=event, args=args)
-    send_msg = SendMsg("Config.Set_Timezone", set_timezone, persona_info)
-
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-
-    msg = persona_info.message_striped_str
-
-    config_core = ConfigCore(persona_info)
-    response = await config_core.set_config("timezone", msg)
-    await send_msg.send_response_check_code(response, f"Set Timezone to {msg}")
+    # 字符串类型，不需要重写 parse_value
+    
+    async def finish_message(
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            response: Response,
+            field: str,
+            value: bool
+        ):
+        await send_msg.send_response_check_code(response, f"Set Timezone to {value}")

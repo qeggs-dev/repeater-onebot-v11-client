@@ -1,9 +1,9 @@
-from ._get_core_task_status import handle_get_core_task_status
-from ._break_chat_task import handle_break_chat_task
-from ._get_chat_buffer import handle_get_chat_buffer
+from ._get_client_task_status import GetCoreTaskStatus
+from ._break_chat_task import BreakChatTask
+from ._get_chat_buffer import GetChatBuffer
 
 __all__ = [
-    "handle_get_core_task_status",
-    "handle_break_chat_task",
-    "handle_get_chat_buffer"
+    "GetCoreTaskStatus",
+    "BreakChatTask",
+    "GetChatBuffer"
 ]

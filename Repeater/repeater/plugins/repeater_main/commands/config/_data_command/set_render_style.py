@@ -1,25 +1,27 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent
-from nonebot.adapters import Bot
+from ....assist import PersonaInfo, SendMsg, Response
+from ....command_register import CommandCaller
+from ..._bases import BaseConfig
 
-from ..._clients import ConfigCore
-from ....assist import PersonaInfo, SendMsg
 
-set_render_style = on_command("setRenderStyle", aliases={"srs", "set_render_style", "Set_Render_Style", "SetRenderStyle"}, rule=to_me(), block=True)
-
-@set_render_style.handle()
-async def handle_set_render_style(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    persona_info = PersonaInfo(bot=bot, event=event, args=args)
-    send_msg = SendMsg("Config.Set_Render_Style", set_render_style, persona_info)
-
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-
-    msg = persona_info.message_striped_str
-
-    config_core = ConfigCore(persona_info)
-    response = await config_core.set_config("render_style", msg)
-    await send_msg.send_response_check_code(response, f"Set Render_Style to {msg}")
+@CommandCaller.register
+class SetRenderStyle(BaseConfig):
+    cmd = "setRenderStyle"
+    aliases = {
+        "srs",
+        "SRS",
+        "set_render_style",
+        "Set_Render_Style",
+        "SetRenderStyle",
+        "SET_RENDER_STYLE",
+    }
+    field = "render_style"
+    
+    async def finish_message(
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            response: Response,
+            field: str,
+            value: bool
+        ):
+        await send_msg.send_response_check_code(response, f"Set Render_Style to {value}")

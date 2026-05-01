@@ -1,45 +1,75 @@
 import json
 import yaml
 
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent
-from nonebot.adapters import Bot
-
-from ..._clients import ConfigCore
-from ....assist import PersonaInfo, SendMsg
 from enum import StrEnum
 
-get_configs = on_command("getConfigs", aliases={"gcfg", "get_configs", "Get_Configs", "GetConfigs"}, rule=to_me(), block=True)
+from ....assist import PersonaInfo, SendMsg, Response
+from ....command_register import CommandCaller
+from ..._bases import BaseConfig, OperationType
+
 
 class FormatType(StrEnum):
     JSON = "json"
     YAML = "yaml"
 
-@get_configs.handle()
-async def handle_get_configs(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    persona_info = PersonaInfo(bot=bot, event=event, args=args)
-    send_msg = SendMsg("Config.Get_Configs", get_configs, persona_info)
 
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
-    try:
-        format_type = FormatType(persona_info.message_striped_str.lower())
-    except ValueError:
-        await send_msg.send_error("Format type is not supported. Please use 'json' or 'yaml'.")
-    
-    config_core = ConfigCore(persona_info)
-    response = await config_core.get_configs()
-    if response:
+@CommandCaller.register
+class GetConfigs(BaseConfig):
+    cmd = "getConfigs"
+    aliases = {
+        "gcfg",
+        "GCFG",
+        "get_configs",
+        "Get_Configs",
+        "GetConfigs",
+        "GET_CONFIGS"
+    }
+    operation = OperationType.GET
+
+    async def parse_value(
+        self,
+        persona_info: PersonaInfo,
+        send_msg: SendMsg,
+        raw_value: FormatType | None,
+    )  -> FormatType:
+        msg = persona_info.message_striped_str.strip()
+        if not msg:
+            return FormatType.JSON  # default to JSON
         try:
-            match format_type:
-                case FormatType.JSON:
-                    await send_msg.send_check_length_prompt(json.dumps(response.json(), ensure_ascii=False, indent=4))
-                case FormatType.YAML:
-                    await send_msg.send_check_length_prompt(yaml.safe_dump(response.json(), allow_unicode=True))
-        except json.JSONDecodeError as e:
-            await send_msg.send_error(f"Failed to decode JSON: {e}")
-    else:
-        await send_msg.send_response(response, "Failed to get configs.")
+            format_type = FormatType(msg.lower())
+        except ValueError:
+            await send_msg.send_error("Format type is not supported. Please use 'json' or 'yaml'.")
+        return format_type
+    
+    async def finish_message(
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            response: Response,
+            field: str,
+            value: FormatType
+        ):
+        if response:
+            try:
+                data = response.json()
+                match value:
+                    case FormatType.JSON:
+                        await send_msg.send_render_prompt(
+                            "``` json\n" +
+                            json.dumps(data, ensure_ascii=False, indent=4) + 
+                            "\n```"
+                        )
+                    case FormatType.YAML:
+                        await send_msg.send_render_prompt(
+                            "``` yaml\n" +
+                            yaml.safe_dump(data, allow_unicode=True) +
+                            "\n```"
+                        )
+            except (json.JSONDecodeError, yaml.YAMLError, TypeError) as e:
+                await send_msg.send_error(f"Failed to format configs: {e}")
+        else:
+            error_msg = "Failed to get configs."
+            error_response = response.get_error() if response else None
+            if error_response:
+                await send_msg.send_error_response(error_response)
+            await send_msg.send_error(error_msg)

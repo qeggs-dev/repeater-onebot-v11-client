@@ -1,29 +1,39 @@
-from nonebot import on_command
-from nonebot.rule import to_me
-from nonebot.params import CommandArg
-from nonebot.adapters import Message
-from nonebot.adapters.onebot.v11 import MessageEvent
-from nonebot.adapters import Bot
+from ....assist import PersonaInfo, SendMsg, Response, str_to_bool
+from ....command_register import CommandCaller
+from ..._bases import BaseConfig
 
-from ..._clients import ConfigCore
-from ....assist import PersonaInfo, SendMsg, str_to_bool
 
-set_cross_user_data_access = on_command("crossUserDataAccess", aliases={"cuda", "cross_user_data_access", "Cross_User_Data_Access", "CrossUserDataAccess"}, rule=to_me(), block=True)
+@CommandCaller.register
+class CrossUserDataAccess(BaseConfig):
+    cmd = "crossUserDataAccess"
+    aliases = {
+        "cuda",
+        "CUDA",
+        "cross_user_data_access",
+        "Cross_User_Data_Access",
+        "CrossUserDataAccess",
+        "CROSS_USER_DATA_ACCESS"
+    }
+    field = "cross_user_data_access"
 
-@set_cross_user_data_access.handle()
-async def handle_cross_user_data_access(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
-    persona_info = PersonaInfo(bot=bot, event=event, args=args)
-    send_msg = SendMsg("Config.Cross_User_Data_Access", set_cross_user_data_access, persona_info)
-
-    if send_msg.is_debug_mode:
-        await send_msg.send_debug_mode()
+    async def parse_value(
+        self,
+        persona_info: PersonaInfo,
+        send_msg: SendMsg,
+        raw_value: bool | None,
+    )  -> bool:
+        try:
+            value = str_to_bool(persona_info.message_striped_str)
+        except ValueError:
+            await send_msg.send_error("Not a valid boolean value")
+        return value
     
-    try:
-        cross_user_data_access = str_to_bool(persona_info.message_striped_str)
-    except ValueError:
-        await send_msg.send_error("Not a valid boolean value")
-    
-    config_core = ConfigCore(persona_info)
-    response = await config_core.set_config("cross_user_data_access", cross_user_data_access)
-    await send_msg.send_response_check_code(response, f"Set Cross User Data Access to {cross_user_data_access}")
-        
+    async def finish_message(
+            self,
+            persona_info: PersonaInfo,
+            send_msg: SendMsg,
+            response: Response,
+            field: str,
+            value: bool
+        ):
+        await send_msg.send_response_check_code(response, f"Set Cross User Data Access to {value}")

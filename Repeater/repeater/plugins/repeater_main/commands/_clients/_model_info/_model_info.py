@@ -1,11 +1,8 @@
-from pydantic import BaseModel, Field
-from ._model_types import ModelType
+from pydantic import BaseModel
 
 class ModelInfo(BaseModel):
     name: str = ""
-    url: str = ""
-    id: str = ""
     parent: str = ""
+    parent_id: str = ""
     uid: str = ""
-    type: ModelType = ModelType.CHAT
     timeout: float = 600.0

@@ -18,8 +18,8 @@ class SendMsg:
     def __init__(
             self,
             component: str,
-            matcher: Type[Matcher],
             persona_info: PersonaInfo,
+            matcher: Type[Matcher] | None = None,
         ): ...
     
     def add_prefix(self, prefix: MessageSegment | str):
@@ -556,6 +556,27 @@ class SendMsg:
             continue_handler: bool = False
         ):
         ...
+    
+    async def _send_auto(
+        self,
+        message: str | Message | MessageSegment,
+        *args,
+        **kwargs
+    ):...
+    
+    async def _send_to_matcher(
+        self,
+        message: str | Message | MessageSegment,
+        *args,
+        **kwargs
+    ):...
+    
+    async def _send_to_api(
+        self,
+        message: str | Message | MessageSegment,
+        *args,
+        **kwargs
+    ):...
     
     @staticmethod
     def text_length_score(text: str) -> float: ...
