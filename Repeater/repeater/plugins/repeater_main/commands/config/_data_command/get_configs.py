@@ -50,11 +50,15 @@ class GetConfigs(BaseConfig):
                 match value:
                     case FormatType.JSON:
                         await send_msg.send_check_length_prompt(
-                            json.dumps(data, ensure_ascii=False, indent=4)
+                            "``` json\n" +
+                            json.dumps(data, ensure_ascii=False, indent=4) + 
+                            "\n```"
                         )
                     case FormatType.YAML:
                         await send_msg.send_check_length_prompt(
-                            yaml.safe_dump(data, allow_unicode=True)
+                            "``` yaml\n" +
+                            yaml.safe_dump(data, allow_unicode=True) +
+                            "\n```"
                         )
             except (json.JSONDecodeError, yaml.YAMLError, TypeError) as e:
                 await send_msg.send_error(f"Failed to format configs: {e}")
