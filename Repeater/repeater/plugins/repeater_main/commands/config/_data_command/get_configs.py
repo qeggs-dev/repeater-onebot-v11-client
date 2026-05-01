@@ -49,13 +49,13 @@ class GetConfigs(BaseConfig):
                 data = response.json()
                 match value:
                     case FormatType.JSON:
-                        await send_msg.send_check_length_prompt(
+                        await send_msg.send_render_prompt(
                             "``` json\n" +
                             json.dumps(data, ensure_ascii=False, indent=4) + 
                             "\n```"
                         )
                     case FormatType.YAML:
-                        await send_msg.send_check_length_prompt(
+                        await send_msg.send_render_prompt(
                             "``` yaml\n" +
                             yaml.safe_dump(data, allow_unicode=True) +
                             "\n```"
