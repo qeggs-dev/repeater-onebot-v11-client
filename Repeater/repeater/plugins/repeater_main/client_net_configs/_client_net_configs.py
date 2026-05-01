@@ -6,9 +6,9 @@ from ._storage_configs import storage_configs
 BASE_URL = net_config.backend_baseurl
 
 # ==== CHAT API ==== #
-CHAT_ROUTE = f"/chat/completion"
-BREAK_CHAT_TASK_ROUTE = f"/chat/break"
-GET_CHAT_BUFFER_ROUTE = f"/chat/buffer"
+CHAT_ROUTE = "/generate/chat/completion"
+BREAK_CHAT_TASK_ROUTE = "/generate/chat/break"
+GET_CHAT_BUFFER_ROUTE = "/generate/chat/buffer"
 
 # ==== CONTEXT API ==== #
 GET_CONTEXT_ROUTE = "/userdata/context/get"
@@ -36,8 +36,8 @@ PACKAGE_USER_SPACE_ROUTE = "/userdata/package_space"
 # ==== RENDER API ==== #
 TEXT_RENDER_ROUTE = "/render"
 
-# ==== VARIABLE EXPANSION API ==== #
-VARIABLE_EXPANSION = "/variable_expand"
+# ==== TEMPLATE RENDER API ==== #
+TEMPLATE_RENDER = "/template/render"
 
 # ==== VERSION API ==== #
 VERSION_ROUTE = f"/version"
