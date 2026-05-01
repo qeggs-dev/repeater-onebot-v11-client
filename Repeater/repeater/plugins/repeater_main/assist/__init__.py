@@ -23,6 +23,10 @@ from .chattts import (
     TTSResponse,
     AudioFiles
 )
+from ._ssl import (
+    get_ssl_context,
+    set_ssl_context
+)
 
 __all__ = [
     "handle_at_with_name",
@@ -48,5 +52,7 @@ __all__ = [
     "parse_delimited_string",
     "ChatTTSAPI",
     "TTSResponse",
-    "AudioFiles"
+    "AudioFiles",
+    "get_ssl_context",
+    "set_ssl_context"
 ]
