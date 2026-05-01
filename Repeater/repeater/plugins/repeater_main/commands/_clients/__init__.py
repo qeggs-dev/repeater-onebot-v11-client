@@ -6,7 +6,7 @@ from ._data_manager import *
 from ._model_info import *
 from ._status_client import *
 from ._user_file_client import *
-from ._variable_expansion_client import *
+from ._template_render_client import *
 from ._version import *
 from ._licenses import *
 from ._content_role import ContentRole
