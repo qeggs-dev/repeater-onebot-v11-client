@@ -48,9 +48,12 @@ class BaseConfig(CommandPackage):
         client = ConfigClient(persona_info)
         raw_value = None
         if self.operation in [OperationType.GET, OperationType.GET_AND_SET]:
-            configs = await client.get_configs()
-            if self.field in configs:
-                raw_value = configs[self.field]
+            response = await client.get_configs()
+            if not response:
+                await send_msg.send_error_response(response)
+            else:
+                config: dict = response.json()
+                raw_value = config.get(self.field)
         
         field, value = await self.parse_value_free(
             persona_info,
