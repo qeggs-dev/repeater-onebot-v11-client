@@ -36,7 +36,7 @@ class BaseConfig(CommandPackage):
             send_msg: SendMsg,
             raw_value: Any | None
         ) -> tuple[str, T]:
-        return self.field, self.parse_value(persona_info, send_msg, raw_value)
+        return self.field, await self.parse_value(persona_info, send_msg, raw_value)
 
     @abstractmethod
     async def finish_message(
