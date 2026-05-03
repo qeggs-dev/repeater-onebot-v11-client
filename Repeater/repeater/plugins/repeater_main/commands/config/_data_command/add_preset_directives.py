@@ -20,7 +20,7 @@ class AddPresetDirectives(BaseConfig):
     _pattern = re.compile(r"^(?P<name>\S+)\s*:\s*(?P<value>.*)$", re.DOTALL)
 
     @classmethod
-    async def parse_input(
+    def parse_input(
         cls,
         text: str
     ):
@@ -47,9 +47,9 @@ class AddPresetDirectives(BaseConfig):
         if raw_value is None:
             raw_value = {}
         msg = persona_info.message_striped_str
-        update_directives = await self.parse_input(msg)
+        update_directives = self.parse_input(msg)
         if update_directives is None:
-            await send_msg.send_error("Invalid input format. Expected: <name>: <value>")
+            await send_msg.send_error("Invalid input format. Expected: <name>: <value>...")
         for name, value in update_directives.items():
             if name in raw_value:
                 raw_value[name].append(value)

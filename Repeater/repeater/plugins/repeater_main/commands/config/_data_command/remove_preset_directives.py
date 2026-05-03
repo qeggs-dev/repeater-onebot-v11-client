@@ -1,3 +1,4 @@
+import re
 import json
 from ....assist import PersonaInfo, SendMsg, Response, parse_delimited_string
 from ....command_register import CommandCaller
@@ -16,6 +17,26 @@ class RemovePresetDirectives(BaseConfig):
     }
     field = "prompt_directives"
     operation = OperationType.GET_AND_SET
+    _pattern = re.compile(r"^(?P<name>\S+)\s*:\s*(?P<value>.*)$", re.DOTALL)
+
+    @classmethod
+    def parse_input(
+        cls,
+        text: str
+    ):
+        match = cls._pattern.match(text)
+        if match is None:
+            return None
+        else:
+            name = match.group("name")
+            value = match.group("value")
+            
+            assert isinstance(name, str), "name must be a string"
+            assert isinstance(value, str), "value must be a string"
+
+            return {
+                name: parse_delimited_string(value)
+            }
 
     async def parse_value(
         self,
@@ -23,13 +44,17 @@ class RemovePresetDirectives(BaseConfig):
         send_msg: SendMsg,
         raw_value: dict[str, list[str]] | None = None
     ):
-        removed_diretives = parse_delimited_string(persona_info.message_striped_str)
-        for tool in removed_diretives:
-             if tool in raw_value:
-                del raw_value[tool]
-                 
-             
-    
+        removed_diretives = self.parse_input(persona_info.message_striped_str)
+        if removed_diretives is None:
+            send_msg.send_error("Invalid input format. Expected: <name>: <value>...")
+
+        for type in removed_diretives:
+            if type in raw_value:
+                diretives = set(removed_diretives[type])
+                for raw_type, raw_directives in raw_value.items():
+                    if type == raw_type and raw_directives in diretives:
+                        raw_value[raw_type].remove(raw_directives)
+                    
     async def finish_message(
             self,
             persona_info: PersonaInfo,
