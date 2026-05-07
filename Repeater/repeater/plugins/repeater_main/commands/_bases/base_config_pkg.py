@@ -36,7 +36,7 @@ class BaseConfig(CommandPackage):
             send_msg: SendMsg,
             raw_value: Any | None
         ) -> tuple[str, T]:
-        return self.field, self.parse_value(persona_info, send_msg, raw_value)
+        return self.field, await self.parse_value(persona_info, send_msg, raw_value)
 
     @abstractmethod
     async def finish_message(
@@ -67,6 +67,8 @@ class BaseConfig(CommandPackage):
         )
         match self.operation:
             case OperationType.SET:
+                response: Response[Any] = await client.set_config(field, value)
+            case OperationType.GET_AND_SET:
                 response: Response[Any] = await client.set_config(field, value)
             case OperationType.GET:
                 response: Response[Any] = await client.get_configs()

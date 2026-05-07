@@ -33,6 +33,9 @@ from ._data_command.set_stop_keywords import SetStopKeywords
 from ._data_command.thinking_mode import ThinkingMode
 from ._data_command.write_user_profile import WriteUserProfile
 from ._data_command.set_reasoning_effort import SetReasoningEffort
+from ._data_command.set_preset_directives import SetPresetDirectives
+from ._data_command.add_preset_directives import AddPresetDirectives
+from ._data_command.remove_preset_directives import RemovePresetDirectives
 
 from ._branch_command.del_config import DelConfig
 from ._branch_command.change_config_branch import ChangeConfigBranch
@@ -83,6 +86,9 @@ __all__ = [
     "ThinkingMode",
     "WriteUserProfile",
     "SetReasoningEffort",
+    "SetPresetDirectives",
+    "AddPresetDirectives",
+    "RemovePresetDirectives",
 
     # Branch commands
     "DelConfig",
