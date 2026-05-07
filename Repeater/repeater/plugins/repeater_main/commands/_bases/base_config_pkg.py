@@ -68,6 +68,8 @@ class BaseConfig(CommandPackage):
         match self.operation:
             case OperationType.SET:
                 response: Response[Any] = await client.set_config(field, value)
+            case OperationType.GET_AND_SET:
+                response: Response[Any] = await client.set_config(field, value)
             case OperationType.GET:
                 response: Response[Any] = await client.get_configs()
             case OperationType.GET_FILE_URL:
