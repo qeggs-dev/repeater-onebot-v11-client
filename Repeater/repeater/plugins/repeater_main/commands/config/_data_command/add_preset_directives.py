@@ -35,7 +35,7 @@ class AddPresetDirectives(BaseConfig):
             assert isinstance(value, str), "value must be a string"
 
             return {
-                name: parse_delimited_string(value)
+                name: value
             }
 
     async def parse_value(

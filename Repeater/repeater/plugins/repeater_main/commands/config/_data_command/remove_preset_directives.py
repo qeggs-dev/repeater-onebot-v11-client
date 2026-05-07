@@ -35,7 +35,7 @@ class RemovePresetDirectives(BaseConfig):
             assert isinstance(value, str), "value must be a string"
 
             return {
-                name: parse_delimited_string(value)
+                name: value
             }
 
     async def parse_value(
@@ -46,14 +46,15 @@ class RemovePresetDirectives(BaseConfig):
     ):
         removed_diretives = self.parse_input(persona_info.message_striped_str)
         if removed_diretives is None:
-            send_msg.send_error("Invalid input format. Expected: <name>: <value>...")
+            await send_msg.send_error("Invalid input format. Expected: <name>: <value>...")
 
         for type in removed_diretives:
             if type in raw_value:
-                diretives = set(removed_diretives[type])
+                diretives = removed_diretives[type]
                 for raw_type, raw_directives in raw_value.items():
-                    if type == raw_type and raw_directives in diretives:
-                        raw_value[raw_type].remove(raw_directives)
+                    for raw_directive in raw_directives:
+                        if raw_directive in diretives:
+                            raw_value[raw_type].remove(raw_directive)
                     
     async def finish_message(
             self,
