@@ -442,10 +442,13 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `packageUserSpace`         | `pus`    | `PackageUserSpace`        | `USERFILE`  | 4.5.5.0        | 打包用户空间                 | 无                                          | 与 `sendUserDataFile` 类似，但它会打包所有分支 |
 | `setReasoningEffort`       | `sre`    | `SetReasoningEffort`      | `CONFIG`    | 4.5.6.0        | 设置推理强度                 | `low`/`medium`/`high`/`xhigh`/`max`         | 设置推理强度 (需要模型支持) |
 | `resetConfigField`         | `rcf`    | `ResetConfigField`        | `CONFIG`    | 4.5.6.0        | 重置配置字段                 | 配置字段名称                                 | 设置指定配置字段到 null |
-| `makeMultimodalMessage`    | `mmm`    | `MakeMultimodalMessage`   | `CONFIG`    | 4.5.8.0        | 是否创建多模态消息            | `true`/`false`                              | 设置是否创建多模态消息 |
+| `makeMultimodalMessage`    | `mmm`    | `MakeMultimodalMessage`   | `CONFIG`    | 4.5.8.0        | 是否创建多模态消息            | `true`/`false`                             | 设置是否创建多模态消息 |
 | `allowedToolCalls`         | `atc`    | `AllowedToolCalls`        | `CONFIG`    | 4.5.8.0        | 批准使用工具                 | *\*多个工具注册名*                           | 指定 AI 能使用哪些工具 |
 | `allowTools`               | `at`     | `AllowTools`              | `CONFIG`    | 4.5.8.0        | 允许使用工具                 | *\*多个工具注册名*                           | 增加工具使用权限 |
 | `disallowTools`            | `dt`     | `DisallowTools`           | `CONFIG`    | 4.5.8.0        | 禁止使用工具                 | *\*多个工具注册名*                           | 移除工具使用权限 |
+| `setPresetDirectives`      | `spd`    | `SetPresetDirectives`     | `CONFIG`    | 4.6.1.0        | 设置 Directive 预设          | *\*多个 Directive*                          | 添加 Directive |
+| `addPresetDirectives`      | `apd`    | `AddPresetDirectives`     | `CONFIG`    | 4.6.1.0        | 添加 Directive 预设          | `<type>: <name>`                            | 添加 Directive |
+| `removePresetDirectives`   | `rpd`    | `RemovePresetDirectives`  | `CONFIG`    | 4.6.1.0        | 移除 Directive 预设          | `<type>: <name>`                            | 移除 Directive |
 
 PS：`CHAT`类型命令大部分都做到了支持视觉输入
 默认命令已支持全模态输入
