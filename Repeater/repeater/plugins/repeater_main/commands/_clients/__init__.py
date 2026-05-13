@@ -4,6 +4,7 @@ from ._data_manager.prompt_client import *
 from ._data_manager.config_client import *
 from ._data_manager import *
 from ._model_info import *
+from ._request_log_client import *
 from ._status_client import *
 from ._user_file_client import *
 from ._template_render_client import *
