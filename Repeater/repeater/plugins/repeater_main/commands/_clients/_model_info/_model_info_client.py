@@ -16,13 +16,12 @@ exit_register = ExitRegister()
 logger = base_logger.bind(module = "Config.Core")
 
 class ModelInfoClient:
-    def __init__(self):
-        self._client = httpx.AsyncClient(
-            base_url = BASE_URL,
-            timeout = storage_configs.server_api_timeout.model_info,
-            transport = HTTPTransport(),
-            verify = get_ssl_context()
-        )
+    _client = httpx.AsyncClient(
+        base_url = BASE_URL,
+        timeout = storage_configs.server_api_timeout.model_info,
+        transport = HTTPTransport(),
+        verify = get_ssl_context()
+    )
     
     # region get all models
     async def get_all_models(self) -> Response[ModelsResponse]:

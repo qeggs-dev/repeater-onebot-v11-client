@@ -25,6 +25,7 @@ class ServerAPITimeout(BaseModel):
     model_info: float = 10.0
     status: float = 10.0
     version: float = 10.0
+    request_log: float = 1200.0
     variable_expansion: float = 40.0
     render: float = 600.0
 

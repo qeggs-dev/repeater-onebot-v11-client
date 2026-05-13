@@ -174,8 +174,7 @@ class SendMsg:
         发送响应对象中的内容，主要用于HTTP错误提示
 
         :param response: 响应对象
-        :param component: 组件名称
-        :param message_handler: 自定义消息文本解析处理函数
+        :param message_handler: 自定义消息文本或解析处理函数
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
@@ -188,10 +187,35 @@ class SendMsg:
             message = message
         else:
             message = response.text
+        await self.send_http_status(
+            http_status = response.code,
+            message = message,
+            reply = reply,
+            continue_handler = continue_handler,
+        )
+    
+    async def send_http_status(
+            self,
+            http_status: int,
+            message: str | None = None,
+            reply: bool = True,
+            continue_handler: bool = False,
+        ):
+        """
+        发送 HTTP 状态码，用于提示 HTTP 错误
+
+        :param http_status: HTTP 状态码
+        :param message: 消息文本
+        :param reply: 是否携带引用
+        :param continue_handler: 是否继续运行当前处理流程
+        """
+        logger.info(
+            "Send Response"
+        )
         await self.send_prompt(
             (
                 f"{message}\n"
-                f"HTTP Code: {response.code}({HTTPCode(response.code)})"
+                f"HTTP Code: {http_status}({HTTPCode(http_status)})"
             ),
             reply = reply,
             continue_handler = continue_handler

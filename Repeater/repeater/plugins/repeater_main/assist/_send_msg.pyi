@@ -147,6 +147,32 @@ class SendMsg:
         ): ...
     
     @overload
+    async def send_http_status(
+            self,
+            http_status: int,
+            message: str | None = None,
+            reply: bool = True,
+            continue_handler: Literal[False] = False,
+        ) -> NoReturn: ...
+
+    @overload
+    async def send_http_status(
+            self,
+            http_status: int,
+            message: str | None = None,
+            reply: bool = True,
+            continue_handler: Literal[True] = True,
+        ) -> None: ...
+    
+    async def send_http_status(
+            self,
+            http_status: int,
+            message: str | None = None,
+            reply: bool = True,
+            continue_handler: bool = False,
+        ): ...
+    
+    @overload
     async def send_multiple_responses(
             self,
             *responses: Response[T_RESPONSE] | tuple[Response[T_RESPONSE], str],

@@ -33,6 +33,10 @@ GET_MODEL_UID_LIST = "/models"
 DOWNLOAD_USER_DATA_FILE_ROUTE = "/userdata/file"
 PACKAGE_USER_SPACE_ROUTE = "/userdata/package_space"
 
+# ==== Request Log API ==== #
+REQUEST_LOG_ROUTE = "/request_log"
+REQUEST_LOG_STREAM_ROUTE = "/request_log/stream"
+
 # ==== RENDER API ==== #
 TEXT_RENDER_ROUTE = "/render"
 
