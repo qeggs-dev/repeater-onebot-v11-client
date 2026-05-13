@@ -24,6 +24,8 @@ from .chattts import (
     AudioFiles
 )
 from ._ssl import (
+    SSLContext,
+    ssl_context,
     get_ssl_context,
     set_ssl_context
 )
@@ -53,6 +55,8 @@ __all__ = [
     "ChatTTSAPI",
     "TTSResponse",
     "AudioFiles",
+    "SSLContext",
+    "ssl_context",
     "get_ssl_context",
     "set_ssl_context"
 ]
