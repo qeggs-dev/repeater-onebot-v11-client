@@ -1,8 +1,9 @@
+import httpx
+
 from abc import (
     ABC,
     abstractmethod
 )
-
 from ..assist import (
     PersonaInfo,
     SendMsg
@@ -190,6 +191,11 @@ class CommandPackage(ABC, Generic[T]):
                 pass
             elif isinstance(exception, BreakWithErrorMessage):
                 await send_msg.send_error(str(exception))
+        elif isinstance(exception, httpx.HTTPStatusError):
+            await send_msg.send_http_status(
+                http_status = exception.response.status_code,
+                message = exception.response.text
+            )
         else:
             logger.exception(f"Error: {exception}")
             await send_msg.send_error(exception)
