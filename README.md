@@ -449,6 +449,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `setPresetDirectives`      | `spd`    | `SetPresetDirectives`     | `CONFIG`    | 4.6.1.0        | 设置 Directive 预设          | *\*多个 Directive*                          | 添加 Directive |
 | `addPresetDirectives`      | `apd`    | `AddPresetDirectives`     | `CONFIG`    | 4.6.1.0        | 添加 Directive 预设          | `<type>: <name>`                            | 添加 Directive |
 | `removePresetDirectives`   | `rpd`    | `RemovePresetDirectives`  | `CONFIG`    | 4.6.1.0        | 移除 Directive 预设          | `<type>: <name>`                            | 移除 Directive |
+| `tokenCount`               | `tc`     | `TokenCount`              | `STATISTIC` | 4.6.3.0        | 获取当前用户所消耗的 Token 数 | 无                                          | 获取当前用户所消耗的 Token 数量 |
 
 PS：`CHAT`类型命令大部分都做到了支持视觉输入
 默认命令已支持全模态输入
