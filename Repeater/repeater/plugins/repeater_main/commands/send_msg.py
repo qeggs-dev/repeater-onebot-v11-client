@@ -4,7 +4,11 @@ from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from pydantic import ValidationError
 
 from ..assist import PersonaInfo, SendMsg
-from ..command_register import CommandCaller, CommandPackage
+from ..command_register import(
+    CommandCaller,
+    CommandPackage,
+    CmdType
+)
 from ..client_net_configs import storage_configs
 
 
@@ -19,10 +23,7 @@ class SendMessage(CommandPackage):
         "SendMessage",
         "SEND_MESSAGE",
     }
-
-    @property
-    def component(self) -> str:
-        return f"Send.{self.__class__.__name__}"
+    cmd_type = CmdType.SENDMSG
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

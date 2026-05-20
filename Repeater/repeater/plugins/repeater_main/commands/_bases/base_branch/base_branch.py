@@ -2,12 +2,10 @@ from abc import abstractmethod
 
 from ..._clients import UserDataClient
 from ....assist import PersonaInfo, SendMsg
-from ....command_register import CommandPackage
+from ....command_register import CommandPackage, CmdType
 
 class BaseBranch(CommandPackage):
-    @property
-    def component(self) -> str:
-        return f"Branch.{self.__class__.__name__}"
+    type = CmdType.BRANCH
     
     @abstractmethod
     def get_client(self, persona_info: PersonaInfo) -> UserDataClient:

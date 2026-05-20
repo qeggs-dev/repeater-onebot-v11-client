@@ -1,5 +1,9 @@
 from ...assist import PersonaInfo, SendMsg, FileSender, FileUrl
-from ...command_register import CommandCaller, CommandPackage
+from ...command_register import(
+    CommandCaller,
+    CommandPackage,
+    CmdType
+)
 import time
 
 
@@ -14,10 +18,7 @@ class AudioToFile(CommandPackage):
         "AudioToFile",
         "AUDIO_TO_FILE",
     }
-
-    @property
-    def component(self) -> str:
-        return f"Other.{self.__class__.__name__}"
+    cmd_type = CmdType.OTHER
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

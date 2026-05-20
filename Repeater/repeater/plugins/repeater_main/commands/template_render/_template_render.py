@@ -1,5 +1,9 @@
 from ...assist import PersonaInfo, SendMsg, Response
-from ...command_register import CommandCaller, CommandPackage
+from ...command_register import(
+    CommandCaller,
+    CommandPackage,
+    CmdType
+)
 from .._clients import TemplateRenderClient
 
 @CommandCaller.register
@@ -22,10 +26,7 @@ class TemplateRender(CommandPackage):
         "VarExpand",
         "VAR_EXPAND",
     }
-
-    @property
-    def component(self) -> str:
-        return f"Template.Render.{self.__class__.__name__}"
+    type = CmdType.TEMPLATE
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

@@ -1,7 +1,10 @@
 from ....assist import PersonaInfo, SendMsg
-from ....command_register import CommandCaller, CommandPackage
+from ....command_register import(
+    CommandCaller,
+    CommandPackage,
+    CmdType
+)
 from ..._clients import PromptClient
-
 
 @CommandCaller.register
 class SetPrompt(CommandPackage):
@@ -14,10 +17,7 @@ class SetPrompt(CommandPackage):
         "SetPrompt",
         "SET_PROMPT",
     }
-
-    @property
-    def component(self) -> str:
-        return f"Prompt.{self.__class__.__name__}"
+    cmd_type = CmdType.PROMPT
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

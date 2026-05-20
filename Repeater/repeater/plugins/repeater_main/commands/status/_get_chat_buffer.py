@@ -1,5 +1,9 @@
 from ...assist import PersonaInfo, SendMsg
-from ...command_register import CommandCaller, CommandPackage
+from ...command_register import(
+    CommandCaller,
+    CommandPackage,
+    CmdType
+)
 from .._clients import ChatClient
 
 
@@ -14,10 +18,7 @@ class GetChatBuffer(CommandPackage):
         "GetChatBuffer",
         "GET_CHAT_BUFFER",
     }
-
-    @property
-    def component(self) -> str:
-        return f"Status.{self.__class__.__name__}"
+    type = CmdType.STATUS
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

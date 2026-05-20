@@ -1,4 +1,14 @@
-from ..assist import get_first_mentioned_user, PersonaInfo, Namespace, SendMsg
+from ..assist import (
+    get_first_mentioned_user,
+    PersonaInfo,
+    Namespace,
+    SendMsg
+)
+from ..command_register import(
+    CommandCaller,
+    CommandPackage,
+    CmdType
+)
 from ..command_register import CommandCaller, CommandPackage
 
 
@@ -13,10 +23,7 @@ class GetNamespace(CommandPackage):
         "GetNamespace",
         "GET_NAMESPACE",
     }
-
-    @property
-    def component(self) -> str:
-        return f"Namespace.{self.__class__.__name__}"
+    type = CmdType.NAMESPACE
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

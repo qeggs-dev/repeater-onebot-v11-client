@@ -1,6 +1,10 @@
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from ...assist import PersonaInfo, SendMsg
-from ...command_register import CommandCaller, CommandPackage
+from ...command_register import(
+    CommandCaller,
+    CommandPackage,
+    CmdType
+)
 from .._clients import LicenseClient
 
 
@@ -15,10 +19,7 @@ class GetServerLicenses(CommandPackage):
         "GetServerLicenses",
         "GET_SERVER_LICENSES",
     }
-
-    @property
-    def component(self) -> str:
-        return f"Licenses.{self.__class__.__name__}"
+    type = CmdType.LICENSES 
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

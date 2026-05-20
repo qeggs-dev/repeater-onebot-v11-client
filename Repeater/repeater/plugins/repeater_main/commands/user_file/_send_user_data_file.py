@@ -1,5 +1,9 @@
 from ...assist import PersonaInfo, SendMsg, FileSender
-from ...command_register import CommandCaller, CommandPackage
+from ...command_register import(
+    CommandCaller,
+    CommandPackage,
+    CmdType
+)
 from .._clients import UserFileClient
 
 
@@ -14,10 +18,7 @@ class SendUserDataFile(CommandPackage):
         "SendUserDataFile",
         "SEND_USER_DATA_FILE",
     }
-
-    @property
-    def component(self) -> str:
-        return f"UserFile.{self.__class__.__name__}"
+    cmd_type = CmdType.USERFILE
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

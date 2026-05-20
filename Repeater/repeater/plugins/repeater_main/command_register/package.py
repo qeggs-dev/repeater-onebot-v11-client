@@ -9,6 +9,7 @@ from ..assist import (
     SendMsg
 )
 from .listen_type import ListenType
+from .cmd_type import CmdType
 from .exceptions import *
 from datetime import (
     datetime,
@@ -85,14 +86,19 @@ class CommandPackage(ABC, Generic[T]):
     state: T_State | None = None
     """Default state"""
 
-    component: str = None
-    """The human-readable name of the Handler (required) """
+    type: CmdType = CmdType.RESERVED
+    """Command Type"""
 
     enabled: bool = True
     """Whether the handler."""
 
     empty_handler: bool = False
     """Whether the Handler is empty (you can not use any of the hooks in the package after setting it) """
+
+    @property
+    def component(self) -> str:
+        """The human-readable name of the Handler (required) """
+        return f"{self.type}.{self.__class__.__name__}"
 
     async def message_enter(self, bot: Bot, event: MessageEvent, matcher: Type[Matcher]) -> tuple[PersonaInfo, SendMsg]:
         """

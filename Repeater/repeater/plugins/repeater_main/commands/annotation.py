@@ -1,5 +1,8 @@
-from ..command_register import CommandCaller, CommandPackage
-
+from ..command_register import(
+    CommandCaller,
+    CommandPackage,
+    CmdType
+)
 
 @CommandCaller.register
 class Annotation(CommandPackage):
@@ -12,11 +15,7 @@ class Annotation(CommandPackage):
         "Annotation",
         "ANNOTATION",
     }
-
-    @property
-    def component(self) -> str:
-        return f"Annotation.{self.__class__.__name__}"
-
+    type = CmdType.RESERVED
     empty_handler = True
 
     async def handler(self, persona_info, send_msg):

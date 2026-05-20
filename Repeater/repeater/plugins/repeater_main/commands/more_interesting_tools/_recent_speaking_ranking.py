@@ -3,7 +3,11 @@ from typing import Any
 from pydantic import ValidationError
 from nonebot.adapters.onebot.v11 import MessageEvent
 from ...assist import PersonaInfo, SendMsg, MessageSource
-from ...command_register import CommandCaller, CommandPackage
+from ...command_register import(
+    CommandCaller,
+    CommandPackage,
+    CmdType
+)
 
 
 @CommandCaller.register
@@ -17,10 +21,7 @@ class RecentSpeakingRanking(CommandPackage):
         "RecentSpeakingRanking",
         "RECENT_SPEAKING_RANKING",
     }
-
-    @property
-    def component(self) -> str:
-        return f"More.{self.__class__.__name__}"
+    type = CmdType.OTHER
 
     @staticmethod
     def recent_speaking_ranking_worker(message_list: dict[str, Any]) -> tuple[str, int, int]:

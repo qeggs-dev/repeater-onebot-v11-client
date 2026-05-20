@@ -1,7 +1,10 @@
 from ....assist import PersonaInfo, SendMsg
-from ....command_register import CommandCaller, CommandPackage
+from ....command_register import(
+    CommandCaller,
+    CommandPackage,
+    CmdType
+)
 from ..._clients import ContextClient, PromptClient, ConfigClient
-
 
 @CommandCaller.register
 class SessionBranchBindFrom(CommandPackage):
@@ -14,10 +17,7 @@ class SessionBranchBindFrom(CommandPackage):
         "SessionBranchBindFrom",
         "SESSION_BRANCH_BIND_FROM",
     }
-
-    @property
-    def component(self) -> str:
-        return f"Session.{self.__class__.__name__}"
+    type = CmdType.BRANCH_MIXED
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

@@ -1,5 +1,9 @@
 from ...assist import PersonaInfo, SendMsg
-from ...command_register import CommandCaller, CommandPackage
+from ...command_register import(
+    CommandCaller,
+    CommandPackage,
+    CmdType
+)
 from .._clients import RequestLogClient
 
 @CommandCaller.register
@@ -13,10 +17,7 @@ class TokenCount(CommandPackage):
         "TokenCount",
         "TOKEN_COUNT",
     }
-
-    @property
-    def component(self) -> str:
-        return f"Statistics.{self.__class__.__name__}"
+    cmd_type = CmdType.STATISTIC
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         client = RequestLogClient()

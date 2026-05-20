@@ -1,5 +1,9 @@
 from ...assist import PersonaInfo, SendMsg
-from ...command_register import CommandCaller, CommandPackage
+from ...command_register import(
+    CommandCaller,
+    CommandPackage,
+    CmdType
+)
 from .._clients import ModelInfoClient, ModelInfo
 
 @CommandCaller.register
@@ -13,10 +17,7 @@ class GetModelList(CommandPackage):
         "GetModelList",
         "GET_MODEL_LIST",
     }
-
-    @property
-    def component(self) -> str:
-        return f"Model.{self.__class__.__name__}"
+    cmd_type = CmdType.MODEL
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:
