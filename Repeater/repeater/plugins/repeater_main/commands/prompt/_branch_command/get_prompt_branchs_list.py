@@ -1,5 +1,5 @@
 from ....assist import PersonaInfo, SendMsg
-from ....command_register import CommandCaller
+from ....command_register import CommandCaller, CmdType
 from ..._bases import GetBranchList, BranchType
 from ..._clients import PromptClient
 
@@ -16,6 +16,7 @@ class GetPromptBranchsList(GetBranchList):
         "GET_PROMPT_BRANCHS_LIST",
     }
     branch_type = BranchType.Prompt
+    cmd_type = CmdType.BRANCH_PROMPT
 
     def get_client(self, persona_info: PersonaInfo) -> PromptClient:
         return PromptClient(persona_info)
