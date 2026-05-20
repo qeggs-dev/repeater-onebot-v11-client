@@ -11,6 +11,7 @@ from typing import (
     overload,
     Literal
 )
+from types import CoroutineType
 
 T_RESPONSE = TypeVar("T_RESPONSE")
 
@@ -27,6 +28,29 @@ class SendMsg:
     
     def clear_prefix(self):
         ...
+    
+    @overload
+    def __call__(
+            self,
+            message: str | Message,
+            reply: bool = True,
+            continue_handler: Literal[False] = False,
+        ) -> CoroutineType[Any, Any, NoReturn]: ...
+    
+    @overload
+    def __call__(
+            self,
+            message: str | Message,
+            reply: bool = True,
+            continue_handler: Literal[True] = True,
+        ) -> CoroutineType[Any, Any, None]: ...
+    
+    def __call__(
+            self,
+            message: str | Message,
+            reply: bool = True,
+            continue_handler: bool = False,
+        ) -> CoroutineType[Any, Any, None | NoReturn]: ...
     
     @property
     def is_debug_mode(self) -> bool:
@@ -479,7 +503,7 @@ class SendMsg:
             self,
             message: Message | str,
             threshold: float = 1.0,
-            document_bottom_comment: bool = False,
+            document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: Literal[False] = False
         ) -> NoReturn: ...
