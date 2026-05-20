@@ -24,11 +24,12 @@ class TokenCount(CommandPackage):
 
         request_logs = client.get_request_log()
 
-        total_token_count = 0
-        input_token_count = 0
-        output_token_count = 0
-        cache_hit_count = 0
-        cache_miss_count = 0
+        total_token_count: int = 0
+        input_token_count: int = 0
+        output_token_count: int = 0
+        cache_hit_count: int = 0
+        cache_miss_count: int = 0
+        count: int = 0
 
         user_id = persona_info.namespace_str
 
@@ -42,8 +43,10 @@ class TokenCount(CommandPackage):
                     cache_miss_count += request_log.cache_miss_count
                 else:
                     cache_miss_count += request_log.prompt_tokens
+                count += 1
         
         await send_msg.send_prompt(
+            f"Valid Record Count: {count}\n"
             f"Total Token Count: {total_token_count}\n"
             f"Input Token Count: {input_token_count}\n"
             f"Output Token Count: {output_token_count}\n"
