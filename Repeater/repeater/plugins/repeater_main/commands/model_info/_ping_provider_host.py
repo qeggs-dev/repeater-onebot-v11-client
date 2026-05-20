@@ -37,7 +37,7 @@ class PingProviderHost(CommandPackage):
                 for detail in ping_response.details:
                     for time in detail.time:
                         text_buffer.append(f"Ping [{detail.host}] in {time}ms")
-                    text_buffer.append(f"Ping [{detail.host}] average inner {detail.average_time}ms")
+                    text_buffer.append(f"Ping [{detail.host}] avg {detail.avg_time}ms ({detail.min_time}ms ~ {detail.max_time}ms)")
                 await send_msg.send_prompt("\n".join(text_buffer))
         else:
             await send_msg.send_response_check_code(response)
