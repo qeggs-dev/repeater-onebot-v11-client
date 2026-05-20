@@ -50,6 +50,7 @@ class ModelInfoClient:
     async def ping_provider(
             self,
             user_id: str,
+            model_uid: str | list[str] | None = None,
             timeout: float = 5.0,
             times: int = 4,
             size: int = 32,
@@ -58,6 +59,7 @@ class ModelInfoClient:
         response = await self._client.post(
             f"{PING_PROVIDER}/{quote(user_id)}",
             json = {
+                "model_uid": model_uid,
                 "timeout": timeout, 
                 "times": times, 
                 "size": size,
