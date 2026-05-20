@@ -8,10 +8,10 @@ class ModelsResponse(BaseModel):
 class PingProviderDetails(BaseModel):
     host: str = ""
     time: list[float] = Field(default_factory=list)
-
-    @property
-    def average_time(self) -> float:
-        return sum(self.time) / len(self.time)
+    packet_loss: float = 0.0
+    max_time: float = 0.0
+    min_time: float = 0.0
+    avg_time: float = 0.0
 
 class PingProviderResponse(BaseModel):
     successful: int = 0
