@@ -319,137 +319,249 @@ PS：该配置文件是专门用于对接ChatTTS的
 
 ## 命令表
 
+### Echo Command
+
 | Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
 | :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
 | `echo`                     | `echo`   | `Echo`                    | `ECHO`      | 4.0 Beta       | 重复消息                       | 要重复消息内容                             | 重复消息内容，包括特殊消息段，如果输入不跟内容，复读机会等待下一条消息 |
+| `noPromptEcho`             | `npecho` | `NoPromptEcho`            | `ECHO`      | 4.3.16.0       | 无额外反应的 Echo              | 任何内容                                  | 与 `echo` 命令相同，但不在未找到参数时显示等待提示词 |
+
+### Chat Command
+
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
 | ` `                        | ` `      | ` `                       | `CHAT`      | 4.0 Beta       | 默认命令，自然语言对话          | 自然语言输入                               | 当@复读机的时候，如果没有命中其他命令就会执行这个 |
 | `chat`                     | `c`      | `Chat`                    | `CHAT`      | 4.0 Beta       | 与机器人对话                   | 自然语言输入                               | 强制模型用文字输出，绕过Markdown渲染检查 |
 | `keepAnswering`            | `ka`     | `KeepAnswering`           | `CHAT`      | 4.0 Beta       | 持续对话(常规)                 | 无                                        | 无须输入，AI再次回复 |
 | `keepReasoning`            | `kr`     | `KeepReasoning`           | `CHAT`      | 4.0 Beta       | 持续对话(推理)                 | 无                                        | 无须输入，AI再次使用推理回复 |
 | `renderChat`               | `rc`     | `RenderChat`              | `CHAT`      | 4.0 Beta       | 渲染Markdown回复               | 自然语言输入                               | 强制渲染图片输出 |
-| `setRenderStyle`           | `srs`    | `SetRenderStyle`          | `CONFIG`    | 4.0 Beta       | 设置渲染样式                   | 渲染样式名称                               | 设置Markdown图片渲染样式 |
 | `npChat`                   | `np`     | `NoPromptChat`            | `CHAT`      | 4.0 Beta       | 不加载提示词进行对话            | 自然语言输入                               | 使用常规模型 |
 | `reason`                   | `r`      | `Reason`                  | `CHAT`      | 4.0 Beta       | 使用 Thinking 模式进行推理      | 自然语言输入                               | 开启 `thinking` 参数以激活 Thinking 模式 |
+| `publicSpaceChat`          | `psc`    | `PublicSpaceChat`         | `CHAT`      | 4.0.2.1 Beta   | 公共空间聊天                   | 自然语言输入                               | 公共空间聊天 |
+| `reference`                | `ref`    | `Reference`               | `CHAT`      | 4.1.2.0        | 引用上下文                     | @群成员并输入自然语言                       | 引用其他用户的上下文进行生成，并将结果保存到自己的聊天记录中 |
+| `raw`                      | `raw`    | `Raw`                     | `CHAT`      | 4.2.5.1        | 发送消息且不包含任何元数据      | 自然语言输入                               | 发送消息且不包含任何元数据 |
+| `noSaveChat`               | `nsc`    | `NoSaveChat`              | `CHAT`      | 4.2.6.6        | 不保存的聊天对话               | 无                                        | 聊天后不保存最新聊天记录 |
+| `summarizeAndContract`     | `sac`    | `SummarizeAndContract`    | `CHAT`      | 4.3.7.6        | 摘要并压缩                     | 自定义提示词，可以为空                      | 摘要并压缩对话，并自动删除多余的历史记录 |
+| `noReason`                 | `nr`     | `NoReason`                | `CHAT`      | 4.3.15.0       | 不使用 Thinking 进行对话       | 自然语言输入                               | 关闭 `thinking` 参数以阻止进入 Thinking 模式 |
+| `generateCandidateAnswer`  | `gca`    | `GenerateCandidateAnswer` | `CHAT`      | 4.3.18.0       | 生成候选答案                 | 无                                        | 生成候选答案（生成内容不保存） |
+| `generateCandidateReason`  | `gcr`    | `GenerateCandidateReason` | `CHAT`      | 4.3.23.1       | 生成候选推理                 | 无                                        | 生成候选回答并开启推理（生成内容不保存） |
+
+### Context Command
+
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
+| `deleteContext`            | `dc`     | `DeleteContext`           | `CONTEXT`   | 4.0 Beta       | 删除上下文                     | 无                                        | 删除上下文 |
+| `getContextTotalLength`    | `gctl`   | `GetContextTotalLength`   | `CONTEXT`   | 4.0.1 Beta     | 获取上下文总长度               | 无                                        | 获取上下文总长度 |
+| `deletePublicSpaceContext` | `dpsc`   | `DeletePublicSpaceContext`| `CONTEXT`   | 4.0.2.1 Beta   | 删除公共空间上下文              | 无                                       | 删除公共空间上下文 | 
+| `withdraw`                 | `w`      | `Withdraw`                | `CONTEXT`   | 4.2.3.0        | 撤回消息                       | 无                                       | 删除复读机上下文中保存的最新一回合对话 |
+| `checkRoleStructure`       | `crs`    | `CheckRoleStructure`      | `CONTEXT`   | 4.3.10.10      | 检查角色结构                 | 无                                         | 检查上下文中的角色结构是否符合 user-assistant 的规则 |
+| `injectUserContent`        | `iuc`    | `InjectUserContent`       | `CONTEXT`   | 4.4.7.0        | 注入用户消息内容             | 消息内容                                    | 插入用户消息内容 |
+| `injectAssistantContent`   | `iac`    | `InjectAssistantContent`  | `CONTEXT`   | 4.4.7.0        | 插入 AI 消息内容             | 消息内容                                    | 插入 AI 消息内容 |
+| `injectSystemContent`      | `isc`    | `InjectSystemContent`     | `CONTEXT`   | 4.4.7.0        | 插入系统消息内容             | 消息内容                                    | 插入系统消息内容 |
+| `getLastContent`           | `glc`    | `GetLastContent`          | `CONTEXT`   | 4.4.8.0        | 获取最后一条消息内容          | 无                                        | 获取当前会话的最后一条消息内容 |
+| `singleWithdraw`           | `sw`     | `SingleWithdraw`          | `CONTEXT`   | 4.4.13.0       | 单条撤回                    | 消息条数                                    | 直接按条撤回消息（而不是按对撤回） |
+| `sendContextFile`          | `scf`    | `SendContextFile`         | `CONTEXT`   | 4.5.5.0-beta   | 发送聊天记录文件             | 无                                          | 获取当前活动分支的聊天记录文件 |
+
+### Prompt Command
+
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
+| `setPrompt`                | `sp`     | `SetPrompt`               | `PROMPT`    | 4.0 Beta       | 设置提示词                     | 自然语言输入                               | 设置提示词 |
+| `deletePrompt`             | `dp`     | `DeletePrompt`            | `PROMPT`    | 4.0 Beta       | 删除提示词                     | 无                                        | 删除提示词 |
+| `getPrompt`                | `gp`     | `GetPrompt`               | `PROMPT`    | 4.4.8.0        | 获取提示词                    | 无                                         | 获取当前会话的提示词 |
+| `sendPromptFile`           | `spf`    | `SendPromptFile`          | `PROMPT`    | 4.5.5.0-beta   | 获取提示词文件                | 无                                         | 获取当前活动分支的提示词文件 |
+
+### Config Command
+
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
+| `setRenderStyle`           | `srs`    | `SetRenderStyle`          | `CONFIG`    | 4.0 Beta       | 设置渲染样式                   | 渲染样式名称                               | 设置Markdown图片渲染样式 |
 | `setFrequencyPenalty`      | `sfp`    | `SetFrequencyPenalty`     | `CONFIG`    | 4.0 Beta       | 设置频率惩罚                   | `-2`\~`2`的浮点数<br/>或`-200%`\~`200%`的百分比 | 控制着模型输出重复相同内容的可能性 |
 | `setPresencePenalty`       | `spp`    | `SetPresencePenalty`      | `CONFIG`    | 4.0 Beta       | 设置存在惩罚                   | `-2`\~`2`的浮点数<br/>或`-200%`\~`200%`的百分比 | 控制着模型谈论新主题的可能性 |
 | `setTemperature`           | `st`     | `SetTemperature`          | `CONFIG`    | 4.0 Beta       | 设置温度                       | `0`\~`2`的浮点数<br/>或`0%`\~`200%`的百分比  | 控制着模型生成内容的不确定性 |
-| `setPrompt`                | `sp`     | `SetPrompt`               | `PROMPT`    | 4.0 Beta       | 设置提示词                     | 自然语言输入                               | 设置提示词 |
 | `changeDefaultPersonality` | `cdp`    | `ChangeDefaultPersonality`| `CONFIG`    | 4.0 Beta       | 修改默认人格                   | 人格预设名称                               | 修改默认人格路由 |
-| `deletePrompt`             | `dp`     | `DeletePrompt`            | `PROMPT`    | 4.0 Beta       | 删除提示词                     | 无                                        | 删除提示词 |
-| `deleteContext`            | `dc`     | `DeleteContext`           | `CONTEXT`   | 4.0 Beta       | 删除上下文                     | 无                                        | 删除上下文 |
-| `templateRender`           | `tr`     | `TemplateRender`          | `TEMPLATE`  | 4.0 Beta       | 变量展开                       | 文本模板                                  | 变量展开 |
 | `setDefaultModel`          | `sdm`    | `SetDefaultModel`         | `CONFIG`    | 4.0 Beta       | 设置默认模型                   | 模型UID                                   | 设置默认使用的模型 |
 | `setTopP`                  | `stp`    | `SetTopP`                 | `CONFIG`    | 4.0.1 Beta     | 设置Top_P参数                  | 0\~1的浮点数<br/>或`0%`\~`100%`的百分比    | 设置Top_P参数 |
 | `setMaxTokens`             | `smt`    | `SetMaxTokens`            | `CONFIG`    | 4.0.1 Beta     | 设置最大生成tokens数           | 整数，通常最大可达模型上下文窗口长度的一半    | 设置最大生成tokens数 |
-| `getContextTotalLength`    | `gctl`   | `GetContextTotalLength`   | `CONTEXT`   | 4.0.1 Beta     | 获取上下文总长度               | 无                                         | 获取上下文总长度 |
-| `publicSpaceChat`          | `psc`    | `PublicSpaceChat`         | `CHAT`      | 4.0.2.1 Beta   | 公共空间聊天                   | 自然语言输入                                | 公共空间聊天 |
-| `deletePublicSpaceContext` | `dpsc`   | `DeletePublicSpaceContext`| `CONTEXT`   | 4.0.2.1 Beta   | 删除公共空间上下文             | 无                                         | 删除公共空间上下文 | 
-| `sendUserDataFile`         | `sudf`   | `SendUserDataFile`        | `USERFILE`  | 4.0.2.1 Beta   | 发送用户数据文件               | 无                                         | 发送用户数据文件 |
-| `changeContextBranch`      | `ccb`    | `ChangeContextBranch`     | `CONTEXT`   | 4.1.2.0        | 切换上下文分支                 | 分支名称                                   | 切换上下文分支 |
-| `changePromptBranch`       | `cppb`   | `ChangePromptBranch`      | `PROMPT`    | 4.1.2.0        | 切换提示词分支                 | 分支名称                                   | 切换提示词分支 |
-| `changeConfigBranch`       | `ccfgb`  | `ChangeConfigBranch`      | `CONFIG`    | 4.1.2.0        | 切换配置分支                   | 分支名称                                   | 切换配置分支 |
-| `reference`                | `ref`    | `Reference`               | `CHAT`      | 4.1.2.0        | 引用上下文                     | @群成员并输入自然语言                       | 引用其他用户的上下文进行生成，并将结果保存到自己的聊天记录中 |
-| `chooseGroupMember`        | `cgm`    | `ChooseGroupMember`       | `OTHER`     | 4.1.2.0        | 抽取群组成员                   | 抽取数量                                   | 抽取群组成员 |
-| `withdraw`                 | `w`      | `Withdraw`                | `CONTEXT`   | 4.2.3.0        | 撤回消息                       | 无                                        | 删除复读机上下文中保存的最新一回合对话 |
-| `recentSpeakingRanking`    | `rsr`    | `RecentSpeakingRanking`   | `OTHER`     | 4.2.3.0        | 最近发言排行                   | 无                                        | 获取群组内最近发言的成员列表 |
 | `setAutoShrinkLength`      | `sasl`   | `SetAutoShrinkLength`     | `CONFIG`    | 4.2.4.0        | 设置自动缩减长度上限            | 目标消息字数                              | 如果你的聊天总字数超过该值，系统会尝试自动删除最旧的直到满足该值 |
+| `setAutoLoadPrompt`        | `salp`   | `SetAutoLoadPrompt`       | `CONFIG`    | 4.3.1.0        | 设置自动加载提示词              | `true`/`false`                           | 设置请求时是否自动加载Prompt |
+| `setAutoSaveContext`       | `sasc`   | `SetAutoSaveContext`      | `CONFIG`    | 4.3.1.0        | 设置自动保存上下文              | `true`/`false`                           | 设置生成完毕后是否自动保存Context |
+| `setRenderTitle`           | `srt`    | `SetRenderTitle`          | `CONFIG`    | 4.3.2.1        | 设置渲染标题                   | 任意文本                                  | 渲染时显示的标题内容 |
+| `setTimezone`              | `stz`    | `SetTimezone`             | `CONFIG`    | 4.3.3.3        | 设置时区                       | 时区名称(如`Asia/Shanghai`)               | 请使用确定的时区名称 |
+| `writeUserProfile`         | `wup`    | `WriteUserProfile`        | `CONFIG`    | 4.3.3.6        | 写入用户人设数据                | 任意文本                                  | 该部分会被嵌入到用户提示词中，告诉AI用户的基础设定 |
+| `setHtmlTemplate`          | `sht`    | `SetHtmlTemplate`         | `CONFIG`    | 4.3.3.6        | 设置HTML模板                   | 预设模板名称                              | 可以用于切换Markdown渲染时使用的HTML模板 |
+| `setSaveTextOnly`          | `ssto`   | `SetSaveTextOnly`         | `CONFIG`    | 4.3.6.0        | 在保存时丢弃除文本以外的内容     | `true`/`false`                           | 设为`true`可以更快速的保存与读取，但模型将无法再获取到上下文中的附加数据 |
+| `crossUserDataAccess`      | `cuda`   | `CrossUserDataAccess`     | `CONFIG`    | 4.3.10.3       | 允许跨用户数据访问             | `true`/`false`                             | 允许跨用户数据访问，如果设置为`false`则只能访问自己的数据 |
+| `newRequestsTextOnly`      | `nrto`   | `NewRequestsTextOnly`     | `CONFIG`    | 4.3.10.7       | 忽略请求里的非文本数据         | `true`/`false`                             | 如果设置为`true`，复读机将把所有消息当成普通文本消息处理 |
+| `setCustomName`            | `scn`    | `SetCustomName`           | `CONFIG`    | 4.3.12.1       | 设置个性化名称                | 用户名                                      | 设置后模型看到的将是设置的名称而非用户名 |
+| `thinkingMode`             | `tm`     | `ThinkingMode`            | `CONFIG`    | 4.3.14.0       | 设置思考模式                  | `true`/`false`/`null`                      | 用于在不指定 Thinking 参数时 启用/禁用/恢复默认 思考模式 |
+| `setModelTimeout`          | `smto`   | `SetModelTimeout`         | `CONFIG`    | 4.3.25.0       | 设置模型超时时间              | 超时秒数                                    | 设置模型超时时间 |
+| `removeReasoningPrompt`    | `rrp`    | `RemoveReasoningPrompt`   | `CONFIG`    | 4.3.26.0       | 删除推理内容                  | 删除推理内容 |                              | 设置是否在提交时移除模型输出的思考内容（不影响保存） |
+| `renderDocBottomComment`   | `rdbc`   | `RenderDocBottomComment`  | `CONFIG`    | 4.4.4.0        | 渲染文档底部注释              | 文本内容                                    | 在渲染图片的底部添加一小段文本 |
+| `fastStatisticsTemplate`   | `fst`    | `FastStatisticsTemplate`  | `CONFIG`    | 4.4.5.0        | 快速统计模板                  | 模板内容                                    | 可以在生成的图片结尾展示一些统计数据 |
+| `setMultipleModel`         | `smm`    | `SetMultipleModel`        | `CONFIG`    | 4.4.6.0        | 设置多个模型                  | *多个模型名称*                              | 设置多个模型，当访问时随机选择一个模型 |
+| `setStopKeywords`          | `ssk`    | `SetStopKeywords`         | `CONFIG`    | 4.4.6.0        | 设置停止关键词                | *多个停止关键词*                             | 当模型生成出这个词时，暂停模型生成并即刻返回结果 |
+| `getConfig`                | `gcfg`   | `GetConfig`               | `CONFIG`    | 4.4.8.0        | 获取配置                      | `JSON`/`YAML`                              | 获取当前会话的配置 |
+| `setCustomAge`             | `sca`    | `SetCustomAge`            | `CONFIG`    | 4.4.9.0        | 设置自定义年龄                | 年龄                                        | 设置自定义年龄 (需要提示词支持) |
+| `setCustomGender`          | `scg`    | `SetCustomGender`         | `CONFIG`    | 4.4.9.0        | 设置自定义性别                | 性别                                        | 设置自定义性别 (需要提示词支持) |
+| `sendConfigFile`           | `scfgf`  | `SendConfigFile`          | `CONFIG`    | 4.5.5.0-beta   | 获取配置文件                  | 无                                          | 获取当前活动分支的配置文件 |
+| `setReasoningEffort`       | `sre`    | `SetReasoningEffort`      | `CONFIG`    | 4.5.6.0        | 设置推理强度                  | `low`/`medium`/`high`/`xhigh`/`max`         | 设置推理强度 (需要模型支持) |
+| `resetConfigField`         | `rcf`    | `ResetConfigField`        | `CONFIG`    | 4.5.6.0        | 重置配置字段                  | 配置字段名称                                 | 设置指定配置字段到 null |
+| `makeMultimodalMessage`    | `mmm`    | `MakeMultimodalMessage`   | `CONFIG`    | 4.5.8.0        | 是否创建多模态消息             | `true`/`false`                             | 设置是否创建多模态消息 |
+| `allowedToolCalls`         | `atc`    | `AllowedToolCalls`        | `CONFIG`    | 4.5.8.0        | 批准使用工具                  | *\*多个工具注册名*                           | 指定 AI 能使用哪些工具 |
+| `allowTools`               | `at`     | `AllowTools`              | `CONFIG`    | 4.5.8.0        | 允许使用工具                  | *\*多个工具注册名*                           | 增加工具使用权限 |
+| `disallowTools`            | `dt`     | `DisallowTools`           | `CONFIG`    | 4.5.8.0        | 禁止使用工具                  | *\*多个工具注册名*                           | 移除工具使用权限 |
+| `setPresetDirectives`      | `spd`    | `SetPresetDirectives`     | `CONFIG`    | 4.6.1.0        | 设置 Directive 预设           | *\*多个 Directive*                          | 添加 Directive |
+| `addPresetDirectives`      | `apd`    | `AddPresetDirectives`     | `CONFIG`    | 4.6.1.0        | 添加 Directive 预设           | `<type>: <name>`                            | 添加 Directive |
+| `removePresetDirectives`   | `rpd`    | `RemovePresetDirectives`  | `CONFIG`    | 4.6.1.0        | 移除 Directive 预设           | `<type>: <name>`                            | 移除 Directive |
+
+### Branch Command
+
+#### Context Branch Command
+
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
+| `changeContextBranch`      | `ccb`    | `ChangeContextBranch`     | `BRANCH`    | 4.1.2.0        | 切换上下文分支                 | 分支名称                                  | 切换上下文分支 |
+| `contextBranchClone`       | `cbc`    | `ContextBranchClone`      | `BRANCH`    | 4.3.9.1        | 克隆上下文分支                 | 目标分支名称                               | 将当前活动分支复制到一个新的分支下 |
+| `contextBranchCloneFrom`   | `cbcf`   | `ContextBranchCloneFrom`  | `BRANCH`    | 4.3.9.1        | 从分支克隆上下文               | 源分支名称                                 | 将指定分支复制到当前活动分支下 |
+| `contextBranchBind`        | `cbb`    | `ContextBranchBind`       | `BRANCH`    | 4.3.9.1        | 绑定上下文分支                 | 目标分支名称                               | 创建一个新的分支，使其硬链接到当前活动分支 |
+| `contextBranchBindFrom`    | `cbbf`   | `ContextBranchBindFrom`   | `BRANCH`    | 4.3.9.1        | 从分支绑定上下文               | 源分支名称                                 | 删除当前活动分支的内容，并作为指定分支的硬链接 |
+| `contextBranchInfo`        | `cbi`    | `ContextBranchInfo`       | `BRANCH`    | 4.3.9.1        | 获取分支元数据信息             | 无                                         | 获取当前活动分支的元数据信息 |
+| `getContextBranchsList`    | `gcbl`   | `GetContextBranchslist`   | `BRANCH`    | 4.3.16.7       | 获取上下文分支列表             | 无                                         | 返回当前用户的上下文分支列表 |
+
+#### Prompt Branch Command
+
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
+| `changePromptBranch`       | `cppb`   | `ChangePromptBranch`      | `BRANCH`    | 4.1.2.0        | 切换提示词分支                 | 分支名称                                   | 切换提示词分支 |
+| `promptBranchClone`        | `pbc`    | `PromptBranchClone`       | `BRANCH`    | 4.3.9.1        | 克隆提示词分支                 | 目标分支名称                                | 将当前活动分支复制到一个新的分支下 |
+| `promptBranchCloneFrom`    | `pbcf`   | `PromptBranchCloneFrom`   | `BRANCH`    | 4.3.9.1        | 从分支克隆提示词               | 源分支名称                                  | 将指定分支复制到当前活动分支下 |
+| `promptBranchBind`         | `pbb`    | `PromptBranchBind`        | `BRANCH`    | 4.3.9.1        | 绑定提示词分支                 | 目标分支名称                                | 创建一个新的分支，使其硬链接到当前活动分支 |
+| `promptBranchBindFrom`     | `pbbf`   | `PromptBranchBindFrom`    | `BRANCH`    | 4.3.9.1        | 从分支绑定提示词               | 源分支名称                                  | 删除当前活动分支的内容，并作为指定分支的硬链接 |
+| `promptBranchInfo`         | `pbi`    | `PromptBranchInfo`        | `BRANCH`    | 4.3.9.1        | 获取分支元数据信息             | 无                                         | 获取当前活动分支的元数据信息 |
+| `getPromptBranchList`      | `gpbl`   | `GetPromptBranchList`     | `BRANCH`    | 4.3.16.7       | 获取提示词分支列表             | 无                                         | 返回当前用户的提示词分支列表 |
+
+#### Config Branch Command
+
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
+| `changeConfigBranch`       | `ccfgb`  | `ChangeConfigBranch`      | `BRANCH`    | 4.1.2.0        | 切换配置分支                   | 分支名称                                  | 切换配置分支 |
+| `configBranchClone`        | `cfgbc`  | `ConfigBranchClone`       | `BRANCH`    | 4.3.9.1        | 克隆配置分支                   | 目标分支名称                               | 将当前活动分支复制到一个新的分支下 |
+| `configBranchCloneFrom`    | `cfgbcf` | `ConfigBranchCloneFrom`   | `BRANCH`    | 4.3.9.1        | 从分支克隆配置                 | 源分支名称                                 | 将指定分支复制到当前活动分支下 |
+| `configBranchBind`         | `cfgbb`  | `ConfigBranchBind`        | `BRANCH`    | 4.3.9.1        | 绑定配置分支                   | 目标分支名称                               | 创建一个新的分支，使其硬链接到当前活动分支 |
+| `configBranchBindFrom`     | `cfgbbf` | `ConfigBranchBindFrom`    | `BRANCH`    | 4.3.9.1        | 从分支绑定配置                 | 源分支名称                                 | 删除当前活动分支的内容，并作为指定分支的硬链接 |
+| `configBranchInfo`         | `cfgbi`  | `ConfigBranchInfo`        | `BRANCH`    | 4.3.9.1        | 获取分支元数据信息             | 无                                         | 获取当前活动分支的元数据信息 |
+| `getConfigBranchList`      | `gcfgbl` | `GetConfigBranchList`     | `BRANCH`    | 4.3.16.7       | 获取当前配置分支列表           | 无                                         | 返回当前配置分支列表 |
+
+#### Mixed Branch Command
+
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
+| `deleteSession`            | `ds`     | `DeleteSession`           | `BRANCH`    | 4.2.5.0        | 删除所有用户数据                | 无                                        | 删除所有用户数据 |
+| `changeSession`            | `cs`     | `ChangeSession`           | `BRANCH`    | 4.2.5.1        | 让所有的数据同时切换到一个分支   | 分支名称                                   | 让`Context`、`Prompt`、`Config`同时切换到一个分支 |
+| `sessionBranchClone`       | `sbc`    | `SessionBranchClone`      | `BRANCH`    | 4.3.9.3        | 克隆所有类型分支               | 目标分支名称                                | 将所有类型的当前活动分支复制到一个新的分支下 |
+| `sessionBranchCloneFrom`   | `sbcf`   | `SessionBranchCloneFrom`  | `BRANCH`    | 4.3.9.3        | 所有类型从指定分支克隆          | 源分支名称                                 | 所有类型的当前活动分支从指定分支复制 |
+| `sessionBranchBind`        | `sbb`    | `SessionBranchBind`       | `BRANCH`    | 4.3.9.3        | 所有类型绑定指定分支            | 目标分支名称                               | 所有类型同时创建一个新分支，硬链接到当前活动分支 |
+| `sessionBranchBindFrom`    | `sbbf`   | `SessionBranchBindFrom`   | `BRANCH`    | 4.3.9.3        | 所有类型绑定指定分支            | 源分支名称                                 | 所有类型同时删除活动分支数据，并从指定分支硬链接一份活动分支文件 |
+
+#### Mixed Command
+
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---    | :---                       | :---:       | :---           | :---                          | :---                                      | :---    |
+| `generatePrompt`           | `genp`   | `GeneratePrompt`          | `MIXED`     | 4.3.7.5        | 生成提示词                     | 角色描述                                   | 生成提示词，并自动保存到用户提示词数据中 |
+
+### User File Command
+
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
+| `sendUserDataFile`         | `sudf`   | `SendUserDataFile`        | `USERFILE`  | 4.0.2.1 Beta   | 发送用户数据文件               | 无                                         | 发送用户数据文件 |
+| `packageUserSpace`         | `pus`    | `PackageUserSpace`        | `USERFILE`  | 4.5.5.0        | 打包用户空间                   | 无                                        | 与 `sendUserDataFile` 类似，但它会打包所有分支 |
+
+### Template Command
+
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
+| `templateRender`           | `tr`     | `TemplateRender`          | `TEMPLATE`  | 4.0 Beta       | 变量展开                       | 文本模板                                  | 变量展开 |
+| `templateRenderText`       | `trt`    | `TemplateRenderText`      | `TEMPLATE`  | 4.2.7.0        | 变量展开(文本)                 | 文本模板                                  | 强制使用文本输出 |
+| `templateRenderImage`      | `tri`    | `TemplateRenderImage`     | `TEMPLATE`  | 4.2.7.0        | 变量展开(图片)                 | 文本模板                                  | 强制使用图片输出 |
+
+### Render Command
+
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
+| `markdownRender`           | `mr`     | `MarkdownRender`          | `RENDER`    | 4.3.7.0        | Markdown 文本渲染              | Markdown 文本                             | 将 Markdown 文本渲染为图片 |
+
+### Model Command
+
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
+| `getModelList`             | `gml`    | `GetModelList`            | `MODEL`     | 4.3.7.4        | 获取模型列表                   | 模型类型(目前只有`chat`)                    | 获取模型列表 |
+
+### Nexus Command
+
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
+| `contextUploadToNexus`     | `cutn`   | `ContextUploadToNexus`    | `NEXUS`     | 4.3.11.0       | 上传上下文到 Nexus             | 超时秒数                                   | 上传上下文到Nexus共享 |
+| `contextDownloadFromNexus` | `cdfn`   | `ContextDownloadFromNexus`| `NEXUS`     | 4.3.11.0       | 从 Nexus 下载上下文            | 资源 UUID                                  | 下载Nexus共享的上下文 |
+| `promptUploadToNexus`      | `putn`   | `PromptUploadToNexus`     | `NEXUS`     | 4.3.11.0       | 上传提示词到 Nexus             | 超时秒数                                   | 上传提示词到Nexus共享 |
+| `promptDownloadFromNexus`  | `pgetn`  | `PromptDownloadFromNexus` | `NEXUS`     | 4.3.11.0       | 从 Nexus 下载提示词            | 资源 UUID                                  | 获取Nexus共享的提示词 |
+| `configUploadToNexus`      | `cfgutn` | `ConfigUploadToNexus`     | `NEXUS`     | 4.3.11.0       | 上传配置到 Nexus               | 超时秒数                                   | 个性配置上传到Nexus |
+| `configDownloadFromNexus`  | `cfgdtn` | `ConfigDownloadFromNexus` | `NEXUS`     | 4.3.11.0       | 从 Nexus 下载配置              | 资源 UUID                                  | 从Nexus下载共享的个性配置 |
+| `envUploadToNexus`         | `eutn`   | `EnvUploadToNexus`        | `NEXUS`     | 4.3.19.0       | 上传环境到 Nexus               | 超时秒数                                   | 同时上传所有用户数据到Nexus |
+| `envDownloadFromNexus`     | `edfn`   | `EnvDownloadFromNexus`    | `NEXUS`     | 4.3.19.0       | 从 Nexus 下载环境              | 资源 UUID                                  | 从 Nexus 同时下载所有用户数据 |
+
+### Licenses Command
+
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
+| `getRequirementLicenses`   | `grl`    | `GetRequirementLicenses`  | `LICENSES`  | 4.3.10.8       | 获取依赖许可证                 | 依赖项名称                                 | 获取指定依赖的许可证信息 |
+| `getRequirementList`       | `grls`   | `GetRequirementList`      | `LICENSES`  | 4.3.10.8       | 获取依赖列表                   | 无                                        | 获取所有记录了License的依赖项名称 |
+| `getServerLicense`         | `gsl`    | `GetServerLicense`        | `LICENSES`  | 4.3.10.8       | 获取服务端许可证               | 无                                        | 获取服务端许可证信息 |
+
+### Status Command
+
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
+| `getCoreTaskStatus`        | `gcts`   | `GetCoreTaskStatus`       | `STATUS`    | 4.3.17.0       | 获取当前任务状态               | 无                                         | 获取当前核心任务状态 (Free or Task Stack) |
+| `breakChatTask`            | `bct`    | `BreakChatTask`           | `STATUS`    | 4.4.4.0        | 中止当前所有生成任务           | 无                                         | 中止当前所有生成任务，中止后模型已生成内容将不会保存和显示 |
+| `getChatBuffer`            | `gcb`    | `GetChatBuffer`           | `STATUS`    | 4.4.8.0        | 获取聊天缓冲区                 | 无                                         | 获取当前会话的聊天缓冲区 |
+
+### Statistic Command
+
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
+| `tokenCount`               | `tc`     | `TokenCount`              | `STATISTIC` | 4.6.3.0        | 获取当前用户所消耗的 Token 数   | 无                                        | 获取当前用户所消耗的 Token 数量 |
+
+### Version Command
+
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
+| `adaptationInfo`           | `adai`   | `AdaptationInfo`          | `VERSION`   | 4.3.10.7       | 版本适配信息                   | 无                                        | 展示服务端和客户端的版本信息 |
+
+### Namespace Command
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
 | `getNamespace`             | `gns`    | `GetNamespace`            | `NAMESPACE` | 4.2.4.4        | 获取命名空间                   | @目标用户 (不填就是自己)                    | 获取当前或指定用户的命名空间 |
-| `deleteSession`            | `ds`     | `DeleteSession`           | `MIXED`     | 4.2.5.0        | 删除所有用户数据               | 无                                        | 删除所有用户数据 |
-| `raw`                      | `raw`    | `Raw`                     | `CHAT`      | 4.2.5.1        | 发送消息且不包含任何元数据      | 自然语言输入                               | 发送消息且不包含任何元数据 |
-| `changeSession`            | `cs`     | `ChangeSession`           | `MIXED`     | 4.2.5.1        | 让所有的数据同时切换到一个分支  | 分支名称                                  | 让`Context`、`Prompt`、`Config`同时切换到一个分支 |
-| `noSaveChat`               | `nsc`    | `NoSaveChat`              | `CHAT`      | 4.2.6.6        | 不保存的聊天对话              | 无                                        | 聊天后不保存最新聊天记录 |
-| `summaryChatRecord`        | `scr`    | `SummaryChatRecord`       | `OTHER`     | 4.2.6.6        | 聊天记录总结                  | 整数，传入的消息数量                       | 获取当前群聊内指定数量的聊天记录摘要 |
-| `templateRenderText`       | `trt`    | `TemplateRenderText`      | `TEMPLATE`  | 4.2.7.0        | 变量展开(文本)                | 文本模板                                 | 强制使用文本输出 |
-| `templateRenderImage`      | `tri`    | `TemplateRenderImage`     | `TEMPLATE`  | 4.2.7.0        | 变量展开(图片)                | 文本模板                                 | 强制使用图片输出 |
-| `setAutoLoadPrompt`        | `salp`   | `SetAutoLoadPrompt`       | `CONFIG`    | 4.3.1.0        | 设置自动加载提示词            | `true`/`false`                           | 设置请求时是否自动加载Prompt |
-| `setAutoSaveContext`       | `sasc`   | `SetAutoSaveContext`      | `CONFIG`    | 4.3.1.0        | 设置自动保存上下文            | `true`/`false`                           | 设置生成完毕后是否自动保存Context |
-| `setRenderTitle`           | `srt`    | `SetRenderTitle`          | `CONFIG`    | 4.3.2.1        | 设置渲染标题                 | 任意文本                                   | 渲染时显示的标题内容 |
-| `setTimezone`              | `stz`    | `SetTimezone`             | `CONFIG`    | 4.3.3.3        | 设置时区                     | 时区名称(如`Asia/Shanghai`)                | 请使用确定的时区名称 |
-| `writeUserProfile`         | `wup`    | `WriteUserProfile`        | `CONFIG`    | 4.3.3.6        | 写入用户人设数据              | 任意文本                                   | 该部分会被嵌入到用户提示词中，告诉AI用户的基础设定 |
-| `setHtmlTemplate`          | `sht`    | `SetHtmlTemplate`         | `CONFIG`    | 4.3.3.6        | 设置HTML模板                 | 预设模板名称                               | 可以用于切换Markdown渲染时使用的HTML模板 |
-| `setSaveTextOnly`          | `ssto`   | `SetSaveTextOnly`         | `CONFIG`    | 4.3.6.0        | 在保存时丢弃除文本以外的内容   | `true`/`false`                           | 设为`true`可以更快速的保存与读取，但模型将无法再获取到上下文中的附加数据 |
-| `markdownRender`           | `mr`     | `MarkdownRender`          | `RENDER`    | 4.3.7.0        | Markdown 文本渲染            | Markdown 文本                             | 将 Markdown 文本渲染为图片 |
-| `getModelList`             | `gml`    | `GetModelList`            | `MODEL`     | 4.3.7.4        | 获取模型列表                 | 模型类型(目前只有`chat`)                   | 获取模型列表 |
-| `generatePrompt`           | `genp`   | `GeneratePrompt`          | `MIXED`     | 4.3.7.5        | 生成提示词                   | 角色描述                                  | 生成提示词，并自动保存到用户提示词数据中 |
-| `summarizeAndContract`     | `sac`    | `SummarizeAndContract`    | `CHAT`      | 4.3.7.6        | 摘要并压缩                   | 自定义提示词，可以为空                      | 摘要并压缩对话，并自动删除多余的历史记录 |
-| `contextBranchClone`       | `cbc`    | `ContextBranchClone`      | `CONTEXT`   | 4.3.9.1        | 克隆上下文分支                | 目标分支名称                               | 将当前活动分支复制到一个新的分支下 |
-| `contextBranchCloneFrom`   | `cbcf`   | `ContextBranchCloneFrom`  | `CONTEXT`   | 4.3.9.1        | 从分支克隆上下文              | 源分支名称                                 | 将指定分支复制到当前活动分支下 |
-| `promptBranchClone`        | `pbc`    | `PromptBranchClone`       | `PROMPT`    | 4.3.9.1        | 克隆提示词分支                | 目标分支名称                               | 将当前活动分支复制到一个新的分支下 |
-| `promptBranchCloneFrom`    | `pbcf`   | `PromptBranchCloneFrom`   | `PROMPT`    | 4.3.9.1        | 从分支克隆提示词              | 源分支名称                                 | 将指定分支复制到当前活动分支下 |
-| `configBranchClone`        | `cfgbc`  | `ConfigBranchClone`       | `CONFIG`    | 4.3.9.1        | 克隆配置分支                  | 目标分支名称                               | 将当前活动分支复制到一个新的分支下 |
-| `configBranchCloneFrom`    | `cfgbcf` | `ConfigBranchCloneFrom`   | `CONFIG`    | 4.3.9.1        | 从分支克隆配置                | 源分支名称                                 | 将指定分支复制到当前活动分支下 |
-| `contextBranchBind`        | `cbb`    | `ContextBranchBind`       | `CONTEXT`   | 4.3.9.1        | 绑定上下文分支                | 目标分支名称                               | 创建一个新的分支，使其硬链接到当前活动分支 |
-| `contextBranchBindFrom`    | `cbbf`   | `ContextBranchBindFrom`   | `CONTEXT`   | 4.3.9.1        | 从分支绑定上下文              | 源分支名称                                 | 删除当前活动分支的内容，并作为指定分支的硬链接 |
-| `promptBranchBind`         | `pbb`    | `PromptBranchBind`        | `PROMPT`    | 4.3.9.1        | 绑定提示词分支                | 目标分支名称                               | 创建一个新的分支，使其硬链接到当前活动分支 |
-| `promptBranchBindFrom`     | `pbbf`   | `PromptBranchBindFrom`    | `PROMPT`    | 4.3.9.1        | 从分支绑定提示词              | 源分支名称                                 | 删除当前活动分支的内容，并作为指定分支的硬链接 |
-| `configBranchBind`         | `cfgbb`  | `ConfigBranchBind`        | `CONFIG`    | 4.3.9.1        | 绑定配置分支                  | 目标分支名称                               | 创建一个新的分支，使其硬链接到当前活动分支 |
-| `configBranchBindFrom`     | `cfgbbf` | `ConfigBranchBindFrom`    | `CONFIG`    | 4.3.9.1        | 从分支绑定配置                | 源分支名称                                 | 删除当前活动分支的内容，并作为指定分支的硬链接 |
-| `contextBranchInfo`        | `cbi`    | `ContextBranchInfo`       | `CONTEXT`   | 4.3.9.1        | 获取分支元数据信息            | 无                                         | 获取当前活动分支的元数据信息 |
-| `promptBranchInfo`         | `pbi`    | `PromptBranchInfo`        | `PROMPT`    | 4.3.9.1        | 获取分支元数据信息            | 无                                         | 获取当前活动分支的元数据信息 |
-| `configBranchInfo`         | `cfgbi`  | `ConfigBranchInfo`        | `CONFIG`    | 4.3.9.1        | 获取分支元数据信息            | 无                                         | 获取当前活动分支的元数据信息 |
-| `sessionBranchClone`       | `sbc`    | `SessionBranchClone`      | `MIXED`     | 4.3.9.3        | 克隆所有类型分支              | 目标分支名称                                | 将所有类型的当前活动分支复制到一个新的分支下 |
-| `sessionBranchCloneFrom`   | `sbcf`   | `SessionBranchCloneFrom`  | `MIXED`     | 4.3.9.3        | 所有类型从指定分支克隆        | 源分支名称                                  | 所有类型的当前活动分支从指定分支复制 |
-| `sessionBranchBind`        | `sbb`    | `SessionBranchBind`       | `MIXED`     | 4.3.9.3        | 所有类型绑定指定分支          | 目标分支名称                                | 所有类型同时创建一个新分支，硬链接到当前活动分支 |
-| `sessionBranchBindFrom`    | `sbbf`   | `SessionBranchBindFrom`   | `MIXED`     | 4.3.9.3        | 所有类型绑定指定分支          | 源分支名称                                  | 所有类型同时删除活动分支数据，并从指定分支硬链接一份活动分支文件 |
-| `#` or `/`                 | `anot`   | `Annotation`              | `RESERVED`  | 4.3.9.3        | 注释，不会执行任何操作        | 无                                         | 不执行任何操作，直接忽略内容，由于命令前缀的存在，触发需要 `/#` 或 `//` |
-| `crossUserDataAccess`      | `cuda`   | `CrossUserDataAccess`     | `CONFIG`    | 4.3.10.3       | 允许跨用户数据访问            | `true`/`false`                            | 允许跨用户数据访问，如果设置为`false`则只能访问自己的数据 |
-| `newRequestsTextOnly`      | `nrto`   | `NewRequestsTextOnly`     | `CONFIG`    | 4.3.10.7       | 忽略请求里的非文本数据        | `true`/`false`                            | 如果设置为`true`，复读机将把所有消息当成普通文本消息处理 |
-| `adaptationInfo`           | `adai`   | `AdaptationInfo`          | `VERSION`   | 4.3.10.7       | 版本适配信息                 | 无                                         | 展示服务端和客户端的版本信息 |
-| `getRequirementLicenses`   | `grl`    | `GetRequirementLicenses`  | `LICENSES`  | 4.3.10.8       | 获取依赖许可证               | 依赖项名称                                  | 获取指定依赖的许可证信息 |
-| `getRequirementList`       | `grls`   | `GetRequirementList`      | `LICENSES`  | 4.3.10.8       | 获取依赖列表                 | 无                                         | 获取所有记录了License的依赖项名称 |
-| `getServerLicense`         | `gsl`    | `GetServerLicense`        | `LICENSES`  | 4.3.10.8       | 获取服务端许可证             | 无                                         | 获取服务端许可证信息 |
-| `checkRoleStructure`       | `crs`    | `CheckRoleStructure`      | `CONTEXT`   | 4.3.10.10      | 检查角色结构                 | 无                                        | 检查上下文中的角色结构是否符合 user-assistant 的规则 |
-| `contextUploadToNexus`     | `cutn`   | `ContextUploadToNexus`    | `NEXUS`     | 4.3.11.0       | 上传上下文到 Nexus           | 超时秒数                                   | 上传上下文到Nexus共享 |
-| `contextDownloadFromNexus` | `cdfn`   | `ContextDownloadFromNexus`| `NEXUS`     | 4.3.11.0       | 从 Nexus 下载上下文          | 资源 UUID                                 | 下载Nexus共享的上下文 |
-| `promptUploadToNexus`      | `putn`   | `PromptUploadToNexus`     | `NEXUS`     | 4.3.11.0       | 上传提示词到 Nexus           | 超时秒数                                   | 上传提示词到Nexus共享 |
-| `promptDownloadFromNexus`  | `pgetn`  | `PromptDownloadFromNexus` | `NEXUS`     | 4.3.11.0       | 从 Nexus 下载提示词          | 资源 UUID                                 | 获取Nexus共享的提示词 |
-| `configUploadToNexus`      | `cfgutn` | `ConfigUploadToNexus`     | `NEXUS`     | 4.3.11.0       | 上传配置到 Nexus             | 超时秒数                                  | 个性配置上传到Nexus |
-| `configDownloadFromNexus`  | `cfgdtn` | `ConfigDownloadFromNexus` | `NEXUS`     | 4.3.11.0       | 从 Nexus 下载配置            | 资源 UUID                                 | 从Nexus下载共享的个性配置 |
-| `setCustomName`            | `scn`    | `SetCustomName`           | `CONFIG`    | 4.3.12.1       | 设置个性化名称               | 用户名                                    | 设置后模型看到的将是设置的名称而非用户名 |
-| `thinkingMode`             | `tm`     | `ThinkingMode`            | `CONFIG`    | 4.3.14.0       | 设置思考模式                 | `true`/`false`/`null`                    | 用于在不指定 Thinking 参数时 启用/禁用/恢复默认 思考模式 |
-| `noReason`                 | `nr`     | `NoReason`                | `CHAT`      | 4.3.15.0       | 不使用 Thinking 进行对话     | 自然语言输入                              | 关闭 `thinking` 参数以阻止进入 Thinking 模式 |
-| `noPromptEcho`             | `npecho` | `NoPromptEcho`            | `ECHO`      | 4.3.16.0       | 无额外反应的 Echo            | 任何内容                                  | 与 `echo` 命令相同，但不在未找到参数时显示等待提示词 |
-| `getContextBranchsList`    | `gcbl`   | `GetContextBranchslist`   | `CONTEXT`   | 4.3.16.7       | 获取分支列表                 | 无                                        | 返回当前用户的上下文分支列表 |
-| `getPromptBranchList`      | `gpbl`   | `GetPromptBranchList`     | `PROMPT`    | 4.3.16.7       | 获取提示词分支列表           | 无                                        | 返回当前用户的提示词分支列表 |
-| `getConfigBranchList`      | `gcfgbl` | `GetConfigBranchList`     | `CONFIG`    | 4.3.16.7       | 获取当前上下文分支           | 无                                        | 获取当前上下文分支 |
-| `getCoreTaskStatus`        | `gcts`   | `GetCoreTaskStatus`       | `STATUS`    | 4.3.17.0       | 获取当前任务状态             | 无                                        | 获取当前核心任务状态 (Free or Task Stack) |
-| `generateCandidateAnswer`  | `gca`    | `GenerateCandidateAnswer` | `CHAT`      | 4.3.18.0       | 生成候选答案                 | 无                                        | 生成候选答案（生成内容不保存） |
-| `envUploadToNexus`         | `eutn`   | `EnvUploadToNexus`        | `NEXUS`     | 4.3.19.0       | 上传环境到 Nexus             | 超时秒数                                  | 同时上传所有用户数据到Nexus |
-| `envDownloadFromNexus`     | `edfn`   | `EnvDownloadFromNexus`    | `NEXUS`     | 4.3.19.0       | 从 Nexus 下载环境            | 资源 UUID                                 | 从 Nexus 同时下载所有用户数据 |
-| `generateCandidateReason`  | `gcr`    | `GenerateCandidateReason` | `CHAT`      | 4.3.23.1       | 生成候选推理                 | 无                                        | 生成候选回答并开启推理（生成内容不保存） |
-| `setModelTimeout`          | `smto`   | `SetModelTimeout`         | `CONFIG`    | 4.3.25.0       | 设置模型超时时间             | 超时秒数                                   | 设置模型超时时间 |
-| `removeReasoningPrompt`    | `rrp`    | `RemoveReasoningPrompt`   | `CONFIG`    | 4.3.26.0       | 删除推理内容                 | 删除推理内容 |                             | 设置是否在提交时移除模型输出的思考内容（不影响保存） |
-| `breakChatTask`            | `bct`    | `BreakChatTask`           | `STATUS`    | 4.4.4.0        | 中止当前所有生成任务         | 无                                         | 中止当前所有生成任务，中止后模型已生成内容将不会保存和显示 |
-| `renderDocBottomComment`   | `rdbc`   | `RenderDocBottomComment`  | `CONFIG`    | 4.4.4.0        | 渲染文档底部注释             | 文本内容                                   | 在渲染图片的底部添加一小段文本 |
-| `calculateLengthScore`     | `cls`    | `CalculateLengthScore`    | `OTHER`     | 4.4.4.0        | 计算长度评分                 | 文本内容                                   | 计算给定文本的长度评分值 |
-| `fastStatisticsTemplate`   | `fst`    | `FastStatisticsTemplate`  | `CONFIG`    | 4.4.5.0        | 快速统计模板                 | 模板内容                                   | 可以在生成的图片结尾展示一些统计数据 |
-| `setMultipleModel`         | `smm`    | `SetMultipleModel`        | `CONFIG`    | 4.4.6.0        | 设置多个模型                 | *多个模型名称*                              | 设置多个模型，当访问时随机选择一个模型 |
-| `setStopKeywords`          | `ssk`    | `SetStopKeywords`         | `CONFIG`    | 4.4.6.0        | 设置停止关键词               | *多个停止关键词*                            | 当模型生成出这个词时，暂停模型生成并即刻返回结果 |
-| `injectUserContent`        | `iuc`    | `InjectUserContent`       | `CONTEXT`   | 4.4.7.0        | 注入用户消息内容             | 消息内容                                   | 插入用户消息内容 |
-| `injectAssistantContent`   | `iac`    | `InjectAssistantContent`  | `CONTEXT`   | 4.4.7.0        | 插入 AI 消息内容             | 消息内容                                   | 插入 AI 消息内容 |
-| `injectSystemContent`      | `isc`    | `InjectSystemContent`     | `CONTEXT`   | 4.4.7.0        | 插入系统消息内容             | 消息内容                                   | 插入系统消息内容 |
-| `getChatBuffer`            | `gcb`    | `GetChatBuffer`           | `STATUS`    | 4.4.8.0        | 获取聊天缓冲区               | 无                                        | 获取当前会话的聊天缓冲区 |
-| `getLastContent`           | `glc`    | `GetLastContent`          | `CONTEXT`   | 4.4.8.0        | 获取最后一条消息内容          | 无                                        | 获取当前会话的最后一条消息内容 |
-| `getConfig`                | `gcfg`   | `GetConfig`               | `CONFIG`    | 4.4.8.0        | 获取配置                     | `JSON`/`YAML`                             | 获取当前会话的配置 |
-| `getPrompt`                | `gp`     | `GetPrompt`               | `PROMPT`    | 4.4.8.0        | 获取提示词                   | 无                                        | 获取当前会话的提示词 |
-| `setCustomAge`             | `sca`    | `SetCustomAge`            | `CONFIG`    | 4.4.9.0        | 设置自定义年龄               | 年龄                                       | 设置自定义年龄 (需要提示词支持) |
-| `setCustomGender`          | `scg`    | `SetCustomGender`         | `CONFIG`    | 4.4.9.0        | 设置自定义性别               | 性别                                       | 设置自定义性别 (需要提示词支持) |
-| `sendMessage`              | `smsg`   | `SendMessage`             | `SENDMSG`   | 4.4.12.0       | 发送消息                    | OneBot 消息结构                             | 发送一条自定义消息（需要 `allow_send_any_message` 字段为 `true`） |
-| `singleWithdraw`           | `sw`     | `SingleWithdraw`          | `CONTEXT`   | 4.4.13.0       | 单条撤回                    | 消息条数                                    | 直接按条撤回消息（而不是按对撤回） |
-| `sendContextFile`          | `scf`    | `SendContextFile`         | `CONTEXT`   | 4.5.5.0-beta   | 发送聊天记录文件             | 无                                          | 获取当前活动分支的聊天记录文件 |
-| `sendPromptFile`           | `spf`    | `SendPromptFile`          | `PROMPT`    | 4.5.5.0-beta   | 获取提示词文件               | 无                                          | 获取当前活动分支的提示词文件 |
-| `sendConfigFile`           | `scfgf`  | `SendConfigFile`          | `CONFIG`    | 4.5.5.0-beta   | 获取配置文件                 | 无                                          | 获取当前活动分支的配置文件 |
-| `packageUserSpace`         | `pus`    | `PackageUserSpace`        | `USERFILE`  | 4.5.5.0        | 打包用户空间                 | 无                                          | 与 `sendUserDataFile` 类似，但它会打包所有分支 |
-| `setReasoningEffort`       | `sre`    | `SetReasoningEffort`      | `CONFIG`    | 4.5.6.0        | 设置推理强度                 | `low`/`medium`/`high`/`xhigh`/`max`         | 设置推理强度 (需要模型支持) |
-| `resetConfigField`         | `rcf`    | `ResetConfigField`        | `CONFIG`    | 4.5.6.0        | 重置配置字段                 | 配置字段名称                                 | 设置指定配置字段到 null |
-| `makeMultimodalMessage`    | `mmm`    | `MakeMultimodalMessage`   | `CONFIG`    | 4.5.8.0        | 是否创建多模态消息            | `true`/`false`                             | 设置是否创建多模态消息 |
-| `allowedToolCalls`         | `atc`    | `AllowedToolCalls`        | `CONFIG`    | 4.5.8.0        | 批准使用工具                 | *\*多个工具注册名*                           | 指定 AI 能使用哪些工具 |
-| `allowTools`               | `at`     | `AllowTools`              | `CONFIG`    | 4.5.8.0        | 允许使用工具                 | *\*多个工具注册名*                           | 增加工具使用权限 |
-| `disallowTools`            | `dt`     | `DisallowTools`           | `CONFIG`    | 4.5.8.0        | 禁止使用工具                 | *\*多个工具注册名*                           | 移除工具使用权限 |
-| `setPresetDirectives`      | `spd`    | `SetPresetDirectives`     | `CONFIG`    | 4.6.1.0        | 设置 Directive 预设          | *\*多个 Directive*                          | 添加 Directive |
-| `addPresetDirectives`      | `apd`    | `AddPresetDirectives`     | `CONFIG`    | 4.6.1.0        | 添加 Directive 预设          | `<type>: <name>`                            | 添加 Directive |
-| `removePresetDirectives`   | `rpd`    | `RemovePresetDirectives`  | `CONFIG`    | 4.6.1.0        | 移除 Directive 预设          | `<type>: <name>`                            | 移除 Directive |
-| `tokenCount`               | `tc`     | `TokenCount`              | `STATISTIC` | 4.6.3.0        | 获取当前用户所消耗的 Token 数 | 无                                          | 获取当前用户所消耗的 Token 数量 |
+
+### Reserved Command
+
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
+| `#` or `/`                 | `anot`   | `Annotation`              | `RESERVED`  | 4.3.9.3        | 注释，不会执行任何操作          | 无                                        | 不执行任何操作，直接忽略内容，由于命令前缀的存在，触发需要 `/#` 或 `//` |
+
+### Send Msg Command
+
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
+| `sendMessage`              | `smsg`   | `SendMessage`             | `SENDMSG`   | 4.4.12.0       | 发送消息                       | OneBot 消息结构                           | 发送一条自定义消息（需要 `allow_send_any_message` 字段为 `true`） |
+
+### Other Command
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
+| `chooseGroupMember`        | `cgm`    | `ChooseGroupMember`       | `OTHER`     | 4.1.2.0        | 抽取群组成员                   | 抽取数量                                   | 抽取群组成员 |
+| `recentSpeakingRanking`    | `rsr`    | `RecentSpeakingRanking`   | `OTHER`     | 4.2.3.0        | 最近发言排行                   | 无                                        | 获取群组内最近发言的成员列表 |
+| `summaryChatRecord`        | `scr`    | `SummaryChatRecord`       | `OTHER`     | 4.2.6.6        | 聊天记录总结                   | 整数，传入的消息数量                        | 获取当前群聊内指定数量的聊天记录摘要 |
+| `calculateLengthScore`     | `cls`    | `CalculateLengthScore`    | `OTHER`     | 4.4.4.0        | 计算长度评分                   | 文本内容                                   | 计算给定文本的长度评分值 |
 
 PS：`CHAT`类型命令大部分都做到了支持视觉输入
 默认命令已支持全模态输入
