@@ -14,6 +14,15 @@ class SummarizeAndContract(BaseChat):
         "SummarizeAndContract",
         "SUMARAIZE_AND_CONTRACT"
     }
+    documents = f"""
+        Summarizes the user's contextual content
+        And save only summary information
+
+        Usage:
+        ```
+        /{cmd} (message)
+        ```
+    """
     
     async def send_message(
         self,
@@ -25,6 +34,8 @@ class SummarizeAndContract(BaseChat):
         persona_info: PersonaInfo,
         send_msg: SendMsg
     ) -> str:
+        if not message:
+            return "Please provide a message to summarize"
         response = await client.send_message(
             message = message,
             image_url = images,

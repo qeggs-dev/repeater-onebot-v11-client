@@ -14,6 +14,14 @@ class NoSaveChat(BaseChat):
         "No_Save_Chat",
         "NO_SAVE_CHAT"
     }
+    documents = f"""
+        Temporarily send a message. (Not saved in the chat history)
+        
+        Usage:
+        ```
+        /{cmd} [text]
+        ```
+    """
     
     async def send_message(
         self,

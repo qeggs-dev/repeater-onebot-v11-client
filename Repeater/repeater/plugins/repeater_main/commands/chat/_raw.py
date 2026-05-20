@@ -14,6 +14,14 @@ class RawChat(BaseChat):
         "RawChat",
         "RAW_CHAT"
     }
+    documents = f"""
+        Generates text without adding metadata.
+        
+        Usage:
+        ```
+        /{cmd} [text]
+        ```
+    """
     
     async def send_message(
         self,

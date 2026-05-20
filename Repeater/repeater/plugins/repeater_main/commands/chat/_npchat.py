@@ -14,6 +14,14 @@ class NPChat(BaseChat):
         "NoPromptChat",
         "NO_PROMPT_CHAT"
     }
+    documents = f"""
+        Generate the task without loading the prompt.
+        
+        Usage:
+        ```
+        /{cmd} [text]
+        ```
+    """
     
     async def send_message(
         self,

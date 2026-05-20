@@ -13,6 +13,15 @@ class TTSChat(BaseChat):
         "TTSChat",
         "TTS_CHAT",
     }
+    documents = f"""
+        Initiates a text generation request,
+        Return content to force tts output.
+        
+        Usage:
+        ```
+        /{cmd} [text]
+        ```
+    """
 
     async def send_chat_send_msg(
         self,

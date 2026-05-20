@@ -14,6 +14,14 @@ class NoReason(BaseChat):
         "NoReason",
         "NO_REASON"
     }
+    documents = f"""
+        Forces the use of non-inferential mode for text generation.
+        
+        Usage:
+        ```
+        /{cmd} [text]
+        ```
+    """
     
     async def send_message(
         self,
