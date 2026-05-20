@@ -9,6 +9,10 @@ class PingProviderDetails(BaseModel):
     host: str = ""
     time: list[float] = Field(default_factory=list)
 
+    @property
+    def average_time(self) -> float:
+        return sum(self.time) / len(self.time)
+
 class PingProviderResponse(BaseModel):
     successful: int = 0
     average_time_spent: float = 0.0
