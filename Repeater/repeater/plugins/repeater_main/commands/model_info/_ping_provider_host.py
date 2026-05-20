@@ -24,8 +24,12 @@ class PingProviderHost(CommandPackage):
             await send_msg.send_debug_mode()
 
         model_info_client = ModelInfoClient()
+        model_uid = persona_info.message_striped_str
 
-        response = await model_info_client.ping_provider(persona_info.namespace_str)
+        response = await model_info_client.ping_provider(
+            persona_info.namespace_str,
+            model_uid = model_uid
+        )
         if response.code == 200:
             ping_response = response.get_data()
             if ping_response is None:
@@ -36,8 +40,8 @@ class PingProviderHost(CommandPackage):
                 text_buffer.append(f"Average Time Spent: {ping_response.average_time_spent}")
                 for detail in ping_response.details:
                     for time in detail.time:
-                        text_buffer.append(f"Ping [{detail.host}] in {time}ms")
-                    text_buffer.append(f"Ping [{detail.host}] avg {detail.avg_time}ms ({detail.min_time}ms ~ {detail.max_time}ms)")
-                await send_msg.send_prompt("\n".join(text_buffer))
+                        text_buffer.append(f"- Ping [{detail.host}] in {time}ms")
+                    text_buffer.append(f"- Ping [{detail.host}] avg {detail.avg_time}ms ({detail.min_time}ms ~ {detail.max_time}ms)")
+                await send_msg.send_check_length_prompt("\n".join(text_buffer))
         else:
             await send_msg.send_response_check_code(response)
