@@ -6,7 +6,7 @@ from ...assist import PersonaInfo, SendMsg
 from ...command_register import CommandPackage, CmdType
 
 class BaseChat(CommandPackage):
-    type = CmdType.CHAT
+    cmd_type = CmdType.CHAT
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         logger.info(

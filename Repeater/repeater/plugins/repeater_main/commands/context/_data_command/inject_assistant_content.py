@@ -18,7 +18,7 @@ class InjectAssistantContent(CommandPackage):
         "InjectAssistantContent",
         "INJECT_ASSISTANT_CONTENT",
     }
-    type = CmdType.CONTEXT
+    cmd_type = CmdType.CONTEXT
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

@@ -19,7 +19,7 @@ class GetServerLicenses(CommandPackage):
         "GetServerLicenses",
         "GET_SERVER_LICENSES",
     }
-    type = CmdType.LICENSES 
+    cmd_type = CmdType.LICENSES 
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

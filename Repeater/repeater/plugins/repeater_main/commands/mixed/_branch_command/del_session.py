@@ -18,7 +18,7 @@ class DeleteSession(CommandPackage):
         "DeleteSession",
         "DELETE_SESSION",
     }
-    type = CmdType.BRANCH_MIXED
+    cmd_type = CmdType.BRANCH_MIXED
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

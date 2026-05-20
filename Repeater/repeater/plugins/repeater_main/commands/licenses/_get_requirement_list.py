@@ -18,7 +18,7 @@ class GetRequirementList(CommandPackage):
         "GetRequirementList",
         "GET_REQUIREMENT_LIST",
     }
-    type = CmdType.LICENSES
+    cmd_type = CmdType.LICENSES
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

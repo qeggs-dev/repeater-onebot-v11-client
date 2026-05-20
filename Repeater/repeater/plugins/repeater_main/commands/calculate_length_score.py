@@ -16,7 +16,7 @@ class CalculateLengthScore(CommandPackage):
         "CalculateLengthScore",
         "CALCULATE_LENGTH_SCORE",
     }
-    type = CmdType.OTHER
+    cmd_type = CmdType.OTHER
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

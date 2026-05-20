@@ -18,7 +18,7 @@ class GetChatBuffer(CommandPackage):
         "GetChatBuffer",
         "GET_CHAT_BUFFER",
     }
-    type = CmdType.STATUS
+    cmd_type = CmdType.STATUS
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

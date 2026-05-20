@@ -86,7 +86,7 @@ class CommandPackage(ABC, Generic[T]):
     state: T_State | None = None
     """Default state"""
 
-    type: CmdType = CmdType.RESERVED
+    cmd_type: Cmd_type = CmdType.RESERVED
     """Command Type"""
 
     enabled: bool = True
@@ -98,7 +98,7 @@ class CommandPackage(ABC, Generic[T]):
     @property
     def component(self) -> str:
         """The human-readable name of the Handler (required) """
-        return f"{self.type}.{self.__class__.__name__}"
+        return f"{self.cmd_type}.{self.__class__.__name__}"
 
     async def message_enter(self, bot: Bot, event: MessageEvent, matcher: Type[Matcher]) -> tuple[PersonaInfo, SendMsg]:
         """

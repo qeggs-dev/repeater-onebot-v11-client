@@ -17,7 +17,7 @@ class OperationType(Enum):
 class BaseConfig(CommandPackage):
     field: str = ""
     operation: OperationType = OperationType.SET
-    type = CmdType.CONFIG
+    cmd_type = CmdType.CONFIG
 
     async def parse_value(
             self,

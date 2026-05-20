@@ -20,7 +20,7 @@ class ChooseGroupMember(CommandPackage):
         "ChooseGroupMember",
         "CHOOSE_GROUP_MEMBER",
     }
-    type = CmdType.OTHER
+    cmd_type = CmdType.OTHER
 
     @staticmethod
     def generate_text(choiced: list[dict[str, Any]]) -> str:

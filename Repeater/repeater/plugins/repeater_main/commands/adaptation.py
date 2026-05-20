@@ -19,7 +19,7 @@ class AdaptationInfo(CommandPackage):
         "AdaptationInfo",
         "ADAPTATION_INFO",
     }
-    type = CmdType.VERSION
+    cmd_type = CmdType.VERSION
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

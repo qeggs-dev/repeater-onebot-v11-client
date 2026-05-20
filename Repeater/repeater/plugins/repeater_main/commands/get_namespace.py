@@ -23,7 +23,7 @@ class GetNamespace(CommandPackage):
         "GetNamespace",
         "GET_NAMESPACE",
     }
-    type = CmdType.NAMESPACE
+    cmd_type = CmdType.NAMESPACE
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

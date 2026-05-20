@@ -21,7 +21,7 @@ class RecentSpeakingRanking(CommandPackage):
         "RecentSpeakingRanking",
         "RECENT_SPEAKING_RANKING",
     }
-    type = CmdType.OTHER
+    cmd_type = CmdType.OTHER
 
     @staticmethod
     def recent_speaking_ranking_worker(message_list: dict[str, Any]) -> tuple[str, int, int]:

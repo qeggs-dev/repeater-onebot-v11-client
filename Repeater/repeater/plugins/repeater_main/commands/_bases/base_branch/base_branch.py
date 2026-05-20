@@ -5,7 +5,7 @@ from ....assist import PersonaInfo, SendMsg
 from ....command_register import CommandPackage, CmdType
 
 class BaseBranch(CommandPackage):
-    type = CmdType.BRANCH
+    cmd_type = CmdType.BRANCH
     
     @abstractmethod
     def get_client(self, persona_info: PersonaInfo) -> UserDataClient:

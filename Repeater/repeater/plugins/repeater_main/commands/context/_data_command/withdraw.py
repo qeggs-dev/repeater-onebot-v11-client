@@ -16,7 +16,7 @@ class Withdraw(CommandPackage):
         "Withdraw",
         "WITHDRAW",
     }
-    type = CmdType.CONTEXT
+    cmd_type = CmdType.CONTEXT
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

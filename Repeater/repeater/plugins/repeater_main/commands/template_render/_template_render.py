@@ -26,7 +26,7 @@ class TemplateRender(CommandPackage):
         "VarExpand",
         "VAR_EXPAND",
     }
-    type = CmdType.TEMPLATE
+    cmd_type = CmdType.TEMPLATE
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

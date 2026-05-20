@@ -19,7 +19,7 @@ class SummaryChatRecord(CommandPackage):
         "SummaryChatRecord",
         "SUMMARY_CHAT_RECORD",
     }
-    type = CmdType.OTHER
+    cmd_type = CmdType.OTHER
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

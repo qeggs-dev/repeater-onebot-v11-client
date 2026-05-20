@@ -15,7 +15,7 @@ class Annotation(CommandPackage):
         "Annotation",
         "ANNOTATION",
     }
-    type = CmdType.RESERVED
+    cmd_type = CmdType.RESERVED
     empty_handler = True
 
     async def handler(self, persona_info, send_msg):
