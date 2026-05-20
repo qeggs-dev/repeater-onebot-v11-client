@@ -90,7 +90,7 @@ class CommandCaller:
                     raise ValueError(f"{package_instance.listen_type} is not supported")
             
             matcher.append_handler(handler)
-            cls.commands[package] = package
+            cls.commands[package] = package_instance
             package_instance.on_registed()
         return package
     

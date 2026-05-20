@@ -14,7 +14,7 @@ class CmdType(Enum):
     USERFILE = "USERFILE"
     RESERVED = "RESERVED"
     TEMPLATE = "TEMPLATE"
-    CMD_LIST = "CMD_LIST"
+    SEE_CMD = "SEE_CMD"
     RENDER = "RENDER"
     MODEL = "MODEL"
     VERSION = "VERSION"
