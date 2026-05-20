@@ -6,12 +6,12 @@ from typing import (
     Callable,
     Any,
     NoReturn,
+    Coroutine,
     TypeVar,
     Type,
     overload,
     Literal
 )
-from types import CoroutineType
 
 T_RESPONSE = TypeVar("T_RESPONSE")
 
@@ -35,7 +35,7 @@ class SendMsg:
             message: str | Message,
             reply: bool = True,
             continue_handler: Literal[False] = False,
-        ) -> CoroutineType[Any, Any, NoReturn]: ...
+        ) -> Coroutine[Any, Any, NoReturn]: ...
     
     @overload
     def __call__(
@@ -43,14 +43,14 @@ class SendMsg:
             message: str | Message,
             reply: bool = True,
             continue_handler: Literal[True] = True,
-        ) -> CoroutineType[Any, Any, None]: ...
+        ) -> Coroutine[Any, Any, None]: ...
     
     def __call__(
             self,
             message: str | Message,
             reply: bool = True,
             continue_handler: bool = False,
-        ) -> CoroutineType[Any, Any, None | NoReturn]: ...
+        ) -> Coroutine[Any, Any, None | NoReturn]: ...
     
     @property
     def is_debug_mode(self) -> bool:

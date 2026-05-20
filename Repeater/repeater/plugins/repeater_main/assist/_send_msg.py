@@ -14,12 +14,12 @@ from typing import (
     Any,
     Callable,
     NoReturn,
+    Coroutine,
     TypeVar,
     Type,
     Literal,
     ClassVar
 )
-from types import CoroutineType
 from datetime import datetime
 from ._limit_speed import LimitSpeed
 from ..logger import logger as base_logger
@@ -59,7 +59,7 @@ class SendMsg:
             message: str | Message,
             reply: bool = True,
             continue_handler: bool = False,
-        ) -> CoroutineType[Any, Any, None | NoReturn]:
+        ) -> Coroutine[Any, Any, None | NoReturn]:
         return self.send_prompt(
             message = message,
             reply = reply,
