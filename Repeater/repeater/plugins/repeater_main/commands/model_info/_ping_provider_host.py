@@ -25,6 +25,8 @@ class PingProviderHost(CommandPackage):
 
         model_info_client = ModelInfoClient()
         model_uid = persona_info.message_striped_str
+        if not model_uid:
+            model_uid = None
 
         response = await model_info_client.ping_provider(
             persona_info.namespace_str,
@@ -42,6 +44,7 @@ class PingProviderHost(CommandPackage):
                     for time in detail.time:
                         text_buffer.append(f"- Ping [{detail.host}] in {time}ms")
                     text_buffer.append(f"- Ping [{detail.host}] avg {detail.avg_time}ms ({detail.min_time}ms ~ {detail.max_time}ms)")
+                    text_buffer.append(f"- Ping [{detail.host}] packet loss {detail.packet_loss:.2%}")
                 await send_msg.send_check_length_prompt("\n".join(text_buffer))
         else:
             await send_msg.send_response_check_code(response)
