@@ -10,6 +10,7 @@ from ....assist import Response, HTTPTransport, get_ssl_context
 from ....exit_register import ExitRegister
 from ._models import (
     ModelsResponse,
+    PingProviderResponse
 )
 
 exit_register = ExitRegister()
@@ -44,6 +45,31 @@ class ModelInfoClient:
             model = ModelsResponse,
         )
     # endregion
+
+    # region ping provider
+    async def ping_provider(
+            self,
+            user_id: str,
+            model_uid: str | list[str] | None = None,
+            timeout: float = 5.0,
+            times: int = 4,
+            size: int = 32,
+            interval: int = 0
+        ) -> Response[PingProviderResponse]:
+        response = await self._client.post(
+            f"{PING_PROVIDER}/{quote(user_id)}",
+            json = {
+                "model_uid": model_uid,
+                "timeout": timeout, 
+                "times": times, 
+                "size": size,
+                "interval": interval
+            }
+        )
+        return Response(
+            httpx_response = response,
+            model = PingProviderResponse,
+        )
 
     # region close
     def close(self) -> None:

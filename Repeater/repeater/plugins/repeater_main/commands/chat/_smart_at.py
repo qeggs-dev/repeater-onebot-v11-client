@@ -12,6 +12,21 @@ class SmartAt(CommandPackage):
     listen_type: ListenType = ListenType.Message
     component = "Chat.Smart_at"
     priority = 100
+    documents = """
+        Determines whether the input is null,
+        to perform a build task,
+        or output the specified text
+
+        Usage:
+        ```
+        @Bot [message]
+        ```
+
+        Or:
+        ```
+        @Bot
+        ```
+    """
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         logger.info(

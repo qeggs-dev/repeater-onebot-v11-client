@@ -1,7 +1,10 @@
 from ...assist import PersonaInfo, SendMsg
-from ...command_register import CommandCaller, CommandPackage
+from ...command_register import(
+    CommandCaller,
+    CommandPackage,
+    CmdType
+)
 from .._clients import ChatClient
-
 
 @CommandCaller.register
 class BreakChatTask(CommandPackage):
@@ -14,10 +17,7 @@ class BreakChatTask(CommandPackage):
         "BreakChatTask",
         "BREAK_CHAT_TASK",
     }
-
-    @property
-    def component(self) -> str:
-        return f"Status.{self.__class__.__name__}"
+    cmd_type = CmdType.STATUS
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

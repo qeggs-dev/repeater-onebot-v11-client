@@ -11,9 +11,10 @@ from ._text_render import TextRender
 from ._response import Response
 from .chattts import ChatTTSAPI
 from typing import (
-    Callable,
     Any,
+    Callable,
     NoReturn,
+    Coroutine,
     TypeVar,
     Type,
     Literal,
@@ -52,6 +53,18 @@ class SendMsg:
     
     def clear_prefix(self):
         self._prefix = Message()
+    
+    def __call__(
+            self,
+            message: str | Message,
+            reply: bool = True,
+            continue_handler: bool = False,
+        ) -> Coroutine[Any, Any, None | NoReturn]:
+        return self.send_prompt(
+            message = message,
+            reply = reply,
+            continue_handler = continue_handler,
+        )
     
     @property
     def is_debug_mode(self) -> bool:

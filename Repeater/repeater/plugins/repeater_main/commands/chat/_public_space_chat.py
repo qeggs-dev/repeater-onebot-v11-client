@@ -14,6 +14,14 @@ class PublicSpaceChat(BaseChat):
         "PublicSpaceChat",
         "Public_Space_Chat"
     }
+    documents = f"""
+        Send a message in public space.
+        
+        Usage:
+        ```
+        /{cmd} [text]
+        ```
+    """
 
     def get_client(self, persona_info: PersonaInfo):
         return ChatClient(persona_info, persona_info.public_namespace_str)

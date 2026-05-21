@@ -17,6 +17,16 @@ class GenerateCandidateAnswer(BaseChat):
         "GenerateCandidateAnswer",
         "GENERATE_CANDIDATE_ANSWER"
     }
+    documents = f"""
+        Initiate a text generation request in the opposite role,
+        let AI mimic user-generated content.
+        Warning: the presence of Tool Calls may cause an error in your application.
+        
+        Usage:
+        ```
+        /{cmd}
+        ```
+    """
 
     metadata_pattern = re.compile(r"> Message\s*?Metadata:.*?---(?:\r?\n)+", re.DOTALL | re.IGNORECASE)
 

@@ -15,6 +15,14 @@ class ChatKeepAnswering(BaseChat):
         "KeepAnswering",
         "KEEP_ANSWERING"
     }
+    documents = f"""
+        Let the AI continue generating content. (sending an empty message) 
+        
+        Usage:
+        ```
+        /{cmd}
+        ```
+    """
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

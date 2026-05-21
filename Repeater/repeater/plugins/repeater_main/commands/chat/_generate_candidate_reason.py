@@ -17,6 +17,16 @@ class GenerateCandidateReason(BaseChat):
         "GenerateCandidateReason",
         "GENERATE_CANDIDATE_REASON"
     }
+    documents = f"""
+        Initiate a text generation request in the opposite role and enable inference mode,
+        let AI simulate user-generated content.
+        Warning: the presence of a tool call may cause an application error.
+        
+        Usage:
+        ```
+        /{cmd}
+        ```
+    """
 
     metadata_pattern = re.compile(r"> Message\s*?Metadata:.*?---(?:\r?\n)+", re.DOTALL | re.IGNORECASE)
 

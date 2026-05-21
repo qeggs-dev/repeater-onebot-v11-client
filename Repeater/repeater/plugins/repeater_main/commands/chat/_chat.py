@@ -11,6 +11,15 @@ class Chat(BaseChat):
         "Chat",
         "CHAT"
     }
+    documents = f"""
+        Initiates a text generation request
+        Return content to force text output.
+        
+        Usage:
+        ```
+        /{cmd} [text]
+        ```
+    """
 
     async def send_chat_send_msg(
         self,

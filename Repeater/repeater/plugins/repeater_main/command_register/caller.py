@@ -2,7 +2,7 @@ import json
 from .package import CommandPackage
 from ..assist import PersonaInfo, SendMsg
 from ..client_net_configs import storage_configs
-from typing import Type, Callable, Awaitable, TypeVar
+from typing import Iterator, Type, Callable, Awaitable, TypeVar
 from nonebot import on_command, on_message
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg
@@ -90,7 +90,7 @@ class CommandCaller:
                     raise ValueError(f"{package_instance.listen_type} is not supported")
             
             matcher.append_handler(handler)
-            cls.commands[package] = package
+            cls.commands[package] = package_instance
             package_instance.on_registed()
         return package
     
@@ -101,7 +101,7 @@ class CommandCaller:
                 matcher = on_command(
                     cmd = package.cmd,
                     rule = package.rule,
-                    aliases = set(package.aliases),
+                    aliases = set(package.aliases) if isinstance(package.aliases, set) else None,
                     force_whitespace = package.force_whitespace,
                     permission = package.permission,
                     handlers = package.handlers,

@@ -37,6 +37,9 @@ from .commands.template_render import *
 # === UserDataFile === #
 from .commands.user_file import *
 
+# === See Cmd === #
+from .commands.see_cmd import *
+
 # === SessionID === #
 from .commands.get_namespace import GetNamespace
 

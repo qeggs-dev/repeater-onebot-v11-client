@@ -12,6 +12,14 @@ class Reason(BaseChat):
         "Reason",
         "REASON"
     }
+    documents = f"""
+        The inference mode is forced to be turned on for this text generation task.
+        
+        Usage:
+        ```
+        /{cmd} [text]
+        ```
+    """
     
     async def send_message(
         self,

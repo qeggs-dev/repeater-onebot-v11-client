@@ -1,7 +1,10 @@
 from ....assist import PersonaInfo, SendMsg
-from ....command_register import CommandCaller, CommandPackage
+from ....command_register import(
+    CommandCaller,
+    CommandPackage,
+    CmdType
+)
 from ..._clients import ContextClient, PromptClient, ConfigClient
-
 
 @CommandCaller.register
 class ChangeSession(CommandPackage):
@@ -14,10 +17,7 @@ class ChangeSession(CommandPackage):
         "ChangeSession",
         "CHANGE_SESSION",
     }
-
-    @property
-    def component(self) -> str:
-        return f"Mixed.{self.__class__.__name__}"
+    cmd_type = CmdType.BRANCH_MIXED
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

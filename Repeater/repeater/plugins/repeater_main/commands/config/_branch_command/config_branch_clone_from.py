@@ -1,5 +1,5 @@
 from ....assist import PersonaInfo
-from ....command_register import CommandCaller
+from ....command_register import CommandCaller, CmdType
 from ..._bases import CloneBranchFrom
 from ..._clients import ConfigClient
 
@@ -15,6 +15,7 @@ class ConfigBranchCloneFrom(CloneBranchFrom):
         "ConfigBranchCloneFrom",
         "CONFIG_BRANCH_CLONE_FROM",
     }
+    cmd_type = CmdType.BRANCH_CONFIG
 
     def get_client(self, persona_info: PersonaInfo) -> ConfigClient:
         return ConfigClient(persona_info)

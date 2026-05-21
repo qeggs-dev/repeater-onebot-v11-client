@@ -2,7 +2,11 @@ import random
 import asyncio
 from typing import Any
 from ...assist import PersonaInfo, SendMsg, MessageSource
-from ...command_register import CommandCaller, CommandPackage
+from ...command_register import(
+    CommandCaller,
+    CommandPackage,
+    CmdType
+)
 
 
 @CommandCaller.register
@@ -16,10 +20,7 @@ class ChooseGroupMember(CommandPackage):
         "ChooseGroupMember",
         "CHOOSE_GROUP_MEMBER",
     }
-
-    @property
-    def component(self) -> str:
-        return f"More.{self.__class__.__name__}"
+    cmd_type = CmdType.OTHER
 
     @staticmethod
     def generate_text(choiced: list[dict[str, Any]]) -> str:

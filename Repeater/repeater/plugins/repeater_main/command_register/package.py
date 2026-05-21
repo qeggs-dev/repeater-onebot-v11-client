@@ -1,4 +1,5 @@
 import httpx
+import textwrap
 
 from abc import (
     ABC,
@@ -9,6 +10,7 @@ from ..assist import (
     SendMsg
 )
 from .listen_type import ListenType
+from .cmd_type import CmdType
 from .exceptions import *
 from datetime import (
     datetime,
@@ -85,14 +87,37 @@ class CommandPackage(ABC, Generic[T]):
     state: T_State | None = None
     """Default state"""
 
-    component: str = None
-    """The human-readable name of the Handler (required) """
+    cmd_type: CmdType = CmdType.RESERVED
+    """Command Type"""
 
     enabled: bool = True
     """Whether the handler."""
 
     empty_handler: bool = False
     """Whether the Handler is empty (you can not use any of the hooks in the package after setting it) """
+
+    documents: str | list[str] | None = None
+    """This handler's documentation"""
+
+    @property
+    def component(self) -> str:
+        """The human-readable name of the Handler (required) """
+        return f"Repeater.{self.cmd_type.value}.{self.__class__.__name__}"
+    
+    @property
+    def description(self) -> str:
+        """Handler description"""
+        
+        text = ""
+
+        if isinstance(self.documents, str):
+            text = textwrap.dedent(
+                self.documents.expandtabs(4)
+            )
+        elif isinstance(self.documents, list):
+            text = "\n".join(self.documents)
+        
+        return text
 
     async def message_enter(self, bot: Bot, event: MessageEvent, matcher: Type[Matcher]) -> tuple[PersonaInfo, SendMsg]:
         """
@@ -187,10 +212,10 @@ class CommandPackage(ABC, Generic[T]):
         if isinstance(exception, NoneBotException):
             raise
         elif isinstance(exception, RepeaterCommandException):
-            if isinstance(exception, BreakHandler) or isinstance(exception, ExitHandler):
-                pass
-            elif isinstance(exception, BreakWithErrorMessage):
+            if isinstance(exception, BreakWithErrorMessage):
                 await send_msg.send_error(str(exception))
+            elif isinstance(exception, BreakHandler) or isinstance(exception, ExitHandler):
+                pass
         elif isinstance(exception, httpx.HTTPStatusError):
             await send_msg.send_http_status(
                 http_status = exception.response.status_code,

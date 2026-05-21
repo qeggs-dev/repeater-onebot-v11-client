@@ -1,6 +1,10 @@
 from nonebot import logger
 from ....assist import PersonaInfo, SendMsg
-from ....command_register import CommandCaller, CommandPackage
+from ....command_register import(
+    CommandCaller,
+    CommandPackage,
+    CmdType
+)
 from ....storage import async_text_storage
 from ..._clients import PromptClient, ChatClient
 from ._default_meta_prompt import META_PROMPT
@@ -17,10 +21,7 @@ class GeneratePrompt(CommandPackage):
         "GeneratePrompt",
         "GENERATE_PROMPT",
     }
-
-    @property
-    def component(self) -> str:
-        return f"Mixed.{self.__class__.__name__}"
+    cmd_type = CmdType.MIXED
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

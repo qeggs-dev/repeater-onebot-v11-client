@@ -13,6 +13,15 @@ class RenderChat(BaseChat):
         "RenderChat",
         "RENDER_CHAT"
     }
+    documents = f"""
+        Initiates a text generation request,
+        Return content to force image output.
+        
+        Usage:
+        ```
+        /{cmd} [text]
+        ```
+    """
 
     async def send_chat_send_msg(
         self,

@@ -1,5 +1,5 @@
 from ....assist import PersonaInfo, SendMsg
-from ....command_register import CommandCaller
+from ....command_register import CommandCaller, CmdType
 from ..._bases import BranchInfo, BranchType
 from ..._clients import ContextClient
 
@@ -15,7 +15,7 @@ class ContextBranchInfo(BranchInfo):
         "ContextBranchInfo",
         "CONTEXT_BRANCH_INFO",
     }
-    branch_type = BranchType.Context
+    cmd_type = CmdType.BRANCH_CONTEXT
 
     def get_client(self, persona_info: PersonaInfo) -> ContextClient:
         return ContextClient(persona_info)

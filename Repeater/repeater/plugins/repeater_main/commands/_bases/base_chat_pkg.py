@@ -3,12 +3,10 @@ from ...logger import logger
 
 from .._clients import ChatClient, ChatSendMsg
 from ...assist import PersonaInfo, SendMsg
-from ...command_register import CommandPackage
+from ...command_register import CommandPackage, CmdType
 
 class BaseChat(CommandPackage):
-    @property
-    def component(self) -> str:
-        return f"Chat.{self.__class__.__name__}"
+    cmd_type = CmdType.CHAT
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         logger.info(

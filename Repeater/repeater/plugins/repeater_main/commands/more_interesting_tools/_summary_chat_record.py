@@ -1,6 +1,10 @@
 import asyncio
 from ...assist import PersonaInfo, SendMsg, MessageSource
-from ...command_register import CommandCaller, CommandPackage
+from ...command_register import(
+    CommandCaller,
+    CommandPackage,
+    CmdType
+)
 from .._clients import ChatClient, ChatSendMsg
 
 
@@ -15,10 +19,7 @@ class SummaryChatRecord(CommandPackage):
         "SummaryChatRecord",
         "SUMMARY_CHAT_RECORD",
     }
-
-    @property
-    def component(self) -> str:
-        return f"More.{self.__class__.__name__}"
+    cmd_type = CmdType.OTHER
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:
