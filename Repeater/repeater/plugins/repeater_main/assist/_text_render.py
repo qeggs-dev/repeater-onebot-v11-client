@@ -41,6 +41,12 @@ class TextRender:
             direct_output: bool | None = None,
             document_bottom_comment: str = ""
         ) -> Response[RendedImage]:
+        logger.info(
+            "Render text:\n{text}",
+            text = text,
+            module = "text-render"
+        )
+        
         response = await self._client.post(
             f"{TEXT_RENDER_ROUTE}/{self.namespce}",
             json={
@@ -49,12 +55,6 @@ class TextRender:
                 "document_bottom_comment": document_bottom_comment
             },
             timeout = self._timeout
-        )
-
-        logger.info(
-            "Render text:\n{text}",
-            text = text,
-            module = "text-render"
         )
         
         return Response(
