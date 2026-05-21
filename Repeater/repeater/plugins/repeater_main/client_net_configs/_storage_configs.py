@@ -22,7 +22,7 @@ class ServerAPITimeout(BaseModel):
     config: float = 10.0
     data_manager: float = 10.0
     licenses: float = 10.0
-    model_info: float = 10.0
+    model_info: float = 1200.0
     status: float = 10.0
     version: float = 10.0
     request_log: float = 1200.0
