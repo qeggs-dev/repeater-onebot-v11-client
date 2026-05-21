@@ -49,7 +49,6 @@ class RandomFortune(CommandPackage):
         return f"Total Fortune: {total:.2%}\n" + "\n".join(text_buffer)
         
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        now = datetime.now()
         at_list = persona_info.noself_at_list
         if not at_list:
             namespace = persona_info.namespace
