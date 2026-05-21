@@ -244,8 +244,10 @@ class CommandPackage(ABC, Generic[T]):
         Warning: this method is used for the main initialization process of the Package. Do not override this method.
         If you need advice try `__post_init__` method.
         """
-        if self.component is None:
-            raise ValueError(f"{self.__class__.__name__}: Component is None")
+        if isinstance(self.documents, str):
+            self.documents = textwrap.dedent(
+                self.documents.expandtabs(4)
+            )
         self.__post_init__(*args, **kwargs)
     
     def __post_init__(self):
