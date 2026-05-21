@@ -6,7 +6,8 @@ class ModelsResponse(BaseModel):
     models: list[ModelInfo] = Field(default_factory=list)
 
 class PingProviderDetails(BaseModel):
-    host: str = ""
+    host_names: list[str] = Field(default_factory=list)
+    ip: str | None = None
     time: list[float] = Field(default_factory=list)
     packet_loss: float = 0.0
     max_time: float = 0.0
@@ -14,6 +15,6 @@ class PingProviderDetails(BaseModel):
     avg_time: float = 0.0
 
 class PingProviderResponse(BaseModel):
-    successful: int = 0
+    success_count: int = 0
     average_time_spent: float = 0.0
     details: list[PingProviderDetails] = Field(default_factory=list)
