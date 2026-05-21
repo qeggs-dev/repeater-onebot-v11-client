@@ -29,7 +29,7 @@ class RandomFortune(CommandPackage):
         now = datetime.now()
         hash_value = hashlib.pbkdf2_hmac(
             "sha256",
-            namespace.namespace_str.encode("utf-8"),
+            str(namespace.user_id).encode("utf-8"),
             str(self.daily_seed(now)).encode("utf-8"),
             10 ** 5
         )
