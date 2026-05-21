@@ -19,7 +19,7 @@ class SmartAt(CommandPackage):
 
         Usage:
         ```
-        @Bot [message]
+        @Bot message
         ```
 
         Or:

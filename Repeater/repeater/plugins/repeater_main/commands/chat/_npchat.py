@@ -19,7 +19,7 @@ class NPChat(BaseChat):
         
         Usage:
         ```
-        /{cmd} [text]
+        /{cmd} text
         ```
     """
     

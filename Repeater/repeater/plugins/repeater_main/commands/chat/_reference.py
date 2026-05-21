@@ -18,7 +18,7 @@ class Reference(BaseChat):
         
         Usage:
         ```
-        /{cmd} @[somebody] [text]
+        /{cmd} @somebody text
         ```
     """
     
