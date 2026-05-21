@@ -17,6 +17,14 @@ class CmdTypes(CommandPackage):
         "CMD_TYPES"
     }
     cmd_type = CmdType.SEE_CMD
+    documents = f"""
+        List all command types.
+
+        Usage:
+        ```
+        /{cmd}
+        ```
+    """
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         commands_count: dict[CmdType, int] = {}

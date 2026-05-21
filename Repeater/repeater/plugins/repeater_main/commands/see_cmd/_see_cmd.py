@@ -19,6 +19,14 @@ class SeeCmd(CommandPackage):
         "SEE_CMD"
     }
     cmd_type = CmdType.SEE_CMD
+    documents = f"""
+        View the details of the specified command.
+
+        Usage:
+        ```
+        /{cmd} command
+        ```
+    """
     
     @classmethod
     def match_command(cls, cmd: str | tuple[str, ...], cmd_name: str, delimiters: Iterable[str]):
