@@ -24,4 +24,5 @@ class CmdType(Enum):
     SENDMSG = "SENDMSG"
     NAMESPACE = "NAMESPACE"
     STATISTIC = "STATISTIC"
+    GAMES = "GAMES"
     OTHER = "OTHER"
