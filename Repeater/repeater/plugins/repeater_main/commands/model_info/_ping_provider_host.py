@@ -38,13 +38,21 @@ class PingProviderHost(CommandPackage):
                 await send_msg.send_error("Error: No Model Data")
             else:
                 text_buffer: list[str] = []
-                text_buffer.append(f"Successful Times: {ping_response.successful}")
+                text_buffer.append(f"Successful Times: {ping_response.success_count}")
                 text_buffer.append(f"Average Time Spent: {ping_response.average_time_spent}")
                 for detail in ping_response.details:
+                    text_buffer.append("")
+                    text_buffer.append(f"**Host** [{detail.ip}]:")
+                    text_buffer.append(f"**names:**")
+                    for name in detail.host_names:
+                        text_buffer.append(f"  - `{name}`")
+                    text_buffer.append(f"**times:**")
                     for time in detail.time:
-                        text_buffer.append(f"- Ping [{detail.host}] in {time}ms")
-                    text_buffer.append(f"- Ping [{detail.host}] avg {detail.avg_time}ms ({detail.min_time}ms ~ {detail.max_time}ms)")
-                    text_buffer.append(f"- Ping [{detail.host}] packet loss {detail.packet_loss:.2%}")
-                await send_msg.send_check_length_prompt("\n".join(text_buffer))
+                        text_buffer.append(f"  - {time}")
+                    text_buffer.append(f"**packet loss:** {detail.packet_loss}")
+                    text_buffer.append(f"**max time:** {detail.max_time}")
+                    text_buffer.append(f"**min time:** {detail.min_time}")
+                    text_buffer.append(f"**avg time:** {detail.avg_time}")
+                await send_msg.send_render_prompt("\n".join(text_buffer))
         else:
             await send_msg.send_response_check_code(response)
