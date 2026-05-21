@@ -40,6 +40,9 @@ from .commands.user_file import *
 # === See Cmd === #
 from .commands.see_cmd import *
 
+# === Games === #
+from .commands.games import *
+
 # === SessionID === #
 from .commands.get_namespace import GetNamespace
 
