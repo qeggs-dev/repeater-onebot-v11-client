@@ -63,6 +63,19 @@ class PersonaInfo:
         persona_info._enter_type = EnterType.Horizontal
         return persona_info
     
+    def namespace_from_this_group(self, user_id: int):
+        if self._source == MessageSource.GROUP:
+            return Namespace(
+                mode = MessageSource.GROUP,
+                group_id = self._group_id,
+                user_id = user_id
+            )
+        else:
+            return Namespace(
+                mode = MessageSource.PRIVATE,
+                user_id = user_id
+            )
+    
     @property
     def enter_type(self) -> EnterType:
         return self._enter_type
