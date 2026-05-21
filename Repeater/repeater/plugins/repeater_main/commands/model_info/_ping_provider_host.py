@@ -41,6 +41,7 @@ class PingProviderHost(CommandPackage):
                 text_buffer.append(f"Successful Times: {ping_response.success_count}")
                 text_buffer.append(f"Average Time Spent: {ping_response.average_time_spent}")
                 for detail in ping_response.details:
+                    statistics = detail.to_statistics()
                     text_buffer.append("")
                     text_buffer.append(f"**Host** [{detail.ip}]:")
                     text_buffer.append(f"**names:**")
@@ -50,9 +51,13 @@ class PingProviderHost(CommandPackage):
                     for time in detail.time:
                         text_buffer.append(f"  - {time}")
                     text_buffer.append(f"**packet loss:** {detail.packet_loss}")
-                    text_buffer.append(f"**max time:** {detail.max_time}")
-                    text_buffer.append(f"**min time:** {detail.min_time}")
-                    text_buffer.append(f"**avg time:** {detail.avg_time}")
+                    text_buffer.append(f"**max time:** {statistics.max}")
+                    text_buffer.append(f"**min time:** {statistics.min}")
+                    text_buffer.append(f"**avg time:** {statistics.mean}")
+                    text_buffer.append(f"**median time:** {statistics.median}")
+                    text_buffer.append(f"**standard deviation:** {statistics.std}")
+                    text_buffer.append(f"**variance:** {statistics.var}")
+                    text_buffer.append(f"**coefficient of variation:** {statistics.cv}")
                 await send_msg.send_render_prompt("\n".join(text_buffer))
         else:
             await send_msg.send_response_check_code(response)
