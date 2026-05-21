@@ -42,6 +42,7 @@ class StorageConfigs(BaseModel):
     camouflage: Camouflage = Field(default_factory = Camouflage)
     download_image_timeout: float = 600.0
     summarize_and_contract_default_message: str = "System Message: please sum up all the contents above."
+    ciallo_content: str = "Ciallo~ (∠・ω< )⌒★"
     branch_file_size_use_abbreviation: bool = True
     hash_user_id: bool = False
     allow_send_any_message: bool = False
