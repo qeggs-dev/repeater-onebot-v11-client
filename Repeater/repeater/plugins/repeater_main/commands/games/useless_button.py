@@ -19,6 +19,14 @@ class UselessButton(CommandPackage):
         "USELESS_BUTTON"
     }
     cmd_type = CmdType.GAMES
+    documents = f"""
+        A useless button.
+
+        Usage:
+        ```
+        /{cmd} [times]
+        ```
+    """
 
     @staticmethod
     def button():

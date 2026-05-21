@@ -20,6 +20,12 @@ class RandomFortune(CommandPackage):
         "RANDOM_FORTUNE"
     }
     cmd_type = CmdType.GAMES
+    documents = f"""
+        Randomly generate daily fortunes.
+
+        Usage:
+          /{cmd} [@someone]
+    """
 
     @staticmethod
     def daily_seed(time: datetime) -> int:

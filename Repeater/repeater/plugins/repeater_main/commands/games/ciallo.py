@@ -14,6 +14,14 @@ class Ciallo(CommandPackage):
         "Ciallo",
     }
     cmd_type = CmdType.GAMES
+    description = f"""
+        Ciallo~ (∠・ω< )⌒★
+
+        Usage:
+        ```
+        /{cmd}
+        ```
+    """
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         await send_msg.send_text(storage_configs.ciallo_content)
