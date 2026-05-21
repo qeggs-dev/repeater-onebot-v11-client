@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from typing import Generic, TypeVar
 from ..config_loader import Loader, Mode
+from ._useless_button_words import useless_button_words
 
 T = TypeVar("T")
 
@@ -48,6 +49,8 @@ class StorageConfigs(BaseModel):
     allow_send_any_message: bool = False
     model_first_chunk_timeout: int | float | None = 90.0
     print_handler_info: bool = False
+    useless_button_words: list[str] = Field(default_factory=lambda: useless_button_words)
+    useless_button_missing: str = "The button buzzed away."
 
 loader: Loader[StorageConfigs] = Loader(
     model=StorageConfigs,
