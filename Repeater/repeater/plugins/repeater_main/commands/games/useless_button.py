@@ -30,7 +30,7 @@ class UselessButton(CommandPackage):
 
     @staticmethod
     def button():
-        button_hit = (random.randint(0, 50) == 25)
+        button_hit = (random.randint(0, 100) == 25)
         if button_hit:
             word = random.choice(storage_configs.useless_button_words)
             return word
@@ -46,9 +46,11 @@ class UselessButton(CommandPackage):
         
         if times == 1:
             results = [self.button()]
+        elif times > 10:
+            await send_msg.send_error("The number of times cannot be greater than 10.")
         elif times > 1:
             results = [f"{i}. {self.button()}" for i in range(1, times + 1)]
         else:
-            results = ["The number of times cannot be less than 1."]
+            await send_msg.send_error("The number of times cannot be less than 1.")
 
         await send_msg.send_check_length("\n".join(results))
