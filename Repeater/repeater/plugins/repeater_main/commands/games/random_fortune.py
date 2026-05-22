@@ -31,12 +31,20 @@ class RandomFortune(CommandPackage):
     def daily_seed(time: datetime) -> int:
         return time.year ^ time.month ^ time.day
     
-    def see_fortune(self, user_ids: list[str]):
-        now = datetime.now()
+    @staticmethod
+    def int_to_bytes(n: int, byteorder: str = "big", signed: bool = False) -> bytes:
+        length = (n.bit_length() + 7) // 8
+        if signed and n < 0:
+            length = (n.bit_length() + 8) // 8
+        return n.to_bytes(length, byteorder, signed=signed)
+    
+    @classmethod
+    def see_fortune(cls, now: datetime, user_ids: list[str]):
+        daily_seed = cls.daily_seed(now)
         hash_value = hashlib.pbkdf2_hmac(
             "sha256",
+            cls.int_to_bytes(daily_seed),
             ("\n".join(user_ids)).encode("utf-8"),
-            str(self.daily_seed(now)).encode("utf-8"),
             10 ** 5
         )
         seed = int.from_bytes(hash_value, "big")
@@ -60,8 +68,9 @@ class RandomFortune(CommandPackage):
         )
         
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
+        now = datetime.now()
         at_list = persona_info.noself_at_list
         user_ids = [str(persona_info.user_id)] + at_list
         
-        fortune_text = self.see_fortune(user_ids)
+        fortune_text = self.see_fortune(now, user_ids)
         await send_msg.send_prompt(fortune_text)
