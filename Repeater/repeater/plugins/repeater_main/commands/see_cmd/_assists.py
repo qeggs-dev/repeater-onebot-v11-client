@@ -24,10 +24,12 @@ async def see_cmds(
         delimiters: set[str],
         send_msg: SendMsg
     ) -> NoReturn:
-    text_buffers: list[list[str]] = []
+    text_buffers: list[str] = []
     for cmd_type in commands:
         text_buffer: list[str] = []
+        text_buffer.append(f"### Repeater.{cmd_type.value}")
         for package in commands[cmd_type]:
+            text_buffer.append("")
             text_buffer.append(f"**{package.component}**")
             text_buffer.append(f"**type**: `{cmd_type}`")
             if package.description:
@@ -57,9 +59,9 @@ async def see_cmds(
                         raise TypeError(f"{alias} is not a valid alias")
         text = "\n".join(text_buffer)
         if text:
-            text_buffers.append(text_buffer)
+            text_buffers.append(text)
     
-    text = "\n\n---\n\n".join("\n".join(buffer) for buffer in text_buffers)
+    text = "\n\n---\n\n".join(text_buffers)
     if not text:
         await send_msg.send_error("Text Buffer is Empty")
     await send_msg.send_render_prompt(text)

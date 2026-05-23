@@ -6,15 +6,15 @@ from ...command_register import(
 from ...assist import PersonaInfo, SendMsg
 
 @CommandCaller.register
-class CmdTypes(CommandPackage):
-    cmd = "cmdTypes"
+class CmdTypesList(CommandPackage):
+    cmd = "cmdTypesList"
     aliases = {
-        "ct",
-        "CT",
-        "cmd_types",
-        "Cmd_Types",
-        "CmdTypes",
-        "CMD_TYPES"
+        "ctl",
+        "CTL",
+        "cmd_types_list",
+        "Cmd_Types_List",
+        "CmdTypesList",
+        "CMD_TYPES_LIST"
     }
     cmd_type = CmdTypes.SEE_CMD
     documents = f"""

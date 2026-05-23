@@ -50,7 +50,7 @@ class CmdType(CommandPackage):
             await send_msg.send_error(f"\"{cmd_type}\" has not any commands")
         
         await see_cmds(
-            commmands = commands,
+            commands = commands,
             delimiters = delimiters,
             send_msg = send_msg
         )
