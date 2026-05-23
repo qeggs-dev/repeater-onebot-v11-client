@@ -4,7 +4,7 @@ import asyncio
 from typing import (
     Any
 )
-from ._chat_buffer import ChatBuffer
+from ._chat_buffer import ChatBufferResponse
 from .._content_role import ContentRole
 from ._response_body import ChatResponse
 from ._break_response_body import BreakResponse
@@ -199,7 +199,7 @@ class ChatClient:
             model = BreakResponse
         )
     
-    async def get_chat_buffer(self) -> Response[ChatBuffer]:
+    async def get_chat_buffer(self) -> Response[ChatBufferResponse]:
         """
         获取当前聊天缓冲区
         """
@@ -212,11 +212,11 @@ class ChatClient:
                 "Error sending message to chat core: {error}",
                 error = e
             )
-            return Response(model=ChatBuffer)
+            return Response(model=ChatBufferResponse)
 
         return Response(
             httpx_response = response,
-            model = ChatBuffer
+            model = ChatBufferResponse
         )
     
     exit_register.register()
