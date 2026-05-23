@@ -2,7 +2,7 @@ from ....assist import PersonaInfo, SendMsg
 from ....command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from ..._clients import PromptClient
 
@@ -17,7 +17,7 @@ class SetPrompt(CommandPackage):
         "SetPrompt",
         "SET_PROMPT",
     }
-    cmd_type = CmdType.PROMPT
+    cmd_type = CmdTypes.PROMPT
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

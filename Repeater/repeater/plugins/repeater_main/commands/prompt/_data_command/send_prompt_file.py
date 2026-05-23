@@ -2,7 +2,7 @@ from ....assist import PersonaInfo, SendMsg, FileSender
 from ....command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from ..._clients import PromptClient
 
@@ -18,7 +18,7 @@ class SendPromptFile(CommandPackage):
         "SendPromptFile",
         "SEND_PROMPT_FILE",
     }
-    cmd_type = CmdType.PROMPT
+    cmd_type = CmdTypes.PROMPT
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

@@ -2,7 +2,7 @@ from ...assist import PersonaInfo, SendMsg, Response
 from ...command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from .._clients import TemplateRenderClient
 
@@ -26,7 +26,7 @@ class TemplateRender(CommandPackage):
         "VarExpand",
         "VAR_EXPAND",
     }
-    cmd_type = CmdType.TEMPLATE
+    cmd_type = CmdTypes.TEMPLATE
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

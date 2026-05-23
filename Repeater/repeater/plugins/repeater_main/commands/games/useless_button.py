@@ -3,7 +3,7 @@ from ...assist import PersonaInfo, SendMsg
 from ...command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from ...client_net_configs import storage_configs
 
@@ -18,7 +18,7 @@ class UselessButton(CommandPackage):
         "UselessButton",
         "USELESS_BUTTON"
     }
-    cmd_type = CmdType.GAMES
+    cmd_type = CmdTypes.GAMES
     documents = f"""
         A useless button.
 

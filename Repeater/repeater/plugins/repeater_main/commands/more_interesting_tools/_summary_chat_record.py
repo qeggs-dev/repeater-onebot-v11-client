@@ -3,7 +3,7 @@ from ...assist import PersonaInfo, SendMsg, MessageSource
 from ...command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from .._clients import ChatClient, ChatSendMsg
 
@@ -19,7 +19,7 @@ class SummaryChatRecord(CommandPackage):
         "SummaryChatRecord",
         "SUMMARY_CHAT_RECORD",
     }
-    cmd_type = CmdType.OTHER
+    cmd_type = CmdTypes.OTHER
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

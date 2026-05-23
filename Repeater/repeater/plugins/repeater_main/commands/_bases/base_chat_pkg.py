@@ -3,10 +3,10 @@ from ...logger import logger
 
 from .._clients import ChatClient, ChatSendMsg
 from ...assist import PersonaInfo, SendMsg
-from ...command_register import CommandPackage, CmdType
+from ...command_register import CommandPackage, CmdTypes
 
 class BaseChat(CommandPackage):
-    cmd_type = CmdType.CHAT
+    cmd_type = CmdTypes.CHAT
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         logger.info(

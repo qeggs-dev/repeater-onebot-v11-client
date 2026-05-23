@@ -1,6 +1,6 @@
 from enum import Enum
 
-class CmdType(Enum):
+class CmdTypes(Enum):
     CHAT = "CHAT"
     CONTEXT = "CONTEXT"
     PROMPT = "PROMPT"

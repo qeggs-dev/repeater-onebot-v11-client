@@ -10,7 +10,7 @@ from ..assist import (
     SendMsg
 )
 from .listen_type import ListenType
-from .cmd_type import CmdType
+from .cmd_type import CmdTypes
 from .exceptions import *
 from datetime import (
     datetime,
@@ -87,7 +87,7 @@ class CommandPackage(ABC, Generic[T]):
     state: T_State | None = None
     """Default state"""
 
-    cmd_type: CmdType = CmdType.RESERVED
+    cmd_type: CmdTypes = CmdTypes.RESERVED
     """Command Type"""
 
     enabled: bool = True

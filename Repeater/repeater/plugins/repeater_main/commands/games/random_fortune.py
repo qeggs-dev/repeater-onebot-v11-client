@@ -5,7 +5,7 @@ from ...assist import PersonaInfo, SendMsg, Namespace
 from ...command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 
 @CommandCaller.register
@@ -19,7 +19,7 @@ class RandomFortune(CommandPackage):
         "RandomFortune",
         "RANDOM_FORTUNE"
     }
-    cmd_type = CmdType.GAMES
+    cmd_type = CmdTypes.GAMES
     documents = f"""
         Randomly generate daily fortunes.
 

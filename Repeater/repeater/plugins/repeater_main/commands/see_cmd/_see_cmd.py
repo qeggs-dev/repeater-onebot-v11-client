@@ -1,7 +1,7 @@
 from ...command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from ...assist import PersonaInfo, SendMsg
 from typing import Iterable
@@ -18,7 +18,7 @@ class SeeCmd(CommandPackage):
         "SeeCmd",
         "SEE_CMD"
     }
-    cmd_type = CmdType.SEE_CMD
+    cmd_type = CmdTypes.SEE_CMD
     documents = f"""
         View the details of the specified command.
 
@@ -45,7 +45,7 @@ class SeeCmd(CommandPackage):
         return {delimiter.join(cmd) for delimiter in delimiters}
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        commands: dict[CmdType, list[CommandPackage]] = {}
+        commands: dict[CmdTypes, list[CommandPackage]] = {}
 
         cmd_name = persona_info.message_striped_str
         config = get_driver().config

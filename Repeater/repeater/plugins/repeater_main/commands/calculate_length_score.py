@@ -2,7 +2,7 @@ from ..assist import PersonaInfo, SendMsg
 from ..command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 
 @CommandCaller.register
@@ -16,7 +16,7 @@ class CalculateLengthScore(CommandPackage):
         "CalculateLengthScore",
         "CALCULATE_LENGTH_SCORE",
     }
-    cmd_type = CmdType.OTHER
+    cmd_type = CmdTypes.OTHER
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

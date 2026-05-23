@@ -2,7 +2,7 @@ from ....assist import PersonaInfo, SendMsg, FileSender
 from ....command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from ..._clients import ContextClient
 
@@ -18,7 +18,7 @@ class SendContextFile(CommandPackage):
         "SendContextFile",
         "SEND_CONTEXT_FILE",
     }
-    cmd_type = CmdType.CONTEXT
+    cmd_type = CmdTypes.CONTEXT
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

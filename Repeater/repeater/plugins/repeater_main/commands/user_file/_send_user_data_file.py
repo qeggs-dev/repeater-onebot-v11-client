@@ -2,7 +2,7 @@ from ...assist import PersonaInfo, SendMsg, FileSender
 from ...command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from .._clients import UserFileClient
 
@@ -18,7 +18,7 @@ class SendUserDataFile(CommandPackage):
         "SendUserDataFile",
         "SEND_USER_DATA_FILE",
     }
-    cmd_type = CmdType.USERFILE
+    cmd_type = CmdTypes.USERFILE
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

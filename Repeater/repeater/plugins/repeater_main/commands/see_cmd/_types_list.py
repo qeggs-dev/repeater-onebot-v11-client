@@ -1,7 +1,7 @@
 from ...command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from ...assist import PersonaInfo, SendMsg
 
@@ -16,7 +16,7 @@ class CmdTypes(CommandPackage):
         "CmdTypes",
         "CMD_TYPES"
     }
-    cmd_type = CmdType.SEE_CMD
+    cmd_type = CmdTypes.SEE_CMD
     documents = f"""
         List all command types.
 
@@ -27,7 +27,7 @@ class CmdTypes(CommandPackage):
     """
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        commands_count: dict[CmdType, int] = {}
+        commands_count: dict[CmdTypes, int] = {}
         total_count: int = 0
 
         for package in CommandCaller.commands.values():

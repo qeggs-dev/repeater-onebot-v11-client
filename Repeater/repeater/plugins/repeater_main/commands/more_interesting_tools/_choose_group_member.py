@@ -5,7 +5,7 @@ from ...assist import PersonaInfo, SendMsg, MessageSource
 from ...command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 
 
@@ -20,7 +20,7 @@ class ChooseGroupMember(CommandPackage):
         "ChooseGroupMember",
         "CHOOSE_GROUP_MEMBER",
     }
-    cmd_type = CmdType.OTHER
+    cmd_type = CmdTypes.OTHER
 
     @staticmethod
     def generate_text(choiced: list[dict[str, Any]]) -> str:

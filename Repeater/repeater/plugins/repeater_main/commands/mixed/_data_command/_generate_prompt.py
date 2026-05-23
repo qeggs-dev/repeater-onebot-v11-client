@@ -3,7 +3,7 @@ from ....assist import PersonaInfo, SendMsg
 from ....command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from ....storage import async_text_storage
 from ..._clients import PromptClient, ChatClient
@@ -21,7 +21,7 @@ class GeneratePrompt(CommandPackage):
         "GeneratePrompt",
         "GENERATE_PROMPT",
     }
-    cmd_type = CmdType.MIXED
+    cmd_type = CmdTypes.MIXED
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

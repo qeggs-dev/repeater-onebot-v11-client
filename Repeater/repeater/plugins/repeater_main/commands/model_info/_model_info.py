@@ -2,7 +2,7 @@ from ...assist import PersonaInfo, SendMsg
 from ...command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from .._clients import ModelInfoClient, ModelInfo
 
@@ -17,7 +17,7 @@ class GetModelList(CommandPackage):
         "GetModelList",
         "GET_MODEL_LIST",
     }
-    cmd_type = CmdType.MODEL
+    cmd_type = CmdTypes.MODEL
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

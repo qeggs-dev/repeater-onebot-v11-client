@@ -7,7 +7,7 @@ from ..assist import (
 from ..command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from ..command_register import CommandCaller, CommandPackage
 
@@ -23,7 +23,7 @@ class GetNamespace(CommandPackage):
         "GetNamespace",
         "GET_NAMESPACE",
     }
-    cmd_type = CmdType.NAMESPACE
+    cmd_type = CmdTypes.NAMESPACE
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

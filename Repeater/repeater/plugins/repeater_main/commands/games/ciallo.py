@@ -2,7 +2,7 @@ from ...assist import PersonaInfo, SendMsg
 from ...command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from ...client_net_configs import storage_configs
 
@@ -13,7 +13,7 @@ class Ciallo(CommandPackage):
     aliases = {
         "Ciallo",
     }
-    cmd_type = CmdType.GAMES
+    cmd_type = CmdTypes.GAMES
     description = f"""
         Ciallo~ (∠・ω< )⌒★
 

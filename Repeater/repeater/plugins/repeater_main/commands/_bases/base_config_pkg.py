@@ -3,7 +3,7 @@ from typing import Any, TypeVar
 
 from .._clients import ConfigClient
 from ...assist import PersonaInfo, SendMsg, Response
-from ...command_register import CommandPackage, CmdType
+from ...command_register import CommandPackage, CmdTypes
 from enum import Enum, auto
 
 T = TypeVar("T")
@@ -17,7 +17,7 @@ class OperationType(Enum):
 class BaseConfig(CommandPackage):
     field: str = ""
     operation: OperationType = OperationType.SET
-    cmd_type = CmdType.CONFIG
+    cmd_type = CmdTypes.CONFIG
 
     async def parse_value(
             self,

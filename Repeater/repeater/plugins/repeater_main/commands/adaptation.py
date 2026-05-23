@@ -2,7 +2,7 @@ from ..assist import PersonaInfo, SendMsg
 from ..command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from ._clients import VersionAPIClient
 from .._adaptation_info import __adaptation__
@@ -19,7 +19,7 @@ class AdaptationInfo(CommandPackage):
         "AdaptationInfo",
         "ADAPTATION_INFO",
     }
-    cmd_type = CmdType.VERSION
+    cmd_type = CmdTypes.VERSION
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

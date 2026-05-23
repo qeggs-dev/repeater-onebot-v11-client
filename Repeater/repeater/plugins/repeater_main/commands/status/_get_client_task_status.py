@@ -3,7 +3,7 @@ from ...assist import PersonaInfo, SendMsg
 from ...command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from .._clients import StatusClient
 
@@ -19,7 +19,7 @@ class GetCoreTaskStatus(CommandPackage):
         "GetCoreTaskStatus",
         "GET_CORE_TASK_STATUS",
     }
-    cmd_type = CmdType.STATUS
+    cmd_type = CmdTypes.STATUS
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:
