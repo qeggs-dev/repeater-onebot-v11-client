@@ -577,7 +577,7 @@ class SendMsg:
             continue_handler: bool = False
         ): ...
     
-    async def break_handler(self) -> NoReturn:
+    def break_handler(self) -> NoReturn:
         ...
 
     async def render_text(self, text: str, direct_output: bool = False, document_bottom_comment: str = "") -> MessageSegment:
