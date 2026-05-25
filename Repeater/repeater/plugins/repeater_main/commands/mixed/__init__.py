@@ -6,6 +6,7 @@ from ._branch_command.session_bind_from import SessionBranchBindFrom
 from ._branch_command.del_session import DeleteSession
 
 from ._data_command._generate_prompt import GeneratePrompt
+from ._data_command._rewrite import Rewrite
 
 __all__ = [
     "ChangeSession",
@@ -14,5 +15,6 @@ __all__ = [
     "SessionBranchBind",
     "SessionBranchBindFrom",
     "DeleteSession",
-    "GeneratePrompt"
+    "GeneratePrompt",
+    "Rewrite"
 ]
