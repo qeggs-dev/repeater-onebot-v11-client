@@ -8,6 +8,7 @@ from ...command_register import CommandPackage, CmdTypes
 
 class BaseChat(CommandPackage):
     cmd_type = CmdTypes.CHAT
+    empty_exit: bool = True
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         logger.info(
@@ -20,7 +21,8 @@ class BaseChat(CommandPackage):
         message = persona_info.message
         if not message:
             logger.warning("Message is empty")
-            return
+            if self.empty_exit:
+                return
         
         message_text = persona_info.message_striped_str
 
