@@ -9,7 +9,7 @@ class ChatBuffer(BaseModel):
 
 class ChatBufferResponse(BaseModel):
     user_id: str = ""
-    buffers: list[ChatBuffer] = Field(default_factory=list)
+    buffers: dict[str, ChatBuffer] = Field(default_factory=dict)
 
     def __len__(self):
-        return sum(len(buffer) for buffer in self.buffers)
+        return sum(len(buffer) for buffer in self.buffers.values())

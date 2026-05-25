@@ -31,7 +31,7 @@ class GetChatBuffer(CommandPackage):
             if buffer_response is None:
                 await send_msg.send_error(response.get_error())
             else:
-                for buffer in buffer_response.buffers:
+                for task_id, buffer in buffer_response.buffers.items():
                     await send_msg.send_chat_response(
                         reasoning_content = buffer.reasoning,
                         content = buffer.content,
