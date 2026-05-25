@@ -1,8 +1,9 @@
 from typing import NoReturn
+
 from ...logger import logger
 
-from .._clients import ChatClient, ChatSendMsg
-from ...assist import PersonaInfo, SendMsg
+from .._clients import ChatClient, ChatSendMsg, ChatResponse
+from ...assist import PersonaInfo, SendMsg, Response
 from ...command_register import CommandPackage, CmdTypes
 
 class BaseChat(CommandPackage):
@@ -83,8 +84,8 @@ class BaseChat(CommandPackage):
         message: str,
         persona_info: PersonaInfo,
         send_msg: SendMsg
-    ) -> str:
-        response = await client.send_message(
+    ) -> Response[ChatResponse]:
+        response: Response[ChatResponse] = await client.send_message(
             message = message,
             image_url = images,
             audio_url = audios,
