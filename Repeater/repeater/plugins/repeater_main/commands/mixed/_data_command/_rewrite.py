@@ -31,7 +31,7 @@ class Rewrite(BaseChat):
         persona_info: PersonaInfo,
         send_msg: SendMsg
     ) -> str:
-        context_client = ContextClient(client)
+        context_client = ContextClient(persona_info)
         response = await context_client.withdraw()
         
         if response:
