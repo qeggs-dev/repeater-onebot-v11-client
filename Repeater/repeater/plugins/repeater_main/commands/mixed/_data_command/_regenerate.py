@@ -1,0 +1,69 @@
+from nonebot import logger
+from ....assist import PersonaInfo, SendMsg
+from ....command_register import(
+    CommandCaller,
+    CmdTypes
+)
+from ....storage import async_text_storage
+from ..._clients import ContextClient, ChatClient, ContentRole
+from ..._bases import BaseChat
+from ._default_meta_prompt import META_PROMPT
+
+
+@CommandCaller.register
+class Regenerate(BaseChat):
+    cmd = "regenerate"
+    aliases = {
+        "reg",
+        "REG",
+        "Regenerate",
+        "REGENERATE",
+    }
+    cmd_type = CmdTypes.MIXED
+    empty_exit: bool = False
+ 
+    async def send_message(
+        self,
+        client: ChatClient,
+        images: list[str],
+        audios: list[str],
+        videos: list[str],
+        message: str,
+        persona_info: PersonaInfo,
+        send_msg: SendMsg
+    ) -> str:
+        context_client = ContextClient(persona_info)
+        response = await context_client.withdraw()
+        
+        if response:
+            data = response.get_data()
+            if data is None:
+                await send_msg.send_error(
+                    "Unable to process data."
+                )
+                return
+            await send_msg.send_prompt(
+                (
+                    f"Deleted: {data.deleted}\n"
+                    f"Remaining: {len(data.context)}\n"
+                ),
+                continue_handler = True
+            )
+        else:
+            await send_msg.send_response_check_code(response, "Withdraw Failed")
+        
+        context = data.deleted_context
+        user_input: list[str] = []
+        for unit in context:
+            if unit.role == ContentRole.USER: 
+                user_input.append(unit.content)
+
+        return await super().send_message(
+            client,
+            images,
+            audios,
+            videos,
+            "\n\n".join(user_input),
+            persona_info,
+            send_msg
+        )
