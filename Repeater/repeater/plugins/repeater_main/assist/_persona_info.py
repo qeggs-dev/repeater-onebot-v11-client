@@ -1,7 +1,7 @@
 from __future__ import annotations
 from nonebot import get_bots
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment, Message
-from typing import Literal, Container
+from typing import AsyncGenerator, Container
 from ._assist_func import (
     handle_at_with_name,
     image_to_text
@@ -23,6 +23,8 @@ class PersonaInfo:
         self._source: MessageSource = MessageSource.GROUP
         self._source = MessageSource(event.message_type.strip().lower())
         self._enter_type: EnterType = EnterType.Command
+        self._raw_message_event: MessageEvent | None = None
+        self._self_id: int = int(bot.self_id)
 
         if self._source == MessageSource.GROUP:
             try:
@@ -63,6 +65,32 @@ class PersonaInfo:
         persona_info._enter_type = EnterType.Horizontal
         return persona_info
     
+    async def from_reference_chain(self) -> AsyncGenerator[PersonaInfo, None]:
+        async for event in self.get_reply_chain():
+            persona_info = self.__class__(
+                bot = self.bot,
+                event = event
+            )
+            yield persona_info
+    
+    async def from_reference(self) -> PersonaInfo | None:
+        event = await self.get_raw_message_event()
+        reply_id: str | None = None
+        for message in event.message:
+            if message.type == "reply":
+                reply_id = message.data["id"]
+                break
+        if reply_id is None:
+            return None
+        response = await self.bot.get_msg(message_id = reply_id)
+        response["post_type"] = "message"
+        reply_event = MessageEvent(**response)
+        persona_info = self.__class__(
+            bot = self.bot,
+            event = reply_event
+        )
+        return persona_info
+    
     def namespace_from_this_group(self, user_id: int):
         if self._source == MessageSource.GROUP:
             return Namespace(
@@ -96,6 +124,14 @@ class PersonaInfo:
         return self.user_id in self.superusers
     
     @property
+    def is_self(self) -> bool:
+        return self.user_id == self.self_id
+    
+    @property
+    def self_id(self) -> int:
+        return self._self_id
+    
+    @property
     def superusers(self) -> set[int]:
         return self._superusers.copy()
     
@@ -112,6 +148,7 @@ class PersonaInfo:
     @property
     def user_id (self) -> int:
         return self._message_event.user_id
+    
     @property
     def nickname(self) -> str | None:
         return self._message_event.sender.nickname
@@ -300,35 +337,40 @@ class PersonaInfo:
                 urls.append(msg.data["url"])
         return urls
     
-    async def get_audio_url(self) -> list[str]:
+    def get_audio_url(self) -> list[str]:
         urls: list[str] = []
         for msg in self.message:
             if msg.type == "record":
                 urls.append(msg.data["url"])
         return urls
     
-    async def get_reply_chain(self) -> list[MessageEvent]:
+    async def get_reply_chain(self) -> AsyncGenerator[MessageEvent, None]:
         """
         获取回复链
 
         注：解析时，它会默认消息段中只有一个 reply 消息段，
         如果有存在多个，那么它将会在该部分直接退出解析
         """
-        msgs: list[MessageEvent] = []
-        message: Message = self._message_event.message
-        while True:
-            reply_messages = await self.get_reply_msgs(message)
-            if len(reply_messages) == 1:
-                event = reply_messages[0]
-                msgs.append(event)
-                message = event.message
-            else:
-                break
-        if not msgs:
-            logger.warning(
-                "Reply chain is not found"
-            )
-        return msgs
+        event = await self.get_raw_message_event()
+        message: Message = event.message
+        times: int = 0
+        try:
+            while True:
+                if times > storage_configs.max_reply_chain_length:
+                    break
+                reply_messages = await self.get_reply_msgs(message)
+                if len(reply_messages) == 1:
+                    event = reply_messages[0]
+                    yield event
+                    message = event.message
+                else:
+                    break
+                times += 1
+        finally:
+            if times == 0:
+                logger.warning(
+                    "Reply chain is not found"
+                )
     
     async def get_reply_msgs(self, message: Message | None = None) -> list[MessageEvent]:
         msgs: list[MessageEvent] = []
@@ -337,6 +379,9 @@ class PersonaInfo:
         for msg in message:
             if msg.type == "reply":
                 reply_msg = await self._bot.get_msg(message_id=msg.data["id"])
+
+                # 兼容 MessageEvent
+                reply_msg["post_type"] = "message"
                 msgs.append(
                     MessageEvent(**reply_msg)
                 )
@@ -391,3 +436,11 @@ class PersonaInfo:
         if validation_failure_counter > 0:
             text_buffer.append(f"Validation Failure: {validation_failure_counter}")
         return "\n".join(text_buffer)
+    
+    async def get_raw_message_event(self) -> MessageEvent:
+        response = await self.bot.get_msg(
+            message_id = self.message_id
+        )
+        # 兼容 MessageEvent
+        response["post_type"] = "message"
+        return MessageEvent(**response)
