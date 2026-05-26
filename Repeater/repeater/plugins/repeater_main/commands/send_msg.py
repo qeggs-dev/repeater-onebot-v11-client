@@ -24,6 +24,7 @@ class SendMessage(CommandPackage):
         "SEND_MESSAGE",
     }
     cmd_type = CmdTypes.SENDMSG
+    superuser_permissions = True
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:
