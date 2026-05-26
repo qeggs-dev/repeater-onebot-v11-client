@@ -27,30 +27,12 @@ class GenerateCandidateAnswer(BaseChat):
         /{cmd}
         ```
     """
+    no_input = True
 
     metadata_pattern = re.compile(r"> Message\s*?Metadata:.*?---(?:\r?\n)+", re.DOTALL | re.IGNORECASE)
 
-    async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        if send_msg.is_debug_mode:
-            await send_msg.send_debug_mode()
-
-        message_text = persona_info.message_striped_str
-
-        logger.info(
-            "Received a message {message} from {namespace}",
-            message = message_text,
-            namespace = persona_info.namespace_str,
-            module = send_msg.component
-        )
-        
-        reply_msgs = await persona_info.get_reply_chain()
-        if reply_msgs:
-            reply_msgs_text = persona_info.generates_text_from_messages_list(reply_msgs)
-            reply_msgs_text = reply_msgs_text.replace("\n", "\n> ")
-
+    async def send_message(self, persona_info: PersonaInfo, send_msg: SendMsg):
         core = ChatClient(persona_info)
-
-        images: list[str] = await persona_info.get_images_url()
 
         response = await core.send_message(
             message = None,
@@ -66,18 +48,9 @@ class GenerateCandidateAnswer(BaseChat):
                 ContentRole.ASSISTANT: ContentRole.USER,
                 ContentRole.SYSTEM: None,
                 ContentRole.TOOLS: None
-            },
-            image_url = images
+            }
         )
 
-        def filters(message: str) -> str:
-            return self.metadata_pattern.sub("", message)
-
-        send_msg = ChatSendMsg(
-            send_msg.component,
-            persona_info,
-            send_msg.matcher,
-            response,
-            content_handler = filters
-        )
-        await send_msg.send()
+    @classmethod
+    def filters(cls, message: str) -> str:
+        return cls.metadata_pattern.sub("", message)
