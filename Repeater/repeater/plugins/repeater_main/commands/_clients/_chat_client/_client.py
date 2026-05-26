@@ -1,3 +1,4 @@
+import re
 import httpx
 import asyncio
 
@@ -28,6 +29,7 @@ class ChatClient:
         transport = HTTPTransport(),
         verify = get_ssl_context()
     )
+    metadata_pattern = re.compile(r"> Message\s*?Metadata:.*?---(?:\r?\n)+", re.DOTALL | re.IGNORECASE)
     
     def __init__(self, persona_info: PersonaInfo, namespace: str | None = None):
         self._persona_info = persona_info
