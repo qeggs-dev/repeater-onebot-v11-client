@@ -29,8 +29,6 @@ class GenerateCandidateAnswer(BaseChat):
     """
     no_input = True
 
-    metadata_pattern = re.compile(r"> Message\s*?Metadata:.*?---(?:\r?\n)+", re.DOTALL | re.IGNORECASE)
-
     async def send_message(self, persona_info: PersonaInfo, send_msg: SendMsg):
         core = ChatClient(persona_info)
 
@@ -51,6 +49,6 @@ class GenerateCandidateAnswer(BaseChat):
             }
         )
 
-    @classmethod
-    def filters(cls, message: str) -> str:
-        return cls.metadata_pattern.sub("", message)
+    @staticmethod
+    def filters(message: str) -> str:
+        return ChatClient.metadata_pattern.sub("", message)
