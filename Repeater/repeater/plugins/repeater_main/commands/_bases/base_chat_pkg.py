@@ -56,7 +56,7 @@ class BaseChat(CommandPackage):
             videos: list[str] = persona_info.get_video_url()
             
             reply_msg = await persona_info.from_reference()
-            if not reply_msg.is_self:
+            if reply_msg is not None and not reply_msg.is_self:
                 reply_msgs = persona_info.from_reference_chain()
                 reply_msgs_texts: list[str] = []
                 async for msg in reply_msgs:
