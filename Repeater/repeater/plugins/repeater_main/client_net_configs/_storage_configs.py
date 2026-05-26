@@ -48,6 +48,7 @@ class StorageConfigs(BaseModel):
     hash_user_id: bool = False
     allow_send_any_message: bool = False
     model_first_chunk_timeout: int | float | None = 90.0
+    max_reply_chain_length: int = 5
     print_handler_info: bool = False
     useless_button_words: list[str] = Field(default_factory=lambda: useless_button_words)
     useless_button_missing: str = "The button buzzed away."
