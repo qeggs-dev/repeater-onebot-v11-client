@@ -1,7 +1,7 @@
 from typing import NoReturn, ClassVar
+from itertools import chain
 
 from ...logger import logger
-
 from .._clients import ChatClient, ChatSendMsg, ChatResponse
 from ...assist import PersonaInfo, SendMsg, Response
 from ...command_register import CommandPackage, CmdTypes
@@ -54,6 +54,10 @@ class BaseChat(CommandPackage):
             images: list[str] = await persona_info.get_images_url()
             audios: list[str] = persona_info.get_audio_url()
             videos: list[str] = persona_info.get_video_url()
+
+            images_list: list[list[str]] = [images]
+            audios_list: list[list[str]] = [audios]
+            videos_list: list[list[str]] = [videos]
             
             reply_msgs = persona_info.from_reference_chain()
             reply_msgs_texts: list[str] = []
@@ -66,9 +70,9 @@ class BaseChat(CommandPackage):
                 reply_msgs_audios: list[str] = msg.get_audio_url()
                 reply_msgs_videos: list[str] = msg.get_video_url()
 
-                images.extend(reply_msgs_images)
-                audios.extend(reply_msgs_audios)
-                videos.extend(reply_msgs_videos)
+                images_list.append(reply_msgs_images)
+                audios_list.append(reply_msgs_audios)
+                videos_list.append(reply_msgs_videos)
 
             reply_msgs_text = "\n\n".join(reply_msgs_texts)
             reply_msgs_text = reply_msgs_text.replace("\n", "\n> ")
@@ -78,10 +82,16 @@ class BaseChat(CommandPackage):
                     message_text = f"Reply messages:\n{reply_msgs_text}\n\n---\n\n{message_text}"
                 else:
                     message_text = reply_msgs_text
+            
+            # 恢复消息顺序
+            images = list(chain.from_iterable(reversed(images_list)))
+            audios = list(chain.from_iterable(reversed(audios_list)))
+            videos = list(chain.from_iterable(reversed(videos_list)))
 
             if not images:
                 if not message_text:
                     message = str(message)
+            
             return Message(
                 text = message_text,
                 images = images,
