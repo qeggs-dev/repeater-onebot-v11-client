@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from ._storage_configs import TextLengthScoreThreshold
+from ._text_length_score_threshold import TextLengthScoreThreshold
 
 class TextLengthScoreConfigs(BaseModel):
     max_lines: int = 5
