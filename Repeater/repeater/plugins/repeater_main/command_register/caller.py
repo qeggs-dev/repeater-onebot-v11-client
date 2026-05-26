@@ -107,10 +107,15 @@ class CommandCaller:
         return package
     
     @classmethod
-    async def remove(cls, package: Type[CommandPackage[T_Handler_Result]]):
+    async def destroy(cls, package: Type[CommandPackage[T_Handler_Result]]):
         if package in cls.commands:
             package_instance = cls.commands.pop(package)
             matcher = cls.matchers.pop(package)
+
+            logger.info(
+                "Destroy command: {name}",
+                name = package_instance.component
+            )
             
             await package_instance.on_destroy()
             matcher.destroy()
