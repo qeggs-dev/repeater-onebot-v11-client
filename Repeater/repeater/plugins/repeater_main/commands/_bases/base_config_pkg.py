@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Any, TypeVar
+from typing import Any, TypeVar, ClassVar
 
 from .._clients import ConfigClient
 from ...assist import PersonaInfo, SendMsg, Response
@@ -16,7 +16,7 @@ class OperationType(Enum):
 
 class BaseConfig(CommandPackage):
     field: str = ""
-    operation: OperationType = OperationType.SET
+    operation: ClassVar[OperationType] = OperationType.SET
     cmd_type = CmdTypes.CONFIG
 
     async def parse_value(

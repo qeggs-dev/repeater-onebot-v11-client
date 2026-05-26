@@ -1,4 +1,4 @@
-from typing import NoReturn
+from typing import NoReturn, ClassVar
 
 from ...logger import logger
 
@@ -15,8 +15,8 @@ class Message(BaseModel):
 
 class BaseChat(CommandPackage):
     cmd_type = CmdTypes.CHAT
-    empty_exit: bool = True
-    no_input: bool = False
+    empty_exit: ClassVar[bool] = True
+    no_input: ClassVar[bool] = False
 
     async def empty_message(
         self,
