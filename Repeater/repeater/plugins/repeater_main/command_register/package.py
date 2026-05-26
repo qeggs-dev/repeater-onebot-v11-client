@@ -39,6 +39,7 @@ from nonebot import logger
 from typing import (
     Any,
     Iterable,
+    NoReturn,
     Type,
     TypeVar,
     Generic,
@@ -98,6 +99,9 @@ class CommandPackage(ABC, Generic[T]):
 
     documents: str | list[str] | None = None
     """This handler's documentation"""
+
+    superuser_permissions: bool = False
+    """Whether the Handler is superuser permissions."""
 
     @property
     def component(self) -> str:
@@ -272,3 +276,27 @@ class CommandPackage(ABC, Generic[T]):
         :return: None
         """
         pass
+
+    @classmethod
+    def on_reg_failed(cls, exc_type, exc_val, exc_tb):
+        """
+        If an error occurs during the registration of the current Handler,
+        by default, the behavior of the modified method is to throw the original exception.
+
+        :param exc_type: Exception type
+        :param exc_val: Exception value
+        :param exc_tb: Exception traceback
+        :return: None
+        """
+        raise
+
+    async def insufficient_access(self, persona_info: PersonaInfo, send_msg: SendMsg) -> NoReturn:
+        """
+        If the current user does not meet the permission requirements of the command, execute the method.
+        
+        :param persona_info: User information
+        :param send_msg: Send message interface
+        :return: None
+        """
+        await send_msg.send_error("Insufficient access rights.")
+        await send_msg.break_handler()

@@ -1,3 +1,4 @@
+import sys
 import json
 from .package import CommandPackage
 from ..assist import PersonaInfo, SendMsg
@@ -48,6 +49,12 @@ class CommandCaller:
     @staticmethod
     async def enter_handler(package: CommandPackage[T_Handler_Result], persona_info: PersonaInfo, send_msg: SendMsg) -> T_Handler_Result:
         try:
+            logger.info(
+                "Enter command from message: {message_id}",
+                message_id = persona_info.message_id,
+            )
+            if package.superuser_permissions and not persona_info.is_superuser:
+                await package.insufficient_access(persona_info, send_msg)
             if send_msg.is_debug_mode:
                 await package.on_debug_mode(persona_info, send_msg)
             return await package.handler(persona_info, send_msg)
@@ -65,33 +72,36 @@ class CommandCaller:
     @classmethod
     def register(cls, package: Type[CommandPackage[T_Handler_Result]]) -> None:
         if package.enabled:
-            package.on_before_instantiate()
-            package_instance = package()
-            matcher = cls._get_matcher(package_instance)
+            try:
+                package.on_before_instantiate()
+                package_instance = package()
+                matcher = cls._get_matcher(package_instance)
+                    
+                match package_instance.listen_type:
+                    case ListenType.Command:
+                        if storage_configs.print_handler_info:
+                            logger.info(
+                                "Register command: {name}\nCommand: {command}\nAliases:\n{aliases}",
+                                name = package_instance.component,
+                                command = package_instance.cmd,
+                                aliases = json.dumps(list(package_instance.aliases), indent = 4, ensure_ascii = False),
+                            )
+                        handler = cls.get_command_handler(package_instance, matcher)
+                    case ListenType.Message:
+                        if storage_configs.print_handler_info:
+                            logger.info(
+                                "Register command: {name}",
+                                name = package_instance.component
+                            )
+                        handler = cls.get_message_handler(package_instance, matcher)
+                    case _:
+                        raise ValueError(f"{package_instance.listen_type} is not supported")
                 
-            match package_instance.listen_type:
-                case ListenType.Command:
-                    if storage_configs.print_handler_info:
-                        logger.info(
-                            "Register command: {name}\nCommand: {command}\nAliases:\n{aliases}",
-                            name = package_instance.component,
-                            command = package_instance.cmd,
-                            aliases = json.dumps(list(package_instance.aliases), indent = 4, ensure_ascii = False),
-                        )
-                    handler = cls.get_command_handler(package_instance, matcher)
-                case ListenType.Message:
-                    if storage_configs.print_handler_info:
-                        logger.info(
-                            "Register command: {name}",
-                            name = package_instance.component
-                        )
-                    handler = cls.get_message_handler(package_instance, matcher)
-                case _:
-                    raise ValueError(f"{package_instance.listen_type} is not supported")
-            
-            matcher.append_handler(handler)
-            cls.commands[package] = package_instance
-            package_instance.on_registed()
+                matcher.append_handler(handler)
+                cls.commands[package] = package_instance
+                package_instance.on_registed()
+            except:
+                package.on_reg_failed(*sys.exc_info())
         return package
     
     @staticmethod
