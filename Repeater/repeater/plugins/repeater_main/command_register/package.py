@@ -271,11 +271,22 @@ class CommandPackage(ABC, Generic[T]):
     
     def on_registed(self):
         """
-        You may want to do something when you complete the registration process, overriding this method allows you to perform the task at the end of the registration.
+        You may want to do something when you complete the registration process,
+        overriding this method allows you to perform the task at the end of the registration.
 
         :return: None
         """
         pass
+
+    def on_matcher_registered(self, matcher: Type[Matcher]) -> Type[Matcher]:
+        """
+        You may want to do something when you complete the registration process of the matcher,
+        overriding this method allows you to perform the task at the end of the registration.
+
+        :param matcher: The matcher that has been registered.
+        :return: None
+        """
+        return matcher
 
     @classmethod
     def on_reg_failed(cls, exc_type, exc_val, exc_tb):
@@ -302,9 +313,17 @@ class CommandPackage(ABC, Generic[T]):
         await send_msg.break_handler()
     
     @classmethod
-    async def on_destroy(cls):
+    def on_destroy(cls):
         """
         This method is executed when the current Handler is destroyed.
+        Both instance and class methods are allowed.
+        """
+        pass
+    
+    @classmethod
+    async def on_adestroy(cls):
+        """
+        The asynchronous method executes when the current Handler is destroyed.
         Both instance and class methods are allowed.
         """
         pass

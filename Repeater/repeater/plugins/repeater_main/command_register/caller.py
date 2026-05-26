@@ -76,7 +76,9 @@ class CommandCaller:
             try:
                 package.on_before_instantiate()
                 package_instance = package()
-                matcher = cls._get_matcher(package_instance)
+                matcher = package_instance.on_matcher_registered(
+                    cls._get_matcher(package_instance)
+                )
                     
                 match package_instance.listen_type:
                     case ListenType.Command:
@@ -107,7 +109,7 @@ class CommandCaller:
         return package
     
     @classmethod
-    async def destroy(cls, package: Type[CommandPackage[T_Handler_Result]]):
+    def destroy(cls, package: Type[CommandPackage[T_Handler_Result]]):
         if package in cls.commands:
             package_instance = cls.commands.pop(package)
             matcher = cls.matchers.pop(package)
@@ -117,7 +119,21 @@ class CommandCaller:
                 name = package_instance.component
             )
             
-            await package_instance.on_destroy()
+            package_instance.on_destroy()
+            matcher.destroy()
+    
+    @classmethod
+    async def adestroy(cls, package: Type[CommandPackage[T_Handler_Result]]):
+        if package in cls.commands:
+            package_instance = cls.commands.pop(package)
+            matcher = cls.matchers.pop(package)
+
+            logger.info(
+                "Async Destroy command: {name}",
+                name = package_instance.component
+            )
+            
+            await package_instance.on_adestroy()
             matcher.destroy()
     
     @staticmethod
