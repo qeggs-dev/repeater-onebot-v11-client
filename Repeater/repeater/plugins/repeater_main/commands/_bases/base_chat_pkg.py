@@ -55,28 +55,29 @@ class BaseChat(CommandPackage):
             audios: list[str] = persona_info.get_audio_url()
             videos: list[str] = persona_info.get_video_url()
             
-            reply_msg = await persona_info.from_reference()
-            if reply_msg is not None and not reply_msg.is_self:
-                reply_msgs = persona_info.from_reference_chain()
-                reply_msgs_texts: list[str] = []
-                async for msg in reply_msgs:
-                    reply_msgs_texts.append(msg.message_striped_str)
-                    reply_msgs_images: list[str] = await msg.get_images_url()
-                    reply_msgs_audios: list[str] = msg.get_audio_url()
-                    reply_msgs_videos: list[str] = msg.get_video_url()
+            reply_msgs = persona_info.from_reference_chain()
+            reply_msgs_texts: list[str] = []
+            async for msg in reply_msgs:
+                if msg.is_self:
+                    break
 
-                    images.extend(reply_msgs_images)
-                    audios.extend(reply_msgs_audios)
-                    videos.extend(reply_msgs_videos)
+                reply_msgs_texts.append(msg.message_striped_str)
+                reply_msgs_images: list[str] = await msg.get_images_url()
+                reply_msgs_audios: list[str] = msg.get_audio_url()
+                reply_msgs_videos: list[str] = msg.get_video_url()
 
-                reply_msgs_text = "\n\n".join(reply_msgs_texts)
-                reply_msgs_text = reply_msgs_text.replace("\n", "\n> ")
+                images.extend(reply_msgs_images)
+                audios.extend(reply_msgs_audios)
+                videos.extend(reply_msgs_videos)
 
-                if reply_msgs_text:
-                    if message_text:
-                        message_text = f"Reply messages:\n{reply_msgs_text}\n\n---\n\n{message_text}"
-                    else:
-                        message_text = reply_msgs_text
+            reply_msgs_text = "\n\n".join(reply_msgs_texts)
+            reply_msgs_text = reply_msgs_text.replace("\n", "\n> ")
+
+            if reply_msgs_text:
+                if message_text:
+                    message_text = f"Reply messages:\n{reply_msgs_text}\n\n---\n\n{message_text}"
+                else:
+                    message_text = reply_msgs_text
 
             if not images:
                 if not message_text:
