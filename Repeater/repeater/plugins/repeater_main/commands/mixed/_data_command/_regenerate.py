@@ -55,8 +55,10 @@ class Regenerate(BaseChat):
         context = data.deleted_context
         user_input: list[str] = []
         for unit in context:
-            if unit.role == ContentRole.USER: 
-                user_input.append(unit.content)
+            if unit.role == ContentRole.USER:
+                user_input.append(
+                    self.sub_user_raw_input(unit.content)
+                )
 
         return await super().send_message(
             client,
@@ -67,3 +69,7 @@ class Regenerate(BaseChat):
             persona_info,
             send_msg
         )
+    
+    @staticmethod
+    def sub_user_raw_input(user_input: str) -> str:
+        return ChatClient.metadata_pattern.sub("", user_input)
