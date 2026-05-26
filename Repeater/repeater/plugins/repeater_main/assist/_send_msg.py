@@ -1,3 +1,5 @@
+import asyncio
+
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment, Message
 from nonebot.internal.matcher.matcher import Matcher
 from nonebot.exception import FinishedException
@@ -46,7 +48,10 @@ class SendMsg:
         )
         self._prefix: Message = Message()
         self._chat_tts_api = ChatTTSAPI()
-        self.matcher: Type[Matcher] | None = matcher
+        self.matcher: Type[Matcher] | None = matcher\
+        
+        self._buffer: asyncio.Queue[tuple[Message, tuple, dict[str, Any]]] = []
+        self.send_to_buffer: bool = False
     
     def add_prefix(self, prefix: MessageSegment | str):
         self._prefix.append(prefix)
@@ -797,10 +802,22 @@ class SendMsg:
         *args,
         **kwargs
     ):
-        if self.matcher is not None:
+        if self.send_to_buffer:
+            await self._send_to_buffer()
+        elif self.matcher is not None:
             await self._send_to_matcher(message, *args, **kwargs)
         else:
             await self._send_to_api(message, *args, **kwargs)
+    
+    async def _send_to_buffer(
+        self,
+        message: str | Message | MessageSegment,
+        *args,
+        **kwargs
+    ):
+        await self._buffer.put(
+            (message, args, kwargs)
+        )
     
     async def _send_to_matcher(
         self,
