@@ -300,3 +300,11 @@ class CommandPackage(ABC, Generic[T]):
         """
         await send_msg.send_error("Insufficient access rights.")
         await send_msg.break_handler()
+    
+    @classmethod
+    async def on_destroy(cls):
+        """
+        This method is executed when the current Handler is destroyed.
+        Both instance and class methods are allowed.
+        """
+        pass

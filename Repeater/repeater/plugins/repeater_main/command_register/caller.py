@@ -15,6 +15,7 @@ T_Handler_Result = TypeVar("T_Handler_Result")
 
 class CommandCaller:
     commands: dict[Type[CommandPackage[T_Handler_Result]], CommandPackage[T_Handler_Result]] = {}
+    matchers: dict[Type[CommandPackage[T_Handler_Result]], Type[Matcher]] = {}
 
     @classmethod
     def get_command_handler(cls, package: CommandPackage[T_Handler_Result], matcher: Type[Matcher]) -> Callable[[Bot, MessageEvent, Message], Awaitable[T_Handler_Result]]:
@@ -99,10 +100,20 @@ class CommandCaller:
                 
                 matcher.append_handler(handler)
                 cls.commands[package] = package_instance
+                cls.matchers[package] = matcher
                 package_instance.on_registed()
             except:
                 package.on_reg_failed(*sys.exc_info())
         return package
+    
+    @classmethod
+    async def remove(cls, package: Type[CommandPackage[T_Handler_Result]]):
+        if package in cls.commands:
+            package_instance = cls.commands.pop(package)
+            matcher = cls.matchers.pop(package)
+            
+            await package_instance.on_destroy()
+            matcher.destroy()
     
     @staticmethod
     def _get_matcher(package: CommandPackage) -> Type[Matcher]:
