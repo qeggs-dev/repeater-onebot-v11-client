@@ -15,14 +15,6 @@ class FastStatisticsTemplate(BaseConfig):
         "FAST_STATISTICS_TEMPLATE"
     }
     field = "request_statistics_template"
-
-    async def parse_value(
-        self,
-        persona_info: PersonaInfo,
-        send_msg: SendMsg,
-        raw_value: str | None,
-    )  -> str:
-        return persona_info.message_striped_str
     
     async def finish_message(
             self,
@@ -30,6 +22,6 @@ class FastStatisticsTemplate(BaseConfig):
             send_msg: SendMsg,
             response: Response,
             field: str,
-            value: bool
+            value: str
         ):
         await send_msg.send_response_check_code(response, f"Fast Statistics Template set to {value}")

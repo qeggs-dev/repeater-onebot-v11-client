@@ -22,6 +22,6 @@ class SetRenderStyle(BaseConfig):
             send_msg: SendMsg,
             response: Response,
             field: str,
-            value: bool
+            value: str
         ):
         await send_msg.send_response_check_code(response, f"Set Render_Style to {value}")

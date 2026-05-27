@@ -21,7 +21,7 @@ class SetMultipleModel(BaseConfig):
         persona_info: PersonaInfo,
         send_msg: SendMsg,
         raw_value: list[str] | None,
-    )  -> list[str]:
+    ) -> list[str]:
         msg = persona_info.message_striped_str
         value = parse_delimited_string(msg)
         if not value:
@@ -34,6 +34,6 @@ class SetMultipleModel(BaseConfig):
             send_msg: SendMsg,
             response: Response,
             field: str,
-            value: bool
+            value: list[str],
         ):
         await send_msg.send_response_check_code(response, f"Set Multiple Model to {', '.join(value)}")

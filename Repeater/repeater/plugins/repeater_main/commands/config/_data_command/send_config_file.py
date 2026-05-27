@@ -2,7 +2,6 @@ from ....assist import PersonaInfo, SendMsg, Response, FileSender
 from ....command_register import CommandCaller
 from ..._bases import BaseConfig, OperationType
 
-
 @CommandCaller.register
 class SendConfigFile(BaseConfig):
     cmd = "sendConfigFile"
@@ -30,7 +29,7 @@ class SendConfigFile(BaseConfig):
             send_msg: SendMsg,
             response: Response,
             field: str,
-            value: bool
+            value: None
         ):
         if value:
             file_sender = FileSender(

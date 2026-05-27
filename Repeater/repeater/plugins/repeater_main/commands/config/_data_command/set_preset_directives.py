@@ -26,7 +26,7 @@ class SetPresetDirectives(BaseConfig):
         persona_info: PersonaInfo,
         send_msg: SendMsg,
         raw_value: Any | None = None
-    ) -> list[str] | None:
+    ) -> dict[str, list[str]] | None:
         msg = persona_info.message_striped_str
         data = json.loads(msg)
         try:
