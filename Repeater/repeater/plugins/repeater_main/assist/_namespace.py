@@ -15,7 +15,8 @@ class Namespace(BaseModel):
     用户命名空间
     """
     model_config = ConfigDict(
-        validate_assignment=True
+        validate_assignment=True,
+        frozen = True
     )
 
     mode: MessageSource = MessageSource.GROUP
