@@ -68,7 +68,6 @@ class ChatClient:
         suffix: str | None = None,
         echo: bool | None = None,
         fim_mode: bool | None = None,
-        add_metadata: bool | None = None,
         role_name: str | None = None,
         temporary_prompt: str | None = None,
         model_uid: str | None = None,
@@ -85,7 +84,8 @@ class ChatClient:
         history_msg_role_map: dict[ContentRole, ContentRole | None] | None = None,
         cross_user_data_routing: CrossUserDataRouting | None = None,
         continue_completion: bool | None = None,
-        timeout: int | float | None = None
+        timeout: int | float | None = None,
+        add_metadata: bool = True,
     ) -> Response[ChatResponse]:
         """
         发送消息到AI后端
