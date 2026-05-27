@@ -1,3 +1,4 @@
+import time
 import asyncio
 
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment, Message
@@ -50,7 +51,7 @@ class SendMsg:
         self._chat_tts_api = ChatTTSAPI()
         self._matcher: Type[Matcher] | None = matcher
         
-        self._buffer: asyncio.Queue[tuple[Message, tuple, dict[str, Any]]] = []
+        self._buffer: asyncio.Queue[tuple[Message, tuple, dict[str, Any], int]] = asyncio.Queue()
         self.send_to_buffer: bool = False
     
     def add_prefix(self, prefix: MessageSegment | str):
@@ -89,7 +90,21 @@ class SendMsg:
     
     @matcher.setter
     def matcher(self, matcher: Type[Matcher] | None):
-        self._matcher = matcher
+        if isinstance(matcher, Matcher) or matcher is None:
+            self._matcher = matcher
+        else:
+            raise TypeError(f"matcher must be Matcher or None, not {type(matcher).__name__}")
+    
+    @property
+    def buffer(self) -> asyncio.Queue[tuple[Message, tuple, dict[str, Any], int]]:
+        return self._buffer
+    
+    @buffer.setter
+    def buffer(self, buffer: asyncio.Queue):
+        if isinstance(buffer, asyncio.Queue):
+            self._buffer = buffer
+        else:
+            raise TypeError(f"buffer must be asyncio.Queue, not {type(buffer).__name__}")
     
     @property
     def hello_content(self) -> str:
@@ -823,8 +838,9 @@ class SendMsg:
         *args,
         **kwargs
     ):
+        now = time.perf_counter_ns()
         await self._buffer.put(
-            (message, args, kwargs)
+            (message, args, kwargs, now)
         )
     
     async def _send_to_matcher(
