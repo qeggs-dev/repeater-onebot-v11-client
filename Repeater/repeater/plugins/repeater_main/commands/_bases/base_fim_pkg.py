@@ -83,7 +83,8 @@ class BaseFIM(BaseChat):
             matcher = send_msg.matcher,
             response = response,
             reasoning_content_handler = self.reason_filters,
-            content_handler = filters
+            content_handler = filters,
+            strip = False
         )
         await self.send_chat_send_msg(chat_send_msg)
     
@@ -105,6 +106,7 @@ class BaseFIM(BaseChat):
             video_url = videos,
             suffix = suffix,
             echo = self.echo,
-            fim_mode = True
+            fim_mode = True,
+            add_metadata = False
         )
         return response
