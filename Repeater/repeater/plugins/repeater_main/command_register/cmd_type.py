@@ -2,6 +2,7 @@ from enum import Enum
 
 class CmdTypes(Enum):
     CHAT = "CHAT"
+    FIM = "FIM"
     CONTEXT = "CONTEXT"
     PROMPT = "PROMPT"
     CONFIG = "CONFIG"
