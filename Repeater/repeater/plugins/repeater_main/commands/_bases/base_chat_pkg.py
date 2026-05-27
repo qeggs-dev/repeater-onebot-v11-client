@@ -26,6 +26,20 @@ class BaseChat(CommandPackage):
         logger.warning("Message is empty")
         if self.empty_exit:
             send_msg.break_handler()
+    
+    async def parse_forward_msgs(
+        self,
+        persona_info: PersonaInfo,
+        send_msg: SendMsg,
+    ) -> str:
+        forward_msgs = await persona_info.get_forward_msgs()
+        if forward_msgs:
+            forward_msgs_text = persona_info.generates_text_from_messages_list(forward_msgs)
+            message_text = f"Forwarded messages:\n{forward_msgs_text}\n\n---\n\n{message_text}"
+        else:
+            message_text = ""
+        
+        return message_text
 
     async def parse_message(
         self,
@@ -41,15 +55,7 @@ class BaseChat(CommandPackage):
             
             message_text = persona_info.message_striped_str
 
-            forward_msgs = await persona_info.get_forward_msgs()
-            if forward_msgs:
-                forward_msgs_text = persona_info.generates_text_from_messages_list(forward_msgs)
-                if message_text:
-                    message_text = f"Forwarded messages:\n{forward_msgs_text}\n\n---\n\n{message_text}"
-                else:
-                    message_text = forward_msgs_text
-            else:
-                message_text = message_text
+            message_text += await self.parse_forward_msgs(persona_info, send_msg)
 
             images: list[str] = await persona_info.get_images_url()
             audios: list[str] = persona_info.get_audio_url()
@@ -65,6 +71,9 @@ class BaseChat(CommandPackage):
                 if msg.is_self:
                     break
 
+                forward_msgs_text = await self.parse_forward_msgs(msg, send_msg)
+                if forward_msgs_text:
+                    reply_msgs_texts.append(forward_msgs_text)
                 reply_msgs_texts.append(msg.message_striped_str)
                 reply_msgs_images: list[str] = await msg.get_images_url()
                 reply_msgs_audios: list[str] = msg.get_audio_url()
@@ -74,7 +83,7 @@ class BaseChat(CommandPackage):
                 audios_list.append(reply_msgs_audios)
                 videos_list.append(reply_msgs_videos)
 
-            reply_msgs_text = "\n\n".join(reply_msgs_texts)
+            reply_msgs_text = "\n\n".join(reversed(reply_msgs_texts))
             reply_msgs_text = reply_msgs_text.replace("\n", "\n> ")
 
             if reply_msgs_text:
