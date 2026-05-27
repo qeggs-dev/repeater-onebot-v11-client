@@ -48,7 +48,7 @@ class SendMsg:
         )
         self._prefix: Message = Message()
         self._chat_tts_api = ChatTTSAPI()
-        self.matcher: Type[Matcher] | None = matcher\
+        self._matcher: Type[Matcher] | None = matcher
         
         self._buffer: asyncio.Queue[tuple[Message, tuple, dict[str, Any]]] = []
         self.send_to_buffer: bool = False
@@ -82,6 +82,14 @@ class SendMsg:
     @property
     def component(self) -> str:
         return self._component
+    
+    @property
+    def matcher(self) -> Type[Matcher] | None:
+        self._matcher
+    
+    @matcher.setter
+    def matcher(self, matcher: Type[Matcher] | None):
+        self._matcher = matcher
     
     @property
     def hello_content(self) -> str:
@@ -804,7 +812,7 @@ class SendMsg:
     ):
         if self.send_to_buffer:
             await self._send_to_buffer()
-        elif self.matcher is not None:
+        elif self._matcher is not None:
             await self._send_to_matcher(message, *args, **kwargs)
         else:
             await self._send_to_api(message, *args, **kwargs)
@@ -825,7 +833,7 @@ class SendMsg:
         *args,
         **kwargs
     ):
-        await self.matcher.send(message, *args, **kwargs)
+        await self._matcher.send(message, *args, **kwargs)
     
     async def _send_to_api(
         self,

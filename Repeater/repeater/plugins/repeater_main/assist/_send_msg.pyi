@@ -61,7 +61,11 @@ class SendMsg:
         ...
     
     @property
-    def matcher(self) -> Type[Matcher]:
+    def matcher(self) -> Type[Matcher] | None:
+        ...
+    
+    @matcher.setter
+    def matcher(self, matcher: Type[Matcher] | None):
         ...
     
     @property
