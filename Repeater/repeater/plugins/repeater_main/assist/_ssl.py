@@ -17,7 +17,9 @@ class SSLContext:
 ssl_context = SSLContext()
 
 def get_ssl_context():
-    return ssl_context
+    global ssl_context
+    return ssl_context.get_ssl_context()
 
-def set_ssl_context(ssl_context: ssl.SSLContext):
+def set_ssl_context(new_ssl_context: ssl.SSLContext):
+    global ssl_context
     ssl_context.set_ssl_context(ssl_context)
