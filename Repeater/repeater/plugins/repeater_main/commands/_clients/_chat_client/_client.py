@@ -65,7 +65,10 @@ class ChatClient:
     async def send_message(
         self,
         message: str | None = None,
-        add_metadata: bool = True,
+        suffix: str | None = None,
+        echo: bool | None = None,
+        fim_mode: bool | None = None,
+        add_metadata: bool | None = None,
         role_name: str | None = None,
         temporary_prompt: str | None = None,
         model_uid: str | None = None,
@@ -116,6 +119,9 @@ class ChatClient:
         extra_template_fields = self._add_extra_template_fields(extra_template_fields)
         data = ChatRequestModel(
             message = message,
+            suffix = suffix,
+            echo = echo,
+            fim_mode = fim_mode,
             user_info = ChatUserInfo(
                 username = self._persona_info.nickname,
                 nickname = self._persona_info.card,
