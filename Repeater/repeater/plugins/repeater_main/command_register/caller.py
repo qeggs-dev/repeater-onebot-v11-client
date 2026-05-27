@@ -77,12 +77,12 @@ class CommandCaller:
                 result = await task
                 return result
             except asyncio.CancelledError:
-                await cls.on_cancel(running)
+                return await package.on_cancel(running)
             finally:
                 cls.runnings.remove(running) 
 
         except Exception as e:
-            await package.on_error(e, persona_info, send_msg)
+            return await package.on_error(e, persona_info, send_msg)
         finally:
             await package.handler_exit(persona_info, send_msg)
     
