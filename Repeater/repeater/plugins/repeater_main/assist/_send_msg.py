@@ -86,7 +86,7 @@ class SendMsg:
     
     @property
     def matcher(self) -> Type[Matcher] | None:
-        self._matcher
+        return self._matcher
     
     @matcher.setter
     def matcher(self, matcher: Type[Matcher] | None):
@@ -802,10 +802,6 @@ class SendMsg:
         send_msg = self._prefix + message
         if reply:
             send_msg = self._persona_info.reply + send_msg
-        logger.info(
-            "Send message: \n{message}",
-            message = send_msg
-        )
         try:
             await self.limit_speed.submit(
                 self._send_auto(send_msg)
@@ -826,10 +822,22 @@ class SendMsg:
         **kwargs
     ):
         if self.send_to_buffer:
+            logger.info(
+                "Send to buffer: \n{message}",
+                message = message
+            )
             await self._send_to_buffer()
         elif self._matcher is not None:
+            logger.info(
+                "Send to matcher: \n{message}",
+                message = message
+            )
             await self._send_to_matcher(message, *args, **kwargs)
         else:
+            logger.info(
+                "Send to api: \n{message}",
+                message = message
+            )
             await self._send_to_api(message, *args, **kwargs)
     
     async def _send_to_buffer(
@@ -860,15 +868,15 @@ class SendMsg:
         bot = self._persona_info.bot
         if self._persona_info.source == MessageSource.GROUP:
             await bot.send_group_msg(
-                self._persona_info.group_id,
-                message,
+                group_id = self._persona_info.group_id,
+                message = message,
                 *args,
                 **kwargs
             )
         elif self._persona_info.source == MessageSource.PRIVATE:
             await bot.send_private_msg(
-                self._persona_info.user_id,
-                message,
+                group_id = self._persona_info.user_id,
+                message = message,
                 *args,
                 **kwargs
             )
