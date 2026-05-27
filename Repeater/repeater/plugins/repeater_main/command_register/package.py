@@ -229,6 +229,20 @@ class CommandPackage(ABC, Generic[T]):
             logger.exception(f"Error: {exception}")
             await send_msg.send_error(exception)
     
+    async def on_interpreter_error(self, exception: BaseException, persona_info: PersonaInfo, send_msg: SendMsg):
+        """
+        This section is executed when the interpreter encounters an error that is a BaseException but not an Exception.
+
+        You can override this method and do what you need to do.
+        It is recommended to keep throwing up at this point. These exceptions probably shouldn't stop there.
+
+        :param exception: The exception
+        :param persona_info: The persona_info object
+        :param send_msg: The send_msg object
+        """
+        logger.exception(f"Error: {exception}")
+        raise
+    
     async def on_cancel(self, persona_info: PersonaInfo, send_msg: SendMsg):
         """
         This section is executed when the Handler is cancelled.

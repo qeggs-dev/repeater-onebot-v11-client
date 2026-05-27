@@ -83,6 +83,8 @@ class CommandCaller:
 
         except Exception as e:
             return await package.on_error(e, persona_info, send_msg)
+        except BaseException as e:
+            return await package.on_interpreter_error(e, persona_info, send_msg)
         finally:
             await package.handler_exit(persona_info, send_msg)
     
