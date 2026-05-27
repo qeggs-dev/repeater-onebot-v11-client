@@ -69,6 +69,13 @@ class BaseFIM(BaseChat):
             persona_info = persona_info,
             send_msg = send_msg
         )
+
+        def filters(text: str) -> str:
+            nonlocal self
+            if self.echo:
+                return text
+            else:
+                return message.text + text + message.suffix
         
         chat_send_msg = ChatSendMsg(
             component = send_msg.component,
@@ -76,7 +83,7 @@ class BaseFIM(BaseChat):
             matcher = send_msg.matcher,
             response = response,
             reasoning_content_handler = self.reason_filters,
-            content_handler = self.filters
+            content_handler = filters
         )
         await self.send_chat_send_msg(chat_send_msg)
     
