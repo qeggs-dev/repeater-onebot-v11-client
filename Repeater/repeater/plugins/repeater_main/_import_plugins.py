@@ -1,6 +1,9 @@
 # === Chat === #
 from .commands.chat import *
 
+# === FIM === #
+from .commands.fim import *
+
 # === Context === #
 from .commands.context import *
 
