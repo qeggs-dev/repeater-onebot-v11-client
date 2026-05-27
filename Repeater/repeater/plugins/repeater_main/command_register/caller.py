@@ -1,7 +1,8 @@
 import sys
 import json
+import asyncio
 from .package import CommandPackage
-from ..assist import PersonaInfo, SendMsg
+from ..assist import PersonaInfo, SendMsg, Namespace
 from ..client_net_configs import storage_configs
 from typing import Iterator, Type, Callable, Awaitable, TypeVar
 from nonebot import on_command, on_message
@@ -10,12 +11,14 @@ from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Message
 from .listen_type import ListenType
 from nonebot import logger
+from .running_package import RunningPackage
 
 T_Handler_Result = TypeVar("T_Handler_Result")
 
 class CommandCaller:
     commands: dict[Type[CommandPackage[T_Handler_Result]], CommandPackage[T_Handler_Result]] = {}
     matchers: dict[Type[CommandPackage[T_Handler_Result]], Type[Matcher]] = {}
+    runnings: set[RunningPackage] = set()
 
     @classmethod
     def get_command_handler(cls, package: CommandPackage[T_Handler_Result], matcher: Type[Matcher]) -> Callable[[Bot, MessageEvent, Message], Awaitable[T_Handler_Result]]:
@@ -47,8 +50,8 @@ class CommandCaller:
                 return await cls.enter_handler(package, persona_info, send_msg)
         return message_handler
     
-    @staticmethod
-    async def enter_handler(package: CommandPackage[T_Handler_Result], persona_info: PersonaInfo, send_msg: SendMsg) -> T_Handler_Result:
+    @classmethod
+    async def enter_handler(cls, package: CommandPackage[T_Handler_Result], persona_info: PersonaInfo, send_msg: SendMsg) -> T_Handler_Result:
         try:
             logger.info(
                 "Enter command from message: {message_id}",
@@ -58,7 +61,26 @@ class CommandCaller:
                 await package.insufficient_access(persona_info, send_msg)
             if send_msg.is_debug_mode:
                 await package.on_debug_mode(persona_info, send_msg)
-            return await package.handler(persona_info, send_msg)
+            task = asyncio.create_task(
+                package.handler(persona_info, send_msg)
+            )
+            running = RunningPackage(
+                package = package,
+                matcher = send_msg.matcher,
+                persona_info = persona_info,
+                send_msg = send_msg,
+                task = task
+            )
+            cls.runnings.add(running)
+
+            try:
+                result = await task
+                return result
+            except asyncio.CancelledError:
+                await cls.on_cancel(running)
+            finally:
+                cls.runnings.remove(running) 
+
         except Exception as e:
             await package.on_error(e, persona_info, send_msg)
         finally:

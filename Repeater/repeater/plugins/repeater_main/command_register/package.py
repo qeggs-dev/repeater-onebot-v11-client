@@ -229,6 +229,18 @@ class CommandPackage(ABC, Generic[T]):
             logger.exception(f"Error: {exception}")
             await send_msg.send_error(exception)
     
+    async def on_cancel(self, persona_info: PersonaInfo, send_msg: SendMsg):
+        """
+        This section is executed when the Handler is cancelled.
+
+        You can override this method and do what you need to do.
+
+        :param persona_info: The persona_info object
+        :param send_msg: The send_msg object
+        """
+        logger.warning(f"{self.component} cancelled")
+        raise
+    
     async def handler_exit(self, persona_info: PersonaInfo, send_msg: SendMsg):
         """
         This section is executed whenever the Handler fails or exits.
