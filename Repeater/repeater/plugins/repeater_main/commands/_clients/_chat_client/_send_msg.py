@@ -20,7 +20,8 @@ class ChatSendMsg(SendMsg):
             matcher: Type[Matcher],
             response: Response[ChatResponse],
             reasoning_content_handler: Callable[[str], str] = lambda t: t,
-            content_handler: Callable[[str], str] = lambda t: t
+            content_handler: Callable[[str], str] = lambda t: t,
+            strip: bool = True,
         ):
         super().__init__(
             component = component,
@@ -31,6 +32,7 @@ class ChatSendMsg(SendMsg):
         self._chat_tts_api = ChatTTSAPI()
         self._reasoning_content_handler = reasoning_content_handler
         self._content_handler = content_handler
+        self._strip = strip
         if self._response.initialized:
             self._data = self._response.get_data()
             self._error = self._response.to_error()
@@ -47,7 +49,10 @@ class ChatSendMsg(SendMsg):
             if content.role == ContentRole.ASSISTANT:
                 if content.reasoning_content and content.reasoning_content.strip():
                     buffer.append(content.reasoning_content)
-        return self._reasoning_content_handler("\n\n---\n\n".join(buffer).strip())
+        merged_content = "\n\n---\n\n".join(buffer)
+        if self._strip:
+            merged_content = merged_content.strip()
+        return self._reasoning_content_handler(merged_content)
 
     @property
     def content(self) -> str | None:
@@ -62,7 +67,10 @@ class ChatSendMsg(SendMsg):
                 if content.tool_calls:
                     for tool_call in content.tool_calls:
                         buffer.append(f"[Call Tool] {tool_call.function.name}")
-        return self._content_handler("\n\n---\n\n".join(buffer).strip())
+        merged_content = "\n\n---\n\n".join(buffer)
+        if self._strip:
+            merged_content = merged_content.strip()
+        return self._content_handler(merged_content)
     
     async def _check_response(self) -> None | NoReturn:
         if self.is_debug_mode:
