@@ -58,6 +58,10 @@ class ChatSendMsg(SendMsg):
             if content.role == ContentRole.ASSISTANT:
                 if content.content and content.content.strip():
                     buffer.append(content.content)
+            if content.role == ContentRole.TOOLS:
+                if content.tool_calls:
+                    for tool_call in content.tool_calls:
+                        buffer.append(f"[Call Tool] {tool_call.function.name}")
         return self._content_handler("\n\n---\n\n".join(buffer).strip())
     
     async def _check_response(self) -> None | NoReturn:
