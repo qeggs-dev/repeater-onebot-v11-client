@@ -263,7 +263,13 @@ main_api.json
 
     // Ciallo~ (∠・ω< )⌒★
     // 在执行 ciallo 命令时，发送的内容
-    "ciallo_content": "Ciallo~ (∠・ω< )⌒★"
+    "ciallo_content": "Ciallo~ (∠・ω< )⌒★",
+
+    // 无用的按钮文字
+    "useless_button_words": [...],
+
+    // 当按钮未命中时，返回的内容
+    "useless_button_missing": "The button buzzed away.",
 }
 ```
 配置了一些主要的参数，如文本长度评分、推理模型使用的UID、欢迎消息等。
@@ -349,6 +355,13 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `noReason`                 | `nr`     | `NoReason`                | `CHAT`      | 4.3.15.0       | 不使用 Thinking 进行对话       | 自然语言输入                               | 关闭 `thinking` 参数以阻止进入 Thinking 模式 |
 | `generateCandidateAnswer`  | `gca`    | `GenerateCandidateAnswer` | `CHAT`      | 4.3.18.0       | 生成候选答案                   | 无                                        | 生成候选答案（生成内容不保存） |
 | `generateCandidateReason`  | `gcr`    | `GenerateCandidateReason` | `CHAT`      | 4.3.23.1       | 生成候选推理                   | 无                                        | 生成候选回答并开启推理（生成内容不保存） |
+
+### FIM Command
+
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---        | :---           | :---                          | :---                                      | :---    |
+| `/fillInMiddle`            | `fim`    | `FillInTheMiddle`         | `FIM`       | 4.6.10.0       | FIM 内容生成                   | 自然语言输入                               | 用 `[fill_this]` 或 `___` 来填充空缺内容，一次只能填写一个空位 |
+| `/fillAtAfter`             | `faa`    | `FillAtAfter`             | `FIM`       | 4.6.10.0       | FIM 前缀续写                   | 自然语言前缀                               | 添入一个前缀，模型会自动尝试续写内容 |
 
 ### Context Command
 
