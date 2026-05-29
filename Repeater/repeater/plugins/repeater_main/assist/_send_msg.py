@@ -109,21 +109,37 @@ class SendMsg:
     @property
     def hello_content(self) -> str:
         now = datetime.now()
-        if len(storage_configs.welcome_messages_by_weekday) == 0:
-            return storage_configs.hello_content
+        buffer: list[str] = [
+            storage_configs.hello_content
+        ]
+
+        if now.strftime("%m-%d") in storage_configs.hello_messages_for_date:
+            buffer.append(
+                storage_configs.hello_messages_for_date[now.strftime("%m-%d")]
+            )
+        
         weekday = now.weekday() + 1
         weekday_str = now.strftime("%A")
         weekday_abridge = now.strftime("%a")
-        if weekday in storage_configs.welcome_messages_by_weekday:
-            return storage_configs.welcome_messages_by_weekday[weekday]
-        elif str(weekday) in storage_configs.welcome_messages_by_weekday:
-            return storage_configs.welcome_messages_by_weekday[str(weekday)]
-        elif weekday_str in storage_configs.welcome_messages_by_weekday:
-            return storage_configs.welcome_messages_by_weekday[weekday_str]
-        elif weekday_abridge in storage_configs.welcome_messages_by_weekday:
-            return storage_configs.welcome_messages_by_weekday[weekday_abridge]
-        else:
-            return storage_configs.hello_content
+
+        if weekday in storage_configs.hello_messages_by_weekday:
+            buffer.append(
+                storage_configs.hello_messages_by_weekday[weekday]
+            )
+        elif str(weekday) in storage_configs.hello_messages_by_weekday:
+            buffer.append(
+                storage_configs.hello_messages_by_weekday[str(weekday)]
+            )
+        elif weekday_str in storage_configs.hello_messages_by_weekday:
+            buffer.append(
+                storage_configs.hello_messages_by_weekday[weekday_str]
+            )
+        elif weekday_abridge in storage_configs.hello_messages_by_weekday:
+            buffer.append(
+                storage_configs.hello_messages_by_weekday[weekday_abridge]
+            )
+
+        return "".join(buffer)
     
     async def send_debug_mode(
             self,
