@@ -2,7 +2,7 @@ import httpx
 from abc import ABC
 from uuid import UUID
 
-from ....assist import HTTPTransport
+from ....assist import http_transport
 from ....client_net_configs import *
 from ....assist import Response, PersonaInfo, get_ssl_context
 from ._nexus_response import (
@@ -18,7 +18,7 @@ class UserDataClient(ABC):
     _httpx_client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.data_manager,
-        transport = HTTPTransport(),
+        transport = http_transport,
         verify = get_ssl_context()
     )
 
