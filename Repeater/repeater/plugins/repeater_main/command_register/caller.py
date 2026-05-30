@@ -107,14 +107,14 @@ class CommandCaller:
                     
                 match package_instance.listen_type:
                     case ListenType.Command:
-                        if storage_configs.print_handler_info:
+                        if storage_configs.log_registed_handler_name:
                             logger.info(
                                 "Register command: {name}",
                                 name = package_instance.component
                             )
                         handler = cls.get_command_handler(package_instance, matcher)
                     case ListenType.Message:
-                        if storage_configs.print_handler_info:
+                        if storage_configs.log_registed_handler_name:
                             logger.info(
                                 "Register command: {name}",
                                 name = package_instance.component
@@ -144,9 +144,9 @@ class CommandCaller:
             commands[package.cmd_type] += 1
         for cmd_type, count in commands.items():
             logger.info(
-                "{cmd_type} registed {count} commands",
+                "Repeater.{cmd_type} registed {count} commands",
                 count = count,
-                cmd_type = cmd_type
+                cmd_type = cmd_type.value
             )
     
     @classmethod
