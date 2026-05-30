@@ -2,7 +2,8 @@ import sys
 import json
 import asyncio
 from .package import CommandPackage
-from ..assist import PersonaInfo, SendMsg, Namespace
+from .cmd_type import CmdTypes
+from ..assist import PersonaInfo, SendMsg
 from ..client_net_configs import storage_configs
 from typing import Iterator, Type, Callable, Awaitable, TypeVar
 from nonebot import on_command, on_message
@@ -108,10 +109,8 @@ class CommandCaller:
                     case ListenType.Command:
                         if storage_configs.print_handler_info:
                             logger.info(
-                                "Register command: {name}\nCommand: {command}\nAliases:\n{aliases}",
-                                name = package_instance.component,
-                                command = package_instance.cmd,
-                                aliases = json.dumps(list(package_instance.aliases), indent = 4, ensure_ascii = False),
+                                "Register command: {name}",
+                                name = package_instance.component
                             )
                         handler = cls.get_command_handler(package_instance, matcher)
                     case ListenType.Message:
@@ -131,6 +130,24 @@ class CommandCaller:
             except:
                 package.on_reg_failed(*sys.exc_info())
         return package
+    
+    @classmethod
+    def log_registed_info(cls):
+        logger.info(
+            "Registed {count} commands",
+            count = len(cls.commands)
+        )
+        commands:dict[CmdTypes, int] = {}
+        for package in cls.commands:
+            if package.cmd_type not in commands:
+                commands[package.cmd_type] = 0
+            commands[package.cmd_type] += 1
+        for cmd_type, count in commands.items():
+            logger.info(
+                "{cmd_type} registed {count} commands",
+                count = count,
+                cmd_type = cmd_type
+            )
     
     @classmethod
     def destroy(cls, package: Type[CommandPackage[T_Handler_Result]]):
