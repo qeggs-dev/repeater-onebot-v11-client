@@ -4,7 +4,6 @@ from .._http_transport import http_transport
 from ._config import tts_config
 from .._response import Response
 from ._tts_response import TTSResponse
-from .._ssl import get_ssl_context
 
 class ChatTTSAPI:
     def __init__(self):
@@ -13,7 +12,6 @@ class ChatTTSAPI:
             base_url = url,
             timeout = tts_config.timeout,
             transport = http_transport,
-            verify = get_ssl_context(),
         )
     
     async def text_to_speech(self, text: str) -> Response[TTSResponse]:

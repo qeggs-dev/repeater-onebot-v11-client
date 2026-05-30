@@ -5,7 +5,6 @@ import base64
 import asyncio
 from typing import AsyncGenerator, Generator
 from ._http_transport import http_transport
-from ._ssl import get_ssl_context
 import imghdr
 
 class ImageDownloader:
@@ -13,8 +12,7 @@ class ImageDownloader:
         self._message = message
         self._client = httpx.AsyncClient(
             timeout = timeout,
-            transport = http_transport,
-            verify = get_ssl_context()
+            transport = http_transport
         )
     
     @staticmethod

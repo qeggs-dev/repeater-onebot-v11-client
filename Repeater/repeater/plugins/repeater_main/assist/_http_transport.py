@@ -1,6 +1,7 @@
 import curlify2
 
 from httpx import AsyncHTTPTransport, Request, Response
+from ._ssl import ssl_context
 from loguru import logger
 
 class HTTPTransport(AsyncHTTPTransport):
@@ -12,4 +13,6 @@ class HTTPTransport(AsyncHTTPTransport):
         )
         return await super().handle_async_request(request)
 
-http_transport = HTTPTransport()
+http_transport = HTTPTransport(
+    verify = ssl_context.get_ssl_context(),
+)
