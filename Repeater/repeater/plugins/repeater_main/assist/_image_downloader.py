@@ -4,7 +4,7 @@ from nonebot.adapters.onebot.v11 import Message
 import base64
 import asyncio
 from typing import AsyncGenerator, Generator
-from ._http_transport import HTTPTransport
+from ._http_transport import http_transport
 from ._ssl import get_ssl_context
 import imghdr
 
@@ -13,7 +13,7 @@ class ImageDownloader:
         self._message = message
         self._client = httpx.AsyncClient(
             timeout = timeout,
-            transport = HTTPTransport(),
+            transport = http_transport,
             verify = get_ssl_context()
         )
     

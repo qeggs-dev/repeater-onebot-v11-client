@@ -1,6 +1,6 @@
 import httpx
 
-from .._http_transport import HTTPTransport
+from .._http_transport import http_transport
 from ._config import tts_config
 from .._response import Response
 from ._tts_response import TTSResponse
@@ -12,7 +12,7 @@ class ChatTTSAPI:
         self.client = httpx.AsyncClient(
             base_url = url,
             timeout = tts_config.timeout,
-            transport = HTTPTransport(),
+            transport = http_transport,
             verify = get_ssl_context(),
         )
     

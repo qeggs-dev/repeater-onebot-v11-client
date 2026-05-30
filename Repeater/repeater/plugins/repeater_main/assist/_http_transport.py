@@ -11,3 +11,5 @@ class HTTPTransport(AsyncHTTPTransport):
             curl_str = curlify.to_curl(),
         )
         return await super().handle_async_request(request)
+
+http_transport = HTTPTransport()
