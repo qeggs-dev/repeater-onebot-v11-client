@@ -1,14 +1,13 @@
 import httpx
 
 from ....client_net_configs import *
-from ....assist import Response, http_transport, get_ssl_context
+from ....assist import Response, http_transport
 
 class LicenseClient:
     _httpx_client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.licenses,
-        transport = http_transport,
-        verify = get_ssl_context()
+        transport = http_transport
     )
 
     async def get_requirement_license(self, requirement_name: str) -> Response[dict[str, str]]:

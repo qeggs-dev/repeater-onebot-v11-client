@@ -6,7 +6,7 @@ from typing import (
 )
 
 from ....client_net_configs import *
-from ....assist import Response, http_transport, get_ssl_context
+from ....assist import Response, http_transport
 from ....exit_register import ExitRegister
 from ._models import (
     ModelsResponse,
@@ -20,8 +20,7 @@ class ModelInfoClient:
     _client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.model_info,
-        transport = http_transport,
-        verify = get_ssl_context()
+        transport = http_transport
     )
     
     # region get all models

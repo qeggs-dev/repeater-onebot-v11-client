@@ -11,7 +11,7 @@ from ._response_body import ChatResponse
 from ._break_response_body import BreakResponse
 from ._cross_user_data_routing import CrossUserDataRouting
 from ....exit_register import ExitRegister
-from ....assist import PersonaInfo, Response, http_transport, get_ssl_context
+from ....assist import PersonaInfo, Response, http_transport
 from ....client_net_configs import *
 from ._request_model import ChatRequestModel, ChatUserInfo, AdditionalData
 from ...._adaptation_info import __adaptation__, __adaptation_text__
@@ -26,8 +26,7 @@ class ChatClient:
     _chat_client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.chat,
-        transport = http_transport,
-        verify = get_ssl_context()
+        transport = http_transport
     )
     metadata_pattern = re.compile(r"> Message\s*?Metadata:.*?---(?:\r?\n)+", re.DOTALL | re.IGNORECASE)
     

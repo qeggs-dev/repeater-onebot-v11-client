@@ -2,7 +2,7 @@ import httpx
 
 from urllib.parse import urljoin
 from .....client_net_configs import *
-from .....assist import Response, PersonaInfo, http_transport, get_ssl_context
+from .....assist import Response, PersonaInfo, http_transport
 from .....logger import logger as base_logger
 from .._base_user_data_client import UserDataClient
 
@@ -12,8 +12,7 @@ class PromptClient(UserDataClient):
     _httpx_client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.prompt,
-        transport = http_transport,
-        verify = get_ssl_context()
+        transport = http_transport
     )
 
     def __init__(self, info: PersonaInfo, namespace: str | None = None):

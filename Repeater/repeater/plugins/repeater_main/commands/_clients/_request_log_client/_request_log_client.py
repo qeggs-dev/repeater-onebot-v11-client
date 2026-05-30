@@ -3,7 +3,7 @@ import orjson
 from ....logger import logger as base_logger
 
 from ....client_net_configs import *
-from ....assist import http_transport, get_ssl_context
+from ....assist import http_transport
 from ....exit_register import ExitRegister
 from ._request_log_object import RequestLog
 
@@ -14,8 +14,7 @@ class RequestLogClient:
     _client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.request_log,
-        transport = http_transport,
-        verify = get_ssl_context()
+        transport = http_transport
     )
     
     async def get_request_log(self):

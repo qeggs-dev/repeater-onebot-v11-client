@@ -5,7 +5,7 @@ from .....logger import logger as base_logger
 from typing import (
     Any,
 )
-from .....assist import Response, PersonaInfo, http_transport, get_ssl_context
+from .....assist import Response, PersonaInfo, http_transport
 # 服务端配置
 from .....client_net_configs import *
 from .....exit_register import ExitRegister
@@ -19,8 +19,7 @@ class ConfigClient(UserDataClient):
     _httpx_client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.config,
-        transport = http_transport,
-        verify = get_ssl_context()
+        transport = http_transport
     )
 
     def __init__(self, info: PersonaInfo, namespace: str | None = None):

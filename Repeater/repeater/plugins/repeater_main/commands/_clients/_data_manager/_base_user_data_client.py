@@ -4,7 +4,7 @@ from uuid import UUID
 
 from ....assist import http_transport
 from ....client_net_configs import *
-from ....assist import Response, PersonaInfo, get_ssl_context
+from ....assist import Response, PersonaInfo
 from ._nexus_response import (
     NexusUploadResponse,
     NexusDownloadResponse
@@ -18,8 +18,7 @@ class UserDataClient(ABC):
     _httpx_client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.data_manager,
-        transport = http_transport,
-        verify = get_ssl_context()
+        transport = http_transport
     )
 
     def __init__(self, info: PersonaInfo, data_type: str, namespace: str | None = None):

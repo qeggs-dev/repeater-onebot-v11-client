@@ -4,7 +4,7 @@ from typing import (
 )
 
 from ....client_net_configs import *
-from ....assist import PersonaInfo, Response, http_transport, get_ssl_context
+from ....assist import PersonaInfo, Response, http_transport
 from ....logger import logger
 from ...._adaptation_info import __adaptation__, __adaptation_text__
 
@@ -12,8 +12,7 @@ class TemplateRenderClient:
     _httpx_client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.variable_expansion,
-        transport = http_transport,
-        verify = get_ssl_context()
+        transport = http_transport
     )
 
     def __init__(self, info: PersonaInfo):
