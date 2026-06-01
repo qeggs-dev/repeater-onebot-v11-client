@@ -4,6 +4,7 @@ from itertools import chain
 from ...logger import logger
 from .._clients import ChatClient, ChatSendMsg, ChatResponse
 from ...assist import PersonaInfo, SendMsg, Response
+from ...client_net_configs import storage_configs
 from ...command_register import CommandPackage, CmdTypes
 from pydantic import BaseModel
 
@@ -41,6 +42,48 @@ class BaseChat(CommandPackage):
             message_text = ""
         
         return message_text
+    
+    @staticmethod
+    async def open_file(
+        persona_info: PersonaInfo,
+        reply_msgs_texts: list[str],
+        files_list: list[list[str]],
+        file_ids: list[str]
+    ):
+        not_open_files: list[str] = []
+        for file_id in file_ids:
+            info = await persona_info.get_file_info(file_id)
+            name = info.file_name
+            size = int(info.file_size)
+
+            if storage_configs.max_text_file_size is not None:
+                if size > storage_configs.max_text_file_size:
+                    logger.warning(
+                        "File {name} is too large to open as text file",
+                        name = name
+                    )
+                    not_open_files.append(name)
+                    continue
+            try:
+                file_data = await persona_info.open_text_file(
+                    file_id,
+                    storage_configs.text_file_encoding
+                )
+                reply_msgs_texts.append(
+                    f"[File {name}]\n[File Content Begin]{file_data}\n[File Content End]"
+                )
+                logger.info(
+                    "File {name} was opened successfully",
+                    name = name
+                )
+            except UnicodeDecodeError:
+                logger.warning(
+                    "File {name} was not opened",
+                    name = name
+                )
+                not_open_files.append(file_id)
+        
+        files_list.append(not_open_files)
 
     async def parse_message(
         self,
@@ -61,13 +104,23 @@ class BaseChat(CommandPackage):
             images: list[str] = await persona_info.get_images_url()
             audios: list[str] = persona_info.get_audio_url()
             videos: list[str] = persona_info.get_video_url()
+            files: list[str] = persona_info.get_file_ids()
 
             images_list: list[list[str]] = [images]
             audios_list: list[list[str]] = [audios]
             videos_list: list[list[str]] = [videos]
+            files_list: list[list[str]] = []
             
             reply_msgs = persona_info.from_reference_chain()
             reply_msgs_texts: list[str] = []
+            
+            await self.open_file(
+                persona_info,
+                reply_msgs_texts,
+                files_list,
+                files
+            )
+            
             async for msg in reply_msgs:
                 if msg.is_self:
                     break
@@ -79,10 +132,17 @@ class BaseChat(CommandPackage):
                 reply_msgs_images: list[str] = await msg.get_images_url()
                 reply_msgs_audios: list[str] = msg.get_audio_url()
                 reply_msgs_videos: list[str] = msg.get_video_url()
+                reply_msgs_files: list[str] = msg.get_file_ids()
 
                 images_list.append(reply_msgs_images)
                 audios_list.append(reply_msgs_audios)
                 videos_list.append(reply_msgs_videos)
+                await self.open_file(
+                    msg,
+                    reply_msgs_texts,
+                    files_list,
+                    reply_msgs_files
+                )
 
             reply_msgs_text = "\n\n".join(reversed(reply_msgs_texts))
             reply_msgs_text = reply_msgs_text.replace("\n", "\n> ")
