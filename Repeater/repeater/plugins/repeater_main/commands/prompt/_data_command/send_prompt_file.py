@@ -1,4 +1,4 @@
-from ....assist import PersonaInfo, SendMsg, FileSender
+from ....assist import PersonaInfo, SendMsg
 from ....command_register import(
     CommandCaller,
     CommandPackage,
@@ -26,8 +26,4 @@ class SendPromptFile(CommandPackage):
 
         user_file_client = PromptClient(persona_info)
         file_url = user_file_client.get_prompt_url()
-        file_sender = FileSender(
-            persona_info=persona_info,
-            send_msg=send_msg
-        )
-        await file_sender.send_file(file_url, f"{persona_info.namespace_str}_User_Prompt.md")
+        await send_msg.send_file(file_url, f"{persona_info.namespace_str}_User_Prompt.md")
