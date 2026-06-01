@@ -21,6 +21,8 @@ class StorageConfigs(BaseModel):
     allow_send_any_message: bool = False
     model_first_chunk_timeout: int | float | None = 90.0
     max_reply_chain_length: int = 5
+    max_text_file_size: int | None = None
+    text_file_encoding: str = "utf-8"
     log_registed_handler_name: bool = True
     useless_button_words: list[str] = Field(default_factory=lambda: useless_button_words)
     useless_button_missing: str = "The button buzzed away."
