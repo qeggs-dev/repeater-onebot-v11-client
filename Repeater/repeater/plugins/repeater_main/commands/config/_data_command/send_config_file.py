@@ -1,4 +1,4 @@
-from ....assist import PersonaInfo, SendMsg, Response, FileSender
+from ....assist import PersonaInfo, SendMsg, Response
 from ....command_register import CommandCaller
 from ..._bases import BaseConfig, OperationType
 
@@ -32,10 +32,6 @@ class SendConfigFile(BaseConfig):
             value: None
         ):
         if value:
-            file_sender = FileSender(
-                persona_info=persona_info,
-                send_msg=send_msg
-            )
-            await file_sender.send_file(value, f"{persona_info.namespace_str}_User_Config.json")
+            await send_msg.send_file(value, f"{persona_info.namespace_str}_User_Config.json")
         else:
             await send_msg.send_error("Failed to get config file URL")
