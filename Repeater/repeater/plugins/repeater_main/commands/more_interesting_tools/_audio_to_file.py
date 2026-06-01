@@ -1,11 +1,12 @@
-from ...assist import PersonaInfo, SendMsg, FileSender, FileUrl
+import time
+
+from pathlib import Path
+from ...assist import PersonaInfo, SendMsg
 from ...command_register import(
     CommandCaller,
     CommandPackage,
     CmdTypes
 )
-import time
-
 
 @CommandCaller.register
 class AudioToFile(CommandPackage):
@@ -26,12 +27,9 @@ class AudioToFile(CommandPackage):
 
         for message_segment in persona_info.message:
             if message_segment.type == "record":
-                file_sender = FileSender(
-                    persona_info=persona_info,
-                    send_msg=send_msg
-                )
-                fileurl = FileUrl(message_segment.data["url"])
-                await file_sender.send_file(
-                    url=str(fileurl),
-                    file_name=f"{persona_info.nickname}_{time.strftime('%Y%m%d_%H%M%S', time.localtime())}{fileurl.path.suffix}"
+                fileurl = message_segment.data["url"]
+                path = Path(fileurl)
+                await send_msg.send_file(
+                    url = str(fileurl),
+                    file_name = f"{persona_info.nickname}_{time.strftime('%Y%m%d_%H%M%S', time.localtime())}{path.suffix}"
                 )
