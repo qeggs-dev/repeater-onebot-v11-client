@@ -24,5 +24,7 @@ class StorageConfigs(BaseModel):
     max_text_file_size: int | None = None
     text_file_encoding: str = "utf-8"
     log_registed_handler_name: bool = True
+    platform_interface_cache_size: int = 1000
+    platform_interface_cache_timeout: int = 60
     useless_button_words: list[str] = Field(default_factory=lambda: useless_button_words)
     useless_button_missing: str = "The button buzzed away."
