@@ -1,14 +1,15 @@
-from nonebot.adapters.onebot.v11 import Message
+import asyncio
+
+from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from nonebot.internal.matcher.matcher import Matcher
 from typing import NoReturn, Type, Callable
-from pydantic import ValidationError
 
-from ....assist import PersonaInfo, Response, SendMsg
-from ._response_body import ChatResponse
-from .._content_role import ContentRole
-from ....assist import ChatTTSAPI
-from ....logger import logger as base_logger
-from ....client_net_configs import storage_configs
+from .....assist import PersonaInfo, Response, SendMsg
+from .._response_body import ChatResponse
+from ..._content_role import ContentRole
+from .....assist import ChatTTSAPI
+from .....logger import logger as base_logger
+from .....client_net_configs import storage_configs
 
 logger = base_logger.bind(module = "Chat.SendMsg")
 
@@ -131,27 +132,39 @@ class ChatSendMsg(SendMsg):
         if self.content:
             message.append(text or self.content)
         else:
-            message.append("[Message is empty.]")
+            message.append(self.empty_message())
         await self._send(message)
     
     async def send_image_mode(self, text: str | None = None) -> NoReturn:
         await self._check_response()
-        
-        message = Message()
+        tasks: list[asyncio.Task[MessageSegment]] = []
+
         if self.reasoning_content:
-            message.append(
-                await self.render_text(
+            reason_render_task = asyncio.create_task(
+                self.render_text(
                     self.reasoning_content,
                     document_bottom_comment = self._get_response_usage()
                 )
             )
+            tasks.append(reason_render_task)
         if self.content:
-            message.append(
-                await self.render_text(
-                    text or self.content,
+            content_render_task = asyncio.create_task(
+                self.render_text(
+                    self.content,
                     document_bottom_comment = self._get_response_usage()
                 )
             )
+            tasks.append(content_render_task)
         else:
-            message.append("[Message is empty.]")
-        await self._send(message)
+            tasks.append(
+                asyncio.create_task(
+                    self.empty_message()
+                )
+            )
+        
+        if tasks:
+            results = await asyncio.gather(*tasks)
+            message = Message(results)
+            await self._send(message)
+        else:
+            await self.send_error("Nothing can be sent.")
