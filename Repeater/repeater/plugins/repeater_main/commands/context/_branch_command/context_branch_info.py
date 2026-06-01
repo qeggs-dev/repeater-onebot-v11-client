@@ -16,6 +16,7 @@ class ContextBranchInfo(BranchInfo):
         "CONTEXT_BRANCH_INFO",
     }
     cmd_type = CmdTypes.BRANCH_CONTEXT
+    branch_type = BranchType.Context
 
     def get_client(self, persona_info: PersonaInfo) -> ContextClient:
         return ContextClient(persona_info)
