@@ -4,14 +4,11 @@ from ..._clients import UserDataClient
 from .branch_type import BranchType
 
 class BranchInfo(BaseBranch):
-    branch_type: BranchType = BranchType.Context
+    branch_type: BranchType = BranchType.Reserved
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        if send_msg.is_debug_mode:
-            await send_msg.send_debug_mode()
-        
-        config_client = self.get_client(persona_info)
-        response = await config_client.branch_info()
+        client = self.get_client(persona_info)
+        response = await client.branch_info()
         if response.code == 200:
             data = response.get_data()
             if data is None:

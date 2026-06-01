@@ -1,17 +1,20 @@
+import re
+
 from ....assist import PersonaInfo, SendMsg
 from .base_branch import BaseBranch
-from ..._clients import UserDataClient
 from .branch_type import BranchType
 
 class GetBranchList(BaseBranch):
-    branch_type: BranchType = BranchType.Context
+    branch_type: BranchType = BranchType.Reserved
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        if send_msg.is_debug_mode:
-            await send_msg.send_debug_mode()
+        try:
+            pattern = re.compile(persona_info.message_striped_str)
+        except re.error:
+            await send_msg.send_error("Invalid regex pattern.")
         
-        config_client = self.get_client(persona_info)
-        response = await config_client.get_branch_list()
+        client = self.get_client(persona_info)
+        response = await client.get_branch_list()
         if response.code == 200:
             data = response.json()
             if not isinstance(data, list):
@@ -23,7 +26,8 @@ class GetBranchList(BaseBranch):
             if data:
                 text_buffer.append("Branchs:")
                 for branch_id in data:
-                    text_buffer.append(f"  - {branch_id}")
+                    if pattern.match(branch_id):
+                        text_buffer.append(f"  - {branch_id}")
             else:
                 text_buffer.append("No branchs found.")
 
