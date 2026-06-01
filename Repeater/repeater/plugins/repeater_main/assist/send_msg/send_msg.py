@@ -886,7 +886,7 @@ class SendMsg:
         *args,
         **kwargs
     ):
-        bot = self._persona_info.bot
+        bot = self._persona_info.cached_api
         if self._persona_info.source == MessageSource.GROUP:
             await bot.send_group_msg(
                 group_id = self._persona_info.group_id,
@@ -919,17 +919,17 @@ class SendMsg:
     
     async def _send_file(self, url: str, file_name: str):
         try:
-            if self.persona_info.source == MessageSource.GROUP:
+            if self._persona_info.source == MessageSource.GROUP:
                 await send_group_file(
-                    self.persona_info.bot,
-                    self.persona_info.group_id,
+                    self._persona_info.cached_api,
+                    self._persona_info.group_id,
                     url,
                     file_name
                 )
-            elif self.persona_info.source == MessageSource.PRIVATE:
+            elif self._persona_info.source == MessageSource.PRIVATE:
                 await send_private_file(
-                    self.persona_info.bot,
-                    self.persona_info.user_id,
+                    self._persona_info.cached_api,
+                    self._persona_info.user_id,
                     url,
                     file_name
                 )
