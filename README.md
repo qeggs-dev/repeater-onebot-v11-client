@@ -80,7 +80,7 @@ PS: 此处的长度评分函数并非实际算法，仅为演示使用
 | Name       | Version | License      | License Text Link                                                      | Where it is used              |
 |------------|---------|--------------|------------------------------------------------------------------------|-------------------------------|
 | httpx      | 0.28.1  | BSD License  | [BSD-3-Clause](https://github.com/encode/httpx/blob/master/LICENSE.md) | *Entire Project*              |
-| nonebot    | 2.4.3   | MIT License  | [MIT](https://github.com/nonebot/nonebot2/blob/master/LICENSE)         | *Entire Project*              |
+| nonebot    | 2.4.3   | MIT License  | [MIT](https://github.com/nonebot/nonebot2/blob/master/LICENSE)         | Protocol docking              |
 | pydantic   | 2.12.0  | MIT License  | [MIT](https://github.com/pydantic/pydantic/blob/main/LICENSE)          | *Entire Project*              |
 | aiofiles   | 25.1.0  | MIT License  | [Apache-2.0](https://github.com/Tinche/aiofiles/blob/main/LICENSE)     | `storage`                     |
 | pyyaml     | 6.0.3   | MIT License  | [MIT](https://github.com/yaml/pyyaml/blob/main/LICENSE)                | `storage`                     |
