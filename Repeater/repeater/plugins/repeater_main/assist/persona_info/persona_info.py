@@ -24,8 +24,8 @@ class PersonaInfo:
     def __init__(self, bot: Bot, event: MessageEvent, args: Message | None = None):
         self._bot: Bot = bot
         self._cached_api: CachedAPI = CachedAPI(
-            self.adapter,
-            self.self_id
+            self._bot.adapter,
+            self._bot.self_id
         )
         self._message_event: MessageEvent = event
         self._args: Message | None = args
