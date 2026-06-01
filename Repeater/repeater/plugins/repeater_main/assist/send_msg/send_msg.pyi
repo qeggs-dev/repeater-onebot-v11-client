@@ -555,6 +555,14 @@ class SendMsg:
         ):
         ...
     
+    @staticmethod
+    async def empty_message(self) -> MessageSegment:
+        ...
+    
+    @staticmethod
+    async def _get_text_message(content: str) -> MessageSegment:
+        ...
+    
     @overload
     async def send_chat_response(
             self,

@@ -530,22 +530,29 @@ class SendMsg:
         logger.info(
             "Send Multiple Render"
         )
-        message = Message()
+        tasks: list[asyncio.Task[MessageSegment]] = []
         for msg in messages:
             if isinstance(msg, str):
-                message.append(
-                    await self.render_text(
-                        msg,
-                        document_bottom_comment = document_bottom_comment
+                tasks.append(
+                    asyncio.create_task(
+                        self.render_text(
+                            msg,
+                            document_bottom_comment = document_bottom_comment
+                        )
                     )
                 )
             elif isinstance(msg, Message):
-                message.append(
-                    await self.render_text(
-                        msg.extract_plain_text(),
-                        document_bottom_comment = document_bottom_comment
+                tasks.append(
+                    asyncio.create_task(
+                        self.render_text(
+                            msg.extract_plain_text(),
+                            document_bottom_comment = document_bottom_comment
+                        )
                     )
                 )
+        
+        results = await asyncio.gather(*tasks)
+        message = Message(results)
         
         await self._send(
             message,
@@ -709,6 +716,14 @@ class SendMsg:
                 continue_handler = continue_handler
             )
     
+    @staticmethod
+    async def empty_message(self) -> MessageSegment:
+        return MessageSegment.text("[Message is empty.]")
+    
+    @staticmethod
+    async def _get_text_message(content: str) -> MessageSegment:
+        return MessageSegment.text(content)
+    
     async def send_chat_response(
             self,
             reasoning_content: str = "",
@@ -719,29 +734,41 @@ class SendMsg:
         logger.info(
             "Send Chat Response"
         )
-        message = Message()
+        tasks: list[asyncio.Task[MessageSegment]] = []
         if reasoning_content:
-            message.append(
-                await self.render_text(
-                    reasoning_content,
+            tasks.append(
+                asyncio.create_task(
+                    self.render_text(
+                        reasoning_content,
+                    )
                 )
             )
         
         if content:
             if self.text_length_score(content) >= self.text_length_score_threshold:
-                message.append(
-                    await self.render_text(
-                        content,
+                tasks.append(
+                    asyncio.create_task(
+                        self.render_text(
+                            content,
+                        )
                     )
                 )
             else:
-                message.append(
-                    MessageSegment.text(content)
+                
+                tasks.append(
+                    asyncio.create_task(
+                        self._get_text_message(content)
+                    )
                 )
         else:
-            message.append(
-                MessageSegment.text("[Message is empty]")
+            tasks.append(
+                asyncio.create_task(
+                    self.empty_message()
+                )
             )
+        
+        results = await asyncio.gather(*tasks)
+        message = Message(results)
 
         await self._send(
             message,
