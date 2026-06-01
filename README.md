@@ -267,10 +267,20 @@ main_api.json
     // Client 将向 Repeater Server 申请取消任务
     // 将其设置为 null 可以忽略超时检查
     "model_first_chunk_timeout": 90.0,
+
+    // 解析消息中的文本文件时
+    // 使用的编码
+    "text_file_encoding": "utf-8",
     
     // 是否在注册时打印 Handler 名称
     // 默认为 true
     "log_registed_handler_name": true,
+
+    // 平台接口缓存大小
+    "platform_interface_cache_size": 1000,
+
+    // 平台接口缓存超时时间
+    "platform_interface_cache_timeout": 60,
 
     // Ciallo~ (∠・ω< )⌒★
     // 在执行 ciallo 命令时，发送的内容
