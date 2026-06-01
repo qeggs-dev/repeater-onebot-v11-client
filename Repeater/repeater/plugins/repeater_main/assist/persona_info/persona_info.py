@@ -309,7 +309,7 @@ class PersonaInfo:
     
     async def image_to_text(self, format: str = "{text}", cite: bool = True, excluded_tags:Container[str] = {}) -> Message:
         """将图片转换为文字"""
-        await image_to_text(
+        return await image_to_text(
             self._cached_api,
             self.message,
             format = format,
@@ -388,10 +388,12 @@ class PersonaInfo:
         event = await self.get_message_event()
         message: Message = event.message
 
-        return await get_reply_chain(
+        chain = get_reply_chain(
             self._cached_api,
             message
         )
+        async for msg in chain:
+            yield msg
     
     async def get_reply_msgs(self, message: Message | None = None) -> list[MessageEvent]:
         return await get_reply_msgs(
@@ -406,11 +408,11 @@ class PersonaInfo:
         )
     
     @staticmethod
-    def generates_text_from_messages_list(messages: list[dict | MessageEvent]):
+    def generates_text_from_messages_list(messages: list[dict | MessageEvent]) -> str:
         return generates_text_from_messages_list(messages)
     
     async def get_message_event(self, message_id: int | None = None) -> MessageEvent:
-        return get_message_event(
+        return await get_message_event(
             self._cached_api,
             message_id if message_id is not None else self.message_id
         )
