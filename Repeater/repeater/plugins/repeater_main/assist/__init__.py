@@ -18,6 +18,7 @@ from ._image_downloader import ImageDownloader
 from ._error_response import ErrorResponse
 from ._format_carry_duration import format_carry_duration
 from ._parse_delimited_string import parse_delimited_string
+from ._file_info import FileInfo
 from .chattts import (
     ChatTTSAPI,
     TTSResponse,
@@ -53,6 +54,7 @@ __all__ = [
     "ErrorResponse",
     "format_carry_duration",
     "parse_delimited_string",
+    "FileInfo",
     "ChatTTSAPI",
     "TTSResponse",
     "AudioFiles",

@@ -1,4 +1,7 @@
 from __future__ import annotations
+
+import aiofiles
+
 from nonebot import get_bots
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment, Message
 from typing import AsyncGenerator, Container
@@ -13,6 +16,7 @@ from nonebot import logger
 from datetime import datetime
 from pydantic import ValidationError
 from ._enter_type import EnterType
+from ._file_info import FileInfo
 
 class PersonaInfo:
     def __init__(self, bot: Bot, event: MessageEvent, args: Message | None = None):
@@ -37,7 +41,7 @@ class PersonaInfo:
         self._superusers: set[int] = set(int(user) for user in self._bot.config.superusers)
     
     @classmethod
-    def from_command(cls, bot: Bot, event: MessageEvent, args: Message | None = None):
+    def from_command(cls, bot: Bot, event: MessageEvent, args: Message | None = None) -> PersonaInfo:
         persona_info = cls(
             bot = bot,
             event = event,
@@ -47,7 +51,7 @@ class PersonaInfo:
         return persona_info
     
     @classmethod
-    def from_message(cls, bot: Bot, event: MessageEvent):
+    def from_message(cls, bot: Bot, event: MessageEvent) -> PersonaInfo:
         persona_info = cls(
             bot = bot,
             event = event
@@ -56,7 +60,7 @@ class PersonaInfo:
         return persona_info
     
     @classmethod
-    def from_horizontal(cls, persona_info: PersonaInfo):
+    def from_horizontal(cls, persona_info: PersonaInfo) -> PersonaInfo:
         persona_info = cls(
             bot = persona_info.bot,
             event = persona_info.event,
@@ -64,6 +68,17 @@ class PersonaInfo:
         )
         persona_info._enter_type = EnterType.Horizontal
         return persona_info
+    
+    async def from_raw_message_event(self, event: MessageEvent) -> PersonaInfo:
+        event = self.get_message_event()
+        cls = type(self)
+        instance = cls(
+            bot = self.bot,
+            event = event,
+            args = self.args,
+        )
+        instance._enter_type = self._enter_type
+        return instance
     
     async def from_reference_chain(self) -> AsyncGenerator[PersonaInfo, None]:
         async for event in self.get_reply_chain():
@@ -74,7 +89,7 @@ class PersonaInfo:
             yield persona_info
     
     async def from_reference(self) -> PersonaInfo | None:
-        event = await self.get_raw_message_event()
+        event = await self.get_message_event()
         reply_id: str | None = None
         for message in event.message:
             if message.type == "reply":
@@ -82,9 +97,7 @@ class PersonaInfo:
                 break
         if reply_id is None:
             return None
-        response = await self.bot.get_msg(message_id = reply_id)
-        response["post_type"] = "message"
-        reply_event = MessageEvent(**response)
+        reply_event = await self.get_message_event(message_id = reply_id)
         persona_info = self.__class__(
             bot = self.bot,
             event = reply_event
@@ -344,6 +357,40 @@ class PersonaInfo:
                 urls.append(msg.data["url"])
         return urls
     
+    def get_file_ids(self) -> list[str]:
+        ids: list[str] = []
+        for msg in self.message:
+            if msg.type == "file":
+                ids.append(msg.data["file_id"])
+        return ids
+    
+    def get_file_urls(self) -> list[str]:
+        urls: list[str] = []
+        for msg in self.message:
+            if msg.type == "file":
+                urls.append(msg.data["url"])
+        return urls
+    
+    async def get_file_info(self, file_id: str) -> FileInfo:
+        response = await self.bot.get_file(file = file_id)
+        return FileInfo(**response)
+    
+    async def get_file_name(self, file_id: str) -> str:
+        file_info = await self.get_file_info(file_id)
+        return file_info.file_name
+    
+    async def get_file_size(self, file_id: str) -> int:
+        file_info = await self.get_file_info(file_id)
+        return int(file_info.file_size)
+    
+    async def open_file(self, file_info: FileInfo) -> bytes:
+        async with aiofiles.open(file_info.file, "rb") as f:
+            return await f.read()
+    
+    async def open_text_file(self, file_info: FileInfo, encoding: str = "utf-8") -> str:
+        async with aiofiles.open(file_info.file, "r", encoding = encoding) as f:
+            return await f.read()
+    
     async def get_reply_chain(self) -> AsyncGenerator[MessageEvent, None]:
         """
         获取回复链
@@ -351,7 +398,7 @@ class PersonaInfo:
         注：解析时，它会默认消息段中只有一个 reply 消息段，
         如果有存在多个，那么它将会在该部分直接退出解析
         """
-        event = await self.get_raw_message_event()
+        event = await self.get_message_event()
         message: Message = event.message
         times: int = 0
         try:
@@ -437,9 +484,9 @@ class PersonaInfo:
             text_buffer.append(f"Validation Failure: {validation_failure_counter}")
         return "\n".join(text_buffer)
     
-    async def get_raw_message_event(self) -> MessageEvent:
+    async def get_message_event(self, message_id: int | None = None) -> MessageEvent:
         response = await self.bot.get_msg(
-            message_id = self.message_id
+            message_id = message_id if message_id is not None else self.message_id
         )
         # 兼容 MessageEvent
         response["post_type"] = "message"
