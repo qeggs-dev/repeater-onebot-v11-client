@@ -70,7 +70,7 @@ class RecentSpeakingRanking(CommandPackage):
             await send_msg.send_error("Please enter a valid number.")
 
         if n > 0:
-            message_list = await persona_info.bot.get_group_msg_history(
+            message_list = await persona_info.cached_api.get_group_msg_history(
                 group_id=group_id,
                 count=n
             )

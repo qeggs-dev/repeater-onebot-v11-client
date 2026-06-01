@@ -47,7 +47,7 @@ class ChooseGroupMember(CommandPackage):
             await send_msg.send_error("Please enter a number.")
 
         if n > 0:
-            member_list = await persona_info.bot.get_group_member_list(
+            member_list = await persona_info.cached_api.get_group_member_list(
                 group_id=group_id,
                 no_cache=False
             )
