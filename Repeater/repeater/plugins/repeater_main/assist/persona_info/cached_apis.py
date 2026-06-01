@@ -1,3 +1,5 @@
+import asyncio
+
 from nonebot.adapters.onebot.v11 import Bot
 from typing import Any, Awaitable, ClassVar
 from functools import wraps
@@ -10,21 +12,28 @@ class CachedAPI(Bot):
         maxsize = storage_configs.platform_interface_cache_size,
         ttl = storage_configs.platform_interface_cache_timeout
     )
+    cache_lock: ClassVar[asyncio.Lock] = asyncio.Lock()
 
     @wraps(Bot.call_api)
     async def call_api(self, api: str, **data: Any) -> Any:
         key: tuple[str, tuple] = (api, tuple(sorted(data.items())))
-        if key in self.cache:
-            logger.info(
-                "Cache hit: {name}",
-                name = api
-            )
-            return self.cache[key]
-        else:
-            logger.info(
-                "Cache miss: {name}",
-                name = api
-            )
-            result = await super().call_api(api, **data)
+        
+        async with self.cache_lock:
+            if key in self.cache:
+                logger.info(
+                    "Cache hit: {name}",
+                    name = api
+                )
+                return self.cache[key]
+            else:
+                logger.info(
+                    "Cache miss: {name}",
+                    name = api
+                )
+        
+        result = await super().call_api(api, **data)
+
+        async with self.cache_lock:
             self.cache[key] = result
-            return result
+        
+        return result
