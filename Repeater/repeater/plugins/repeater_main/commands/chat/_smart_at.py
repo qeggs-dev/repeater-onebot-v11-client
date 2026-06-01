@@ -4,7 +4,7 @@ from .._bases import BaseChat
 
 @CommandCaller.register
 class SmartAt(BaseChat):
-    listen_type: ListenType = ListenType.Message
+    listen_type = ListenType.Message
     priority = 100
     documents = """
         Determines whether the input is null,
