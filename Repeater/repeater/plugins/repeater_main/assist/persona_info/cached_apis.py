@@ -1,20 +1,19 @@
 from nonebot.adapters.onebot.v11 import Bot
 from typing import Any, Awaitable, ClassVar
-from frozendict import frozendict
 from functools import wraps
 from cachetools import TTLCache
 from ...client_net_configs import storage_configs
 from ...logger import logger
 
 class CachedAPI(Bot):
-    cache: ClassVar[TTLCache[tuple[str, frozendict[str, Any]], Any, float]] = TTLCache(
+    cache: ClassVar[TTLCache[tuple[str, tuple], Any, float]] = TTLCache(
         maxsize = storage_configs.platform_interface_cache_size,
         ttl = storage_configs.platform_interface_cache_timeout
     )
 
     @wraps(Bot.call_api)
     async def call_api(self, api: str, **data: Any) -> Any:
-        key: tuple[str, frozendict[str, Any]] = (api, frozendict(data))
+        key: tuple[str, tuple] = (api, tuple(sorted(data.items())))
         if key in self.cache:
             logger.info(
                 "Cache hit: {name}",
