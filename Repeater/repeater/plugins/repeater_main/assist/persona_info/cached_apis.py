@@ -1,0 +1,30 @@
+from nonebot.adapters.onebot.v11 import Bot
+from typing import Any, Awaitable, ClassVar
+from functools import warps
+from cachetools import TTLCache
+from ...client_net_configs import storage_configs
+from ...logger import logger
+
+class CachedAPI(Bot):
+    cache: ClassVar[TTLCache[tuple[str, dict[str, Any]], Any, float]] = TTLCache(
+        maxsize = storage_configs.platform_interface_cache_size,
+        ttl = storage_configs.platform_interface_cache_timeout
+    )
+
+    @warps(Bot.call_api)
+    async def call_api(self, api: str, **data: Any) -> Any:
+        key = (api, data)
+        if key in self.cache:
+            logger.info(
+                "Cache hit: {name}",
+                name = api
+            )
+            return self.cache[key]
+        else:
+            logger.info(
+                "Cache miss: {name}",
+                name = api
+            )
+            result = await super().call_api(api, **data)
+            self.cache[key] = result
+            return result

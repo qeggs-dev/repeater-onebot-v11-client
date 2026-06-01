@@ -3,7 +3,7 @@ from __future__ import annotations
 import aiofiles
 
 from nonebot import get_bots
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment, Message
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment, Message, Adapter
 from typing import AsyncGenerator, Container
 from ..assist_func import (
     at_with_name,
@@ -15,18 +15,18 @@ from ..assist_func import (
     generates_text_from_messages_list,
     get_reply_chain
 )
-from ...client_net_configs import storage_configs
 from ..namespace import MessageSource, Namespace
-from ..network.image_downloader import ImageDownloader
-from nonebot import logger
-from datetime import datetime
-from pydantic import ValidationError
 from .enter_type import EnterType
 from .file_info import FileInfo
+from .cached_apis import CachedAPI
 
 class PersonaInfo:
     def __init__(self, bot: Bot, event: MessageEvent, args: Message | None = None):
         self._bot: Bot = bot
+        self._cached_api: CachedAPI = CachedAPI(
+            self.adapter,
+            self.self_id
+        )
         self._message_event: MessageEvent = event
         self._args: Message | None = args
         self._group_id: int | None = None
@@ -137,6 +137,10 @@ class PersonaInfo:
         return False
     
     @property
+    def adapter(self) -> Adapter:
+        return self._bot.adapter
+    
+    @property
     def is_superuser(self) -> bool:
         if self._bot.config.superusers is None:
             return False
@@ -196,6 +200,10 @@ class PersonaInfo:
     @property
     def bot(self):
         return self._bot
+    
+    @property
+    def cached_api(self) -> CachedAPI:
+        return self._cached_api
     
     @property
     def bots(self):
@@ -297,12 +305,12 @@ class PersonaInfo:
         return at_list
     
     async def handle_at_with_name(self):
-        return await at_with_name(self._bot, self._message_event)
+        return await at_with_name(self._cached_api, self._message_event)
     
     async def image_to_text(self, format: str = "{text}", cite: bool = True, excluded_tags:Container[str] = {}) -> Message:
         """将图片转换为文字"""
         await image_to_text(
-            self._bot,
+            self._cached_api,
             self.message,
             format = format,
             cite = cite,
@@ -348,7 +356,7 @@ class PersonaInfo:
         return urls
     
     async def get_file_info(self, file_id: str) -> FileInfo:
-        response = await self.bot.get_file(file = file_id)
+        response = await self._cached_api.get_file(file = file_id)
         return FileInfo(**response)
     
     async def get_file_name(self, file_id: str) -> str:
@@ -381,19 +389,19 @@ class PersonaInfo:
         message: Message = event.message
 
         return await get_reply_chain(
-            self._bot,
+            self._cached_api,
             message
         )
     
     async def get_reply_msgs(self, message: Message | None = None) -> list[MessageEvent]:
         return await get_reply_msgs(
-            self._bot,
+            self._cached_api,
             message if message is not None else self.message
         )
     
     async def get_forward_msgs(self) -> list[MessageEvent]:
         return await get_forward_msgs(
-            self._bot,
+            self._cached_api,
             self.message
         )
     
@@ -403,6 +411,6 @@ class PersonaInfo:
     
     async def get_message_event(self, message_id: int | None = None) -> MessageEvent:
         return get_message_event(
-            self._bot,
+            self._cached_api,
             message_id if message_id is not None else self.message_id
         )
