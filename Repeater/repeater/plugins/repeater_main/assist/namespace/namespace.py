@@ -1,14 +1,7 @@
 import hashlib
 from pydantic import BaseModel, ConfigDict
-from enum import Enum
-from ..client_net_configs import storage_configs
-
-class MessageSource(Enum):
-    """
-    消息来源
-    """
-    GROUP = "group"
-    PRIVATE = "private"
+from ...client_net_configs import storage_configs
+from .message_source import MessageSource
 
 class Namespace(BaseModel):
     """

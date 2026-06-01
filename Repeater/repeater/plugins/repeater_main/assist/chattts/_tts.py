@@ -1,8 +1,8 @@
 import httpx
 
-from .._http_transport import http_transport
+from ..network.http_transport import http_transport
 from ._config import tts_config
-from .._response import Response
+from ..response.response import Response
 from ._tts_response import TTSResponse
 
 class ChatTTSAPI:

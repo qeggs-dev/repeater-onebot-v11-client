@@ -3,16 +3,21 @@ import asyncio
 
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment, Message
 from nonebot.internal.matcher.matcher import Matcher
-from nonebot.exception import FinishedException
+from nonebot.exception import FinishedException, ActionFailed
 
-from ._text_render import RendedImage
-from ..client_net_configs import RepeaterDebugMode, storage_configs
-from ._http_code import HTTPCode
-from ._persona_info import PersonaInfo
-from ._namespace import MessageSource
-from ._text_render import TextRender
-from ._response import Response
-from .chattts import ChatTTSAPI
+from ..assist_func import (
+    text_length_score,
+    send_group_file,
+    send_private_file,
+)
+from ..text_render.text_render import RendedImage
+from ...client_net_configs import RepeaterDebugMode, storage_configs
+from ..network import HTTPCode
+from ..persona_info import PersonaInfo
+from ..namespace import MessageSource
+from ..text_render.text_render import TextRender
+from ..response.response import Response
+from ..chattts import ChatTTSAPI
 from typing import (
     Any,
     Callable,
@@ -24,8 +29,8 @@ from typing import (
     ClassVar
 )
 from datetime import datetime
-from ._limit_speed import LimitSpeed
-from ..logger import logger as base_logger
+from .limit_speed import LimitSpeed
+from ...logger import logger as base_logger
 
 logger = base_logger.bind(module = "SendMsg")
 
@@ -901,62 +906,7 @@ class SendMsg:
     
     @staticmethod
     def text_length_score(text: str) -> float:
-        if not text:
-            return 0.0
-        
-        config = storage_configs.text_length_score_configs
-        
-        # 单次遍历统计
-        max_line_length: int = 0
-        total_chars_in_lines: int = 0  # 所有行中非换行符字符总数
-        line_count: int = 0
-        current_line_length: int = 0
-        
-        for char in text:
-            if char == "\n":
-                # 当前行结束
-                if current_line_length > max_line_length:
-                    max_line_length = current_line_length
-                total_chars_in_lines += current_line_length
-                line_count += 1
-                current_line_length = 0
-            else:
-                current_line_length += 1
-        
-        # 处理最后一行（如果文本不以换行符结尾）
-        if current_line_length > 0 or (text and text[-1] == '\n'):
-            # 两种情况：
-            # 1. current_line_length > 0: 最后有内容
-            # 2. text[-1] == '\n': 最后是空行（current_line_length=0但算一行）
-            if current_line_length > max_line_length:
-                max_line_length = current_line_length
-            total_chars_in_lines += current_line_length
-            line_count += 1
-        
-        # 如果line_count为0（理论上不会发生，因为text不为空）
-        if line_count == 0:
-            return 0.0
-        
-        # 计算统计值
-        mean_line_length: float = total_chars_in_lines / line_count
-        total_length: int = len(text)  # 直接使用len，避免重复计算
-        
-        # 计算各项得分
-        lines_score: float = line_count / config.max_lines
-        max_single_line_score: float = max_line_length / config.single_line_max
-        mean_line_score: float = mean_line_length / config.mean_line_max
-        total_length_score: float = total_length / config.total_length
-        
-        # 综合得分（加权平均）
-        return (
-            lines_score +
-            (
-                max_single_line_score
-                +
-                mean_line_score
-            ) / 2.0 +
-            total_length_score
-        ) / 3.0
+        return text_length_score(text)
     
     @property
     def text_length_score_threshold(self) -> float:
@@ -966,3 +916,31 @@ class SendMsg:
             threshold = storage_configs.text_length_score_configs.threshold.private
 
         return threshold
+    
+    async def _send_file(self, url: str, file_name: str):
+        try:
+            if self.persona_info.source == MessageSource.GROUP:
+                await send_group_file(
+                    self.persona_info.bot,
+                    self.persona_info.group_id,
+                    url,
+                    file_name
+                )
+            elif self.persona_info.source == MessageSource.PRIVATE:
+                await send_private_file(
+                    self.persona_info.bot,
+                    self.persona_info.user_id,
+                    url,
+                    file_name
+                )
+        except ActionFailed as e:
+            logger.error(f"Failed to upload file: {e}")
+            await self.send_error("Failed to upload file.")
+    
+    async def send_file(self, url: str, file_name: str):
+        await self.limit_speed.submit(
+            self._send_file(
+                url,
+                file_name
+            )
+        )

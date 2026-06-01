@@ -2,23 +2,13 @@ from __future__ import annotations
 
 import sys
 
-from dataclasses import dataclass
-from types import TracebackType
 from typing import Generic, TypeVar, Type, Any
 from httpx import Response as HTTPXResponse
-from ._error_response import ErrorResponse
 from pydantic import BaseModel
+from .error_response import ErrorResponse
+from .exception_info import ExceptionInfo
 
 T_Response = TypeVar("T_Response")
-
-@dataclass
-class ExceptionInfo:
-    exc_type: type[BaseException] | None = None
-    exc_value: BaseException | None = None
-    exc_traceback: TracebackType | None = None
-
-    def __bool__(self) -> bool:
-        return self.exc_type is not None and self.exc_value is not None and self.exc_traceback is not None
 
 class Response(Generic[T_Response]):
     def __init__(

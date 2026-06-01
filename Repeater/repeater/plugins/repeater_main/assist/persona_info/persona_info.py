@@ -5,18 +5,24 @@ import aiofiles
 from nonebot import get_bots
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment, Message
 from typing import AsyncGenerator, Container
-from ._assist_func import (
-    handle_at_with_name,
-    image_to_text
+from ..assist_func import (
+    at_with_name,
+    image_to_text,
+    get_images_url,
+    get_reply_msgs,
+    get_forward_msgs,
+    get_message_event,
+    generates_text_from_messages_list,
+    get_reply_chain
 )
-from ..client_net_configs import storage_configs
-from ._namespace import MessageSource, Namespace
-from ._image_downloader import ImageDownloader
+from ...client_net_configs import storage_configs
+from ..namespace import MessageSource, Namespace
+from ..network.image_downloader import ImageDownloader
 from nonebot import logger
 from datetime import datetime
 from pydantic import ValidationError
-from ._enter_type import EnterType
-from ._file_info import FileInfo
+from .enter_type import EnterType
+from .file_info import FileInfo
 
 class PersonaInfo:
     def __init__(self, bot: Bot, event: MessageEvent, args: Message | None = None):
@@ -291,57 +297,27 @@ class PersonaInfo:
         return at_list
     
     async def handle_at_with_name(self):
-        return await handle_at_with_name(self._bot, self._message_event)
+        return await at_with_name(self._bot, self._message_event)
     
     async def image_to_text(self, format: str = "{text}", cite: bool = True, excluded_tags:Container[str] = {}) -> Message:
         """将图片转换为文字"""
-        if "image" not in self.message:
-            return self.message
-        outmsg = Message()
-        for segment in self.message:
-            if segment.type == "image":
-                ocrout = await self._bot.ocr_image(image = segment.data["url"])
-                text = ""
-                tag = segment.data.get("summary", "")
-                for item in ocrout:
-                    text += item["text"] + "\n"
-                if text.endswith("\n"):
-                    text = text[:-1]
-                if tag not in excluded_tags:
-                    text = f"[Image tag:{tag}]\n{text}"
-                if text.strip():
-                    text = format.format(text = text)
-                    if cite:
-                        text = text.replace("\n", "\n> ")
-                    outmsg.append(MessageSegment(type = "text", data = {"text": text}))
-                else:
-                    outmsg.append(segment)
-            else:
-                outmsg.append(segment)
-        return outmsg
+        await image_to_text(
+            self._bot,
+            self.message,
+            format = format,
+            cite = cite,
+            excluded_tags = excluded_tags
+        )
     
     @property
     def plaintext_message(self) -> str:
         return self.message.extract_plain_text()
     
     async def get_images_url(self, base64: bool | None = None) -> list[str]:
-        if base64 is None:
-            base64 = storage_configs.use_base64_image_url
-        images: list[str] = []
-        if "image" in self.message:
-            async with ImageDownloader(
-                self.message,
-                timeout=storage_configs.download_image_timeout
-            ) as downloader:
-                if base64:
-                    get_image_url = downloader.download_image_to_base64()
-                    async for image_url in get_image_url:
-                        if image_url is not None:
-                            images.append(image_url)
-                else:
-                    for image_url in downloader.get_images():
-                        images.append(image_url)
-        return images
+        return await get_images_url(
+            self.message,
+            base64 = base64
+        )
     
     def get_video_url(self) -> list[str]:
         urls: list[str] = []
@@ -398,96 +374,35 @@ class PersonaInfo:
         注：解析时，它会默认消息段中只有一个 reply 消息段，
         如果有存在多个，那么它将会在该部分直接退出解析
         """
+
+        # 经过框架处理的 Event 中可能并未包含 reply 消息段
+        # 需要重新获取原始 Event
         event = await self.get_message_event()
         message: Message = event.message
-        times: int = 0
-        try:
-            while True:
-                if times > storage_configs.max_reply_chain_length:
-                    break
-                reply_messages = await self.get_reply_msgs(message)
-                if len(reply_messages) == 1:
-                    event = reply_messages[0]
-                    yield event
-                    message = event.message
-                else:
-                    break
-                times += 1
-        finally:
-            if times == 0:
-                logger.warning(
-                    "Reply chain is not found"
-                )
+
+        return await get_reply_chain(
+            self._bot,
+            message
+        )
     
     async def get_reply_msgs(self, message: Message | None = None) -> list[MessageEvent]:
-        msgs: list[MessageEvent] = []
-        if message is None:
-            message = self._message_event.message
-        for msg in message:
-            if msg.type == "reply":
-                reply_msg = await self._bot.get_msg(message_id=msg.data["id"])
-
-                # 兼容 MessageEvent
-                reply_msg["post_type"] = "message"
-                msgs.append(
-                    MessageEvent(**reply_msg)
-                )
-        if not msgs:
-            logger.warning(
-                "Reply is not found"
-            )
-        return msgs
+        return await get_reply_msgs(
+            self._bot,
+            message if message is not None else self.message
+        )
     
     async def get_forward_msgs(self) -> list[MessageEvent]:
-        msgs: list[MessageEvent] = []
-
-        for msg in self._message_event.message:
-            if msg.type == "forward":
-                forward_msg = await self._bot.get_forward_msg(id=msg.data["id"])
-                messages = forward_msg["messages"]
-                for message in messages:
-                    msgs.append(MessageEvent(**message))
-        if not msgs:
-            logger.warning(
-                "Forward is not found"
-            )
-        return msgs
+        return await get_forward_msgs(
+            self._bot,
+            self.message
+        )
     
     @staticmethod
     def generates_text_from_messages_list(messages: list[dict | MessageEvent]):
-        text_buffer: list[str] = []
-        validation_failure_counter: int = 0
-        for message in messages:
-            try:
-                if isinstance(message, MessageEvent):
-                    event = message
-                else:
-                    event = MessageEvent(**message)
-                nick_name = event.sender.card or event.sender.nickname
-                text = event.message
-                time = datetime.fromtimestamp(event.time)
-            except ValidationError:
-                try:
-                    nick_name = message["sender"]["card"] or message["sender"]["nickname"]
-                    text = message['message']
-                    time = datetime.fromtimestamp(message["time"])
-                except KeyError:
-                    validation_failure_counter += 1
-                    continue
-            
-            time_str = time.strftime("%Y-%m-%d %H:%M:%S")
-            text_buffer.append(
-                f"[{time_str}]{nick_name}: {text}"
-            )
-
-        if validation_failure_counter > 0:
-            text_buffer.append(f"Validation Failure: {validation_failure_counter}")
-        return "\n".join(text_buffer)
+        return generates_text_from_messages_list(messages)
     
     async def get_message_event(self, message_id: int | None = None) -> MessageEvent:
-        response = await self.bot.get_msg(
-            message_id = message_id if message_id is not None else self.message_id
+        return get_message_event(
+            self._bot,
+            message_id if message_id is not None else self.message_id
         )
-        # 兼容 MessageEvent
-        response["post_type"] = "message"
-        return MessageEvent(**response)

@@ -1,20 +1,11 @@
 import httpx
 
-from ._http_transport import http_transport
-from ..client_net_configs import *
-from pydantic import BaseModel
-from ._response import Response
-from ._namespace import Namespace
-from ..logger import logger
-
-class RendedImage(BaseModel):
-    image_url: str = ""
-    file_uuid: str = ""
-    style: str = ""
-    timeout: float = 0.0
-    text: str = ""
-    created: float = 0.0
-    created_ms: int = 0
+from ..network.http_transport import http_transport
+from ...client_net_configs import *
+from ..response.response import Response
+from ..namespace import Namespace
+from ...logger import logger
+from .response import RendedImage
 
 class TextRender:
     _client = httpx.AsyncClient(

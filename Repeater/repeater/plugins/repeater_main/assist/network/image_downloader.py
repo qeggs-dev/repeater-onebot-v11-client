@@ -4,7 +4,7 @@ from nonebot.adapters.onebot.v11 import Message
 import base64
 import asyncio
 from typing import AsyncGenerator, Generator
-from ._http_transport import http_transport
+from .http_transport import http_transport
 import imghdr
 
 class ImageDownloader:

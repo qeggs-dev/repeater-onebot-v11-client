@@ -1,7 +1,7 @@
 from nonebot.adapters.onebot.v11 import MessageSegment, Message
 from nonebot.internal.matcher.matcher import Matcher
-from ._persona_info import PersonaInfo
-from ._response import Response
+from ..persona_info import PersonaInfo
+from ..response.response import Response
 from typing import (
     Callable,
     Any,
@@ -637,3 +637,7 @@ class SendMsg:
     
     @property
     def text_length_score_threshold(self) -> float: ...
+    
+    async def _send_file(self, url: str, file_name: str): ...
+    
+    async def send_file(self, url: str, file_name: str): ...
