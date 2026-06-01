@@ -15,7 +15,6 @@ dependencies = [
     "curlify2 (>=2.0.0,<3.0.0)",
     "numpy (==2.4.2)",
     "cachetools (>=7.1.4,<8.0.0)",
-    "frozendict (>=2.4.7,<3.0.0)"
 ]
 
 [project.optional-dependencies]
