@@ -13,7 +13,8 @@ dependencies = [
     "pyyaml (>=6.0.3,<7.0.0)",
     "pydantic (>=2.12.5,<3.0.0)",
     "curlify2 (>=2.0.0,<3.0.0)",
-    "numpy (==2.4.2)"
+    "numpy (==2.4.2)",
+    "cachetools (>=7.1.4,<8.0.0)"
 ]
 
 [project.optional-dependencies]
