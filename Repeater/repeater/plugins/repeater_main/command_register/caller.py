@@ -78,7 +78,7 @@ class CommandCaller:
                 result = await task
                 return result
             except asyncio.CancelledError:
-                return await package.on_cancel(running)
+                return await package.on_cancel(persona_info, send_msg)
             finally:
                 cls.runnings.remove(running) 
 
