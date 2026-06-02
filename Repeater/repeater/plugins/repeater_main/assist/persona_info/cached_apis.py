@@ -16,18 +16,28 @@ class CachedAPI(Bot):
 
     @wraps(Bot.call_api)
     async def call_api(self, api: str, **data: Any) -> Any:
-        key: tuple[str, tuple] = (api, tuple(sorted(data.items())))
+        try:
+            key: tuple[str, tuple] = (api, frozenset(data.items()))
+            cacheable: bool = True
+        except TypeError:
+            cacheable = False
         
         async with self.cache_lock:
-            if key in self.cache:
-                logger.info(
-                    "Cache hit: {name}",
-                    name = api
-                )
-                return self.cache[key]
+            if cacheable:
+                if key in self.cache:
+                    logger.info(
+                        "Cache hit: {name}",
+                        name = api
+                    )
+                    return self.cache[key]
+                else:
+                    logger.info(
+                        "Cache miss: {name}",
+                        name = api
+                    )
             else:
                 logger.info(
-                    "Cache miss: {name}",
+                    "Is not cacheable call: {name}",
                     name = api
                 )
         
