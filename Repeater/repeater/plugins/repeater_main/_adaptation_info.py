@@ -1,2 +1,2 @@
-__adaptation__ = "4.6.10"
+__adaptation__ = "4.7.3"
 __adaptation_text__ = f"Repeater QQ client implementation based on NoneBot Plugins, adaptation version: {__adaptation__}"
