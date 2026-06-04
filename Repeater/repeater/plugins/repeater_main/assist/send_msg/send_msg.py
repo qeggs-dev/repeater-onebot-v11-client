@@ -717,7 +717,7 @@ class SendMsg:
             )
     
     @staticmethod
-    async def empty_message(self) -> MessageSegment:
+    async def empty_message() -> MessageSegment:
         return MessageSegment.text("[Message is empty.]")
     
     @staticmethod
