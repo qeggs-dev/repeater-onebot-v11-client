@@ -132,7 +132,7 @@ class ChatSendMsg(SendMsg):
         if self.content:
             message.append(text or self.content)
         else:
-            message.append(self.empty_message())
+            message.append(await self.empty_message())
         await self._send(message)
     
     async def send_image_mode(self, text: str | None = None) -> NoReturn:
