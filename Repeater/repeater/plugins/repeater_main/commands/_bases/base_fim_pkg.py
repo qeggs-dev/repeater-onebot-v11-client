@@ -12,7 +12,7 @@ class BaseFIM(BaseChat):
     cmd_type = CmdTypes.FIM
 
     fim_regex = re.compile(r"^(?P<prompt>.*?)\[fill_this\](?P<suffix>.*)$", re.IGNORECASE | re.DOTALL)
-    fim_regex_greedy = re.compile(r"^(?P<prompt>.*)___(?P<suffix>.*)$", re.IGNORECASE | re.DOTALL)
+    fim_regex_greedy = re.compile(r"^(?P<prompt>.*)_{3,}(?P<suffix>.*)$", re.IGNORECASE | re.DOTALL)
 
     async def parse_message(
         self,
