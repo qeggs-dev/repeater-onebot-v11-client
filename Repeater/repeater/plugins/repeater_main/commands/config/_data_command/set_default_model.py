@@ -14,7 +14,7 @@ class SetDefaultModel(BaseConfig):
         "SetDefaultModel",
         "SET_DEFAULT_MODEL",
     }
-    field = "model_uid"
+    field = "model_id"
     
     async def finish_message(
             self,

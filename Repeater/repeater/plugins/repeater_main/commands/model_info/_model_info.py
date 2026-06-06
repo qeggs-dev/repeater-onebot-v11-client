@@ -24,9 +24,9 @@ class GetModelList(CommandPackage):
             await send_msg.send_debug_mode()
 
         model_info_client = ModelInfoClient()
-        model_uid = persona_info.message_striped_str
+        model_id = persona_info.message_striped_str
 
-        response = await model_info_client.get_models(model_uid)
+        response = await model_info_client.get_models(model_id)
         if response.code == 200:
             model_info = response.get_data()
             if model_info is None:

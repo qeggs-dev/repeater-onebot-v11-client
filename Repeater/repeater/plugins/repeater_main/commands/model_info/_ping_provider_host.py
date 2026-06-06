@@ -24,13 +24,13 @@ class PingProviderHost(CommandPackage):
             await send_msg.send_debug_mode()
 
         model_info_client = ModelInfoClient()
-        model_uid = persona_info.message_striped_str
-        if not model_uid:
-            model_uid = None
+        model_id = persona_info.message_striped_str
+        if not model_id:
+            model_id = None
 
         response = await model_info_client.ping_provider(
             persona_info.namespace_str,
-            model_uid = model_uid
+            model_id = model_id
         )
         if response.code == 200:
             ping_response = response.get_data()

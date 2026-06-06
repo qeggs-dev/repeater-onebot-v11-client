@@ -14,7 +14,7 @@ class SetMultipleModel(BaseConfig):
         "SetMultipleModel",
         "SET_MULTIPLE_MODEL",
     }
-    field = "model_uid"
+    field = "model_id"
 
     async def parse_value(
         self,
@@ -25,7 +25,7 @@ class SetMultipleModel(BaseConfig):
         msg = persona_info.message_striped_str
         value = parse_delimited_string(msg)
         if not value:
-            await send_msg.send_error("Please enter at least one model_uid")
+            await send_msg.send_error("Please enter at least one model_id")
         return value
     
     async def finish_message(
