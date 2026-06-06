@@ -28,7 +28,7 @@ class ChatRequestModel(BaseModel):
     role_name: str | None = None
     extra_template_fields: dict[str, Any] | None = None
     temporary_prompt: str | None = None
-    model_uid: str | None = None
+    model_id: str | None = None
     thinking: bool | None = None
     additional_data: AdditionalData | None = None
     load_prompt: bool | None = None

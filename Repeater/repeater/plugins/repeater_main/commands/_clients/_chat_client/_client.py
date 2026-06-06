@@ -69,7 +69,7 @@ class ChatClient:
         fim_mode: bool | None = None,
         role_name: str | None = None,
         temporary_prompt: str | None = None,
-        model_uid: str | None = None,
+        model_id: str | None = None,
         thinking: bool | None = None,
         allow_tool_calls: bool | None = None,
         extra_template_fields: dict[str, Any] | None = None,
@@ -93,7 +93,7 @@ class ChatClient:
         :param add_metadata: 是否添加元数据
         :param role_name: 角色名称
         :param temporary_prompt: 临时提示
-        :param model_uid: 模型UID
+        :param model_id: 模型UID
         :param thinking: 思考模式
         :param allow_tool_calls: 是否允许工具调用
         :param extra_template_fields: 额外模板字段
@@ -130,7 +130,7 @@ class ChatClient:
             add_metadata = add_metadata,
             role_name = role_name,
             temporary_prompt = temporary_prompt,
-            model_uid = model_uid,
+            model_id = model_id,
             thinking = thinking,
             allow_tool_calls = allow_tool_calls,
             extra_template_fields = extra_template_fields,
