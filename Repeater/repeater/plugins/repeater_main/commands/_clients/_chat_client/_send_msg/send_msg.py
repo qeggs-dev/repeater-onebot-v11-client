@@ -93,9 +93,9 @@ class ChatSendMsg(SendMsg):
 
         score = self.text_length_score(self.content)
         threshold = self.text_length_score_threshold
-        logger.info(f"Response content socre: {score}")
+        logger.info(f"Response content score: {score}")
         if score >= threshold:
-            logger.warning(f"Response content socre to high: {score}, Expected to be below {threshold} ")
+            logger.warning(f"Response content score to high: {score}, Expected to be below {threshold} ")
             logger.warning("The text will be rendered as an image output.")
             await self.send_image_mode()
         else:
