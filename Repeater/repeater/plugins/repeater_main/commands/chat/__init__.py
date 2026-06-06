@@ -11,7 +11,7 @@ from ._npchat import NPChat
 from ._keep_answering import ChatKeepAnswering
 from ._keep_reasoning import ChatKeepReasoning
 from ._reference import Reference
-from ._public_space_chat import PersonaInfo
+from ._public_space_chat import PublicSpaceChat
 from ._summarize_and_contract import SummarizeAndContract
 from ._tts_chat import TTSChat
 
@@ -29,7 +29,7 @@ __all__ = [
     "ChatKeepAnswering",
     "ChatKeepReasoning",
     "Reference",
-    "PersonaInfo",
+    "PublicSpaceChat",
     "SummarizeAndContract",
     "TTSChat",
 ]
