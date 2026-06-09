@@ -19,7 +19,7 @@ class RawChat(BaseChat):
         
         Usage:
         ```
-        /{cmd} [text]
+        /{cmd} text
         ```
     """
     

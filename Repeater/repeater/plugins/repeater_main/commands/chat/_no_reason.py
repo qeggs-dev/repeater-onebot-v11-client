@@ -19,7 +19,7 @@ class NoReason(BaseChat):
         
         Usage:
         ```
-        /{cmd} [text]
+        /{cmd} text
         ```
     """
     

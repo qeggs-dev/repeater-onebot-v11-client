@@ -3,10 +3,10 @@ from ....assist import PersonaInfo, SendMsg
 from ....command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from ....storage import async_text_storage
-from ..._clients import PromptClient, ChatClient
+from ..._clients import PromptClient, ChatClient, ContentRole
 from ._default_meta_prompt import META_PROMPT
 
 
@@ -21,7 +21,7 @@ class GeneratePrompt(CommandPackage):
         "GeneratePrompt",
         "GENERATE_PROMPT",
     }
-    cmd_type = CmdType.MIXED
+    cmd_type = CmdTypes.MIXED
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:
@@ -57,17 +57,22 @@ class GeneratePrompt(CommandPackage):
             await send_msg.send_error("Unable to process data.")
             return
 
-        if not data.content:
+        if not data.context:
             await send_msg.send_error("No prompt content generated.")
             return
 
         prompt_client = PromptClient(persona_info)
-        prompt_response = await prompt_client.set_prompt(data.content)
+        text_buffer:list[str] = []
+        for buffer in data.context.context_list:
+            if buffer.role == ContentRole.USER:
+                text_buffer.append(buffer.content)
+        text = "\n\n".join(text_buffer)
+        prompt_response = await prompt_client.set_prompt(text)
         if prompt_response.code != 200:
             await send_msg.send_response_check_code(prompt_response, "Set Prompt failed")
         else:
             await send_msg.send_mixed_render(
-                text="Prompt generated:",
-                text_to_render=data.content,
-                prompt_mode=True
+                text = "Prompt generated:",
+                text_to_render = text,
+                prompt_mode = True
             )

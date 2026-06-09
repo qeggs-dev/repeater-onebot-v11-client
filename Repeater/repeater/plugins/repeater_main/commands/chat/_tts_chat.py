@@ -19,7 +19,7 @@ class TTSChat(BaseChat):
         
         Usage:
         ```
-        /{cmd} [text]
+        /{cmd} text
         ```
     """
 

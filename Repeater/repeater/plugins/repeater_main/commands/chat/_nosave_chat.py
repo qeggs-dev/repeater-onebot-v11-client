@@ -19,7 +19,7 @@ class NoSaveChat(BaseChat):
         
         Usage:
         ```
-        /{cmd} [text]
+        /{cmd} text
         ```
     """
     

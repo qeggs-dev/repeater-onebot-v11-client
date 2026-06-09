@@ -2,7 +2,7 @@ from ...assist import PersonaInfo, SendMsg
 from ...command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from .._clients import ChatClient
 
@@ -18,7 +18,7 @@ class GetChatBuffer(CommandPackage):
         "GetChatBuffer",
         "GET_CHAT_BUFFER",
     }
-    cmd_type = CmdType.STATUS
+    cmd_type = CmdTypes.STATUS
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:
@@ -27,11 +27,15 @@ class GetChatBuffer(CommandPackage):
         chat_client = ChatClient(persona_info)
         response = await chat_client.get_chat_buffer()
         if response:
-            buffer = response.get_data()
-            if buffer is None:
+            buffer_response = response.get_data()
+            if buffer_response is None:
                 await send_msg.send_error(response.get_error())
             else:
-                await send_msg.send_chat_response(
-                    reasoning_content=buffer.reasoning,
-                    content=buffer.content
-                )
+                for task_id, buffer in buffer_response.buffers.items():
+                    await send_msg.send_chat_response(
+                        reasoning_content = buffer.reasoning,
+                        content = buffer.content,
+                        continue_handler = True
+                    )
+        
+        send_msg.break_handler()

@@ -1,8 +1,8 @@
-from ...assist import PersonaInfo, SendMsg, FileSender
+from ...assist import PersonaInfo, SendMsg
 from ...command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from .._clients import UserFileClient
 
@@ -18,7 +18,7 @@ class SendUserDataFile(CommandPackage):
         "SendUserDataFile",
         "SEND_USER_DATA_FILE",
     }
-    cmd_type = CmdType.USERFILE
+    cmd_type = CmdTypes.USERFILE
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:
@@ -26,8 +26,4 @@ class SendUserDataFile(CommandPackage):
 
         user_file_client = UserFileClient(persona_info)
         file_url = await user_file_client.get_user_data_file_url()
-        file_sender = FileSender(
-            persona_info=persona_info,
-            send_msg=send_msg,
-        )
-        await file_sender.send_file(file_url, f"{persona_info.namespace_str}_UserDataFile.zip")
+        await send_msg.send_file(file_url, f"{persona_info.namespace_str}_UserDataFile.zip")

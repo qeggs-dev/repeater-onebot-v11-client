@@ -28,7 +28,9 @@ from ._data_command.set_max_tokens import SetMaxTokens
 from ._data_command.set_model_timeout import SetModelTimeout
 from ._data_command.set_multiple_model import SetMultipleModel
 from ._data_command.set_timezone import SetTimezone
+from ._data_command.set_top_a import SetTopA
 from ._data_command.set_top_p import SetTopP
+from ._data_command.set_top_k import SetTopK
 from ._data_command.set_stop_keywords import SetStopKeywords
 from ._data_command.thinking_mode import ThinkingMode
 from ._data_command.write_user_profile import WriteUserProfile
@@ -36,6 +38,8 @@ from ._data_command.set_reasoning_effort import SetReasoningEffort
 from ._data_command.set_preset_directives import SetPresetDirectives
 from ._data_command.add_preset_directives import AddPresetDirectives
 from ._data_command.remove_preset_directives import RemovePresetDirectives
+from ._data_command.model_request_loop_times import ModelRequestLoopTimes
+from ._data_command.tool_calling_remove_reasoning import ToolCallingRemoveReasoning
 
 from ._branch_command.del_config import DelConfig
 from ._branch_command.change_config_branch import ChangeConfigBranch
@@ -81,7 +85,9 @@ __all__ = [
     "SetModelTimeout",
     "SetMultipleModel",
     "SetTimezone",
+    "SetTopA",
     "SetTopP",
+    "SetTopK",
     "SetStopKeywords",
     "ThinkingMode",
     "WriteUserProfile",
@@ -89,6 +95,8 @@ __all__ = [
     "SetPresetDirectives",
     "AddPresetDirectives",
     "RemovePresetDirectives",
+    "ModelRequestLoopTimes",
+    "ToolCallingRemoveReasoning",
 
     # Branch commands
     "DelConfig",

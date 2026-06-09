@@ -2,7 +2,7 @@ from ...assist import PersonaInfo, SendMsg
 from ...command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from .._clients import ModelInfoClient, ModelInfo
 
@@ -17,20 +17,20 @@ class PingProviderHost(CommandPackage):
         "PingProviderHost",
         "PING_PROVIDER_HOST",
     }
-    cmd_type = CmdType.MODEL
+    cmd_type = CmdTypes.MODEL
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:
             await send_msg.send_debug_mode()
 
         model_info_client = ModelInfoClient()
-        model_uid = persona_info.message_striped_str
-        if not model_uid:
-            model_uid = None
+        model_id = persona_info.message_striped_str
+        if not model_id:
+            model_id = None
 
         response = await model_info_client.ping_provider(
             persona_info.namespace_str,
-            model_uid = model_uid
+            model_id = model_id
         )
         if response.code == 200:
             ping_response = response.get_data()
@@ -41,6 +41,7 @@ class PingProviderHost(CommandPackage):
                 text_buffer.append(f"Successful Times: {ping_response.success_count}")
                 text_buffer.append(f"Average Time Spent: {ping_response.average_time_spent}")
                 for detail in ping_response.details:
+                    statistics = detail.to_statistics()
                     text_buffer.append("")
                     text_buffer.append(f"**Host** [{detail.ip}]:")
                     text_buffer.append(f"**names:**")
@@ -48,11 +49,15 @@ class PingProviderHost(CommandPackage):
                         text_buffer.append(f"  - `{name}`")
                     text_buffer.append(f"**times:**")
                     for time in detail.time:
-                        text_buffer.append(f"  - {time}")
-                    text_buffer.append(f"**packet loss:** {detail.packet_loss}")
-                    text_buffer.append(f"**max time:** {detail.max_time}")
-                    text_buffer.append(f"**min time:** {detail.min_time}")
-                    text_buffer.append(f"**avg time:** {detail.avg_time}")
+                        text_buffer.append(f"  - {time:.4f}ms")
+                    text_buffer.append(f"**packet loss:** {detail.packet_loss:.2%}")
+                    text_buffer.append(f"**max time:** {statistics.max:.4f}ms")
+                    text_buffer.append(f"**min time:** {statistics.min:.4f}ms")
+                    text_buffer.append(f"**avg time:** {statistics.mean:.4f}ms")
+                    text_buffer.append(f"**median time:** {statistics.median:.4f}ms")
+                    text_buffer.append(f"**standard deviation:** {statistics.std:.4f}ms")
+                    text_buffer.append(f"**variance:** {statistics.var:.4f}ms")
+                    text_buffer.append(f"**coefficient of variation:** {statistics.cv:.2%}")
                 await send_msg.send_render_prompt("\n".join(text_buffer))
         else:
             await send_msg.send_response_check_code(response)

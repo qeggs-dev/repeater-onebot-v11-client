@@ -3,7 +3,7 @@ from ...assist import PersonaInfo, SendMsg
 from ...command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from .._clients import LicenseClient
 
@@ -19,7 +19,7 @@ class GetServerLicenses(CommandPackage):
         "GetServerLicenses",
         "GET_SERVER_LICENSES",
     }
-    cmd_type = CmdType.LICENSES 
+    cmd_type = CmdTypes.LICENSES 
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

@@ -6,7 +6,7 @@ from ...assist import PersonaInfo, SendMsg, MessageSource
 from ...command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 
 
@@ -21,7 +21,7 @@ class RecentSpeakingRanking(CommandPackage):
         "RecentSpeakingRanking",
         "RECENT_SPEAKING_RANKING",
     }
-    cmd_type = CmdType.OTHER
+    cmd_type = CmdTypes.OTHER
 
     @staticmethod
     def recent_speaking_ranking_worker(message_list: dict[str, Any]) -> tuple[str, int, int]:
@@ -70,7 +70,7 @@ class RecentSpeakingRanking(CommandPackage):
             await send_msg.send_error("Please enter a valid number.")
 
         if n > 0:
-            message_list = await persona_info.bot.get_group_msg_history(
+            message_list = await persona_info.cached_api.get_group_msg_history(
                 group_id=group_id,
                 count=n
             )

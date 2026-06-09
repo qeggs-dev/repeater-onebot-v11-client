@@ -1,7 +1,7 @@
 from ..command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 
 @CommandCaller.register
@@ -15,7 +15,7 @@ class Annotation(CommandPackage):
         "Annotation",
         "ANNOTATION",
     }
-    cmd_type = CmdType.RESERVED
+    cmd_type = CmdTypes.RESERVED
     empty_handler = True
 
     async def handler(self, persona_info, send_msg):

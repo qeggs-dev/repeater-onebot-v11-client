@@ -27,7 +27,7 @@ GET_CONFIG_ROUTE = "/userdata/config/get"
 REMOVE_CONFIG_KEY_ROUTE = "/userdata/config/delkey"
 
 # ==== MODEL API ==== #
-GET_MODEL_UID_LIST = "/models"
+GET_MODEL_LIST = "/models"
 PING_PROVIDER = "/ping_provider"
 
 # ==== Download User Data File ==== #

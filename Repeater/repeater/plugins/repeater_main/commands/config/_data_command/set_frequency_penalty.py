@@ -41,6 +41,6 @@ class SetFrequencyPenalty(BaseConfig):
             send_msg: SendMsg,
             response: Response,
             field: str,
-            value: bool
+            value: float
         ):
         await send_msg.send_response_check_code(response, f"Set Frequency_Penalty to {value}")

@@ -7,7 +7,7 @@ from ..assist import PersonaInfo, SendMsg
 from ..command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from ..client_net_configs import storage_configs
 
@@ -23,7 +23,8 @@ class SendMessage(CommandPackage):
         "SendMessage",
         "SEND_MESSAGE",
     }
-    cmd_type = CmdType.SENDMSG
+    cmd_type = CmdTypes.SENDMSG
+    superuser_permissions = True
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

@@ -3,7 +3,7 @@ from ...assist import PersonaInfo, SendMsg, MessageSource
 from ...command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from .._clients import ChatClient, ChatSendMsg
 
@@ -19,7 +19,7 @@ class SummaryChatRecord(CommandPackage):
         "SummaryChatRecord",
         "SUMMARY_CHAT_RECORD",
     }
-    cmd_type = CmdType.OTHER
+    cmd_type = CmdTypes.OTHER
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:
@@ -36,7 +36,7 @@ class SummaryChatRecord(CommandPackage):
             await send_msg.send_error("Please enter a valid number.")
 
         if n > 0:
-            message_list = await persona_info.bot.get_group_msg_history(
+            message_list = await persona_info.cached_api.get_group_msg_history(
                 group_id=group_id,
                 count=n
             )

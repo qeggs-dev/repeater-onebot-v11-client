@@ -80,13 +80,15 @@ PS: 此处的长度评分函数并非实际算法，仅为演示使用
 | Name       | Version | License      | License Text Link                                                      | Where it is used              |
 |------------|---------|--------------|------------------------------------------------------------------------|-------------------------------|
 | httpx      | 0.28.1  | BSD License  | [BSD-3-Clause](https://github.com/encode/httpx/blob/master/LICENSE.md) | *Entire Project*              |
-| nonebot    | 2.4.3   | MIT License  | [MIT](https://github.com/nonebot/nonebot2/blob/master/LICENSE)         | *Entire Project*              |
+| nonebot    | 2.4.3   | MIT License  | [MIT](https://github.com/nonebot/nonebot2/blob/master/LICENSE)         | Protocol docking              |
 | pydantic   | 2.12.0  | MIT License  | [MIT](https://github.com/pydantic/pydantic/blob/main/LICENSE)          | *Entire Project*              |
 | aiofiles   | 25.1.0  | MIT License  | [Apache-2.0](https://github.com/Tinche/aiofiles/blob/main/LICENSE)     | `storage`                     |
 | pyyaml     | 6.0.3   | MIT License  | [MIT](https://github.com/yaml/pyyaml/blob/main/LICENSE)                | `storage`                     |
 | orjson     | 3.11.3  | Apache Software License; MIT License | [Apache-2.0](https://github.com/ijl/orjson/blob/master/LICENSE-APACHE) / [MIT](https://github.com/ijl/orjson/blob/master/LICENSE-MIT) | `storage` |
 | loguru     | 0.7.3   | MIT License  | [MIT](https://github.com/Delgan/loguru/blob/master/LICENSE)            | *Entire Project*              |
 | curlify2   | 2.0.0   | MIT License  | [MIT](https://github.com/marcuxyz/curlify2/blob/master/LICENSE)        | *Entire Project*              |
+| numpy      | 2.4.2   | BSD 3-Clause | [BSD-3-Clause](https://github.com/numpy/numpy/blob/main/LICENSE.txt)   | *Entire Project*              |
+| cachetools | 7.1.4   | MIT License  | [MIT](https://github.com/tkem/cachetools/blob/master/LICENSE)          | *Entire Project*              |
 
 具体依赖的License请查看[LICENSES.md](LICENSES.md)
 
@@ -173,13 +175,24 @@ main_api.json
     // 在仅@且没有任何文本的情况下
     // 返回的消息内容
     "hello_content": "Repeater is Online!",
-
-    // 是hello_content的变种
-    // 这里的Key是星期
-    // Value是星期对应的消息内容
-    "welcome_messages_by_weekday": {
-        "4": "Repeater is Online!\n\n疯狂星期四! ! !\n复读机想要 50,000,000 Token ，求求了（>^< ;)"
+    
+    // hello_content 的可变后缀
+    // 这里的 Key 是一个用 `-` 分割的日期
+    // Value 是对应日期的消息内容
+    // 例如 "06-28" 对应 6月28日
+    // 当该值与 hello_messages_by_weekday 同时匹配时
+    // 该值将在上方显示
+    "hello_messages_for_date": {
+        "06-28": "\n\n今天是 6-28 ，是复读机生日！！！\n好耶！！！ ヽ(✿ﾟ▽ﾟ)ノ"
     },
+
+    // hello_content 的可变后缀
+    // 这里的 Key 是星期
+    // Value 是星期对应的消息内容
+    "hello_messages_by_weekday": {
+        "4": "\n\n疯狂星期四! ! !\n复读机想要 50,000,000 Token ，求求了 (>^< ;)"
+    },
+
     // 是否在群聊中让所有人使用同一个上下文
     "usage_group_context": false,
 
@@ -256,10 +269,30 @@ main_api.json
     // Client 将向 Repeater Server 申请取消任务
     // 将其设置为 null 可以忽略超时检查
     "model_first_chunk_timeout": 90.0,
+
+    // 解析消息中的文本文件时
+    // 使用的编码
+    "text_file_encoding": "utf-8",
     
-    // 是否在注册时打印 Handler 信息
-    // 默认为 false
-    "print_handler_info": false
+    // 是否在注册时打印 Handler 名称
+    // 默认为 true
+    "log_registed_handler_name": true,
+
+    // 平台接口缓存大小
+    "platform_interface_cache_size": 1000,
+
+    // 平台接口缓存超时时间
+    "platform_interface_cache_timeout": 60,
+
+    // Ciallo~ (∠・ω< )⌒★
+    // 在执行 ciallo 命令时，发送的内容
+    "ciallo_content": "Ciallo~ (∠・ω< )⌒★",
+
+    // 无用的按钮文字
+    "useless_button_words": [...],
+
+    // 当按钮未命中时，返回的内容
+    "useless_button_missing": "The button buzzed away.",
 }
 ```
 配置了一些主要的参数，如文本长度评分、推理模型使用的UID、欢迎消息等。
@@ -343,8 +376,15 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `noSaveChat`               | `nsc`    | `NoSaveChat`              | `CHAT`      | 4.2.6.6        | 不保存的聊天对话               | 无                                        | 聊天后不保存最新聊天记录 |
 | `summarizeAndContract`     | `sac`    | `SummarizeAndContract`    | `CHAT`      | 4.3.7.6        | 摘要并压缩                     | 自定义提示词，可以为空                      | 摘要并压缩对话，并自动删除多余的历史记录 |
 | `noReason`                 | `nr`     | `NoReason`                | `CHAT`      | 4.3.15.0       | 不使用 Thinking 进行对话       | 自然语言输入                               | 关闭 `thinking` 参数以阻止进入 Thinking 模式 |
-| `generateCandidateAnswer`  | `gca`    | `GenerateCandidateAnswer` | `CHAT`      | 4.3.18.0       | 生成候选答案                 | 无                                        | 生成候选答案（生成内容不保存） |
-| `generateCandidateReason`  | `gcr`    | `GenerateCandidateReason` | `CHAT`      | 4.3.23.1       | 生成候选推理                 | 无                                        | 生成候选回答并开启推理（生成内容不保存） |
+| `generateCandidateAnswer`  | `gca`    | `GenerateCandidateAnswer` | `CHAT`      | 4.3.18.0       | 生成候选答案                   | 无                                        | 生成候选答案（生成内容不保存） |
+| `generateCandidateReason`  | `gcr`    | `GenerateCandidateReason` | `CHAT`      | 4.3.23.1       | 生成候选推理                   | 无                                        | 生成候选回答并开启推理（生成内容不保存） |
+
+### FIM Command
+
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---        | :---           | :---                          | :---                                      | :---    |
+| `/fillInMiddle`            | `fim`    | `FillInTheMiddle`         | `FIM`       | 4.6.10.0       | FIM 内容生成                   | 自然语言输入                               | 用 `[fill_this]` 或 `___` 来填充空缺内容，一次只能填写一个空位 |
+| `/fillAtAfter`             | `faa`    | `FillAtAfter`             | `FIM`       | 4.6.10.0       | FIM 前缀续写                   | 自然语言前缀                               | 添入一个前缀，模型会自动尝试续写内容 |
 
 ### Context Command
 
@@ -354,13 +394,13 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `getContextTotalLength`    | `gctl`   | `GetContextTotalLength`   | `CONTEXT`   | 4.0.1 Beta     | 获取上下文总长度               | 无                                        | 获取上下文总长度 |
 | `deletePublicSpaceContext` | `dpsc`   | `DeletePublicSpaceContext`| `CONTEXT`   | 4.0.2.1 Beta   | 删除公共空间上下文              | 无                                       | 删除公共空间上下文 | 
 | `withdraw`                 | `w`      | `Withdraw`                | `CONTEXT`   | 4.2.3.0        | 撤回消息                       | 无                                       | 删除复读机上下文中保存的最新一回合对话 |
-| `checkRoleStructure`       | `crs`    | `CheckRoleStructure`      | `CONTEXT`   | 4.3.10.10      | 检查角色结构                 | 无                                         | 检查上下文中的角色结构是否符合 user-assistant 的规则 |
-| `injectUserContent`        | `iuc`    | `InjectUserContent`       | `CONTEXT`   | 4.4.7.0        | 注入用户消息内容             | 消息内容                                    | 插入用户消息内容 |
-| `injectAssistantContent`   | `iac`    | `InjectAssistantContent`  | `CONTEXT`   | 4.4.7.0        | 插入 AI 消息内容             | 消息内容                                    | 插入 AI 消息内容 |
-| `injectSystemContent`      | `isc`    | `InjectSystemContent`     | `CONTEXT`   | 4.4.7.0        | 插入系统消息内容             | 消息内容                                    | 插入系统消息内容 |
-| `getLastContent`           | `glc`    | `GetLastContent`          | `CONTEXT`   | 4.4.8.0        | 获取最后一条消息内容          | 无                                        | 获取当前会话的最后一条消息内容 |
-| `singleWithdraw`           | `sw`     | `SingleWithdraw`          | `CONTEXT`   | 4.4.13.0       | 单条撤回                    | 消息条数                                    | 直接按条撤回消息（而不是按对撤回） |
-| `sendContextFile`          | `scf`    | `SendContextFile`         | `CONTEXT`   | 4.5.5.0-beta   | 发送聊天记录文件             | 无                                          | 获取当前活动分支的聊天记录文件 |
+| `checkRoleStructure`       | `crs`    | `CheckRoleStructure`      | `CONTEXT`   | 4.3.10.10      | 检查角色结构                   | 无                                         | 检查上下文中的角色结构是否符合 user-assistant 的规则 |
+| `injectUserContent`        | `iuc`    | `InjectUserContent`       | `CONTEXT`   | 4.4.7.0        | 注入用户消息内容               | 消息内容                                    | 插入用户消息内容 |
+| `injectAssistantContent`   | `iac`    | `InjectAssistantContent`  | `CONTEXT`   | 4.4.7.0        | 插入 AI 消息内容               | 消息内容                                    | 插入 AI 消息内容 |
+| `injectSystemContent`      | `isc`    | `InjectSystemContent`     | `CONTEXT`   | 4.4.7.0        | 插入系统消息内容               | 消息内容                                    | 插入系统消息内容 |
+| `getLastContent`           | `glc`    | `GetLastContent`          | `CONTEXT`   | 4.4.8.0        | 获取最后一条消息内容            | 无                                        | 获取当前会话的最后一条消息内容 |
+| `singleWithdraw`           | `sw`     | `SingleWithdraw`          | `CONTEXT`   | 4.4.13.0       | 单条撤回                      | 消息条数                                    | 直接按条撤回消息（而不是按对撤回） |
+| `sendContextFile`          | `scf`    | `SendContextFile`         | `CONTEXT`   | 4.5.5.0-beta   | 发送聊天记录文件               | 无                                          | 获取当前活动分支的聊天记录文件 |
 
 ### Prompt Command
 
@@ -368,8 +408,8 @@ PS：该配置文件是专门用于对接ChatTTS的
 | :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
 | `setPrompt`                | `sp`     | `SetPrompt`               | `PROMPT`    | 4.0 Beta       | 设置提示词                     | 自然语言输入                               | 设置提示词 |
 | `deletePrompt`             | `dp`     | `DeletePrompt`            | `PROMPT`    | 4.0 Beta       | 删除提示词                     | 无                                        | 删除提示词 |
-| `getPrompt`                | `gp`     | `GetPrompt`               | `PROMPT`    | 4.4.8.0        | 获取提示词                    | 无                                         | 获取当前会话的提示词 |
-| `sendPromptFile`           | `spf`    | `SendPromptFile`          | `PROMPT`    | 4.5.5.0-beta   | 获取提示词文件                | 无                                         | 获取当前活动分支的提示词文件 |
+| `getPrompt`                | `gp`     | `GetPrompt`               | `PROMPT`    | 4.4.8.0        | 获取提示词                     | 无                                         | 获取当前会话的提示词 |
+| `sendPromptFile`           | `spf`    | `SendPromptFile`          | `PROMPT`    | 4.5.5.0-beta   | 获取提示词文件                 | 无                                         | 获取当前活动分支的提示词文件 |
 
 ### Config Command
 
@@ -391,26 +431,26 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `writeUserProfile`         | `wup`    | `WriteUserProfile`        | `CONFIG`    | 4.3.3.6        | 写入用户人设数据                | 任意文本                                  | 该部分会被嵌入到用户提示词中，告诉AI用户的基础设定 |
 | `setHtmlTemplate`          | `sht`    | `SetHtmlTemplate`         | `CONFIG`    | 4.3.3.6        | 设置HTML模板                   | 预设模板名称                              | 可以用于切换Markdown渲染时使用的HTML模板 |
 | `setSaveTextOnly`          | `ssto`   | `SetSaveTextOnly`         | `CONFIG`    | 4.3.6.0        | 在保存时丢弃除文本以外的内容     | `true`/`false`                           | 设为`true`可以更快速的保存与读取，但模型将无法再获取到上下文中的附加数据 |
-| `crossUserDataAccess`      | `cuda`   | `CrossUserDataAccess`     | `CONFIG`    | 4.3.10.3       | 允许跨用户数据访问             | `true`/`false`                             | 允许跨用户数据访问，如果设置为`false`则只能访问自己的数据 |
-| `newRequestsTextOnly`      | `nrto`   | `NewRequestsTextOnly`     | `CONFIG`    | 4.3.10.7       | 忽略请求里的非文本数据         | `true`/`false`                             | 如果设置为`true`，复读机将把所有消息当成普通文本消息处理 |
-| `setCustomName`            | `scn`    | `SetCustomName`           | `CONFIG`    | 4.3.12.1       | 设置个性化名称                | 用户名                                      | 设置后模型看到的将是设置的名称而非用户名 |
-| `thinkingMode`             | `tm`     | `ThinkingMode`            | `CONFIG`    | 4.3.14.0       | 设置思考模式                  | `true`/`false`/`null`                      | 用于在不指定 Thinking 参数时 启用/禁用/恢复默认 思考模式 |
-| `setModelTimeout`          | `smto`   | `SetModelTimeout`         | `CONFIG`    | 4.3.25.0       | 设置模型超时时间              | 超时秒数                                    | 设置模型超时时间 |
-| `removeReasoningPrompt`    | `rrp`    | `RemoveReasoningPrompt`   | `CONFIG`    | 4.3.26.0       | 删除推理内容                  | 删除推理内容 |                              | 设置是否在提交时移除模型输出的思考内容（不影响保存） |
-| `renderDocBottomComment`   | `rdbc`   | `RenderDocBottomComment`  | `CONFIG`    | 4.4.4.0        | 渲染文档底部注释              | 文本内容                                    | 在渲染图片的底部添加一小段文本 |
-| `fastStatisticsTemplate`   | `fst`    | `FastStatisticsTemplate`  | `CONFIG`    | 4.4.5.0        | 快速统计模板                  | 模板内容                                    | 可以在生成的图片结尾展示一些统计数据 |
-| `setMultipleModel`         | `smm`    | `SetMultipleModel`        | `CONFIG`    | 4.4.6.0        | 设置多个模型                  | *多个模型名称*                              | 设置多个模型，当访问时随机选择一个模型 |
-| `setStopKeywords`          | `ssk`    | `SetStopKeywords`         | `CONFIG`    | 4.4.6.0        | 设置停止关键词                | *多个停止关键词*                             | 当模型生成出这个词时，暂停模型生成并即刻返回结果 |
+| `crossUserDataAccess`      | `cuda`   | `CrossUserDataAccess`     | `CONFIG`    | 4.3.10.3       | 允许跨用户数据访问              | `true`/`false`                             | 允许跨用户数据访问，如果设置为`false`则只能访问自己的数据 |
+| `newRequestsTextOnly`      | `nrto`   | `NewRequestsTextOnly`     | `CONFIG`    | 4.3.10.7       | 忽略请求里的非文本数据          | `true`/`false`                             | 如果设置为`true`，复读机将把所有消息当成普通文本消息处理 |
+| `setCustomName`            | `scn`    | `SetCustomName`           | `CONFIG`    | 4.3.12.1       | 设置个性化名称                 | 用户名                                      | 设置后模型看到的将是设置的名称而非用户名 |
+| `thinkingMode`             | `tm`     | `ThinkingMode`            | `CONFIG`    | 4.3.14.0       | 设置思考模式                   | `true`/`false`/`null`                      | 用于在不指定 Thinking 参数时 启用/禁用/恢复默认 思考模式 |
+| `setModelTimeout`          | `smto`   | `SetModelTimeout`         | `CONFIG`    | 4.3.25.0       | 设置模型超时时间               | 超时秒数                                    | 设置模型超时时间 |
+| `removeReasoningPrompt`    | `rrp`    | `RemoveReasoningPrompt`   | `CONFIG`    | 4.3.26.0       | 删除推理内容                   | 删除推理内容 |                              | 设置是否在提交时移除模型输出的思考内容（不影响保存） |
+| `renderDocBottomComment`   | `rdbc`   | `RenderDocBottomComment`  | `CONFIG`    | 4.4.4.0        | 渲染文档底部注释               | 文本内容                                    | 在渲染图片的底部添加一小段文本 |
+| `fastStatisticsTemplate`   | `fst`    | `FastStatisticsTemplate`  | `CONFIG`    | 4.4.5.0        | 快速统计模板                   | 模板内容                                    | 可以在生成的图片结尾展示一些统计数据 |
+| `setMultipleModel`         | `smm`    | `SetMultipleModel`        | `CONFIG`    | 4.4.6.0        | 设置多个模型                   | *多个模型名称*                              | 设置多个模型，当访问时随机选择一个模型 |
+| `setStopKeywords`          | `ssk`    | `SetStopKeywords`         | `CONFIG`    | 4.4.6.0        | 设置停止关键词                 | *多个停止关键词*                             | 当模型生成出这个词时，暂停模型生成并即刻返回结果 |
 | `getConfig`                | `gcfg`   | `GetConfig`               | `CONFIG`    | 4.4.8.0        | 获取配置                      | `JSON`/`YAML`                              | 获取当前会话的配置 |
-| `setCustomAge`             | `sca`    | `SetCustomAge`            | `CONFIG`    | 4.4.9.0        | 设置自定义年龄                | 年龄                                        | 设置自定义年龄 (需要提示词支持) |
-| `setCustomGender`          | `scg`    | `SetCustomGender`         | `CONFIG`    | 4.4.9.0        | 设置自定义性别                | 性别                                        | 设置自定义性别 (需要提示词支持) |
-| `sendConfigFile`           | `scfgf`  | `SendConfigFile`          | `CONFIG`    | 4.5.5.0-beta   | 获取配置文件                  | 无                                          | 获取当前活动分支的配置文件 |
-| `setReasoningEffort`       | `sre`    | `SetReasoningEffort`      | `CONFIG`    | 4.5.6.0        | 设置推理强度                  | `low`/`medium`/`high`/`xhigh`/`max`         | 设置推理强度 (需要模型支持) |
-| `resetConfigField`         | `rcf`    | `ResetConfigField`        | `CONFIG`    | 4.5.6.0        | 重置配置字段                  | 配置字段名称                                 | 设置指定配置字段到 null |
-| `makeMultimodalMessage`    | `mmm`    | `MakeMultimodalMessage`   | `CONFIG`    | 4.5.8.0        | 是否创建多模态消息             | `true`/`false`                             | 设置是否创建多模态消息 |
-| `allowedToolCalls`         | `atc`    | `AllowedToolCalls`        | `CONFIG`    | 4.5.8.0        | 批准使用工具                  | *\*多个工具注册名*                           | 指定 AI 能使用哪些工具 |
-| `allowTools`               | `at`     | `AllowTools`              | `CONFIG`    | 4.5.8.0        | 允许使用工具                  | *\*多个工具注册名*                           | 增加工具使用权限 |
-| `disallowTools`            | `dt`     | `DisallowTools`           | `CONFIG`    | 4.5.8.0        | 禁止使用工具                  | *\*多个工具注册名*                           | 移除工具使用权限 |
+| `setCustomAge`             | `sca`    | `SetCustomAge`            | `CONFIG`    | 4.4.9.0        | 设置自定义年龄                 | 年龄                                        | 设置自定义年龄 (需要提示词支持) |
+| `setCustomGender`          | `scg`    | `SetCustomGender`         | `CONFIG`    | 4.4.9.0        | 设置自定义性别                 | 性别                                        | 设置自定义性别 (需要提示词支持) |
+| `sendConfigFile`           | `scfgf`  | `SendConfigFile`          | `CONFIG`    | 4.5.5.0-beta   | 获取配置文件                   | 无                                          | 获取当前活动分支的配置文件 |
+| `setReasoningEffort`       | `sre`    | `SetReasoningEffort`      | `CONFIG`    | 4.5.6.0        | 设置推理强度                   | `low`/`medium`/`high`/`xhigh`/`max`         | 设置推理强度 (需要模型支持) |
+| `resetConfigField`         | `rcf`    | `ResetConfigField`        | `CONFIG`    | 4.5.6.0        | 重置配置字段                   | 配置字段名称                                 | 设置指定配置字段到 null |
+| `makeMultimodalMessage`    | `mmm`    | `MakeMultimodalMessage`   | `CONFIG`    | 4.5.8.0        | 是否创建多模态消息              | `true`/`false`                             | 设置是否创建多模态消息 |
+| `allowedToolCalls`         | `atc`    | `AllowedToolCalls`        | `CONFIG`    | 4.5.8.0        | 批准使用工具                   | *\*多个工具注册名*                           | 指定 AI 能使用哪些工具 |
+| `allowTools`               | `at`     | `AllowTools`              | `CONFIG`    | 4.5.8.0        | 允许使用工具                   | *\*多个工具注册名*                           | 增加工具使用权限 |
+| `disallowTools`            | `dt`     | `DisallowTools`           | `CONFIG`    | 4.5.8.0        | 禁止使用工具                   | *\*多个工具注册名*                           | 移除工具使用权限 |
 | `setPresetDirectives`      | `spd`    | `SetPresetDirectives`     | `CONFIG`    | 4.6.1.0        | 设置 Directive 预设           | *\*多个 Directive*                          | 添加 Directive |
 | `addPresetDirectives`      | `apd`    | `AddPresetDirectives`     | `CONFIG`    | 4.6.1.0        | 添加 Directive 预设           | `<type>: <name>`                            | 添加 Directive |
 | `removePresetDirectives`   | `rpd`    | `RemovePresetDirectives`  | `CONFIG`    | 4.6.1.0        | 移除 Directive 预设           | `<type>: <name>`                            | 移除 Directive |
@@ -467,8 +507,10 @@ PS：该配置文件是专门用于对接ChatTTS的
 #### Mixed Command
 
 | Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
-| :---                       | :---    | :---                       | :---:       | :---           | :---                          | :---                                      | :---    |
+| :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
 | `generatePrompt`           | `genp`   | `GeneratePrompt`          | `MIXED`     | 4.3.7.5        | 生成提示词                     | 角色描述                                   | 生成提示词，并自动保存到用户提示词数据中 |
+| `rewrite`                  | `rew`    | `Rewrite`                 | `MIXED`     | 4.6.6.2        | 重写                          | 自然语言文本                                | 撤回上一条并使用当前内容修改重新发送 |
+| `regenerate`               | `reg`    | `Regenerate`              | `MIXED`     | 4.6.6.2        | 重新生成                       | 无                                        | 撤回上条并使用当前内容重新生成 |
 
 ### User File Command
 
@@ -524,7 +566,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
 | :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
 | `getCoreTaskStatus`        | `gcts`   | `GetCoreTaskStatus`       | `STATUS`    | 4.3.17.0       | 获取当前任务状态               | 无                                         | 获取当前核心任务状态 (Free or Task Stack) |
-| `breakChatTask`            | `bct`    | `BreakChatTask`           | `STATUS`    | 4.4.4.0        | 中止当前所有生成任务           | 无                                         | 中止当前所有生成任务，中止后模型已生成内容将不会保存和显示 |
+| `breakChatTask`            | `bct`    | `BreakChatTask`           | `STATUS`    | 4.4.4.0        | 中止当前所有生成任务            | 无                                         | 中止当前所有生成任务，中止后模型已生成内容将不会保存和显示 |
 | `getChatBuffer`            | `gcb`    | `GetChatBuffer`           | `STATUS`    | 4.4.8.0        | 获取聊天缓冲区                 | 无                                         | 获取当前会话的聊天缓冲区 |
 
 ### Statistic Command
@@ -537,8 +579,9 @@ PS：该配置文件是专门用于对接ChatTTS的
 
 | Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
 | :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
-| `seeCmd`                   | `sc`     | `SeeCmd`                  | `SEE_CMD`   | 4.6.4.0        | 显示命令                       | 命令名称                                   | 显示指定命令的详细帮助信息 |
-| `cmdTypes`                 | `ct`     | `CmdTypes`                | `SEE_CMD`   | 4.6.4.0        | 列出命令类型                   | 无                                        | 列出所有命令类型 |
+| `seeCmd`                   | `sc`     | `SeeCmd`                  | `SEE_CMD`   | 4.6.4.0        | 显示命令                       | 命令名称                                  | 显示指定命令的详细帮助信息 |
+| `cmdTypesList`             | `ctl`    | `CmdTypesList`            | `SEE_CMD`   | 4.6.4.0        | 列出命令类型                   | 无                                        | 列出所有命令类型 |
+| `cmdType`                  | `ct`     | `CmdType`                 | `SEE_CMD`   | 4.6.5.0        | 列出命令类型下的所有命令        | 无                                        | 列出命令类型下的所有命令 |
 
 ### Version Command
 
@@ -563,6 +606,14 @@ PS：该配置文件是专门用于对接ChatTTS的
 | :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
 | `sendMessage`              | `smsg`   | `SendMessage`             | `SENDMSG`   | 4.4.12.0       | 发送消息                       | OneBot 消息结构                           | 发送一条自定义消息（需要 `allow_send_any_message` 字段为 `true`） |
 
+### Games Command
+
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
+| `ciallo`                   | `ciallo` | `Ciallo`                  | `GAMES`     | 4.6.4.0        | Ciallo~(∠・ω< )⌒★           | 无                                        | 输出 `ciallo_content` 里的内容 |
+| `randomFortune`            | `rf`     | `RandomFortune`           | `GAMES`     | 4.6.4.0        | 随机运势                       | @指定用户（可选）                          | 根据用户与时间生成每日固定的随机数 |
+| `uselessButton`            | `ub`     | `UselessButton`           | `GAMES`     | 4.6.4.0        | 随机按钮                       | 次数（可选）                               | 多按几次或许会有意外收获 |
+
 ### Other Command
 | Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
 | :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
@@ -571,7 +622,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `summaryChatRecord`        | `scr`    | `SummaryChatRecord`       | `OTHER`     | 4.2.6.6        | 聊天记录总结                   | 整数，传入的消息数量                        | 获取当前群聊内指定数量的聊天记录摘要 |
 | `calculateLengthScore`     | `cls`    | `CalculateLengthScore`    | `OTHER`     | 4.4.4.0        | 计算长度评分                   | 文本内容                                   | 计算给定文本的长度评分值 |
 
-PS：`CHAT`类型命令大部分都做到了支持视觉输入
+PS：`CHAT` 类型命令大部分都做到了支持视觉输入
 默认命令已支持全模态输入
 为了速度和减少本机网络开销，复读机会直接使用QQ传递的临时URL
 你可以在配置中改用 Base64 编码的 URL
@@ -579,7 +630,11 @@ PS：`CHAT`类型命令大部分都做到了支持视觉输入
 但想要 Repeater Server 不忽略附加数据需要主动设置 `NewRequestsTextOnly` 为 `false`
 或是找管理员关闭 Repeater Server 的自动拦截
 
-`MIXED`类型命令是混合型命令
+`CHAT` 类型命令支持解析引用消息链
+可顺着引用消息一直展开，并读取其中的文本与图片视频音频文件等内容
+其中文本文件会被展开到消息内容中，图片视频音频文件会被提交到附加数据
+
+`MIXED` 类型命令是混合型命令
 它的一条命令会执行多条后端请求
 通常，它会从基础功能拼接出高级功能
 或是同时操作多个数据内容

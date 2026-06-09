@@ -1,16 +1,17 @@
+import re
 import httpx
 import asyncio
 
 from typing import (
     Any
 )
-from ._chat_buffer import ChatBuffer
+from ._chat_buffer import ChatBufferResponse
 from .._content_role import ContentRole
 from ._response_body import ChatResponse
 from ._break_response_body import BreakResponse
 from ._cross_user_data_routing import CrossUserDataRouting
 from ....exit_register import ExitRegister
-from ....assist import PersonaInfo, Response, HTTPTransport, get_ssl_context
+from ....assist import PersonaInfo, Response, http_transport
 from ....client_net_configs import *
 from ._request_model import ChatRequestModel, ChatUserInfo, AdditionalData
 from ...._adaptation_info import __adaptation__, __adaptation_text__
@@ -25,9 +26,9 @@ class ChatClient:
     _chat_client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.chat,
-        transport = HTTPTransport(),
-        verify = get_ssl_context()
+        transport = http_transport
     )
+    metadata_pattern = re.compile(r"> Message\s*?Metadata:.*?---(?:\r?\n)+", re.DOTALL | re.IGNORECASE)
     
     def __init__(self, persona_info: PersonaInfo, namespace: str | None = None):
         self._persona_info = persona_info
@@ -63,10 +64,12 @@ class ChatClient:
     async def send_message(
         self,
         message: str | None = None,
-        add_metadata: bool = True,
+        suffix: str | None = None,
+        echo: bool | None = None,
+        fim_mode: bool | None = None,
         role_name: str | None = None,
         temporary_prompt: str | None = None,
-        model_uid: str | None = None,
+        model_id: str | None = None,
         thinking: bool | None = None,
         allow_tool_calls: bool | None = None,
         extra_template_fields: dict[str, Any] | None = None,
@@ -80,7 +83,8 @@ class ChatClient:
         history_msg_role_map: dict[ContentRole, ContentRole | None] | None = None,
         cross_user_data_routing: CrossUserDataRouting | None = None,
         continue_completion: bool | None = None,
-        timeout: int | float | None = None
+        timeout: int | float | None = None,
+        add_metadata: bool = True,
     ) -> Response[ChatResponse]:
         """
         发送消息到AI后端
@@ -89,7 +93,7 @@ class ChatClient:
         :param add_metadata: 是否添加元数据
         :param role_name: 角色名称
         :param temporary_prompt: 临时提示
-        :param model_uid: 模型UID
+        :param model_id: 模型UID
         :param thinking: 思考模式
         :param allow_tool_calls: 是否允许工具调用
         :param extra_template_fields: 额外模板字段
@@ -114,6 +118,9 @@ class ChatClient:
         extra_template_fields = self._add_extra_template_fields(extra_template_fields)
         data = ChatRequestModel(
             message = message,
+            suffix = suffix,
+            echo = echo,
+            fim_mode = fim_mode,
             user_info = ChatUserInfo(
                 username = self._persona_info.nickname,
                 nickname = self._persona_info.card,
@@ -123,7 +130,7 @@ class ChatClient:
             add_metadata = add_metadata,
             role_name = role_name,
             temporary_prompt = temporary_prompt,
-            model_uid = model_uid,
+            model_id = model_id,
             thinking = thinking,
             allow_tool_calls = allow_tool_calls,
             extra_template_fields = extra_template_fields,
@@ -199,7 +206,7 @@ class ChatClient:
             model = BreakResponse
         )
     
-    async def get_chat_buffer(self) -> Response[ChatBuffer]:
+    async def get_chat_buffer(self) -> Response[ChatBufferResponse]:
         """
         获取当前聊天缓冲区
         """
@@ -212,11 +219,11 @@ class ChatClient:
                 "Error sending message to chat core: {error}",
                 error = e
             )
-            return Response(model=ChatBuffer)
+            return Response(model=ChatBufferResponse)
 
         return Response(
             httpx_response = response,
-            model = ChatBuffer
+            model = ChatBufferResponse
         )
     
     exit_register.register()

@@ -55,6 +55,7 @@ class RemovePresetDirectives(BaseConfig):
                     for raw_directive in raw_directives:
                         if raw_directive in diretives:
                             raw_value[raw_type].remove(raw_directive)
+        return raw_value
                     
     async def finish_message(
             self,
@@ -62,6 +63,6 @@ class RemovePresetDirectives(BaseConfig):
             send_msg: SendMsg,
             response: Response,
             field: str,
-            value: list[str] | None
+            value: dict[str, list[str]] | None
         ):
             await send_msg.send_response_check_code(response, f"Removed Preset Directives to {json.dumps(value, ensure_ascii = False)}")

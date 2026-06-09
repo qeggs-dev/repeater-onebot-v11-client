@@ -2,7 +2,7 @@ from ....assist import PersonaInfo, SendMsg
 from ....command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from ..._clients import ContextClient, ContentRole, ContentUnit
 
@@ -18,7 +18,7 @@ class InjectAssistantContent(CommandPackage):
         "InjectAssistantContent",
         "INJECT_ASSISTANT_CONTENT",
     }
-    cmd_type = CmdType.CONTEXT
+    cmd_type = CmdTypes.CONTEXT
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

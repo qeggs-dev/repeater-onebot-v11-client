@@ -2,7 +2,7 @@ from ...assist import PersonaInfo, SendMsg
 from ...command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from .._clients import RequestLogClient
 
@@ -17,7 +17,7 @@ class TokenCount(CommandPackage):
         "TokenCount",
         "TOKEN_COUNT",
     }
-    cmd_type = CmdType.STATISTIC
+    cmd_type = CmdTypes.STATISTIC
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         client = RequestLogClient()

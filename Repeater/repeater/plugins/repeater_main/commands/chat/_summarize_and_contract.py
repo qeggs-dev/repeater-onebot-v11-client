@@ -20,7 +20,7 @@ class SummarizeAndContract(BaseChat):
 
         Usage:
         ```
-        /{cmd} (message)
+        /{cmd} [message]
         ```
     """
     

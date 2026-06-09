@@ -6,7 +6,7 @@ from typing import (
 )
 
 from ....client_net_configs import *
-from ....assist import Response, HTTPTransport, get_ssl_context
+from ....assist import Response, http_transport
 from ....exit_register import ExitRegister
 from ._models import (
     ModelsResponse,
@@ -20,14 +20,13 @@ class ModelInfoClient:
     _client = httpx.AsyncClient(
         base_url = BASE_URL,
         timeout = storage_configs.server_api_timeout.model_info,
-        transport = HTTPTransport(),
-        verify = get_ssl_context()
+        transport = http_transport
     )
     
     # region get all models
     async def get_all_models(self) -> Response[ModelsResponse]:
         response = await self._client.get(
-            f"{GET_MODEL_UID_LIST}",
+            f"{GET_MODEL_LIST}",
         )
         return Response(
             httpx_response = response,
@@ -38,7 +37,7 @@ class ModelInfoClient:
     # region get models
     async def get_models(self, model_uid: str) -> Response[ModelsResponse]:
         response = await self._client.get(
-            f"{GET_MODEL_UID_LIST}/{quote(model_uid)}",
+            f"{GET_MODEL_LIST}/{quote(model_uid)}",
         )
         return Response(
             httpx_response = response,
@@ -50,7 +49,7 @@ class ModelInfoClient:
     async def ping_provider(
             self,
             user_id: str,
-            model_uid: str | list[str] | None = None,
+            model_id: str | list[str] | None = None,
             timeout: float = 5.0,
             times: int = 4,
             size: int = 32,
@@ -59,7 +58,7 @@ class ModelInfoClient:
         response = await self._client.post(
             f"{PING_PROVIDER}/{quote(user_id)}",
             json = {
-                "model_uid": model_uid,
+                "model_id": model_id,
                 "timeout": timeout, 
                 "times": times, 
                 "size": size,

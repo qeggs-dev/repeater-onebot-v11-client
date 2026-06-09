@@ -19,7 +19,7 @@ class RenderChat(BaseChat):
         
         Usage:
         ```
-        /{cmd} [text]
+        /{cmd} text
         ```
     """
 

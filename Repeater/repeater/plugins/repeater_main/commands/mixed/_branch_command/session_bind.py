@@ -2,7 +2,7 @@ from ....assist import PersonaInfo, SendMsg
 from ....command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 from ..._clients import ContextClient, PromptClient, ConfigClient
 
@@ -18,7 +18,7 @@ class SessionBranchBind(CommandPackage):
         "SessionBranchBind",
         "SESSION_BRANCH_BIND",
     }
-    cmd_type = CmdType.BRANCH_MIXED
+    cmd_type = CmdTypes.BRANCH_MIXED
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

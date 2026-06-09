@@ -14,7 +14,7 @@ class SetDefaultModel(BaseConfig):
         "SetDefaultModel",
         "SET_DEFAULT_MODEL",
     }
-    field = "model_uid"
+    field = "model_id"
     
     async def finish_message(
             self,
@@ -22,6 +22,6 @@ class SetDefaultModel(BaseConfig):
             send_msg: SendMsg,
             response: Response,
             field: str,
-            value: bool
+            value: str
         ):
         await send_msg.send_response_check_code(response, f"Set Default Model to {value}")

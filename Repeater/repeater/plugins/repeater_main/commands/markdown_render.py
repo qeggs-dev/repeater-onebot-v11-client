@@ -2,7 +2,7 @@ from ..assist import PersonaInfo, SendMsg
 from ..command_register import(
     CommandCaller,
     CommandPackage,
-    CmdType
+    CmdTypes
 )
 
 
@@ -17,7 +17,7 @@ class TextRender(CommandPackage):
         "MarkdownRender",
         "MARKDOWN_RENDER",
     }
-    cmd_type = CmdType.RENDER
+    cmd_type = CmdTypes.RENDER
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:

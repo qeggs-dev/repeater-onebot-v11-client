@@ -19,13 +19,16 @@ class AdditionalData(BaseModel):
 
 class ChatRequestModel(BaseModel):
     message: str | None = None
+    suffix: str | None = None
+    echo: bool | None = None
+    fim_mode: bool | None = None
     user_info: ChatUserInfo | None = None
     allow_tool_calls: bool | None = None
     add_metadata: bool = True
     role_name: str | None = None
     extra_template_fields: dict[str, Any] | None = None
     temporary_prompt: str | None = None
-    model_uid: str | None = None
+    model_id: str | None = None
     thinking: bool | None = None
     additional_data: AdditionalData | None = None
     load_prompt: bool | None = None

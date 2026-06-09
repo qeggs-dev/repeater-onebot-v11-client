@@ -10,7 +10,7 @@ from ..assist import (
     SendMsg
 )
 from .listen_type import ListenType
-from .cmd_type import CmdType
+from .cmd_type import CmdTypes
 from .exceptions import *
 from datetime import (
     datetime,
@@ -39,6 +39,7 @@ from nonebot import logger
 from typing import (
     Any,
     Iterable,
+    NoReturn,
     Type,
     TypeVar,
     Generic,
@@ -87,7 +88,7 @@ class CommandPackage(ABC, Generic[T]):
     state: T_State | None = None
     """Default state"""
 
-    cmd_type: CmdType = CmdType.RESERVED
+    cmd_type: CmdTypes = CmdTypes.RESERVED
     """Command Type"""
 
     enabled: bool = True
@@ -98,6 +99,9 @@ class CommandPackage(ABC, Generic[T]):
 
     documents: str | list[str] | None = None
     """This handler's documentation"""
+
+    superuser_permissions: bool = False
+    """Whether the Handler is superuser permissions."""
 
     @property
     def component(self) -> str:
@@ -225,6 +229,32 @@ class CommandPackage(ABC, Generic[T]):
             logger.exception(f"Error: {exception}")
             await send_msg.send_error(exception)
     
+    async def on_interpreter_error(self, exception: BaseException, persona_info: PersonaInfo, send_msg: SendMsg):
+        """
+        This section is executed when the interpreter encounters an error that is a BaseException but not an Exception.
+
+        You can override this method and do what you need to do.
+        It is recommended to keep throwing up at this point. These exceptions probably shouldn't stop there.
+
+        :param exception: The exception
+        :param persona_info: The persona_info object
+        :param send_msg: The send_msg object
+        """
+        logger.exception(f"Error: {exception}")
+        raise
+    
+    async def on_cancel(self, persona_info: PersonaInfo, send_msg: SendMsg):
+        """
+        This section is executed when the Handler is cancelled.
+
+        You can override this method and do what you need to do.
+
+        :param persona_info: The persona_info object
+        :param send_msg: The send_msg object
+        """
+        logger.warning(f"{self.component} cancelled")
+        raise
+    
     async def handler_exit(self, persona_info: PersonaInfo, send_msg: SendMsg):
         """
         This section is executed whenever the Handler fails or exits.
@@ -244,8 +274,10 @@ class CommandPackage(ABC, Generic[T]):
         Warning: this method is used for the main initialization process of the Package. Do not override this method.
         If you need advice try `__post_init__` method.
         """
-        if self.component is None:
-            raise ValueError(f"{self.__class__.__name__}: Component is None")
+        if isinstance(self.documents, str):
+            self.documents = textwrap.dedent(
+                self.documents.expandtabs(4)
+            )
         self.__post_init__(*args, **kwargs)
     
     def __post_init__(self):
@@ -265,8 +297,59 @@ class CommandPackage(ABC, Generic[T]):
     
     def on_registed(self):
         """
-        You may want to do something when you complete the registration process, overriding this method allows you to perform the task at the end of the registration.
+        You may want to do something when you complete the registration process,
+        overriding this method allows you to perform the task at the end of the registration.
 
         :return: None
+        """
+        pass
+
+    def on_matcher_registered(self, matcher: Type[Matcher]) -> Type[Matcher]:
+        """
+        You may want to do something when you complete the registration process of the matcher,
+        overriding this method allows you to perform the task at the end of the registration.
+
+        :param matcher: The matcher that has been registered.
+        :return: None
+        """
+        return matcher
+
+    @classmethod
+    def on_reg_failed(cls, exc_type, exc_val, exc_tb):
+        """
+        If an error occurs during the registration of the current Handler,
+        by default, the behavior of the modified method is to throw the original exception.
+
+        :param exc_type: Exception type
+        :param exc_val: Exception value
+        :param exc_tb: Exception traceback
+        :return: None
+        """
+        raise
+
+    async def insufficient_access(self, persona_info: PersonaInfo, send_msg: SendMsg) -> NoReturn:
+        """
+        If the current user does not meet the permission requirements of the command, execute the method.
+        
+        :param persona_info: User information
+        :param send_msg: Send message interface
+        :return: None
+        """
+        await send_msg.send_error("Insufficient access rights.")
+        await send_msg.break_handler()
+    
+    @classmethod
+    def on_destroy(cls):
+        """
+        This method is executed when the current Handler is destroyed.
+        Both instance and class methods are allowed.
+        """
+        pass
+    
+    @classmethod
+    async def on_adestroy(cls):
+        """
+        The asynchronous method executes when the current Handler is destroyed.
+        Both instance and class methods are allowed.
         """
         pass

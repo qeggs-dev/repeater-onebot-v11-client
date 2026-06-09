@@ -21,7 +21,7 @@ class SetModelTimeout(BaseConfig):
         persona_info: PersonaInfo,
         send_msg: SendMsg,
         raw_value: float | None,
-    )  -> float:
+    ) -> float:
         msg = persona_info.message_striped_str
         try:
             value = int(msg)
@@ -38,6 +38,6 @@ class SetModelTimeout(BaseConfig):
             send_msg: SendMsg,
             response: Response,
             field: str,
-            value: bool
+            value: float
         ):
         await send_msg.send_response_check_code(response, f"Set Model Timeout to {value}")

@@ -1,10 +1,9 @@
 import httpx
 
-from .._http_transport import HTTPTransport
+from ..network.http_transport import http_transport
 from ._config import tts_config
-from .._response import Response
+from ..response.response import Response
 from ._tts_response import TTSResponse
-from .._ssl import get_ssl_context
 
 class ChatTTSAPI:
     def __init__(self):
@@ -12,8 +11,7 @@ class ChatTTSAPI:
         self.client = httpx.AsyncClient(
             base_url = url,
             timeout = tts_config.timeout,
-            transport = HTTPTransport(),
-            verify = get_ssl_context(),
+            transport = http_transport,
         )
     
     async def text_to_speech(self, text: str) -> Response[TTSResponse]:

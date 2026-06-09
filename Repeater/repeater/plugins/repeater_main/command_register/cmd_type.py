@@ -1,7 +1,8 @@
 from enum import Enum
 
-class CmdType(Enum):
+class CmdTypes(Enum):
     CHAT = "CHAT"
+    FIM = "FIM"
     CONTEXT = "CONTEXT"
     PROMPT = "PROMPT"
     CONFIG = "CONFIG"
@@ -24,4 +25,5 @@ class CmdType(Enum):
     SENDMSG = "SENDMSG"
     NAMESPACE = "NAMESPACE"
     STATISTIC = "STATISTIC"
+    GAMES = "GAMES"
     OTHER = "OTHER"

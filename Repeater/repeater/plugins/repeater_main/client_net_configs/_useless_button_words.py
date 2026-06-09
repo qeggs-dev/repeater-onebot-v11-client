@@ -1,0 +1,32 @@
+useless_button_words: list[str] = [
+    "A potato is watching you in a parallel universe.",
+    "The button gave a slight electronic sigh.",
+    "Nothing happened. Perfect.",
+    "There's nothing here.",
+    "Cosmic rays have just flipped this sentence by a bit. You may need ECC.",
+    "The button thinks you pressed it well.",
+    "Wrong: nothing wrong, just don't want to work."
+    "[======== ] 99% (0.0kb/s) Elapsed: 16:45:39 Remaining: 2:40:12"
+    
+    "This action has been reported to the Bureau of Pointless Interactions.",
+    "A single duck in a distant pond just quacked for no reason. Coincidence?",
+    "You have unlocked the achievement: 'Clicked a Button'.",
+    "This sentence is false.",
+    "The button is now questioning its purpose.",
+    "Your click has been securely ignored.",
+    "Operation completed unsuccessfully.",
+    "Congratulations, you are still here.",
+    "The universe expanded by one button press. You're welcome.",
+    "Efficiency: 0.00%. Keep going.",
+    "If a button is pressed and no one reads the message, did it really happen?",
+    "This is not a placeholder. This is the final content.",
+    "Beep. (That was the sound of nothing happening.)",
+    "It is now slightly later than when you pressed the button.",
+    "The button stares back at you. Uncomfortable, isn't it?",
+    "Thanks for your input. It has been forwarded to /dev/null.",
+    "An invisible cat just walked across your keyboard. Only you can't see it.",
+    "Status: 418 I'm a teapot.",
+    "You have successfully wasted exactly one button press.",
+    "This message is on vacation. It will return with more emptiness.",
+    "Have a nice day. No, really. That's it.",
+]

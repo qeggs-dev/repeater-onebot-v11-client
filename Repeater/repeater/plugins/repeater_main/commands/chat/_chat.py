@@ -17,7 +17,7 @@ class Chat(BaseChat):
         
         Usage:
         ```
-        /{cmd} [text]
+        /{cmd} text
         ```
     """
 

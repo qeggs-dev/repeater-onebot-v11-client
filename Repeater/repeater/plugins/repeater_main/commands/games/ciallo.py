@@ -1,0 +1,27 @@
+from ...assist import PersonaInfo, SendMsg
+from ...command_register import(
+    CommandCaller,
+    CommandPackage,
+    CmdTypes
+)
+from ...client_net_configs import storage_configs
+
+
+@CommandCaller.register
+class Ciallo(CommandPackage):
+    cmd = "ciallo"
+    aliases = {
+        "Ciallo",
+    }
+    cmd_type = CmdTypes.GAMES
+    description = f"""
+        Ciallo~ (∠・ω< )⌒★
+
+        Usage:
+        ```
+        /{cmd}
+        ```
+    """
+
+    async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
+        await send_msg.send_text(storage_configs.ciallo_content)
