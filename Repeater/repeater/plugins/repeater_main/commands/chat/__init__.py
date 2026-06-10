@@ -13,6 +13,8 @@ from ._keep_reasoning import ChatKeepReasoning
 from ._reference import Reference
 from ._public_space_chat import PublicSpaceChat
 from ._summarize_and_contract import SummarizeAndContract
+from ._to_group_chat import ToGroupChat
+from ._to_private_chat import ToPrivateChat
 from ._tts_chat import TTSChat
 
 __all__ = [
