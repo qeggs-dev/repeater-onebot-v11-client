@@ -84,6 +84,10 @@ class BaseChat(CommandPackage):
                 not_open_files.append(file_id)
         
         files_list.append(not_open_files)
+    
+    async def parse_input(self, persona_info: PersonaInfo) -> str:
+        message_text = persona_info.message_striped_str
+        return message_text
 
     async def parse_message(
         self,
@@ -97,7 +101,7 @@ class BaseChat(CommandPackage):
             if not persona_info:
                 await self.empty_message(persona_info, send_msg)
             
-            message_text = persona_info.message_striped_str
+            message_text = await self.parse_input(persona_info)
 
             message_text += await self.parse_forward_msgs(persona_info, send_msg)
 
@@ -158,9 +162,8 @@ class BaseChat(CommandPackage):
             audios = list(chain.from_iterable(reversed(audios_list)))
             videos = list(chain.from_iterable(reversed(videos_list)))
 
-            if not images:
-                if not message_text:
-                    message = str(message)
+            if not message_text or not images or not audios or not videos:
+                message_text = str(message)
             
             return Message(
                 text = message_text,
