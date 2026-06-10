@@ -232,6 +232,29 @@ class PersonaInfo:
         return self.namespace.namespace_str
     
     @property
+    def private_namespace(self):
+        return Namespace(
+            mode = MessageSource.PRIVATE,
+            user_id = self.user_id
+        )
+    
+    @property
+    def private_namespace_str(self):
+        return self.private_namespace.namespace_str
+
+    def group_namespace(self, group_id: int | None = None):
+        if group_id is None and self._group_id is None:
+            raise RuntimeError("Not found group_id")
+        return Namespace(
+            mode = MessageSource.GROUP,
+            group_id = group_id or self._group_id,
+            user_id = self.user_id
+        )
+    
+    def group_namespace_str(self, group_id: int | None = None):
+        return self.group_namespace(group_id).namespace_str
+    
+    @property
     def public_namespace_str(self) -> str:
         return self.namespace.public_space_id
     
