@@ -11,7 +11,7 @@ from ._response_body import ChatResponse
 from ._break_response_body import BreakResponse
 from ._cross_user_data_routing import CrossUserDataRouting
 from ....exit_register import ExitRegister
-from ....assist import PersonaInfo, Response, http_transport
+from ....assist import PersonaInfo, Namespace, Response, http_transport
 from ....client_net_configs import *
 from ._request_model import ChatRequestModel, ChatUserInfo, AdditionalData
 from ...._adaptation_info import __adaptation__, __adaptation_text__
@@ -30,14 +30,19 @@ class ChatClient:
     )
     metadata_pattern = re.compile(r"> Message\s*?Metadata:.*?---(?:\r?\n)+", re.DOTALL | re.IGNORECASE)
     
-    def __init__(self, persona_info: PersonaInfo, namespace: str | None = None):
+    def __init__(self, persona_info: PersonaInfo, namespace: str | Namespace | None = None):
         self._persona_info = persona_info
         self._namespace = namespace
     
     @property
     def namespace(self) -> str:
-        if self._namespace:
-            return self._namespace
+        if self._namespace is not None:
+            if isinstance(self._namespace, Namespace):
+                return self._namespace.namespace_str
+            elif isinstance(self._namespace, str):
+                return self._namespace
+            else:
+                raise TypeError(f"Invalid type for namespace: {type(self._namespace).__name__}")
         else:
             return self._persona_info.namespace_str
     
