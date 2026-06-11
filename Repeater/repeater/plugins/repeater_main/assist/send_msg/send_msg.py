@@ -30,6 +30,10 @@ from typing import (
 )
 from datetime import datetime
 from .limit_speed import LimitSpeed
+from ...exceptions import (
+    ExitHandler,
+    BreakHandler,
+)
 from ...logger import logger as base_logger
 
 logger = base_logger.bind(module = "SendMsg")
@@ -346,7 +350,7 @@ class SendMsg:
                 continue_handler = continue_handler
             )
         elif not continue_handler:
-            self.break_handler()
+            self.handler_finished()
     
     @property
     def prompt_str(self) -> str:
@@ -798,7 +802,7 @@ class SendMsg:
             continue_handler = continue_handler
         )
     
-    def break_handler(self) -> NoReturn:
+    def handler_finished(self) -> NoReturn:
         """
         跳出当前处理函数
         """
@@ -806,6 +810,24 @@ class SendMsg:
             "Break handler"
         )
         raise FinishedException
+    
+    def break_handler(self) -> NoReturn:
+        """
+        跳出当前处理函数
+        """
+        logger.info(
+            "Break handler"
+        )
+        raise BreakHandler
+    
+    def exit_handler(self) -> NoReturn:
+        """
+        跳出当前处理函数
+        """
+        logger.info(
+            "Exit handler"
+        )
+        raise ExitHandler
 
     async def render_text(self, text: str, direct_output: bool = False, document_bottom_comment: str = "") -> MessageSegment:
         """
@@ -861,7 +883,7 @@ class SendMsg:
             )
             raise
         if not continue_handler:
-            self.break_handler()
+            self.handler_finished()
     
     async def _send_auto(
         self,
