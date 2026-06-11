@@ -1,4 +1,6 @@
-class RepeaterCommandException(Exception):
+from .base import RepeaterException
+
+class RepeaterCommandException(RepeaterException):
     """
     Repeater Command Base Exception
     """
@@ -25,5 +27,11 @@ class ExitHandler(ProcessControlException):
 class BreakWithErrorMessage(BreakHandler):
     """
     Break Handler Exception with Error Message
+    """
+    pass
+
+class ExitWithErrorMessage(ExitHandler):
+    """
+    Exit Handler Exception with Error Message
     """
     pass
