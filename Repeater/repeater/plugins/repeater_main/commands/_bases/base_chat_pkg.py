@@ -162,7 +162,7 @@ class BaseChat(CommandPackage):
             audios = list(chain.from_iterable(reversed(audios_list)))
             videos = list(chain.from_iterable(reversed(videos_list)))
 
-            if not message_text or not images or not audios or not videos:
+            if not (message_text or images or audios or videos):
                 message_text = str(message)
             
             return Message(
