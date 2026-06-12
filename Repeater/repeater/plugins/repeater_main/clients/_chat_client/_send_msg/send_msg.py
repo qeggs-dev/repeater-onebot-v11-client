@@ -4,7 +4,7 @@ from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from nonebot.internal.matcher.matcher import Matcher
 from typing import NoReturn, Type, Callable
 
-from ....assist import PersonaInfo, Response, SendMsg, CmdTypes
+from ....assist import PersonaInfo, Response, SendMsg
 from .._response_body import ChatResponse
 from ..._content_role import ContentRole
 from ....assist import ChatTTSAPI

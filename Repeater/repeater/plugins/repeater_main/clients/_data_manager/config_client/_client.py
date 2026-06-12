@@ -5,7 +5,7 @@ from ....logger import logger as base_logger
 from typing import (
     Any,
 )
-from ....assist import Response, PersonaInfo, http_transport, CmdTypes
+from ....assist import Response, PersonaInfo, http_transport
 # 服务端配置
 from ....client_net_configs import *
 from ....exit_register import ExitRegister

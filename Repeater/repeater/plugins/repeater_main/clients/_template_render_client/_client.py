@@ -4,7 +4,7 @@ from typing import (
 )
 
 from ...client_net_configs import *
-from ...assist import PersonaInfo, Response, http_transport, CmdTypes
+from ...assist import PersonaInfo, Response, http_transport
 from ...logger import logger
 from ..._adaptation_info import __adaptation__, __adaptation_text__
 

@@ -1,7 +1,7 @@
 import httpx
 
 from ...client_net_configs import *
-from ...assist import Response, http_transport, CmdTypes
+from ...assist import Response, http_transport
 from ._response import StatusResponse
 
 class StatusClient:

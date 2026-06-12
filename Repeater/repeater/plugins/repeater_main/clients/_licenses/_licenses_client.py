@@ -1,7 +1,7 @@
 import httpx
 
 from ...client_net_configs import *
-from ...assist import Response, http_transport, CmdTypes
+from ...assist import Response, http_transport
 
 class LicenseClient:
     _httpx_client = httpx.AsyncClient(

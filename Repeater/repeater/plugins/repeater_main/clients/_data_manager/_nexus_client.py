@@ -3,7 +3,8 @@ from uuid import UUID
 
 from ...assist import http_transport
 from ...client_net_configs import *
-from ...assist import Response, PersonaInfo, CmdTypes
+from ...assist import Response, PersonaInfo
+from ...cmd_type import CmdTypes
 from ._nexus_response import (
     NexusUploadResponse,
     NexusDownloadResponse

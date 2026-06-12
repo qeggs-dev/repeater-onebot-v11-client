@@ -6,7 +6,7 @@ from typing import (
 )
 
 from ...client_net_configs import *
-from ...assist import Response, http_transport, CmdTypes
+from ...assist import Response, http_transport
 from ...exit_register import ExitRegister
 from ._models import (
     ModelsResponse,

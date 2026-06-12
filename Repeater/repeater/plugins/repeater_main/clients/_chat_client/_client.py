@@ -11,7 +11,7 @@ from ._response_body import ChatResponse
 from ._break_response_body import BreakResponse
 from ._cross_user_data_routing import CrossUserDataRouting
 from ...exit_register import ExitRegister
-from ...assist import PersonaInfo, Namespace, Response, http_transport, CmdTypes
+from ...assist import PersonaInfo, Namespace, Response, http_transport
 from ...client_net_configs import *
 from ._request_model import ChatRequestModel, ChatUserInfo, AdditionalData
 from ..._adaptation_info import __adaptation__, __adaptation_text__
