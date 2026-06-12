@@ -1,5 +1,6 @@
 import asyncio
-from ...assist import PersonaInfo, SendMsg, MessageSource, CmdTypes
+from ...assist import PersonaInfo, SendMsg, MessageSource
+from ...cmd_info import CmdTypes
 from ...command_register import(
     CommandCaller,
     CommandPackage

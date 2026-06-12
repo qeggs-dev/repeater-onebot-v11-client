@@ -1,4 +1,5 @@
-from ....assist import PersonaInfo, CmdTypes
+from ....assist import PersonaInfo
+from ....cmd_info import CmdTypes
 from ....command_register import CommandCaller
 from ..._bases import BranchInfo, BranchType
 from ....clients import ConfigClient

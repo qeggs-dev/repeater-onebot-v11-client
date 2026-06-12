@@ -1,4 +1,5 @@
-from ....assist import PersonaInfo, SendMsg, Response, str_to_bool, CmdTypes
+from ....assist import PersonaInfo, SendMsg, Response, str_to_bool
+from ....cmd_info import CmdTypes
 from ....command_register import CommandCaller
 from ..._bases import BaseConfig
 

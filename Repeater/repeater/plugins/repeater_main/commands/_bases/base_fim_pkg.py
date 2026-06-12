@@ -1,6 +1,7 @@
 import re
 
-from ...assist import PersonaInfo, SendMsg, Response, CmdTypes
+from ...assist import PersonaInfo, SendMsg, Response
+from ...cmd_info import CmdTypes
 from ...clients import ChatClient, ChatResponse, ChatSendMsg
 from .base_chat_pkg import BaseChat, Message
 from typing import ClassVar

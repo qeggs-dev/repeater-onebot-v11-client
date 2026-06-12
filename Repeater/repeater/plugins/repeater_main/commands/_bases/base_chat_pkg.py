@@ -3,7 +3,8 @@ from itertools import chain
 
 from ...logger import logger
 from ...clients import ChatClient, ChatSendMsg, ChatResponse
-from ...assist import PersonaInfo, SendMsg, Response, CmdTypes
+from ...assist import PersonaInfo, SendMsg, Response
+from ...cmd_info import CmdTypes
 from ...client_net_configs import storage_configs
 from ...command_register import CommandPackage
 from pydantic import BaseModel

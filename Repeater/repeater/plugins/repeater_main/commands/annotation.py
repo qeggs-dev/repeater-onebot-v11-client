@@ -2,7 +2,7 @@ from ..command_register import(
     CommandCaller,
     CommandPackage
 )
-from ..assist import CmdTypes
+from ..cmd_info import CmdTypes
 
 @CommandCaller.register
 class Annotation(CommandPackage):

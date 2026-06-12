@@ -1,5 +1,6 @@
 from nonebot import logger
-from ....assist import PersonaInfo, SendMsg, CmdTypes
+from ....assist import PersonaInfo, SendMsg
+from ....cmd_info import CmdTypes
 from ....command_register import(
     CommandCaller
 )

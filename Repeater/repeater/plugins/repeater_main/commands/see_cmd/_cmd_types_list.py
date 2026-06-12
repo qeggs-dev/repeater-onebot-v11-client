@@ -2,7 +2,8 @@ from ...command_register import(
     CommandCaller,
     CommandPackage
 )
-from ...assist import PersonaInfo, SendMsg, CmdTypes
+from ...assist import PersonaInfo, SendMsg
+from ...cmd_info import CmdTypes
 
 @CommandCaller.register
 class CmdTypesList(CommandPackage):

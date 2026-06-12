@@ -1,5 +1,6 @@
 from .base_nexus import BaseNexus
-from ....assist import PersonaInfo, SendMsg, CmdTypes
+from ....assist import PersonaInfo, SendMsg
+from ....cmd_info import CmdTypes
 
 class DownloadFromNexus(BaseNexus):
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):

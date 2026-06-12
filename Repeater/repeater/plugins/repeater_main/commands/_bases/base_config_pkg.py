@@ -2,7 +2,8 @@ from abc import abstractmethod
 from typing import Any, TypeVar, ClassVar
 
 from ...clients import ConfigClient
-from ...assist import PersonaInfo, SendMsg, Response, CmdTypes
+from ...assist import PersonaInfo, SendMsg, Response
+from ...cmd_info import CmdTypes
 from ...command_register import CommandPackage
 from enum import Enum, auto
 

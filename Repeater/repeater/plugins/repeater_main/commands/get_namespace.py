@@ -2,9 +2,9 @@ from ..assist import (
     get_first_mentioned_user,
     PersonaInfo,
     Namespace,
-    SendMsg,
-    CmdTypes
+    SendMsg
 )
+from ..cmd_info import CmdTypes
 from ..command_register import(
     CommandCaller,
     CommandPackage
