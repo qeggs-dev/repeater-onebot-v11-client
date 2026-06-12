@@ -7,9 +7,9 @@ from abc import (
 )
 from ..assist import (
     PersonaInfo,
-    SendMsg,
-    CmdTypes
+    SendMsg
 )
+from ..cmd_info import CmdTypes
 from .listen_type import ListenType
 from ..exceptions import *
 from datetime import (
@@ -201,6 +201,8 @@ class CommandPackage(ABC, Generic[T]):
         
         if behavioral_act.block_output:
             send_msg.send_to_buffer = True
+        
+        return True
 
     @abstractmethod
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T:

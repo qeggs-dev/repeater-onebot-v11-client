@@ -1,7 +1,8 @@
 import asyncio
 from typing import TypeVar, Generic
 from .package import CommandPackage
-from ..assist import PersonaInfo, SendMsg, CmdTypes
+from ..assist import PersonaInfo, SendMsg
+from ..cmd_info import CmdTypes
 from nonebot.matcher import Matcher
 from dataclasses import dataclass
 
