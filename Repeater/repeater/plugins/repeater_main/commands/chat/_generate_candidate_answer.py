@@ -1,8 +1,8 @@
 import re
 from ...logger import logger
 
-from ...clients import ChatClient, ContentRole
-from ...assist import PersonaInfo, SendMsg
+from ...clients import ChatClient, ContentRole, ChatResponse
+from ...assist import PersonaInfo, SendMsg, Response
 from ...command_register import CommandCaller
 from .._bases import BaseChat
 
@@ -28,11 +28,19 @@ class GenerateCandidateAnswer(BaseChat):
         ```
     """
     no_input = True
+    
+    async def send_message(
+        self,
+        client: ChatClient,
+        images: list[str],
+        audios: list[str],
+        videos: list[str],
+        message: str,
+        persona_info: PersonaInfo,
+        send_msg: SendMsg
+    ) -> Response[ChatResponse]:
 
-    async def send_message(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        core = ChatClient(persona_info)
-
-        response = await core.send_message(
+        response = await client.send_message(
             message = None,
             add_metadata = False,
             save_context = False,
