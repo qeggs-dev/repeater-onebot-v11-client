@@ -50,7 +50,6 @@ from .network import (
     set_ssl_context,
     ImageDownloader
 )
-from .cmd_type import CmdTypes
 
 __all__ = [
     "at_with_name",
@@ -95,7 +94,5 @@ __all__ = [
     "ssl_context",
     "get_ssl_context",
     "set_ssl_context",
-    "ImageDownloader",
-
-    "CmdTypes"
+    "ImageDownloader"
 ]
