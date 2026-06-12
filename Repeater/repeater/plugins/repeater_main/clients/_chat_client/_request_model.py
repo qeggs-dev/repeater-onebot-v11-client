@@ -2,8 +2,8 @@ from pydantic import BaseModel
 from typing import Any
 from .._content_role import ContentRole
 from ._cross_user_data_routing import CrossUserDataRouting
-from ....assist import PersonaInfo
-from ....client_net_configs import storage_configs
+from ...assist import PersonaInfo
+from ...client_net_configs import storage_configs
 
 class ChatUserInfo(BaseModel):
     username: str | None = None

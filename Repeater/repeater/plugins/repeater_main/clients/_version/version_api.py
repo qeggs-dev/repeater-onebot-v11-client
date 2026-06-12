@@ -5,8 +5,8 @@ from typing import (
     Union
 )
 
-from ....client_net_configs import *
-from ....assist import Response, http_transport
+from ...client_net_configs import *
+from ...assist import Response, http_transport, CmdTypes
 from .version_model import VersionModel
 
 class VersionAPIClient:

@@ -1,7 +1,7 @@
 from urllib.parse import urljoin
-from ....client_net_configs import *
-from ....assist import PersonaInfo
-from ....logger import logger
+from ...client_net_configs import *
+from ...assist import PersonaInfo
+from ...logger import logger
 
 class UserFileClient:
     def __init__(self, info: PersonaInfo):

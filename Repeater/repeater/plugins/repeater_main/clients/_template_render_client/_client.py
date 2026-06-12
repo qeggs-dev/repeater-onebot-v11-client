@@ -3,10 +3,10 @@ from typing import (
     Any
 )
 
-from ....client_net_configs import *
-from ....assist import PersonaInfo, Response, http_transport
-from ....logger import logger
-from ...._adaptation_info import __adaptation__, __adaptation_text__
+from ...client_net_configs import *
+from ...assist import PersonaInfo, Response, http_transport, CmdTypes
+from ...logger import logger
+from ..._adaptation_info import __adaptation__, __adaptation_text__
 
 class TemplateRenderClient:
     _httpx_client = httpx.AsyncClient(

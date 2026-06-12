@@ -2,14 +2,14 @@ import httpx
 from abc import ABC
 from uuid import UUID
 
-from ....assist import http_transport
-from ....client_net_configs import *
-from ....assist import Response, PersonaInfo
+from ...assist import http_transport
+from ...client_net_configs import *
+from ...assist import Response, PersonaInfo, CmdTypes
 from ._nexus_response import (
     NexusUploadResponse,
     NexusDownloadResponse
 )
-from ....logger import logger as base_logger
+from ...logger import logger as base_logger
 from ._branch_info import BranchInfo
 
 logger = base_logger.bind(module = "UserData.Core")

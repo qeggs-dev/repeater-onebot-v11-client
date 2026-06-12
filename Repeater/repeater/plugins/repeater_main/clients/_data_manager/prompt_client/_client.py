@@ -1,9 +1,9 @@
 import httpx
 
 from urllib.parse import urljoin
-from .....client_net_configs import *
-from .....assist import Response, PersonaInfo, http_transport
-from .....logger import logger as base_logger
+from ....client_net_configs import *
+from ....assist import Response, PersonaInfo, http_transport, CmdTypes
+from ....logger import logger as base_logger
 from .._base_user_data_client import UserDataClient
 
 logger = base_logger.bind(module = "Prompt.Core")

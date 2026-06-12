@@ -1,14 +1,14 @@
 import httpx
 
 from urllib.parse import urljoin
-from .....logger import logger as base_logger
+from ....logger import logger as base_logger
 from typing import (
     Any,
 )
-from .....assist import Response, PersonaInfo, http_transport
+from ....assist import Response, PersonaInfo, http_transport, CmdTypes
 # 服务端配置
-from .....client_net_configs import *
-from .....exit_register import ExitRegister
+from ....client_net_configs import *
+from ....exit_register import ExitRegister
 
 from .._base_user_data_client import UserDataClient
 

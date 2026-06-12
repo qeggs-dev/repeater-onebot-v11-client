@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
-from ....assist import format_carry_duration
-from ....client_net_configs import storage_configs
+from ...assist import format_carry_duration
+from ...client_net_configs import storage_configs
 
 SIZE_UNITS = [
     ("Bytes", "B", 1024),

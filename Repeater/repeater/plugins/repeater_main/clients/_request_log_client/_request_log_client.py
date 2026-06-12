@@ -1,10 +1,10 @@
 import httpx
 import orjson
-from ....logger import logger as base_logger
+from ...logger import logger as base_logger
 
-from ....client_net_configs import *
-from ....assist import http_transport
-from ....exit_register import ExitRegister
+from ...client_net_configs import *
+from ...assist import http_transport
+from ...exit_register import ExitRegister
 from ._request_log_object import RequestLog
 
 exit_register = ExitRegister()

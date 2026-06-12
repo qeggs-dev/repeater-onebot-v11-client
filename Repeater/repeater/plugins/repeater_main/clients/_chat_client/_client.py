@@ -10,13 +10,13 @@ from .._content_role import ContentRole
 from ._response_body import ChatResponse
 from ._break_response_body import BreakResponse
 from ._cross_user_data_routing import CrossUserDataRouting
-from ....exit_register import ExitRegister
-from ....assist import PersonaInfo, Namespace, Response, http_transport
-from ....client_net_configs import *
+from ...exit_register import ExitRegister
+from ...assist import PersonaInfo, Namespace, Response, http_transport, CmdTypes
+from ...client_net_configs import *
 from ._request_model import ChatRequestModel, ChatUserInfo, AdditionalData
-from ...._adaptation_info import __adaptation__, __adaptation_text__
-from ....logger import logger as base_logger
-from ....command_register import BreakWithErrorMessage
+from ..._adaptation_info import __adaptation__, __adaptation_text__
+from ...logger import logger as base_logger
+from ...exceptions import BreakWithErrorMessage
 
 logger = base_logger.bind(module = "chat_client")
 

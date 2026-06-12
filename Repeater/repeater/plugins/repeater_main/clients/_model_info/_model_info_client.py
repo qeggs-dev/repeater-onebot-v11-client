@@ -1,13 +1,13 @@
 import httpx
 from urllib.parse import quote
-from ....logger import logger as base_logger
+from ...logger import logger as base_logger
 from typing import (
     Any,
 )
 
-from ....client_net_configs import *
-from ....assist import Response, http_transport
-from ....exit_register import ExitRegister
+from ...client_net_configs import *
+from ...assist import Response, http_transport, CmdTypes
+from ...exit_register import ExitRegister
 from ._models import (
     ModelsResponse,
     PingProviderResponse
