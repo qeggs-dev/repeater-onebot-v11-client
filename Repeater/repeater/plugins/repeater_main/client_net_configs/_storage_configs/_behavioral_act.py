@@ -1,9 +1,8 @@
 from pydantic import BaseModel
-from ...assist import CmdTypes
+from ...cmd_info import CmdTypes
 from typing import Literal
 
 class BehavioralACT(BaseModel):
-    user_id: str = ""
     allowed_cmd_types: list[CmdTypes] | Literal["ALL"] = "ALL"
     block_handlers: bool = False
     block_output: bool = False

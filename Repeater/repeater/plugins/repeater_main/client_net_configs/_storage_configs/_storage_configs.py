@@ -10,7 +10,7 @@ class StorageConfigs(BaseModel):
     hello_content: str = "Repeater Is Ready!"
     hello_messages_by_weekday: dict[int | str, str] = Field(default_factory=dict, max_length=7)
     hello_messages_for_date: dict[str, str] = Field(default_factory=dict)
-    behavioral_acts: list[BehavioralACT] = Field(default_factory=list)
+    behavioral_acts: dict[int | str, BehavioralACT] = Field(default_factory=dict)
     default_behavioral_act: BehavioralACT = Field(default_factory=BehavioralACT)
     usage_group_context: bool = False
     server_api_timeout:ServerAPITimeout = Field(default_factory = ServerAPITimeout)
@@ -33,24 +33,10 @@ class StorageConfigs(BaseModel):
     useless_button_missing: str = "The button buzzed away."
 
     def __post_init__(self):
-        self._behavioral_acts = {act.user_id: act for act in self.behavioral_acts}
-
-    @field_validator("blacklist")
-    def _blacklist_validator(cls, v: list[int | str]):
-        try:
-            for user_id in v:
-                if isinstance(user_id, str):
-                    user_id = int(user_id)
-        except ValueError as e:
-            raise ValueError("blacklist must be a list of int or str") from e
-        return v
-
-    def get_blacklist(self) -> set[int]:
-        blacklist = set(int(user_id) for user_id in self.blacklist)
-        return blacklist
+        self.behavioral_acts = {int(key): value for key, value in self.behavioral_acts.items()}
     
     def get_behavioral_act(self, user_id: int) -> BehavioralACT:
-        if user_id in self._behavioral_acts:
-            return self._behavioral_acts[user_id]
+        if user_id in self.behavioral_acts:
+            return self.behavioral_acts[user_id]
         else:
             return self.default_behavioral_act
