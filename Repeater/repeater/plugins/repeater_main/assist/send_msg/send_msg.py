@@ -61,7 +61,7 @@ class SendMsg:
         self._matcher: Type[Matcher] | None = matcher
         
         self._buffer: asyncio.Queue[tuple[Message, tuple, dict[str, Any], int]] = asyncio.Queue()
-        self.send_to_buffer: bool = False
+        self._send_to_buffer: bool = False
     
     def add_prefix(self, prefix: MessageSegment | str):
         self._prefix.append(prefix)
@@ -103,6 +103,17 @@ class SendMsg:
             self._matcher = matcher
         else:
             raise TypeError(f"matcher must be Matcher or None, not {type(matcher).__name__}")
+    
+    @property
+    def send_to_buffer(self) -> bool:
+        return self._send_to_buffer
+    
+    @send_to_buffer.setter
+    def send_to_buffer(self, send_to_buffer: bool):
+        if isinstance(send_to_buffer, bool):
+            self._send_to_buffer = send_to_buffer
+        else:
+            raise TypeError(f"send_to_buffer must be bool, not {type(send_to_buffer).__name__}")
     
     @property
     def buffer(self) -> asyncio.Queue[tuple[Message, tuple, dict[str, Any], int]]:
@@ -891,12 +902,12 @@ class SendMsg:
         *args,
         **kwargs
     ):
-        if self.send_to_buffer:
+        if self._send_to_buffer:
             logger.info(
                 "Send to buffer: \n{message}",
                 message = message
             )
-            await self._send_to_buffer()
+            await self._send_to_queue()
         elif self._matcher is not None:
             logger.info(
                 "Send to matcher: \n{message}",
@@ -910,7 +921,7 @@ class SendMsg:
             )
             await self._send_to_api(message, *args, **kwargs)
     
-    async def _send_to_buffer(
+    async def _send_to_queue(
         self,
         message: str | Message | MessageSegment,
         *args,

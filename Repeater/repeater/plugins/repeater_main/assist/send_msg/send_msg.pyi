@@ -76,6 +76,14 @@ class SendMsg:
     def hello_content(self) -> str:
         ...
     
+    @property
+    def send_to_buffer(self) -> bool:
+        ...
+    
+    @send_to_buffer.setter
+    def send_to_buffer(self, send_to_buffer: bool):
+        ...
+    
     @overload
     async def send_debug_mode(
             self,
@@ -626,6 +634,13 @@ class SendMsg:
         ...
     
     async def _send_auto(
+        self,
+        message: str | Message | MessageSegment,
+        *args,
+        **kwargs
+    ):...
+
+    async def _send_to_queue(
         self,
         message: str | Message | MessageSegment,
         *args,
