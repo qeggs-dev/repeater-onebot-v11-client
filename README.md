@@ -293,6 +293,25 @@ main_api.json
 
     // 当按钮未命中时，返回的内容
     "useless_button_missing": "The button buzzed away.",
+
+    // 用户 ID 行为许可名单
+    "behavioral_acts": {
+        "1234567890": {
+            // 允许的命令类型，可为 "ALL" 或命令类型列表
+            "allowed_cmd_types": [],
+
+            // 是否阻止该用户使用 Handler
+            "block_handlers": true,
+
+            // 是否阻止机器人对该用户输出内容
+            "block_output": true
+        }
+    },
+
+    // 默认的用户 ID 行为许可
+    "default_behavioral_act": {
+        "allowed_cmd_types": "ALL",
+    },
 }
 ```
 配置了一些主要的参数，如文本长度评分、推理模型使用的UID、欢迎消息等。
