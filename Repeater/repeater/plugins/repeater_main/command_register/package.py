@@ -11,7 +11,7 @@ from ..assist import (
 )
 from .listen_type import ListenType
 from .cmd_type import CmdTypes
-from .exceptions import *
+from ..exceptions import *
 from datetime import (
     datetime,
     timedelta
@@ -34,7 +34,10 @@ from nonebot.rule import (
 )
 from nonebot.permission import Permission
 from nonebot.dependencies import Dependent
-from nonebot.exception import NoneBotException
+from nonebot.exception import (
+    NoneBotException,
+    FinishedException
+)
 from nonebot import logger
 from typing import (
     Any,
@@ -198,6 +201,35 @@ class CommandPackage(ABC, Generic[T]):
         :param send_msg: SendMsg object
         """
         await send_msg.send_debug_mode()
+    
+    async def on_nonebot_exception(self, exception: NoneBotException, persona_info: PersonaInfo, send_msg: SendMsg):
+        """
+        This method is called when the program throws a NoneBot exception
+        You can do some handling here
+        Re-throwing is recommended to avoid the framework not receiving the message
+
+        :param exception: NoneBotException object
+        :param persona_info: PersonaInfo object
+        :param send_msg: SendMsg object
+        """
+        raise
+
+    async def on_repeater_exception(self, exception: RepeaterCommandException, persona_info: PersonaInfo, send_msg: SendMsg):
+        """
+        This method is called when the program throws a Repeater exception
+
+        :param exception: RepeaterException object
+        :param persona_info: PersonaInfo object
+        :param send_msg: SendMsg object
+        """
+        if isinstance(exception, BreakWithErrorMessage):
+            await send_msg.send_error(str(exception))
+        elif isinstance(exception, ExitWithErrorMessage):
+            await send_msg.send_error(str(exception))
+        elif isinstance(exception, BreakHandler):
+            send_msg.break_handler()
+        elif isinstance(exception, ExitHandler):
+            send_msg.break_handler()
 
     async def on_error(self, exception: Exception, persona_info: PersonaInfo, send_msg: SendMsg):
         """
@@ -213,14 +245,7 @@ class CommandPackage(ABC, Generic[T]):
         :param persona_info: The persona_info object
         :param send_msg: The send_msg object
         """
-        if isinstance(exception, NoneBotException):
-            raise
-        elif isinstance(exception, RepeaterCommandException):
-            if isinstance(exception, BreakWithErrorMessage):
-                await send_msg.send_error(str(exception))
-            elif isinstance(exception, BreakHandler) or isinstance(exception, ExitHandler):
-                pass
-        elif isinstance(exception, httpx.HTTPStatusError):
+        if isinstance(exception, httpx.HTTPStatusError):
             await send_msg.send_http_status(
                 http_status = exception.response.status_code,
                 message = exception.response.text
@@ -272,13 +297,20 @@ class CommandPackage(ABC, Generic[T]):
         Initialize the command package.
 
         Warning: this method is used for the main initialization process of the Package. Do not override this method.
-        If you need advice try `__post_init__` method.
+        If you need advice try `__pre_init__` and `__post_init__` method.
         """
+        self.__pre_init__(*args, **kwargs)
         if isinstance(self.documents, str):
             self.documents = textwrap.dedent(
                 self.documents.expandtabs(4)
             )
         self.__post_init__(*args, **kwargs)
+    
+    def __pre_init__(self):
+        """
+        This method will be called at initialization time.
+        """
+        pass
     
     def __post_init__(self):
         """
@@ -336,6 +368,20 @@ class CommandPackage(ABC, Generic[T]):
         :return: None
         """
         await send_msg.send_error("Insufficient access rights.")
+        await send_msg.break_handler()
+    
+    async def on_blacklist(self, persona_info: PersonaInfo, send_msg: SendMsg) -> NoReturn:
+        """
+        If the current user is in the blacklist, execute the method.
+
+        :param persona_info: User information
+        :param send_msg: Send message interface
+        :return: None
+        """
+        logger.warning(
+            "User {user_id} is in the blacklist.",
+            user_id = persona_info.user_id
+        )
         await send_msg.break_handler()
     
     @classmethod

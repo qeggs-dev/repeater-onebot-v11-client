@@ -5,6 +5,8 @@ from .package import CommandPackage
 from .cmd_type import CmdTypes
 from ..assist import PersonaInfo, SendMsg
 from ..client_net_configs import storage_configs
+from ..exceptions import *
+from nonebot.exception import NoneBotException
 from typing import Iterator, Type, Callable, Awaitable, TypeVar
 from nonebot import on_command, on_message
 from nonebot.matcher import Matcher
@@ -58,10 +60,16 @@ class CommandCaller:
                 "Enter command from message: {message_id}",
                 message_id = persona_info.message_id,
             )
+
+            if persona_info.user_id in storage_configs.get_blacklist():
+                await package.on_blacklist(persona_info, send_msg)
+            
             if package.superuser_permissions and not persona_info.is_superuser:
                 await package.insufficient_access(persona_info, send_msg)
+            
             if send_msg.is_debug_mode:
                 await package.on_debug_mode(persona_info, send_msg)
+            
             task = asyncio.create_task(
                 package.handler(persona_info, send_msg)
             )
@@ -80,8 +88,12 @@ class CommandCaller:
             except asyncio.CancelledError:
                 return await package.on_cancel(persona_info, send_msg)
             finally:
-                cls.runnings.remove(running) 
-
+                cls.runnings.remove(running)
+            
+        except NoneBotException as e:
+            return await package.on_nonebot_exception(e, persona_info, send_msg)
+        except RepeaterException as e:
+            return await package.on_repeater_exception(e, persona_info, send_msg)
         except Exception as e:
             return await package.on_error(e, persona_info, send_msg)
         except BaseException as e:
