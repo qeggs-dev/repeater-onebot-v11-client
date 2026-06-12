@@ -1,9 +1,8 @@
 from ...command_register import(
     CommandCaller,
-    CommandPackage,
-    CmdTypes
+    CommandPackage
 )
-from ...assist import PersonaInfo, SendMsg
+from ...assist import PersonaInfo, SendMsg, CmdTypes
 from ._assists import (
     match_command,
     see_cmds

@@ -1,8 +1,7 @@
 from ...command_register import(
-    CommandPackage,
-    CmdTypes
+    CommandPackage
 )
-from ...assist import SendMsg
+from ...assist import SendMsg, CmdTypes
 from typing import Iterable, NoReturn
 
 def all_joined_commands(cmd: tuple[str, ...], delimiters: Iterable[str]) -> set[str]:

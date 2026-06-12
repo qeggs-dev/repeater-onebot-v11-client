@@ -1,6 +1,6 @@
 import re
 
-from ....assist import PersonaInfo, SendMsg
+from ....assist import PersonaInfo, SendMsg, CmdTypes
 from .base_branch import BaseBranch
 from .branch_type import BranchType
 

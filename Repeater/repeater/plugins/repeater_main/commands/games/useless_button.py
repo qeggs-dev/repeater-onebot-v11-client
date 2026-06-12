@@ -1,9 +1,8 @@
 import random
-from ...assist import PersonaInfo, SendMsg
+from ...assist import PersonaInfo, SendMsg, CmdTypes
 from ...command_register import(
     CommandCaller,
-    CommandPackage,
-    CmdTypes
+    CommandPackage
 )
 from ...client_net_configs import storage_configs
 

@@ -1,11 +1,10 @@
 from nonebot.adapters.onebot.v11 import Message, MessageSegment
-from ...assist import PersonaInfo, SendMsg
+from ...assist import PersonaInfo, SendMsg, CmdTypes
 from ...command_register import(
     CommandCaller,
-    CommandPackage,
-    CmdTypes
+    CommandPackage
 )
-from .._clients import LicenseClient
+from ...clients import LicenseClient
 
 
 @CommandCaller.register

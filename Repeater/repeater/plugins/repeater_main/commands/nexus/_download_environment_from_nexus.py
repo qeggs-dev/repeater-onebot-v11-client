@@ -1,6 +1,6 @@
 from .._bases.base_nexus import DownloadFromNexus
 from ...command_register import CommandCaller
-from .._clients import NexusClient
+from ...clients import NexusClient
 
 
 @CommandCaller.register

@@ -1,6 +1,6 @@
-from ....assist import PersonaInfo, SendMsg
+from ....assist import PersonaInfo, SendMsg, CmdTypes
 from .base_branch import BaseBranch
-from ..._clients import UserDataClient
+from ....clients import UserDataClient
 from .branch_type import BranchType
 
 class BranchInfo(BaseBranch):

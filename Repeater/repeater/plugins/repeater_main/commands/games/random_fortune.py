@@ -1,11 +1,10 @@
 import random
 import hashlib
 from datetime import datetime
-from ...assist import PersonaInfo, SendMsg, Namespace
+from ...assist import PersonaInfo, SendMsg, Namespace, CmdTypes
 from ...command_register import(
     CommandCaller,
-    CommandPackage,
-    CmdTypes
+    CommandPackage
 )
 
 @CommandCaller.register

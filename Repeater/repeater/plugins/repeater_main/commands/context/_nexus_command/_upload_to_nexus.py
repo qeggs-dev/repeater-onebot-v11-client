@@ -1,6 +1,6 @@
 from ..._bases import UploadToNexus
 from ....command_register import CommandCaller
-from ..._clients import ContextClient
+from ....clients import ContextClient
 
 
 @CommandCaller.register

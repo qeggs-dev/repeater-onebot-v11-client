@@ -1,6 +1,6 @@
 from ..._bases import DownloadFromNexus
 from ....command_register import CommandCaller
-from ..._clients import PromptClient
+from ....clients import PromptClient
 
 
 @CommandCaller.register

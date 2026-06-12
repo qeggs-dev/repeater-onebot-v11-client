@@ -1,7 +1,7 @@
 import re
 from .._bases import BaseChat
 from ...assist import PersonaInfo
-from .._clients import ChatClient
+from ...clients import ChatClient
 from ...command_register import CommandCaller
 
 @CommandCaller.register

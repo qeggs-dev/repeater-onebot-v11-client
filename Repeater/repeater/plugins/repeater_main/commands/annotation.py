@@ -1,8 +1,8 @@
 from ..command_register import(
     CommandCaller,
-    CommandPackage,
-    CmdTypes
+    CommandPackage
 )
+from ..assist import CmdTypes
 
 @CommandCaller.register
 class Annotation(CommandPackage):

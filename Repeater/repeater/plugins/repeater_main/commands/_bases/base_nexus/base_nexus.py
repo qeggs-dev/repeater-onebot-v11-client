@@ -1,8 +1,8 @@
 from abc import abstractmethod
 
-from ..._clients import UserDataClient
-from ....assist import PersonaInfo, SendMsg
-from ....command_register import CommandPackage, CmdTypes
+from ....clients import UserDataClient
+from ....assist import PersonaInfo, SendMsg, CmdTypes
+from ....command_register import CommandPackage
 
 class BaseNexus(CommandPackage):
     cmd_type = CmdTypes.NEXUS

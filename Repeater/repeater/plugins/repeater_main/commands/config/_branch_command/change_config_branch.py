@@ -1,8 +1,7 @@
-from ....assist import PersonaInfo
-from ....command_register import CommandCaller, CmdTypes
+from ....assist import PersonaInfo, CmdTypes
+from ....command_register import CommandCaller
 from ..._bases import ChangeBranch
-from ..._clients import ConfigClient
-
+from ....clients import ConfigClient
 
 @CommandCaller.register
 class ChangeConfigBranch(ChangeBranch):

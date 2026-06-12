@@ -1,6 +1,6 @@
-from ...assist import PersonaInfo, SendMsg
+from ...assist import PersonaInfo, SendMsg, CmdTypes
 from ...command_register import CommandCaller
-from .._clients import TemplateRenderClient
+from ...clients import TemplateRenderClient
 from ._template_render import TemplateRender
 
 @CommandCaller.register

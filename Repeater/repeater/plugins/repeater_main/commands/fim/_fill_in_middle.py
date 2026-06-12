@@ -1,5 +1,5 @@
 from .._bases import BaseFIM
-from .._clients import ChatSendMsg
+from ...clients import ChatSendMsg
 from ...command_register import CommandCaller
 
 @CommandCaller.register

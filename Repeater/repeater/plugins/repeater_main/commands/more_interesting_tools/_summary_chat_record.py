@@ -1,11 +1,10 @@
 import asyncio
-from ...assist import PersonaInfo, SendMsg, MessageSource
+from ...assist import PersonaInfo, SendMsg, MessageSource, CmdTypes
 from ...command_register import(
     CommandCaller,
-    CommandPackage,
-    CmdTypes
+    CommandPackage
 )
-from .._clients import ChatClient, ChatSendMsg
+from ...clients import ChatClient, ChatSendMsg
 
 
 @CommandCaller.register

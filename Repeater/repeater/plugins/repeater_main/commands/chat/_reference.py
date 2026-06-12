@@ -1,5 +1,5 @@
 from ...assist import PersonaInfo, SendMsg
-from .._clients import ChatClient, DataRoutingField, CrossUserDataRouting
+from ...clients import ChatClient, DataRoutingField, CrossUserDataRouting
 from ...command_register import CommandCaller
 from .._bases import BaseChat
 

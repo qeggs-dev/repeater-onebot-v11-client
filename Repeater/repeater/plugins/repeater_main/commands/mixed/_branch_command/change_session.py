@@ -1,10 +1,9 @@
-from ....assist import PersonaInfo, SendMsg
+from ....assist import PersonaInfo, SendMsg, CmdTypes
 from ....command_register import(
     CommandCaller,
-    CommandPackage,
-    CmdTypes
+    CommandPackage
 )
-from ..._clients import ContextClient, PromptClient, ConfigClient
+from ....clients import ContextClient, PromptClient, ConfigClient
 
 @CommandCaller.register
 class ChangeSession(CommandPackage):

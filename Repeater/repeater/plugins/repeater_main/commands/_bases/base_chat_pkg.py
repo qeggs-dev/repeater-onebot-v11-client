@@ -2,10 +2,10 @@ from typing import NoReturn, ClassVar
 from itertools import chain
 
 from ...logger import logger
-from .._clients import ChatClient, ChatSendMsg, ChatResponse
-from ...assist import PersonaInfo, SendMsg, Response
+from ...clients import ChatClient, ChatSendMsg, ChatResponse
+from ...assist import PersonaInfo, SendMsg, Response, CmdTypes
 from ...client_net_configs import storage_configs
-from ...command_register import CommandPackage, CmdTypes
+from ...command_register import CommandPackage
 from pydantic import BaseModel
 
 class Message(BaseModel):

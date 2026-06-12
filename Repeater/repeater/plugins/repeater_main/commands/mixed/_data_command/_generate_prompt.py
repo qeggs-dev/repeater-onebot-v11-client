@@ -1,12 +1,11 @@
 from nonebot import logger
-from ....assist import PersonaInfo, SendMsg
+from ....assist import PersonaInfo, SendMsg, CmdTypes
 from ....command_register import(
     CommandCaller,
-    CommandPackage,
-    CmdTypes
+    CommandPackage
 )
 from ....storage import async_text_storage
-from ..._clients import PromptClient, ChatClient, ContentRole
+from ....clients import PromptClient, ChatClient, ContentRole
 from ._default_meta_prompt import META_PROMPT
 
 

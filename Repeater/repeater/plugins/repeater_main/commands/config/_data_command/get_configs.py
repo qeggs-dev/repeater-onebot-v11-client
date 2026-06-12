@@ -3,7 +3,7 @@ import yaml
 
 from enum import StrEnum
 
-from ....assist import PersonaInfo, SendMsg, Response
+from ....assist import PersonaInfo, SendMsg, Response, CmdTypes
 from ....command_register import CommandCaller
 from ..._bases import BaseConfig, OperationType
 

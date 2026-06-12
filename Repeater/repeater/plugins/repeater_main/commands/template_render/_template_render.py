@@ -1,10 +1,9 @@
-from ...assist import PersonaInfo, SendMsg, Response
+from ...assist import PersonaInfo, SendMsg, Response, CmdTypes
 from ...command_register import(
     CommandCaller,
-    CommandPackage,
-    CmdTypes
+    CommandPackage
 )
-from .._clients import TemplateRenderClient
+from ...clients import TemplateRenderClient
 
 @CommandCaller.register
 class TemplateRender(CommandPackage):

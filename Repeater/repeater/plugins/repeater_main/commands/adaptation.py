@@ -1,10 +1,9 @@
-from ..assist import PersonaInfo, SendMsg
+from ..assist import PersonaInfo, SendMsg, CmdTypes
 from ..command_register import(
     CommandCaller,
-    CommandPackage,
-    CmdTypes
+    CommandPackage
 )
-from ._clients import VersionAPIClient
+from ..clients import VersionAPIClient
 from .._adaptation_info import __adaptation__
 
 

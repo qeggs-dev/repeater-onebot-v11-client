@@ -1,5 +1,5 @@
 from .base_nexus import BaseNexus
-from ....assist import PersonaInfo, SendMsg
+from ....assist import PersonaInfo, SendMsg, CmdTypes
 
 class UploadToNexus(BaseNexus):
     

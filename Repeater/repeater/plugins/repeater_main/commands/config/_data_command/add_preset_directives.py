@@ -1,6 +1,6 @@
 import re
 import json
-from ....assist import PersonaInfo, SendMsg, Response, parse_delimited_string
+from ....assist import PersonaInfo, SendMsg, Response, parse_delimited_string, CmdTypes
 from ....command_register import CommandCaller
 from ..._bases import BaseConfig, OperationType
 

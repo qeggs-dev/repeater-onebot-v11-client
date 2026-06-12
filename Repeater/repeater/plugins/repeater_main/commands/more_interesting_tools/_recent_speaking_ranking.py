@@ -2,11 +2,10 @@ import asyncio
 from typing import Any
 from pydantic import ValidationError
 from nonebot.adapters.onebot.v11 import MessageEvent
-from ...assist import PersonaInfo, SendMsg, MessageSource
+from ...assist import PersonaInfo, SendMsg, MessageSource, CmdTypes
 from ...command_register import(
     CommandCaller,
-    CommandPackage,
-    CmdTypes
+    CommandPackage
 )
 
 

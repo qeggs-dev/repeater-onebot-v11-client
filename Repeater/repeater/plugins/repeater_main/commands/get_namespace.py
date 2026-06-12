@@ -2,12 +2,12 @@ from ..assist import (
     get_first_mentioned_user,
     PersonaInfo,
     Namespace,
-    SendMsg
+    SendMsg,
+    CmdTypes
 )
 from ..command_register import(
     CommandCaller,
-    CommandPackage,
-    CmdTypes
+    CommandPackage
 )
 from ..command_register import CommandCaller, CommandPackage
 

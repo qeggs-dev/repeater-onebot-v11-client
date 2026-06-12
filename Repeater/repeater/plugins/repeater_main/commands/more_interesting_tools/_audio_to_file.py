@@ -1,11 +1,10 @@
 import time
 
 from pathlib import Path
-from ...assist import PersonaInfo, SendMsg
+from ...assist import PersonaInfo, SendMsg, CmdTypes
 from ...command_register import(
     CommandCaller,
-    CommandPackage,
-    CmdTypes
+    CommandPackage
 )
 
 @CommandCaller.register

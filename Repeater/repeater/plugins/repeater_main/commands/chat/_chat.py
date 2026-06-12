@@ -1,5 +1,5 @@
 from .._bases import BaseChat
-from .._clients import ChatSendMsg
+from ...clients import ChatSendMsg
 from ...command_register import CommandCaller, CommandPackage
 
 @CommandCaller.register

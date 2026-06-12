@@ -1,4 +1,4 @@
-from .._clients import ChatClient, ChatSendMsg
+from ...clients import ChatClient, ChatSendMsg
 from ...assist import PersonaInfo, SendMsg
 from ...logger import logger
 from ...command_register import CommandCaller

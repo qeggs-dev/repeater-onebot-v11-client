@@ -1,9 +1,9 @@
 from abc import abstractmethod
 from typing import Any, TypeVar, ClassVar
 
-from .._clients import ConfigClient
-from ...assist import PersonaInfo, SendMsg, Response
-from ...command_register import CommandPackage, CmdTypes
+from ...clients import ConfigClient
+from ...assist import PersonaInfo, SendMsg, Response, CmdTypes
+from ...command_register import CommandPackage
 from enum import Enum, auto
 
 T = TypeVar("T")

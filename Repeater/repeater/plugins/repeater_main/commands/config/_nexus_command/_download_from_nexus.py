@@ -1,6 +1,6 @@
 from ..._bases import DownloadFromNexus
 from ....command_register import CommandCaller
-from ..._clients import ConfigClient
+from ....clients import ConfigClient
 
 @CommandCaller.register
 class ConfigDownloadFromNexus(DownloadFromNexus):

@@ -1,7 +1,7 @@
-from ....assist import PersonaInfo, SendMsg
-from ....command_register import CommandCaller, CmdTypes
+from ....assist import PersonaInfo, SendMsg, CmdTypes
+from ....command_register import CommandCaller
 from ..._bases import BranchInfo, BranchType
-from ..._clients import PromptClient
+from ....clients import PromptClient
 
 
 @CommandCaller.register

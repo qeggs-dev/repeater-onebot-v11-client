@@ -1,10 +1,9 @@
-from ...assist import PersonaInfo, SendMsg
+from ...assist import PersonaInfo, SendMsg, CmdTypes
 from ...command_register import(
     CommandCaller,
-    CommandPackage,
-    CmdTypes
+    CommandPackage
 )
-from .._clients import ChatClient
+from ...clients import ChatClient
 
 @CommandCaller.register
 class BreakChatTask(CommandPackage):
