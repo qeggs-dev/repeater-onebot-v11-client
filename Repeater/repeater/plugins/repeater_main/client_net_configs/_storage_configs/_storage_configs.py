@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from ._camouflage import Camouflage
 from ._text_length_score_configs import TextLengthScoreConfigs
 from ._server_api_timeout import ServerAPITimeout
@@ -9,6 +9,7 @@ class StorageConfigs(BaseModel):
     hello_content: str = "Repeater Is Ready!"
     hello_messages_by_weekday: dict[int | str, str] = Field(default_factory=dict, max_length=7)
     hello_messages_for_date: dict[str, str] = Field(default_factory=dict)
+    blacklist: list[int | str] = Field(default_factory=list)
     usage_group_context: bool = False
     server_api_timeout:ServerAPITimeout = Field(default_factory = ServerAPITimeout)
     use_base64_image_url: bool = False
@@ -28,3 +29,17 @@ class StorageConfigs(BaseModel):
     platform_interface_cache_timeout: int = 60
     useless_button_words: list[str] = Field(default_factory=lambda: useless_button_words)
     useless_button_missing: str = "The button buzzed away."
+
+    @field_validator("blacklist")
+    def _blacklist_validator(cls, v: list[int | str]):
+        try:
+            for user_id in v:
+                if isinstance(user_id, str):
+                    user_id = int(user_id)
+        except ValueError as e:
+            raise ValueError("blacklist must be a list of int or str") from e
+        return v
+
+    def get_blacklist(self) -> set[int]:
+        blacklist = set(int(user_id) for user_id in self.blacklist)
+        return blacklist
