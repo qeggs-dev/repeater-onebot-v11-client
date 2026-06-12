@@ -2,8 +2,7 @@ import sys
 import json
 import asyncio
 from .package import CommandPackage
-from .cmd_type import CmdTypes
-from ..assist import PersonaInfo, SendMsg
+from ..assist import PersonaInfo, SendMsg, CmdTypes
 from ..client_net_configs import storage_configs
 from ..exceptions import *
 from nonebot.exception import NoneBotException
@@ -61,8 +60,13 @@ class CommandCaller:
                 message_id = persona_info.message_id,
             )
 
-            if persona_info.user_id in storage_configs.get_blacklist():
-                await package.on_blacklist(persona_info, send_msg)
+            if not await package.permissions_check(persona_info, send_msg):
+                logger.warning(
+                    "Command {name} from message {message_id} has insufficient access",
+                    name = package.component,
+                    message_id = persona_info.message_id,
+                )
+                send_msg.break_handler()
             
             if package.superuser_permissions and not persona_info.is_superuser:
                 await package.insufficient_access(persona_info, send_msg)

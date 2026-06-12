@@ -7,10 +7,10 @@ from abc import (
 )
 from ..assist import (
     PersonaInfo,
-    SendMsg
+    SendMsg,
+    CmdTypes
 )
 from .listen_type import ListenType
-from .cmd_type import CmdTypes
 from ..exceptions import *
 from datetime import (
     datetime,
@@ -38,6 +38,7 @@ from nonebot.exception import (
     NoneBotException,
     FinishedException
 )
+from ..client_net_configs import storage_configs
 from nonebot import logger
 from typing import (
     Any,
@@ -182,6 +183,24 @@ class CommandPackage(ABC, Generic[T]):
         """
         persona_info_copy = PersonaInfo.from_horizontal(persona_info)
         return persona_info_copy, send_msg
+    
+    async def permissions_check(self, persona_info: PersonaInfo, send_msg: SendMsg) -> bool:
+        """
+        This method is called to check permissions.
+
+        :param persona_info: PersonaInfo object
+        :param send_msg: SendMsg object
+        :return: True or False
+        """
+        behavioral_act = storage_configs.get_behavioral_act(persona_info.user_id)
+        if not behavioral_act.check_cmd_types_allowed(self.cmd_type):
+            return False
+        
+        if behavioral_act.block_handlers:
+            return False
+        
+        if behavioral_act.block_output:
+            send_msg.send_to_buffer = True
 
     @abstractmethod
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T:
