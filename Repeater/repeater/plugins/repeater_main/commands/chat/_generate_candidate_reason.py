@@ -1,7 +1,7 @@
 import re
 from ...logger import logger
 
-from .._clients import ChatClient, ChatSendMsg, ContentRole
+from .._clients import ChatClient, ContentRole
 from ...assist import PersonaInfo, SendMsg
 from ...command_register import CommandCaller
 from .._bases import BaseChat
