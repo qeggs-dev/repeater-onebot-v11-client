@@ -3,13 +3,15 @@ from ._camouflage import Camouflage
 from ._text_length_score_configs import TextLengthScoreConfigs
 from ._server_api_timeout import ServerAPITimeout
 from .._useless_button_words import useless_button_words
+from ._behavioral_act import BehavioralACT
 
 class StorageConfigs(BaseModel):
     text_length_score_configs: TextLengthScoreConfigs = Field(default_factory = TextLengthScoreConfigs)
     hello_content: str = "Repeater Is Ready!"
     hello_messages_by_weekday: dict[int | str, str] = Field(default_factory=dict, max_length=7)
     hello_messages_for_date: dict[str, str] = Field(default_factory=dict)
-    blacklist: list[int | str] = Field(default_factory=list)
+    behavioral_acts: list[BehavioralACT] = Field(default_factory=list)
+    default_behavioral_act: BehavioralACT = Field(default_factory=BehavioralACT)
     usage_group_context: bool = False
     server_api_timeout:ServerAPITimeout = Field(default_factory = ServerAPITimeout)
     use_base64_image_url: bool = False
@@ -30,6 +32,9 @@ class StorageConfigs(BaseModel):
     useless_button_words: list[str] = Field(default_factory=lambda: useless_button_words)
     useless_button_missing: str = "The button buzzed away."
 
+    def __post_init__(self):
+        self._behavioral_acts = {act.user_id: act for act in self.behavioral_acts}
+
     @field_validator("blacklist")
     def _blacklist_validator(cls, v: list[int | str]):
         try:
@@ -43,3 +48,9 @@ class StorageConfigs(BaseModel):
     def get_blacklist(self) -> set[int]:
         blacklist = set(int(user_id) for user_id in self.blacklist)
         return blacklist
+    
+    def get_behavioral_act(self, user_id: int) -> BehavioralACT:
+        if user_id in self._behavioral_acts:
+            return self._behavioral_acts[user_id]
+        else:
+            return self.default_behavioral_act
