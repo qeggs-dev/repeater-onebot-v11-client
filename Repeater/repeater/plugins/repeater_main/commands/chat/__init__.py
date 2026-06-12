@@ -33,5 +33,7 @@ __all__ = [
     "Reference",
     "PublicSpaceChat",
     "SummarizeAndContract",
+    "ToGroupChat",
+    "ToPrivateChat",
     "TTSChat",
 ]
