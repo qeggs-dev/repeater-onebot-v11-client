@@ -52,10 +52,6 @@ class SendMsg:
         ):
         self._component: str = component
         self._persona_info: PersonaInfo = persona_info
-        self._text_render = TextRender(
-            namespace = self._persona_info.namespace,
-            timeout = storage_configs.server_api_timeout.render
-        )
         self._prefix: Message = Message()
         self._chat_tts_api = ChatTTSAPI()
         self._matcher: Type[Matcher] | None = matcher
@@ -502,7 +498,7 @@ class SendMsg:
         logger.info(
             "Send Mixed Render"
         )
-        image = await self.render_text(
+        image = await self.render_text_to_msg_segment(
             text_to_render,
             document_bottom_comment = document_bottom_comment
         )
@@ -550,7 +546,7 @@ class SendMsg:
             if isinstance(msg, str):
                 tasks.append(
                     asyncio.create_task(
-                        self.render_text(
+                        self.render_text_to_msg_segment(
                             msg,
                             document_bottom_comment = document_bottom_comment
                         )
@@ -559,7 +555,7 @@ class SendMsg:
             elif isinstance(msg, Message):
                 tasks.append(
                     asyncio.create_task(
-                        self.render_text(
+                        self.render_text_to_msg_segment(
                             msg.extract_plain_text(),
                             document_bottom_comment = document_bottom_comment
                         )
@@ -585,7 +581,7 @@ class SendMsg:
         logger.info(
             "Send Render Prompt"
         )
-        image = await self.render_text(
+        image = await self.render_text_to_msg_segment(
             text,
             document_bottom_comment = document_bottom_comment
         )
@@ -617,7 +613,7 @@ class SendMsg:
         logger.info(
             "Send Render"
         )
-        image = await self.render_text(
+        image = await self.render_text_to_msg_segment(
             text,
             document_bottom_comment = document_bottom_comment
         )
@@ -753,7 +749,7 @@ class SendMsg:
         if reasoning_content:
             tasks.append(
                 asyncio.create_task(
-                    self.render_text(
+                    self.render_text_to_msg_segment(
                         reasoning_content,
                     )
                 )
@@ -763,7 +759,7 @@ class SendMsg:
             if self.text_length_score(content) >= self.text_length_score_threshold:
                 tasks.append(
                     asyncio.create_task(
-                        self.render_text(
+                        self.render_text_to_msg_segment(
                             content,
                         )
                     )
@@ -839,31 +835,54 @@ class SendMsg:
             "Exit handler"
         )
         raise ExitHandler
+    
+    async def render_text_to_msg_segment(self, text: str, direct_output: bool = False, document_bottom_comment: str = "") -> MessageSegment:
+        """
+        渲染文本
 
-    async def render_text(self, text: str, direct_output: bool = False, document_bottom_comment: str = "") -> MessageSegment:
+        :param text: 渲染文本内容
+        """
+        return MessageSegment.image(
+            await self.render_text(
+                text,
+                direct_output,
+                document_bottom_comment
+            )
+        )
+
+    async def render_text(self, text: str, direct_output: bool = False, document_bottom_comment: str = "") -> str:
         """
         渲染文本
 
         :param text: 渲染文本内容
         """
         logger.info(
-            "Render Text"
+            "Render Text:\n{text}",
+            text = text,
+        )
+        user_configs = await self.persona_info.get_user_configs()
+        text_render = TextRender(
+            persona_info = self.persona_info,
+            user_configs = user_configs,
         )
         if text:
-            render_response: Response[RendedImage] = await self._text_render.render(
+            render_response: Response[RendedImage] = await text_render.render(
                 text,
                 direct_output = direct_output,
                 document_bottom_comment = document_bottom_comment
             )
-            if render_response.code == 200:
+            if render_response:
                 data = render_response.get_data()
                 if data is not None:
-                    message = MessageSegment.image(data.image_url)
+                    url = data.image_url
+                    return url
                 else:
                     logger.error(f"Render Data Is Invalid")
+                    await self.send_response(render_response, "Render Response Is Invalid")
+            elif render_response.initialized:
+                await self.send_error_response(render_response)
             else:
                 await self.send_response(render_response, lambda response: f"Render Error: {response.text}")
-            return message
         else:
             raise ValueError("Text is empty.")
     

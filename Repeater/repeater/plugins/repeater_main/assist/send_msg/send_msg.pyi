@@ -606,7 +606,10 @@ class SendMsg:
     def exit_handler(self) -> NoReturn:
         ...
 
-    async def render_text(self, text: str, direct_output: bool = False, document_bottom_comment: str = "") -> MessageSegment:
+    async def render_text_to_msg_segment(self, text: str, direct_output: bool = False, document_bottom_comment: str = "") -> MessageSegment:
+        ...
+
+    async def render_text(self, text: str, direct_output: bool = False, document_bottom_comment: str = "") -> str:
         ...
     
     @overload
