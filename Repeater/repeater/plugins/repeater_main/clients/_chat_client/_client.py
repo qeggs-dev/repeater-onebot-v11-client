@@ -11,7 +11,8 @@ from ._response_body import ChatResponse
 from ._break_response_body import BreakResponse
 from ._cross_user_data_routing import CrossUserDataRouting
 from ...exit_register import ExitRegister
-from ...assist import PersonaInfo, Namespace, Response, http_transport
+from ...assist import Response, BaseClient
+from .._content_unit import ContentUnit
 from ...client_net_configs import *
 from ._request_model import ChatRequestModel, ChatUserInfo, AdditionalData
 from ..._adaptation_info import __adaptation__, __adaptation_text__
@@ -22,29 +23,9 @@ logger = base_logger.bind(module = "chat_client")
 
 exit_register = ExitRegister()
 
-class ChatClient:
-    _chat_client = httpx.AsyncClient(
-        base_url = BASE_URL,
-        timeout = storage_configs.server_api_timeout.chat,
-        transport = http_transport
-    )
+class ChatClient(BaseClient):
     metadata_pattern = re.compile(r"> Message\s*?Metadata:.*?---(?:\r?\n)+", re.DOTALL | re.IGNORECASE)
-    
-    def __init__(self, persona_info: PersonaInfo, namespace: str | Namespace | None = None):
-        self._persona_info = persona_info
-        self._namespace = namespace
-    
-    @property
-    def namespace(self) -> str:
-        if self._namespace is not None:
-            if isinstance(self._namespace, Namespace):
-                return self._namespace.namespace_str
-            elif isinstance(self._namespace, str):
-                return self._namespace
-            else:
-                raise TypeError(f"Invalid type for namespace: {type(self._namespace).__name__}")
-        else:
-            return self._persona_info.namespace_str
+    timeout = storage_configs.server_api_timeout.chat
     
     @property
     def merge_namespace(self) -> str | None:
@@ -74,6 +55,7 @@ class ChatClient:
         fim_mode: bool | None = None,
         role_name: str | None = None,
         temporary_prompt: str | None = None,
+        history_messages: list[ContentUnit] | None = None,
         model_id: str | None = None,
         thinking: bool | None = None,
         allow_tool_calls: bool | None = None,
@@ -95,9 +77,12 @@ class ChatClient:
         发送消息到AI后端
         
         :param message: 消息内容
-        :param add_metadata: 是否添加元数据
+        :param suffix: 消息后缀
+        :param echo: 是否回显
+        :param fim_mode: 是否使用 fim 模式
         :param role_name: 角色名称
         :param temporary_prompt: 临时提示
+        :param history_messages: 历史消息
         :param model_id: 模型UID
         :param thinking: 思考模式
         :param allow_tool_calls: 是否允许工具调用
@@ -112,6 +97,7 @@ class ChatClient:
         :param history_msg_role_map: 历史消息角色映射
         :param cross_user_data_routing: 跨用户数据路由
         :param continue_completion: 是否继续生成
+        :param add_metadata: 是否添加元数据
         :return: AI返回的消息
         """
         url = f"{CHAT_ROUTE}/{self.namespace}"
@@ -120,7 +106,9 @@ class ChatClient:
             if self.merge_namespace:
                 cross_user_data_routing = CrossUserDataRouting()
                 cross_user_data_routing.context.fill_missing(self.merge_namespace)
+        
         extra_template_fields = self._add_extra_template_fields(extra_template_fields)
+
         data = ChatRequestModel(
             message = message,
             suffix = suffix,
@@ -135,6 +123,7 @@ class ChatClient:
             add_metadata = add_metadata,
             role_name = role_name,
             temporary_prompt = temporary_prompt,
+            history_messages = history_messages,
             model_id = model_id,
             thinking = thinking,
             allow_tool_calls = allow_tool_calls,
@@ -152,15 +141,19 @@ class ChatClient:
             cross_user_data_routing = cross_user_data_routing,
             continue_completion = continue_completion,
         )
+        
         if timeout is None:
             timeout = storage_configs.model_first_chunk_timeout
         
+        data.inject_metadata()
+        
         task = asyncio.create_task(
-            self._chat_client.post(
+            self.client.post(
                 url = url,
-                json = data.submit_body()
+                json = data.model_dump(exclude_none = True),
             )
         )
+
         last_buffer_length: int | None = None
         if timeout is not None:
             while True:
@@ -196,7 +189,7 @@ class ChatClient:
         中断当前在线的任务
         """
         try:
-            response = await self._chat_client.post(
+            response = await self.client.post(
                 url = f"{BREAK_CHAT_TASK_ROUTE}/{self.namespace}"
             )
         except Exception as e:
@@ -216,7 +209,7 @@ class ChatClient:
         获取当前聊天缓冲区
         """
         try:
-            response = await self._chat_client.get(
+            response = await self.client.get(
                 url = f"{GET_CHAT_BUFFER_ROUTE}/{self.namespace}"
             )
         except Exception as e:
@@ -233,5 +226,5 @@ class ChatClient:
     
     exit_register.register()
     async def close(self):
-        await self._chat_client.aclose()
+        await self.client.aclose()
     # endregion
