@@ -1,32 +1,22 @@
-import httpx
 from uuid import UUID
 
-from ...assist import http_transport
 from ...client_net_configs import *
-from ...assist import Response, PersonaInfo
-from ...cmd_info import CmdTypes
 from ._nexus_response import (
     NexusUploadResponse,
     NexusDownloadResponse
 )
+from ...assist import Response, BaseClient
 from ...logger import logger as base_logger
 
 logger = base_logger.bind(module = "UserData.Core")
 
-class NexusClient:
-    _httpx_client = httpx.AsyncClient(
-        base_url = BASE_URL,
-        timeout = storage_configs.server_api_timeout.data_manager,
-        transport = http_transport
-    )
-
-    def __init__(self, info: PersonaInfo):
-        self._info = info
+class NexusClient(BaseClient):
+    timeout = storage_configs.server_api_timeout.data_manager
     
     # region upload to nexus
     async def upload_to_nexus(self, timeout: int | None = None) -> Response[NexusUploadResponse]:
-        response = await self._httpx_client.post(
-            f"/nexus/upload/{self._info.namespace_str}/environment",
+        response = await self.client.post(
+            f"/nexus/upload/{self._persona_info.namespace_str}/environment",
             json = {
                 "timeout": timeout
             }
@@ -44,8 +34,8 @@ class NexusClient:
         except ValueError:
             raise ValueError("UUID is not valid")
         
-        response = await self._httpx_client.post(
-            f"/nexus/download/{self._info.namespace_str}/environment",
+        response = await self.client.post(
+            f"/nexus/download/{self._persona_info.namespace_str}/environment",
             json = {
                 "id": str(uuid)
             }
@@ -58,5 +48,5 @@ class NexusClient:
 
     # region close
     def close(self) -> None:
-        self._httpx_client.aclose()
+        self.client.aclose()
     # endregion
