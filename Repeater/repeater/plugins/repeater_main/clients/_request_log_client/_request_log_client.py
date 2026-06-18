@@ -3,22 +3,18 @@ import orjson
 from ...logger import logger as base_logger
 
 from ...client_net_configs import *
-from ...assist import http_transport
 from ...exit_register import ExitRegister
 from ._request_log_object import RequestLog
+from ...assist import BaseClient
 
 exit_register = ExitRegister()
 logger = base_logger.bind(module = "Config.Core")
 
-class RequestLogClient:
-    _client = httpx.AsyncClient(
-        base_url = BASE_URL,
-        timeout = storage_configs.server_api_timeout.request_log,
-        transport = http_transport
-    )
+class RequestLogClient(BaseClient):
+    timeout = storage_configs.server_api_timeout.request_log
     
     async def get_request_log(self):
-        async with self._client.stream(
+        async with self.client.stream(
             "GET",
             REQUEST_LOG_STREAM_ROUTE
         ) as response:
@@ -29,5 +25,5 @@ class RequestLogClient:
 
     # region close
     def close(self) -> None:
-        self._client.aclose()
+        self.client.aclose()
     # endregion

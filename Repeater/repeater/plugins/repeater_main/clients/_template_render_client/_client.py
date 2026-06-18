@@ -4,16 +4,12 @@ from typing import (
 )
 
 from ...client_net_configs import *
-from ...assist import PersonaInfo, Response, http_transport
+from ...assist import PersonaInfo, Response, BaseClient
 from ...logger import logger
 from ..._adaptation_info import __adaptation__, __adaptation_text__
 
-class TemplateRenderClient:
-    _httpx_client = httpx.AsyncClient(
-        base_url = BASE_URL,
-        timeout = storage_configs.server_api_timeout.variable_expansion,
-        transport = http_transport
-    )
+class TemplateRenderClient(BaseClient):
+    timeout = storage_configs.server_api_timeout.variable_expansion
 
     def __init__(self, info: PersonaInfo):
         self._info = info
@@ -33,7 +29,7 @@ class TemplateRenderClient:
     async def render(self, text: str, **extra_fields: Any) -> Response[None]:
         logger.info("Expanding variable", module = "variable_expansion.core")
         self._add_extra_template_fields(extra_fields)
-        response = await self._httpx_client.post(
+        response = await self.client.post(
             f"{TEMPLATE_RENDER}/{self._info.namespace_str}",
             json={
                 "user_info":{

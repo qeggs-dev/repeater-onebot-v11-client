@@ -1,17 +1,13 @@
 import httpx
 
 from ...client_net_configs import *
-from ...assist import Response, http_transport
+from ...assist import Response, BaseClient
 
-class LicenseClient:
-    _httpx_client = httpx.AsyncClient(
-        base_url = BASE_URL,
-        timeout = storage_configs.server_api_timeout.licenses,
-        transport = http_transport
-    )
+class LicenseClient(BaseClient):
+    timeout = storage_configs.server_api_timeout.licenses
 
     async def get_requirement_license(self, requirement_name: str) -> Response[dict[str, str]]:
-        response = await self._httpx_client.get(
+        response = await self.client.get(
             url = f"/license/requirement/{requirement_name}",
         )
         return Response(
@@ -20,7 +16,7 @@ class LicenseClient:
         )
 
     async def get_requirement_list(self) -> Response[list[str]]:
-        response = await self._httpx_client.get(
+        response = await self.client.get(
             url = f"/license/requirement_list",
         )
         return Response(
@@ -29,7 +25,7 @@ class LicenseClient:
         )
     
     async def get_server_licenses(self) -> Response[dict[str, str]]:
-        response = await self._httpx_client.get(
+        response = await self.client.get(
             url = "/license/self",
         )
         return Response(

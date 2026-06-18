@@ -6,7 +6,7 @@ from typing import (
 )
 
 from ...client_net_configs import *
-from ...assist import Response, http_transport
+from ...assist import Response, BaseClient
 from ...exit_register import ExitRegister
 from ._models import (
     ModelsResponse,
@@ -16,12 +16,8 @@ from ._models import (
 exit_register = ExitRegister()
 logger = base_logger.bind(module = "Config.Core")
 
-class ModelInfoClient:
-    _client = httpx.AsyncClient(
-        base_url = BASE_URL,
-        timeout = storage_configs.server_api_timeout.model_info,
-        transport = http_transport
-    )
+class ModelInfoClient(BaseClient):
+    timeout = storage_configs.server_api_timeout.model_info
     
     # region get all models
     async def get_all_models(self) -> Response[ModelsResponse]:
