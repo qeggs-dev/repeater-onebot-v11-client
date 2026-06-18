@@ -1,6 +1,4 @@
 import os
-import shutil
-from pathlib import Path
 from typing import AsyncGenerator, AsyncIterable, Iterable, Generic, TypeVar
 from abc import abstractmethod
 from .._sync_base_storage import SyncStorage
