@@ -50,6 +50,17 @@ from .network import (
     set_ssl_context,
     ImageDownloader
 )
+from .user_config import (
+    UserConfigs,
+    UserConfigLoader
+)
+from .base_client import (
+    BaseClient,
+    ClientPool,
+    ClientTimeout,
+    ClientLimits,
+    ClientInfo
+)
 
 __all__ = [
     "at_with_name",
@@ -94,5 +105,14 @@ __all__ = [
     "ssl_context",
     "get_ssl_context",
     "set_ssl_context",
-    "ImageDownloader"
+    "ImageDownloader",
+
+    "UserConfigs",
+    "UserConfigLoader",
+
+    "BaseClient",
+    "ClientPool",
+    "ClientTimeout",
+    "ClientLimits",
+    "ClientInfo"
 ]
