@@ -1,49 +1,22 @@
-import httpx
-
-from ..network.http_transport import http_transport
 from ...client_net_configs import *
 from ..response.response import Response
-from ..namespace import Namespace
-from ...logger import logger
 from .response import RendedImage
+from ..base_client import BaseClient
 
-class TextRender:
-    _client = httpx.AsyncClient(
-        base_url = BASE_URL,
-        timeout = storage_configs.server_api_timeout.render,
-        transport = http_transport
-    )
-
-    def __init__(self, namespace: str | Namespace, timeout:float = 60.0):
-        self.url = BASE_URL
-        if isinstance(namespace, str):
-            self.namespce = namespace
-        elif isinstance(namespace, Namespace):
-            self.namespce = namespace.namespace_str
-        else:
-            raise TypeError(f"namespace must be str or Namespace, not {type(namespace)}")
-        self._timeout = timeout
-
+class TextRender(BaseClient):
     async def render(
             self,
             text: str,
             direct_output: bool | None = None,
             document_bottom_comment: str = ""
         ) -> Response[RendedImage]:
-        logger.info(
-            "Render text:\n{text}",
-            text = text,
-            module = "text-render"
-        )
-        
-        response = await self._client.post(
-            f"{TEXT_RENDER_ROUTE}/{self.namespce}",
+        response = await self.client.post(
+            f"{TEXT_RENDER_ROUTE}/{self.namespace}",
             json={
                 "text": text,
                 "direct_output": direct_output,
                 "document_bottom_comment": document_bottom_comment
-            },
-            timeout = self._timeout
+            }
         )
         
         return Response(
