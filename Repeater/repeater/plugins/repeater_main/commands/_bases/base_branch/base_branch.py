@@ -1,16 +1,41 @@
 from abc import abstractmethod
 
-from ....clients import UserDataClient
-from ....assist import PersonaInfo, SendMsg
+from ....clients import ContextClient, PromptClient, ConfigClient, UserDataClient
+from ....assist import PersonaInfo, SendMsg, Namespace
 from ....cmd_info import CmdTypes
 from ....command_register import CommandPackage
+from ..userdata_cmds_type import UserdataCmdsType
 
 class BaseBranch(CommandPackage):
     cmd_type = CmdTypes.BRANCH
+    userdata_cmds_type: UserdataCmdsType = UserdataCmdsType.NONE
+
+    async def get_namespace(self, persona_info: PersonaInfo) -> str | Namespace | None:
+        pass
     
-    @abstractmethod
-    def get_client(self, persona_info: PersonaInfo) -> UserDataClient:
-        ...
+    async def get_client(self, persona_info: PersonaInfo) -> UserDataClient:
+        user_configs = await persona_info.get_user_configs()
+        match self.userdata_cmds_type:
+            case UserdataCmdsType.CONTEXT:
+                return ContextClient(
+                    persona_info,
+                    user_configs,
+                    await self.get_namespace(persona_info)
+                )
+            case UserdataCmdsType.PROMPT:
+                return PromptClient(
+                    persona_info,
+                    user_configs,
+                    await self.get_namespace(persona_info)
+                )
+            case UserdataCmdsType.CONFIG:
+                return ConfigClient(
+                    persona_info,
+                    user_configs,
+                    await self.get_namespace(persona_info)
+                )
+            case _:
+                raise ValueError("Invalid userdata_cmds_type")
     
     async def parser(self, branch_id: str, client: UserDataClient, send_msg: SendMsg):
         pass
@@ -18,5 +43,5 @@ class BaseBranch(CommandPackage):
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         msg = persona_info.message_striped_str
 
-        config_client = self.get_client(persona_info)
-        await self.parser(msg, config_client, send_msg)
+        client = await self.get_client(persona_info)
+        await self.parser(msg, client, send_msg)
