@@ -12,6 +12,9 @@ class StorageConfigs(BaseModel):
     hello_messages_for_date: dict[str, str] = Field(default_factory=dict)
     behavioral_acts: dict[int | str, BehavioralACT] = Field(default_factory=dict)
     default_behavioral_act: BehavioralACT = Field(default_factory=BehavioralACT)
+    backends: dict[str, str] = Field(default_factory=dict)
+    default_backend: str = ""
+    client_pool_size: int = Field(default=10, ge=1)
     usage_group_context: bool = False
     server_api_timeout:ServerAPITimeout = Field(default_factory = ServerAPITimeout)
     use_base64_image_url: bool = False

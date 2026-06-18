@@ -2,9 +2,6 @@
 from ._net_config import net_config
 from ._storage_configs import storage_configs
 
-# ==== BASE URL ==== #
-BASE_URL = net_config.backend_baseurl
-
 # ==== CHAT API ==== #
 CHAT_ROUTE = "/generate/chat/completion"
 BREAK_CHAT_TASK_ROUTE = "/generate/chat/break"
