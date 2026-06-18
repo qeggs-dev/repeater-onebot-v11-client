@@ -19,6 +19,7 @@ from ..namespace import MessageSource, Namespace
 from .enter_type import EnterType
 from .file_info import FileInfo
 from .cached_apis import CachedAPI
+from ..user_config import UserConfigLoader, UserConfigs
 
 class PersonaInfo:
     def __init__(self, bot: Bot, event: MessageEvent, args: Message | None = None):
@@ -45,6 +46,7 @@ class PersonaInfo:
                 raise ValueError("Is Group, But Group ID is Not Found")
         
         self._superusers: set[int] = set(int(user) for user in self._bot.config.superusers)
+        self._user_config_loader = UserConfigLoader(self.namespace)
     
     @classmethod
     def from_command(cls, bot: Bot, event: MessageEvent, args: Message | None = None) -> PersonaInfo:
@@ -241,6 +243,12 @@ class PersonaInfo:
     @property
     def private_namespace_str(self):
         return self.private_namespace.namespace_str
+    
+    async def get_user_configs(self):
+        return await self._user_config_loader.load()
+    
+    async def set_user_configs(self, configs: UserConfigs):
+        await self._user_config_loader.save(configs)
 
     def group_namespace(self, group_id: int | None = None):
         if group_id is None and self._group_id is None:
