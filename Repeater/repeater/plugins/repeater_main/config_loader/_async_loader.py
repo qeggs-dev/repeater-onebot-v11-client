@@ -1,8 +1,10 @@
-from ..storage import async_json_storage, async_yaml_storage
-from ._mode import Mode
+import os
+
 from pydantic import BaseModel
 from typing import Type, Any, TypeVar, Generic
 from pathlib import Path
+from ._mode import Mode
+from ..storage import async_json_storage, async_yaml_storage
 from ..logger import logger as base_logger
 
 logger = base_logger.bind(module = "Configs.Core")
@@ -10,9 +12,9 @@ logger = base_logger.bind(module = "Configs.Core")
 T_MODEL = TypeVar("T_MODEL", bound=BaseModel)
 
 class AsyncLoader(Generic[T_MODEL]):
-    def __init__(self, model: Type[T_MODEL], path: str | Path, mode: Mode = Mode.JSON):
+    def __init__(self, model: Type[T_MODEL], path: str | os.PathLike, mode: Mode = Mode.JSON):
         self._model = model
-        self._path = path
+        self._path = Path(path)
         self._mode = mode
     
     async def load(self, write_on_failure: bool = False) -> T_MODEL:
@@ -25,12 +27,12 @@ class AsyncLoader(Generic[T_MODEL]):
                 raise ValueError("Unknown mode")
         except Exception as e:
             if write_on_failure:
-                logger.warning(f"Failed to load config from \"{self._path}\", writing default config")
+                logger.warning(f"Failed to load config from \"{self._path.as_posix()}\", writing default config")
                 model = self._model()
                 await self.save(model)
                 return model
             else:
-                logger.error(f"Failed to load config from \"{self._path}\"")
+                logger.error(f"Failed to load config from \"{self._path.as_posix()}\"")
                 raise e
 
     async def save(self, data: T_MODEL):
@@ -42,17 +44,17 @@ class AsyncLoader(Generic[T_MODEL]):
             raise ValueError("Unknown mode")
 
     @staticmethod
-    async def _decode_json(file_path: str | Path):
+    async def _decode_json(file_path: str | os.PathLike):
         return await async_json_storage.load_json(file_path)
 
     @staticmethod
-    async def _decode_yaml(file_path: str | Path):
+    async def _decode_yaml(file_path: str | os.PathLike):
         return await async_yaml_storage.load_yaml(file_path)
     
     @staticmethod
-    async def _encode_json(file_path: str | Path, data: Any):
+    async def _encode_json(file_path: str | os.PathLike, data: Any):
         return await async_json_storage.save_json(file_path, data)
 
-
-    async def _encode_yaml(file_path: str | Path, data: Any):
+    @staticmethod
+    async def _encode_yaml(file_path: str | os.PathLike, data: Any):
         return await async_yaml_storage.save_yaml(file_path, data)
