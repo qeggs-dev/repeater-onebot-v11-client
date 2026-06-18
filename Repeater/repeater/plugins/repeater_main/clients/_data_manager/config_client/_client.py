@@ -16,14 +16,8 @@ exit_register = ExitRegister()
 logger = base_logger.bind(module = "Config.Core")
 
 class ConfigClient(UserDataClient):
-    _httpx_client = httpx.AsyncClient(
-        base_url = BASE_URL,
-        timeout = storage_configs.server_api_timeout.config,
-        transport = http_transport
-    )
-
-    def __init__(self, info: PersonaInfo, namespace: str | None = None):
-        super().__init__(info, "config", namespace)
+    timeout = storage_configs.server_api_timeout.config
+    data_type = "config"
     
     # region set config
     async def set_config(self, config_key: str, value: Any, item_type: str = "auto") -> Response[Any]:
@@ -54,7 +48,7 @@ class ConfigClient(UserDataClient):
             value=value,
             item_type=item_type
         )
-        response = await self._httpx_client.put(
+        response = await self.client.put(
             f"{SET_CONFIG_ROUTE}/{self.namespace_str}/{config_key}",
             json={
                 "type": item_type,
@@ -67,19 +61,19 @@ class ConfigClient(UserDataClient):
     # region get config
     async def get_configs(self) -> Response[Any | None]:
         logger.info("Get {user} configs", user=self.namespace_str)
-        response = await self._httpx_client.get(
+        response = await self.client.get(
             f"{GET_CONFIG_ROUTE}/{self.namespace_str}"
         )
         return Response(response)
     
     def get_configs_url(self) -> str:
-        return urljoin(BASE_URL, f"{GET_CONFIG_ROUTE}/{self.namespace_str}.json")
+        return urljoin(base_url, f"{GET_CONFIG_ROUTE}/{self.namespace_str}.json")
     # endregion
 
     # region remove config key
     async def remove_config_key(self, config_key: str) -> Response[None]:
         logger.info("Remove config key: {config_key}", config_key=config_key)
-        response = await self._httpx_client.delete(
+        response = await self.client.delete(
             f"{REMOVE_CONFIG_KEY_ROUTE}/{self.namespace_str}/{config_key}"
         )
         return Response(response)
