@@ -1,13 +1,13 @@
 import aiofiles
 from pathlib import Path
 from typing import AsyncGenerator, AsyncIterable, Iterable
-from ._storage import Storage
+from ._storage import AsyncStorage
 from ...logger import logger as base_logger
 
 logger = base_logger.bind(module = "Storage.Async.Binary")
 
-class BinaryStorage(Storage[bytes]):
-    async def load(self, path: Path | str) -> bytes:
+class BinaryStorage(AsyncStorage[bytes]):
+    async def load(self, path: str | os.PathLike) -> bytes:
         try:
             path = self._path(path)
             logger.info(f"Loading binary from {path}")
@@ -19,7 +19,7 @@ class BinaryStorage(Storage[bytes]):
             logger.error(f"Error loading binary from {path}: {e}")
             raise
     
-    async def load_line_stream(self, path: Path | str) -> AsyncGenerator[bytes, None]:
+    async def load_line_stream(self, path: str | os.PathLike) -> AsyncGenerator[bytes, None]:
         try:
             path = self._path(path)
             logger.info(f"Use line-by-line chunk streaming to load the file \"{path}\"")
@@ -30,7 +30,7 @@ class BinaryStorage(Storage[bytes]):
             logger.error(f"Error loading binary line stream from {path}: {e}")
             raise
     
-    async def load_stream(self, path: Path | str, chunk_size: int = 1024) -> AsyncGenerator[bytes, None]:
+    async def load_stream(self, path: str | os.PathLike, chunk_size: int = 1024) -> AsyncGenerator[bytes, None]:
         try:
             path = self._path(path)
             logger.info(f"Stream load the file \"{path}\" in {chunk_size}-byte chunks")
@@ -44,7 +44,7 @@ class BinaryStorage(Storage[bytes]):
             logger.error(f"Error loading binary stream from {path}: {e}")
             raise
     
-    async def save(self, path: Path | str, data: bytes, append: bool = False) -> None:
+    async def save(self, path: str | os.PathLike, data: bytes, append: bool = False) -> None:
         try:
             path = self._path(path)
             logger.info(f"Saving binary to {path}")
@@ -56,7 +56,7 @@ class BinaryStorage(Storage[bytes]):
             logger.error(f"Error saving binary to {path}: {e}")
             raise
     
-    async def save_stream(self, path: Path | str, stream: Iterable[bytes], append: bool = False) -> None:
+    async def save_stream(self, path: str | os.PathLike, stream: Iterable[bytes], append: bool = False) -> None:
         try:
             path = self._path(path)
             logger.info(f"Saving binary stream to {path}")
@@ -69,7 +69,7 @@ class BinaryStorage(Storage[bytes]):
             logger.error(f"Error saving binary stream to {path}: {e}")
             raise
     
-    async def save_astream(self, path: Path | str, stream: AsyncIterable[bytes], append: bool = False) -> None:
+    async def save_astream(self, path: str | os.PathLike, stream: AsyncIterable[bytes], append: bool = False) -> None:
         try:
             path = self._path(path)
             logger.info(f"Saving binary stream to {path}")

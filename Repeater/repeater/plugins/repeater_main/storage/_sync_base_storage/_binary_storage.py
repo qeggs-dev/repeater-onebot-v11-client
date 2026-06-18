@@ -1,12 +1,12 @@
-from pathlib import Path
+import os
 from typing import Generator, Iterable
-from ._storage import Storage
+from ._storage import SyncStorage
 from ...logger import logger as base_logger
 
 logger = base_logger.bind(module = "Storage.Sync.Binary")
 
-class BinaryStorage(Storage[bytes]):
-    def load(self, path: Path | str) -> bytes:
+class BinaryStorage(SyncStorage[bytes]):
+    def load(self, path: str | os.PathLike) -> bytes:
         try:
             path = self._path(path)
             logger.info(f"Loading binary from {path}")
@@ -18,7 +18,7 @@ class BinaryStorage(Storage[bytes]):
             logger.error(f"Error loading binary from {path}: {e}")
             raise
     
-    def load_line_stream(self, path: Path | str) -> Generator[bytes, None, None]:
+    def load_line_stream(self, path: str | os.PathLike) -> Generator[bytes, None, None]:
         try:
             path = self._path(path)
             logger.info(f"Use line-by-line chunk streaming to load the file \"{path}\"")
@@ -29,7 +29,7 @@ class BinaryStorage(Storage[bytes]):
             logger.error(f"Error loading binary line stream from {path}: {e}")
             raise
     
-    def load_stream(self, path: Path | str, chunk_size: int = 1024) -> Generator[bytes, None, None]:
+    def load_stream(self, path: str | os.PathLike, chunk_size: int = 1024) -> Generator[bytes, None, None]:
         try:
             path = self._path(path)
             logger.info(f"Stream load the file \"{path}\" in {chunk_size}-byte chunks")
@@ -43,7 +43,7 @@ class BinaryStorage(Storage[bytes]):
             logger.error(f"Error loading binary stream from {path}: {e}")
             raise
     
-    def save(self, path: Path | str, data: bytes, append: bool = False) -> None:
+    def save(self, path: str | os.PathLike, data: bytes, append: bool = False) -> None:
         try:
             path = self._path(path)
             logger.info(f"Saving binary to {path}")
@@ -55,7 +55,7 @@ class BinaryStorage(Storage[bytes]):
             logger.error(f"Error saving binary to {path}: {e}")
             raise
     
-    def save_stream(self, path: Path | str, stream: Iterable[bytes], append: bool = False) -> None:
+    def save_stream(self, path: str | os.PathLike, stream: Iterable[bytes], append: bool = False) -> None:
         try:
             path = self._path(path)
             logger.info(f"Saving binary stream to {path}")

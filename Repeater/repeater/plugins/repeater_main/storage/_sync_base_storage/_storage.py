@@ -1,3 +1,4 @@
+import os
 import shutil
 from pathlib import Path
 from typing import AsyncGenerator, AsyncIterable, Iterable, Generic, TypeVar
@@ -5,7 +6,7 @@ from abc import ABC, abstractmethod
 
 T_STORAGE_DATA = TypeVar("T_STORAGE_DATA")
 
-class Storage(ABC, Generic[T_STORAGE_DATA]):
+class SyncStorage(ABC, Generic[T_STORAGE_DATA]):
     """
     Storage
 
@@ -17,38 +18,38 @@ class Storage(ABC, Generic[T_STORAGE_DATA]):
         """
         self.storage_base_path = Path(storage_base_path)
     
-    def _path(self, path: Path | str):
+    def _path(self, path: str | os.PathLike):
         path = Path(path)
         if path.is_absolute():
             return path
         return self.storage_base_path / path
     
     @abstractmethod
-    def load(self, path: Path | str) -> T_STORAGE_DATA:
+    def load(self, path: str | os.PathLike) -> T_STORAGE_DATA:
         pass
     
     @abstractmethod
-    def save(self, path: Path | str, data: T_STORAGE_DATA) -> None:
+    def save(self, path: str | os.PathLike, data: T_STORAGE_DATA) -> None:
         pass
 
     @abstractmethod
-    def load_line_stream(self, path: Path | str) -> AsyncGenerator[T_STORAGE_DATA, None]:
+    def load_line_stream(self, path: str | os.PathLike) -> AsyncGenerator[T_STORAGE_DATA, None]:
         pass
 
     @abstractmethod
-    def load_stream(self, path: Path | str) -> AsyncGenerator[T_STORAGE_DATA, None]:
+    def load_stream(self, path: str | os.PathLike) -> AsyncGenerator[T_STORAGE_DATA, None]:
         pass
 
     @abstractmethod
-    def save_stream(self, path: Path | str, data: Iterable[T_STORAGE_DATA]) -> None:
+    def save_stream(self, path: str | os.PathLike, data: Iterable[T_STORAGE_DATA]) -> None:
         pass
 
-    def move(self, src: Path | str, dst: Path | str) -> None:
+    def move(self, src: str | os.PathLike, dst: str | os.PathLike) -> None:
         src = self._path(src)
         dst = self._path(dst)
         src.rename(dst)
     
-    def remove(self, path: Path | str) -> None:
+    def remove(self, path: str | os.PathLike) -> None:
         path = self._path(path)
         if path.exists():
             if path.is_file():
@@ -56,7 +57,7 @@ class Storage(ABC, Generic[T_STORAGE_DATA]):
             elif path.is_dir():
                 shutil.rmtree(path)
     
-    def copy(self, src: Path | str, dst: Path | str) -> None:
+    def copy(self, src: str | os.PathLike, dst: str | os.PathLike) -> None:
         src = self._path(src)
         dst = self._path(dst)
         if src.is_file():

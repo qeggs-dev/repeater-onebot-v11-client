@@ -1,12 +1,12 @@
-from pathlib import Path
+import os
 from typing import Generator, Iterable
-from ._storage import Storage
+from ._storage import SyncStorage
 from ...logger import logger as base_logger
 
 logger = base_logger.bind(module = "Storage.Sync.Text")
 
-class TextStorage(Storage[str]):
-    def load(self, path: Path | str, encoding: str = "utf-8") -> str:
+class TextStorage(SyncStorage[str]):
+    def load(self, path: str | os.PathLike, encoding: str = "utf-8") -> str:
         try:
             path = self._path(path)
             logger.info(f"Load {path}")
@@ -16,7 +16,7 @@ class TextStorage(Storage[str]):
             logger.error(f"Load {path} failed: {e}")
             raise
     
-    def load_line_stream(self, path: Path | str, encoding: str = "utf-8") -> Generator[str, None, None]:
+    def load_line_stream(self, path: str | os.PathLike, encoding: str = "utf-8") -> Generator[str, None, None]:
         try:
             path = self._path(path)
             logger.info(f"Use line-by-line chunk streaming to load the file \"{path}\"")
@@ -27,7 +27,7 @@ class TextStorage(Storage[str]):
             logger.error(f"Load {path} failed: {e}")
             raise
     
-    def load_stream(self, path: Path | str, encoding: str = "utf-8", chunk_size: int = 1024) -> Generator[str, None, None]:
+    def load_stream(self, path: str | os.PathLike, encoding: str = "utf-8", chunk_size: int = 1024) -> Generator[str, None, None]:
         try:
             path = self._path(path)
             logger.info(f"Stream load the file \"{path}\" in {chunk_size}-byte chunks")
@@ -41,7 +41,7 @@ class TextStorage(Storage[str]):
             logger.error(f"Load {path} failed: {e}")
             raise
 
-    def save(self, path: Path | str, data: str, encoding: str = "utf-8", append: bool = False) -> None:
+    def save(self, path: str | os.PathLike, data: str, encoding: str = "utf-8", append: bool = False) -> None:
         try:
             path = self._path(path)
             logger.info(f"Saving text to {path}")
@@ -53,7 +53,7 @@ class TextStorage(Storage[str]):
             logger.error(f"Save {path} failed: {e}")
             raise
     
-    def save_stream(self, path: Path | str, data: Iterable[str], encoding: str = "utf-8", append: bool = False) -> None:
+    def save_stream(self, path: str | os.PathLike, data: Iterable[str], encoding: str = "utf-8", append: bool = False) -> None:
         try:
             path = self._path(path)
             logger.info(f"Saving text stream to {path}")

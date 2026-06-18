@@ -1,3 +1,4 @@
+import os
 from ._sync_base_storage import BinaryStorage
 from pathlib import Path
 from typing import Any, Generator, Iterable, TypeVar
@@ -14,7 +15,7 @@ class OrjsonStorage(BinaryStorage):
 
     存储json数据
     """
-    def load_json(self, path: Path | str, default: T = None) -> Any | T:
+    def load_json(self, path: str | os.PathLike, default: T = None) -> Any | T:
         try:
             logger.info(f"Loading json from {path}")
             return orjson.loads(
@@ -27,7 +28,7 @@ class OrjsonStorage(BinaryStorage):
             else:
                 return default
     
-    def save_json(self, path: Path | str, data: Any):
+    def save_json(self, path: str | os.PathLike, data: Any):
         try:
             logger.info(f"Saving json to {path}")
             self.save(
@@ -38,7 +39,7 @@ class OrjsonStorage(BinaryStorage):
             logger.error(f"Error saving json to {path}: {e}")
             raise
     
-    def load_jsonl(self, path: Path | str, default: T = None) -> Generator[Any | T, None, None]:
+    def load_jsonl(self, path: str | os.PathLike, default: T = None) -> Generator[Any | T, None, None]:
         try:
             logger.info(f"Loading jsonl from {path}")
             for line in self.load_line_stream(path):
@@ -56,7 +57,7 @@ class OrjsonStorage(BinaryStorage):
             else:
                 yield default
             
-    def save_jsonl(self, path: Path | str, data: Iterable[Any], append: bool = False):
+    def save_jsonl(self, path: str | os.PathLike, data: Iterable[Any], append: bool = False):
         try:
             logger.info(f"Saving jsonl to {path}")
             def json_dumps(obj: Iterable[Any]):
