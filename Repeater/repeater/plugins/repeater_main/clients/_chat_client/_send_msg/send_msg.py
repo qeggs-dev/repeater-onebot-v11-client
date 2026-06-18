@@ -124,7 +124,7 @@ class ChatSendMsg(SendMsg):
         # 推理内容必须渲染为图片
         if self.reasoning_content:
             message.append(
-                await self.render_text(
+                await self.render_text_to_msg_segment(
                     self.reasoning_content,
                     document_bottom_comment = self._get_response_usage()
                 )
@@ -141,7 +141,7 @@ class ChatSendMsg(SendMsg):
 
         if self.reasoning_content:
             reason_render_task = asyncio.create_task(
-                self.render_text(
+                self.render_text_to_msg_segment(
                     self.reasoning_content,
                     document_bottom_comment = self._get_response_usage()
                 )
@@ -149,7 +149,7 @@ class ChatSendMsg(SendMsg):
             tasks.append(reason_render_task)
         if self.content:
             content_render_task = asyncio.create_task(
-                self.render_text(
+                self.render_text_to_msg_segment(
                     self.content,
                     document_bottom_comment = self._get_response_usage()
                 )
