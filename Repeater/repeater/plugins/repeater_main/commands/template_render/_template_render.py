@@ -38,7 +38,7 @@ class TemplateRender(CommandPackage):
         await self.send_result(persona_info, send_msg, response)
     
     async def send_result(self, persona_info: PersonaInfo, send_msg: SendMsg, response: Response[None]):
-        if response.code == 200:
+        if response:
             await send_msg.send_check_length(response.text)
         else:
             await send_msg.send_response_check_code(response)

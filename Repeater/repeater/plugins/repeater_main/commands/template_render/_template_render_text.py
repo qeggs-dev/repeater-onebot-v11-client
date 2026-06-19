@@ -1,7 +1,5 @@
-from ...assist import PersonaInfo, SendMsg
-from ...cmd_info import CmdTypes
+from ...assist import PersonaInfo, SendMsg, Response
 from ...command_register import CommandCaller
-from ...clients import TemplateRenderClient
 from ._template_render import TemplateRender
 
 @CommandCaller.register
@@ -23,15 +21,9 @@ class TemplateRenderText(TemplateRender):
         "VarExpandText",
         "VAR_EXPAND_TEXT",
     }
-
-    async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        if send_msg.is_debug_mode:
-            await send_msg.send_debug_mode()
-
-        msg = persona_info.message_striped_str
-        variable_expansion_client = TemplateRenderClient(persona_info)
-        response = await variable_expansion_client.render(text=msg)
-        if response.code == 200:
+    
+    async def send_result(self, persona_info: PersonaInfo, send_msg: SendMsg, response: Response[None]):
+        if response:
             await send_msg.send_text(response.text)
         else:
             await send_msg.send_response_check_code(response)
