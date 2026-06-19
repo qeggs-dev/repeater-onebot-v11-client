@@ -24,6 +24,7 @@ class SendContextFile(CommandPackage):
         if send_msg.is_debug_mode:
             await send_msg.send_debug_mode()
 
-        user_file_client = ContextClient(persona_info)
+        user_config = await persona_info.get_user_configs()
+        context_client = ContextClient(persona_info, user_config)
         file_url = user_file_client.get_context_url()
         await send_msg.send_file(file_url, f"{persona_info.namespace_str}_User_Context.json")

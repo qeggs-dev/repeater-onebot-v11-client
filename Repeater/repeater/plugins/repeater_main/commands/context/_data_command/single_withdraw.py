@@ -24,7 +24,8 @@ class SingleWithdraw(CommandPackage):
         if send_msg.is_debug_mode:
             await send_msg.send_debug_mode()
 
-        context_client = ContextClient(persona_info)
+        user_config = await persona_info.get_user_configs()
+        context_client = ContextClient(persona_info, user_config)
         if persona_info.args_str:
             try:
                 num = int(persona_info.args_str)

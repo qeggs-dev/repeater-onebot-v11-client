@@ -23,7 +23,8 @@ class InjectUserContent(CommandPackage):
         if send_msg.is_debug_mode:
             await send_msg.send_debug_mode()
 
-        context_client = ContextClient(persona_info)
+        user_config = await persona_info.get_user_configs()
+        context_client = ContextClient(persona_info, user_config)
         response = await context_client.inject_context(
             content_unit=ContentUnit(
                 content=persona_info.message_striped_str,
