@@ -24,6 +24,8 @@ class SendPromptFile(CommandPackage):
         if send_msg.is_debug_mode:
             await send_msg.send_debug_mode()
 
-        user_file_client = PromptClient(persona_info)
-        file_url = user_file_client.get_prompt_url()
+        
+        user_configs = await persona_info.get_user_configs()
+        prompt_client = PromptClient(persona_info, user_configs)
+        file_url = prompt_client.get_prompt_url()
         await send_msg.send_file(file_url, f"{persona_info.namespace_str}_User_Prompt.md")

@@ -23,7 +23,8 @@ class GetPrompt(CommandPackage):
         if send_msg.is_debug_mode:
             await send_msg.send_debug_mode()
 
-        prompt_client = PromptClient(persona_info)
+        user_configs = await persona_info.get_user_configs()
+        prompt_client = PromptClient(persona_info, user_configs)
         response = await prompt_client.get_prompt()
         if response:
             if response.text:

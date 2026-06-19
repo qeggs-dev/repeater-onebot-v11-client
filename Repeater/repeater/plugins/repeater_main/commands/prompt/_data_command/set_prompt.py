@@ -25,6 +25,7 @@ class SetPrompt(CommandPackage):
 
         msg = persona_info.message_striped_str
 
-        prompt_client = PromptClient(persona_info)
+        user_configs = await persona_info.get_user_configs()
+        prompt_client = PromptClient(persona_info, user_configs)
         response = await prompt_client.set_prompt(msg)
         await send_msg.send_response_check_code(response, f"Set Prompt {'successfully' if response.code == 200 else 'failed'}")
