@@ -31,7 +31,7 @@ async def see_cmds(
         for package in commands[cmd_type]:
             text_buffer.append("")
             text_buffer.append(f"**{package.component}**")
-            text_buffer.append(f"**type**: `{cmd_type}`")
+            text_buffer.append(f"**type**: `{cmd_type.value}`")
             if package.description:
                 text_buffer.append("")
                 text_buffer.append(package.description.replace("\n", "\n> "))
