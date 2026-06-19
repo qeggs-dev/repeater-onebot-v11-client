@@ -25,7 +25,8 @@ class GetServerLicenses(CommandPackage):
         if send_msg.is_debug_mode:
             await send_msg.send_debug_mode()
 
-        license_client = LicenseClient()
+        user_configs = await persona_info.get_user_configs()
+        license_client = LicenseClient(persona_info, user_configs)
         server_version = await license_client.get_server_licenses()
         version_data = server_version.get_data()
         if version_data is None:
