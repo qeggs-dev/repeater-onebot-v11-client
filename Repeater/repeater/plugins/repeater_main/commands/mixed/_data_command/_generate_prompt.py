@@ -29,6 +29,8 @@ class GeneratePrompt(CommandPackage):
 
         message = persona_info.message_striped_str
 
+        user_configs = await persona_info.get_user_configs()
+
         meta_prompt_file_path = "prompts/generate_prompt/meta_prompt.txt"
         try:
             meta_prompt = await async_text_storage.load(path=meta_prompt_file_path)
@@ -37,18 +39,19 @@ class GeneratePrompt(CommandPackage):
             meta_prompt = META_PROMPT
             await async_text_storage.save(path=meta_prompt_file_path, data=meta_prompt)
 
-        chat_client = ChatClient(persona_info, namespace="Prompt_Generater")
+        chat_client = ChatClient(persona_info, user_configs)
         image_url = await persona_info.get_images_url()
         chat_response = await chat_client.send_message(
             message,
             add_metadata = False,
             save_context = False,
+            history_messages = [],
             allow_tool_calls = False,
             image_url = image_url,
             temporary_prompt = meta_prompt
         )
 
-        if chat_response.code != 200:
+        if not chat_response:
             await send_msg.send_response_check_code(chat_response, "Generate Prompt failed.")
             return
 
@@ -61,7 +64,7 @@ class GeneratePrompt(CommandPackage):
             await send_msg.send_error("No prompt content generated.")
             return
 
-        prompt_client = PromptClient(persona_info)
+        prompt_client = PromptClient(persona_info, user_configs)
         text_buffer:list[str] = []
         for buffer in data.context.context_list:
             if buffer.role == ContentRole.USER:

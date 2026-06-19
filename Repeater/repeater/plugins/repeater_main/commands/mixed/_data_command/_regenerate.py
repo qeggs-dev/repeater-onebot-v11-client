@@ -32,7 +32,8 @@ class Regenerate(BaseChat):
         persona_info: PersonaInfo,
         send_msg: SendMsg
     ) -> str:
-        context_client = ContextClient(persona_info)
+        user_configs = await persona_info.get_user_configs()
+        context_client = ContextClient(persona_info, user_configs)
         response = await context_client.withdraw()
         
         if response:
