@@ -23,7 +23,9 @@ class GetModelList(CommandPackage):
         if send_msg.is_debug_mode:
             await send_msg.send_debug_mode()
 
-        model_info_client = ModelInfoClient()
+        
+        user_configs = await persona_info.get_user_configs()
+        model_info_client = ModelInfoClient(persona_info, user_configs)
         model_id = persona_info.message_striped_str
 
         response = await model_info_client.get_models(model_id)
