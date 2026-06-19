@@ -1,20 +1,13 @@
 from typing import NoReturn, ClassVar
 from itertools import chain
 
-from ...logger import logger
-from ...clients import ChatClient, ChatSendMsg, ChatResponse
-from ...assist import PersonaInfo, SendMsg, Response
-from ...cmd_info import CmdTypes
-from ...client_net_configs import storage_configs
-from ...command_register import CommandPackage
-from pydantic import BaseModel
-
-class Message(BaseModel):
-    text: str | None = None
-    suffix: str | None = None
-    images: list[str] | None = None
-    audios: list[str] | None = None
-    videos: list[str] | None = None
+from ....logger import logger
+from ....clients import ChatClient, ChatSendMsg, ChatResponse
+from ....assist import PersonaInfo, SendMsg, Response
+from ....cmd_info import CmdTypes
+from ....client_net_configs import storage_configs
+from ....command_register import CommandPackage
+from .message import SendMessage
 
 class BaseChat(CommandPackage):
     cmd_type = CmdTypes.CHAT
@@ -94,9 +87,9 @@ class BaseChat(CommandPackage):
         self,
         persona_info: PersonaInfo,
         send_msg: SendMsg,
-    ) -> Message:
+    ) -> SendMessage:
         if self.no_input:
-            return Message()
+            return SendMessage()
         else:
             message = persona_info.message
             if not persona_info:
@@ -166,7 +159,7 @@ class BaseChat(CommandPackage):
             if not (message_text or images or audios or videos):
                 message_text = str(message)
             
-            return Message(
+            return SendMessage(
                 text = message_text,
                 images = images,
                 audios = audios,
@@ -181,7 +174,7 @@ class BaseChat(CommandPackage):
             module = send_msg.component
         )
         
-        client = self.get_client(persona_info)
+        client = await self.get_client(persona_info)
 
         message = await self.parse_message(persona_info, send_msg)
 
@@ -194,7 +187,12 @@ class BaseChat(CommandPackage):
             persona_info = persona_info,
             send_msg = send_msg
         )
-        
+
+        if not response and response.initialized:
+            await send_msg.send_error_response(
+                response = response,
+            )
+
         chat_send_msg = ChatSendMsg(
             component = send_msg.component,
             persona_info = persona_info,
@@ -211,8 +209,9 @@ class BaseChat(CommandPackage):
     def reason_filters(self, text: str) -> str:
         return text
     
-    def get_client(self, persona_info: PersonaInfo) -> ChatClient:
-        client = ChatClient(persona_info)
+    async def get_client(self, persona_info: PersonaInfo) -> ChatClient:
+        user_configs = await persona_info.get_user_configs()
+        client = ChatClient(persona_info, user_configs)
         return client
     
     async def send_message(
