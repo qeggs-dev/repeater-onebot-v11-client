@@ -26,10 +26,10 @@ class SessionBranchClone(CommandPackage):
 
         msg = persona_info.message_striped_str
 
-        context_client = ContextClient(persona_info)
-        prompt_client = PromptClient(persona_info)
-        config_client = ConfigClient(persona_info)
-
+        user_configs = await persona_info.get_user_configs()
+        context_client = ContextClient(persona_info, user_configs)
+        prompt_client = PromptClient(persona_info, user_configs)
+        config_client = ConfigClient(persona_info, user_configs)
         context_response = await context_client.clone(msg)
         prompt_response = await prompt_client.clone(msg)
         config_response = await config_client.clone(msg)
