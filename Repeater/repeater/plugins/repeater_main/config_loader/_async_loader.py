@@ -32,7 +32,6 @@ class AsyncLoader(Generic[T_MODEL]):
                 await self.save(model)
                 return model
             else:
-                logger.error(f"Failed to load config from \"{self._path.as_posix()}\"")
                 raise e
 
     async def save(self, data: T_MODEL):

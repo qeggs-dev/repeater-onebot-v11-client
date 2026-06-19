@@ -32,7 +32,6 @@ class Loader(Generic[T_MODEL]):
                 self.save(model)
                 return model
             else:
-                logger.error(f"Failed to load config from \"{self._path.as_posix()}\"")
                 raise e
 
     def save(self, data: T_MODEL):
