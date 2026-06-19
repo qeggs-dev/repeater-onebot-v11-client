@@ -1,7 +1,7 @@
 from .._bases.base_nexus import DownloadFromNexus
 from ...command_register import CommandCaller
 from ...clients import NexusClient
-
+from ...assist import PersonaInfo
 
 @CommandCaller.register
 class EnvironmentDownloadFromNexus(DownloadFromNexus):
@@ -15,5 +15,6 @@ class EnvironmentDownloadFromNexus(DownloadFromNexus):
         "ENV_DOWNLOAD_FROM_NEXUS",
     }
 
-    def get_client(self, persona_info):
-        return NexusClient(persona_info)
+    async def get_client(self, persona_info: PersonaInfo):
+        user_configs = await persona_info.get_user_configs()
+        return NexusClient(persona_info, user_configs)

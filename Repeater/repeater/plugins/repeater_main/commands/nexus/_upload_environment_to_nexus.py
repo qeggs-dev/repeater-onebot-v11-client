@@ -1,7 +1,7 @@
 from .._bases.base_nexus import UploadToNexus
 from ...command_register import CommandCaller
 from ...clients import NexusClient
-
+from ...assist import PersonaInfo
 
 @CommandCaller.register
 class EnvironmentUploadToNexus(UploadToNexus):
@@ -15,5 +15,6 @@ class EnvironmentUploadToNexus(UploadToNexus):
         "ENV_UPLOAD_TO_NEXUS",
     }
 
-    def get_client(self, persona_info):
-        return NexusClient(persona_info)
+    async def get_client(self, persona_info: PersonaInfo):
+        user_configs = await persona_info.get_user_configs()
+        return NexusClient(persona_info, user_configs)
