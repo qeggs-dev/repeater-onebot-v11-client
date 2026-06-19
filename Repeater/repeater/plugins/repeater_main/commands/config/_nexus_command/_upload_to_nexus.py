@@ -1,7 +1,5 @@
-from ..._bases import UploadToNexus
+from ..._bases import UploadToNexus, UserdataCmdsType
 from ....command_register import CommandCaller
-from ....clients import ConfigClient
-
 
 @CommandCaller.register
 class ConfigUploadToNexus(UploadToNexus):
@@ -14,6 +12,4 @@ class ConfigUploadToNexus(UploadToNexus):
         "ConfigUploadToNexus",
         "CONFIG_UPLOAD_TO_NEXUS",
     }
-
-    def get_client(self, persona_info):
-        return ConfigClient(persona_info)
+    userdata_cmds_type: UserdataCmdsType = UserdataCmdsType.CONFIG

@@ -1,6 +1,5 @@
-from ..._bases import DownloadFromNexus
+from ..._bases import DownloadFromNexus, UserdataCmdsType
 from ....command_register import CommandCaller
-from ....clients import ConfigClient
 
 @CommandCaller.register
 class ConfigDownloadFromNexus(DownloadFromNexus):
@@ -13,6 +12,4 @@ class ConfigDownloadFromNexus(DownloadFromNexus):
         "ConfigDownloadFromNexus",
         "CONFIG_DOWNLOAD_FROM_NEXUS"
     }
-
-    def get_client(self, persona_info):
-        return ConfigClient(persona_info)
+    userdata_cmds_type: UserdataCmdsType = UserdataCmdsType.CONFIG

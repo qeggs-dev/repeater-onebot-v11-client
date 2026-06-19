@@ -1,4 +1,4 @@
-from ..._bases import DownloadFromNexus
+from ..._bases import DownloadFromNexus, UserdataCmdsType
 from ....command_register import CommandCaller
 from ....clients import ContextClient
 
@@ -14,6 +14,4 @@ class ContextDownloadFromNexus(DownloadFromNexus):
         "ContextDownloadFromNexus",
         "CONTEXT_DOWNLOAD_FROM_NEXUS",
     }
-
-    def get_client(self, persona_info):
-        return ContextClient(persona_info)
+    userdata_cmds_type: UserdataCmdsType = UserdataCmdsType.CONTEXT

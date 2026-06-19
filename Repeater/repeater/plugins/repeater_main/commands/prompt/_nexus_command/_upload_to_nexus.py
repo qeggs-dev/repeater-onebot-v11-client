@@ -1,4 +1,4 @@
-from ..._bases import UploadToNexus
+from ..._bases import UploadToNexus, UserdataCmdsType
 from ....command_register import CommandCaller
 from ....clients import PromptClient
 
@@ -14,6 +14,4 @@ class PromptUploadToNexus(UploadToNexus):
         "PromptUploadToNexus",
         "PROMPT_UPLOAD_TO_NEXUS",
     }
-
-    def get_client(self, persona_info):
-        return PromptClient(persona_info)
+    userdata_cmds_type: UserdataCmdsType = UserdataCmdsType.PROMPT

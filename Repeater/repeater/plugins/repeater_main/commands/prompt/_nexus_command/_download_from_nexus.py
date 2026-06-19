@@ -1,4 +1,4 @@
-from ..._bases import DownloadFromNexus
+from ..._bases import DownloadFromNexus, UserdataCmdsType
 from ....command_register import CommandCaller
 from ....clients import PromptClient
 
@@ -14,6 +14,4 @@ class PromptDownloadFromNexus(DownloadFromNexus):
         "PromptDownloadFromNexus",
         "PROMPT_DOWNLOAD_FROM_NEXUS",
     }
-
-    def get_client(self, persona_info):
-        return PromptClient(persona_info)
+    userdata_cmds_type: UserdataCmdsType = UserdataCmdsType.PROMPT
