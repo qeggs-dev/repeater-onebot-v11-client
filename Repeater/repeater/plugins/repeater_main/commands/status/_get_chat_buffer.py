@@ -24,7 +24,9 @@ class GetChatBuffer(CommandPackage):
         if send_msg.is_debug_mode:
             await send_msg.send_debug_mode()
 
-        chat_client = ChatClient(persona_info)
+        
+        user_configs = await persona_info.get_user_configs()
+        chat_client = ChatClient(persona_info, user_configs)
         response = await chat_client.get_chat_buffer()
         if response:
             buffer_response = response.get_data()
