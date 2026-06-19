@@ -4,6 +4,8 @@ from .response import RendedImage
 from ..base_client import BaseClient
 
 class TextRender(BaseClient):
+    timeout = storage_configs.server_api_timeout.render
+    
     async def render(
             self,
             text: str,
