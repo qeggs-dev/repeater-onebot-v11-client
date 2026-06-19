@@ -20,7 +20,8 @@ class TokenCount(CommandPackage):
     cmd_type = CmdTypes.STATISTIC
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        client = RequestLogClient()
+        user_configs = await persona_info.get_user_configs()
+        client = RequestLogClient(persona_info, user_configs)
 
         request_logs = client.get_request_log()
 
