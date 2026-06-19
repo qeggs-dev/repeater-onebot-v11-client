@@ -8,7 +8,7 @@ class UploadToNexus(BaseNexus):
         if send_msg.is_debug_mode:
             await send_msg.send_debug_mode()
         
-        nexus_client = self.get_client(persona_info)
+        nexus_client = await self.get_client(persona_info)
 
         timeout = None
         if persona_info.message_striped_str:

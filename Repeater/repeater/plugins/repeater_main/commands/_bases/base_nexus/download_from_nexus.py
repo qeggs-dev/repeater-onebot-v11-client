@@ -7,7 +7,7 @@ class DownloadFromNexus(BaseNexus):
         if send_msg.is_debug_mode:
             await send_msg.send_debug_mode()
         
-        nexus_client = self.get_client(persona_info)
+        nexus_client = await self.get_client(persona_info)
         
         try:
             response = await nexus_client.download_from_nexus(persona_info.message_striped_str)
