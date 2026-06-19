@@ -26,7 +26,7 @@ class ChangeBackend(CommandPackage):
         /{cmd} backend_name
         ```
     """
-    cmd_type = CmdTypes.USER_CONFIG
+    cmd_type = CmdTypes.CLIENT_CONFIG
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         if send_msg.is_debug_mode:
