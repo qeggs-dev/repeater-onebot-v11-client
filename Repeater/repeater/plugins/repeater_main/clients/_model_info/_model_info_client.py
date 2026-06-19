@@ -21,7 +21,7 @@ class ModelInfoClient(BaseClient):
     
     # region get all models
     async def get_all_models(self) -> Response[ModelsResponse]:
-        response = await self._client.get(
+        response = await self.client.get(
             f"{GET_MODEL_LIST}",
         )
         return Response(
@@ -32,7 +32,7 @@ class ModelInfoClient(BaseClient):
 
     # region get models
     async def get_models(self, model_uid: str) -> Response[ModelsResponse]:
-        response = await self._client.get(
+        response = await self.client.get(
             f"{GET_MODEL_LIST}/{quote(model_uid)}",
         )
         return Response(
@@ -51,7 +51,7 @@ class ModelInfoClient(BaseClient):
             size: int = 32,
             interval: int = 0
         ) -> Response[PingProviderResponse]:
-        response = await self._client.post(
+        response = await self.client.post(
             f"{PING_PROVIDER}/{quote(user_id)}",
             json = {
                 "model_id": model_id,
@@ -68,5 +68,5 @@ class ModelInfoClient(BaseClient):
 
     # region close
     def close(self) -> None:
-        self._client.aclose()
+        self.client.aclose()
     # endregion
