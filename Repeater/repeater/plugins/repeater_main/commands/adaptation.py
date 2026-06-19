@@ -25,7 +25,8 @@ class AdaptationInfo(CommandPackage):
         if send_msg.is_debug_mode:
             await send_msg.send_debug_mode()
 
-        version_client = VersionAPIClient()
+        user_configs = await persona_info.get_user_configs()
+        version_client = VersionAPIClient(persona_info, user_configs)
         server_version = await version_client.get_version()
         version_data = server_version.get_data()
         if version_data is None:
