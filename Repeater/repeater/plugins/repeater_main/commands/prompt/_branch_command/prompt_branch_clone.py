@@ -1,7 +1,7 @@
 from ....assist import PersonaInfo, SendMsg
 from ....cmd_info import CmdTypes
 from ....command_register import CommandCaller
-from ..._bases import CloneBranch
+from ..._bases import CloneBranch, UserdataCmdsType
 from ....clients import PromptClient
 
 
@@ -17,6 +17,4 @@ class PromptBranchClone(CloneBranch):
         "PROMPT_BRANCH_CLONE",
     }
     cmd_type = CmdTypes.BRANCH_PROMPT
-
-    def get_client(self, persona_info: PersonaInfo) -> PromptClient:
-        return PromptClient(persona_info)
+    userdata_cmds_type: UserdataCmdsType = UserdataCmdsType.PROMPT

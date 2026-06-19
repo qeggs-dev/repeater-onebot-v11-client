@@ -1,9 +1,6 @@
-from ....assist import PersonaInfo
 from ....cmd_info import CmdTypes
 from ....command_register import CommandCaller
-from ..._bases import DeleteBranch
-from ....clients import ConfigClient
-
+from ..._bases import DeleteBranch, UserdataCmdsType
 
 @CommandCaller.register
 class DelConfig(DeleteBranch):
@@ -17,6 +14,4 @@ class DelConfig(DeleteBranch):
         "DELETE_CONFIG",
     }
     cmd_type = CmdTypes.BRANCH_CONFIG
-
-    def get_client(self, persona_info: PersonaInfo) -> ConfigClient:
-        return ConfigClient(persona_info)
+    userdata_cmds_type: UserdataCmdsType = UserdataCmdsType.CONFIG

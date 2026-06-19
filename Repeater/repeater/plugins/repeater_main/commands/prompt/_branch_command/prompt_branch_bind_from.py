@@ -1,7 +1,7 @@
 from ....assist import PersonaInfo, SendMsg
 from ....cmd_info import CmdTypes
 from ....command_register import CommandCaller
-from ..._bases import BindBranchFrom
+from ..._bases import BindBranchFrom, UserdataCmdsType
 from ....clients import PromptClient
 
 
@@ -17,6 +17,4 @@ class PromptBranchBindFrom(BindBranchFrom):
         "PROMPT_BRANCH_BIND_FROM",
     }
     cmd_type = CmdTypes.BRANCH_PROMPT
-
-    def get_client(self, persona_info: PersonaInfo) -> PromptClient:
-        return PromptClient(persona_info)
+    userdata_cmds_type: UserdataCmdsType = UserdataCmdsType.PROMPT

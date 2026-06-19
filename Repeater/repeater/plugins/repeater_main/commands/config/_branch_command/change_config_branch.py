@@ -1,8 +1,6 @@
-from ....assist import PersonaInfo
 from ....cmd_info import CmdTypes
 from ....command_register import CommandCaller
-from ..._bases import ChangeBranch
-from ....clients import ConfigClient
+from ..._bases import ChangeBranch, UserdataCmdsType, UserdataCmdsType
 
 @CommandCaller.register
 class ChangeConfigBranch(ChangeBranch):
@@ -16,6 +14,4 @@ class ChangeConfigBranch(ChangeBranch):
         "CHANGE_CONFIG_BRANCH",
     }
     cmd_type = CmdTypes.BRANCH_CONFIG
-
-    def get_client(self, persona_info: PersonaInfo) -> ConfigClient:
-        return ConfigClient(persona_info)
+    userdata_cmds_type: UserdataCmdsType = UserdataCmdsType.CONFIG

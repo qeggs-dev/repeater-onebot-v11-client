@@ -1,8 +1,6 @@
-from ....assist import PersonaInfo, SendMsg
 from ....cmd_info import CmdTypes
 from ....command_register import CommandCaller
-from ..._bases import ChangeBranch
-from ....clients import ContextClient
+from ..._bases import ChangeBranch, UserdataCmdsType
 
 
 @CommandCaller.register
@@ -17,6 +15,4 @@ class ChangeContextBranch(ChangeBranch):
         "CHANGE_CONTEXT_BRANCH",
     }
     cmd_type = CmdTypes.BRANCH_CONTEXT
-
-    def get_client(self, persona_info: PersonaInfo) -> ContextClient:
-        return ContextClient(persona_info)
+    userdata_cmds_type: UserdataCmdsType = UserdataCmdsType.CONTEXT

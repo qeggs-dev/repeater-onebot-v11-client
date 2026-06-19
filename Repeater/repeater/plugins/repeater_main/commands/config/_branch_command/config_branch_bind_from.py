@@ -1,9 +1,6 @@
-from ....assist import PersonaInfo
 from ....cmd_info import CmdTypes
 from ....command_register import CommandCaller
-from ..._bases import BindBranchFrom
-from ....clients import ConfigClient
-
+from ..._bases import BindBranchFrom, UserdataCmdsType
 
 @CommandCaller.register
 class ConfigBranchBindFrom(BindBranchFrom):
@@ -17,6 +14,4 @@ class ConfigBranchBindFrom(BindBranchFrom):
         "CONFIG_BRANCH_BIND_FROM",
     }
     cmd_type = CmdTypes.BRANCH_CONFIG
-
-    def get_client(self, persona_info: PersonaInfo) -> ConfigClient:
-        return ConfigClient(persona_info)
+    userdata_cmds_type: UserdataCmdsType = UserdataCmdsType.CONFIG

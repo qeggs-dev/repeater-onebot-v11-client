@@ -1,7 +1,7 @@
 from ....assist import PersonaInfo, SendMsg
 from ....cmd_info import CmdTypes
 from ....command_register import CommandCaller
-from ..._bases import DeleteBranch
+from ..._bases import DeleteBranch, UserdataCmdsType
 from ....clients import ContextClient
 
 
@@ -17,6 +17,7 @@ class DeletePublicSpaceContext(DeleteBranch):
         "DELETE_PUBLIC_SPACE_CONTEXT",
     }
     cmd_type = CmdTypes.BRANCH_CONTEXT
+    userdata_cmds_type: UserdataCmdsType = UserdataCmdsType.CONTEXT
 
-    def get_client(self, persona_info: PersonaInfo) -> ContextClient:
-        return ContextClient(persona_info, namespace=persona_info.public_namespace_str)
+    async def get_namespace(self, persona_info: PersonaInfo) -> str:
+        return persona_info.public_namespace_str
