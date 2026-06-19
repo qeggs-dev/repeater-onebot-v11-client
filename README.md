@@ -615,7 +615,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
 | `seeCmd`                   | `sc`     | `SeeCmd`                  | `SEE_CMD`   | 4.6.4.0        | 显示命令                       | 命令名称                                  | 显示指定命令的详细帮助信息 |
 | `cmdTypesList`             | `ctl`    | `CmdTypesList`            | `SEE_CMD`   | 4.6.4.0        | 列出命令类型                   | 无                                        | 列出所有命令类型 |
-| `cmdType`                  | `ct`     | `CmdType`                 | `SEE_CMD`   | 4.6.5.0        | 列出命令类型下的所有命令        | 无                                        | 列出命令类型下的所有命令 |
+| `cmdType`                  | `ct`     | `CmdType`                 | `SEE_CMD`   | 4.6.5.0        | 列出命令类型下的所有命令        | 命令类型                                   | 列出命令类型下的所有命令 |
 
 ### Version Command
 
