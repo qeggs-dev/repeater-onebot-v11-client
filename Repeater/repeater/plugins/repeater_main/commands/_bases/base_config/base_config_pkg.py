@@ -1,19 +1,13 @@
 from abc import abstractmethod
 from typing import Any, TypeVar, ClassVar
 
-from ...clients import ConfigClient
-from ...assist import PersonaInfo, SendMsg, Response
-from ...cmd_info import CmdTypes
-from ...command_register import CommandPackage
-from enum import Enum, auto
+from ....clients import ConfigClient
+from ....assist import PersonaInfo, SendMsg, Response
+from ....cmd_info import CmdTypes
+from ....command_register import CommandPackage
+from .operation_type import OperationType
 
 T = TypeVar("T")
-
-class OperationType(Enum):
-    SET = auto()
-    GET = auto()
-    GET_FILE_URL = auto()
-    GET_AND_SET = auto()
 
 class BaseConfig(CommandPackage):
     field: str = ""
@@ -46,9 +40,17 @@ class BaseConfig(CommandPackage):
         value: T | None
     ) -> None:
         pass
+
+    async def get_client(
+        self,
+        persona_info: PersonaInfo,
+    ):
+        user_configs = await persona_info.get_user_configs()
+        client = ConfigClient(persona_info, user_configs)
+        return client
     
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg) -> None:
-        client = ConfigClient(persona_info)
+        client = await self.get_client(persona_info)
         raw_value = None
         if self.operation in [OperationType.GET, OperationType.GET_AND_SET]:
             response = await client.get_configs()
