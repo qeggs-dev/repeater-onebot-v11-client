@@ -60,7 +60,7 @@ class BaseChat(CommandPackage):
                     continue
             try:
                 file_data = await persona_info.open_text_file(
-                    file_id,
+                    info,
                     storage_configs.text_file_encoding
                 )
                 reply_msgs_texts.append(
