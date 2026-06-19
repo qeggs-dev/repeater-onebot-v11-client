@@ -24,6 +24,7 @@ class SendUserDataFile(CommandPackage):
         if send_msg.is_debug_mode:
             await send_msg.send_debug_mode()
 
-        user_file_client = UserFileClient(persona_info)
+        user_configs = await persona_info.get_user_configs()
+        user_file_client = UserFileClient(persona_info, user_configs)
         file_url = await user_file_client.get_user_data_file_url()
         await send_msg.send_file(file_url, f"{persona_info.namespace_str}_UserDataFile.zip")
