@@ -1,11 +1,11 @@
 import re
 
-from ...assist import PersonaInfo, SendMsg, Response
-from ...cmd_info import CmdTypes
-from ...clients import ChatClient, ChatResponse, ChatSendMsg
-from .base_chat_pkg import BaseChat, Message
+from ....assist import PersonaInfo, SendMsg, Response
+from ....cmd_info import CmdTypes
+from ....clients import ChatClient, ChatResponse, ChatSendMsg
+from ..base_chat.base_chat_pkg import BaseChat, SendMessage
 from typing import ClassVar
-from ...logger import logger
+from ....logger import logger
 
 class BaseFIM(BaseChat):
     echo: ClassVar[bool | None] = None
@@ -18,7 +18,7 @@ class BaseFIM(BaseChat):
         self,
         persona_info: PersonaInfo,
         send_msg: SendMsg
-    ) -> Message:
+    ) -> SendMessage:
         if self.echo:
             text = persona_info.message_striped_str
         else:
@@ -31,7 +31,7 @@ class BaseFIM(BaseChat):
                 assert isinstance(text, str), "text must be a string"
                 assert isinstance(suffix, str), "suffix must be a string"
                 
-                return Message(text=text, suffix=suffix)
+                return SendMessage(text=text, suffix=suffix)
             else:
                 match_fim_greedy = self.fim_regex_greedy.match(msg)
                 if match_fim_greedy:
@@ -41,11 +41,11 @@ class BaseFIM(BaseChat):
                     assert isinstance(text, str), "text must be a string"
                     assert isinstance(suffix, str), "suffix must be a string"
                     
-                    return Message(text=text, suffix=suffix)
+                    return SendMessage(text=text, suffix=suffix)
                 else:
                     await send_msg.send_error("Invalid FIM format")
 
-        return Message(text=text)
+        return SendMessage(text=text)
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         logger.info(
@@ -55,7 +55,7 @@ class BaseFIM(BaseChat):
             module = send_msg.component
         )
         
-        client = self.get_client(persona_info)
+        client = await self.get_client(persona_info)
 
         message = await self.parse_message(persona_info, send_msg)
 
