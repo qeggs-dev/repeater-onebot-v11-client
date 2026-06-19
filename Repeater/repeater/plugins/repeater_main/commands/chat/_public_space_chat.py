@@ -23,5 +23,6 @@ class PublicSpaceChat(BaseChat):
         ```
     """
 
-    def get_client(self, persona_info: PersonaInfo):
-        return ChatClient(persona_info, persona_info.public_namespace_str)
+    async def get_client(self, persona_info: PersonaInfo):
+        user_configs = await persona_info.get_user_configs()
+        return ChatClient(persona_info, user_configs, persona_info.public_namespace_str)

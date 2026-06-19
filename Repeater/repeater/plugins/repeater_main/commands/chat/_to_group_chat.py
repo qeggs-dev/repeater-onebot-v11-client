@@ -37,7 +37,7 @@ class ToGroupChat(BaseChat):
         
         return message_text
     
-    def get_client(self, persona_info: PersonaInfo) -> ChatClient:
+    async def get_client(self, persona_info: PersonaInfo) -> ChatClient:
         matched = self.pattern.match(persona_info.message_striped_str)
         if matched:
             group_id_str = matched.group("group_id")
@@ -46,8 +46,10 @@ class ToGroupChat(BaseChat):
         else:
             raise ValueError("Invalid input format")
         
+        user_configs = await persona_info.get_user_configs()
         client = ChatClient(
             persona_info,
+            user_configs,
             namespace = persona_info.group_namespace(group_id),
         )
         return client

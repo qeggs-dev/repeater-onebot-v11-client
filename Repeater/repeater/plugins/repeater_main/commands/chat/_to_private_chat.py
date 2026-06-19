@@ -24,7 +24,8 @@ class ToPrivateChat(BaseChat):
         ```
     """
     
-    def get_client(self, persona_info: PersonaInfo) -> ChatClient:
+    async def get_client(self, persona_info: PersonaInfo) -> ChatClient:
+        user_configs = await persona_info.get_user_configs()
         client = ChatClient(
             persona_info,
             namespace = persona_info.private_namespace,
