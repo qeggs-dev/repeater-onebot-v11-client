@@ -43,17 +43,17 @@ class AsyncLoader(Generic[T_MODEL]):
             raise ValueError("Unknown mode")
 
     @staticmethod
-    async def _decode_json(file_path: str | os.PathLike):
+    async def _decode_json(file_path: str | os.PathLike) -> Any | None:
         return await async_json_storage.load_json(file_path)
 
     @staticmethod
-    async def _decode_yaml(file_path: str | os.PathLike):
+    async def _decode_yaml(file_path: str | os.PathLike) -> Any:
         return await async_yaml_storage.load_yaml(file_path)
     
     @staticmethod
-    async def _encode_json(file_path: str | os.PathLike, data: Any):
+    async def _encode_json(file_path: str | os.PathLike, data: Any) -> None:
         return await async_json_storage.save_json(file_path, data)
 
     @staticmethod
-    async def _encode_yaml(file_path: str | os.PathLike, data: Any):
+    async def _encode_yaml(file_path: str | os.PathLike, data: Any) -> None:
         return await async_yaml_storage.save_yaml(file_path, data)
