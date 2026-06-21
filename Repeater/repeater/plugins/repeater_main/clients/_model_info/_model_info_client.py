@@ -65,8 +65,3 @@ class ModelInfoClient(BaseClient):
             httpx_response = response,
             model = PingProviderResponse,
         )
-
-    # region close
-    def close(self) -> None:
-        self.client.aclose()
-    # endregion
