@@ -31,4 +31,4 @@ class GetBranchList(BaseBranch):
 
             await send_msg.send_check_length_prompt("\n".join(text_buffer))
         else:
-            await send_msg.send_response_check_code(response, f"Get {self.branch_type.name} branch list failed")
+            await send_msg.send_response_check_code(response, f"Get {self.userdata_cmds_type.name} branch list failed")
