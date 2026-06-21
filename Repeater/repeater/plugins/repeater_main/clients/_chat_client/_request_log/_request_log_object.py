@@ -26,7 +26,7 @@ class RequestLogObject(BaseModel):
     request_end_time: TimeStamp = Field(default_factory=lambda: TimeStamp(timestamp=0, monotonic=0))
     stream_processing_start_time: TimeStamp = Field(default_factory=lambda: TimeStamp(timestamp=0, monotonic=0))
     stream_processing_end_time: TimeStamp = Field(default_factory=lambda: TimeStamp(timestamp=0, monotonic=0))
-    task_end_time: TimeStamp = Field(default=lambda: TimeStamp(timestamp=0, monotonic=0))
+    task_end_time: TimeStamp = Field(default_factory=lambda: TimeStamp(timestamp=0, monotonic=0))
     chunk_times: list[TimeStamp] = Field(default_factory=list)
     chunk_generated_times: list[TimeStamp] = Field(default_factory=list)
     created_time: int = 0
