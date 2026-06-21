@@ -75,7 +75,14 @@ class BaseFIM(BaseChat):
             if self.echo:
                 return text
             else:
-                return message.text + text + message.suffix
+                buffer: list[str] = []
+                if message.text:
+                    buffer.append(message.text)
+                if text:
+                    buffer.append(text)
+                if message.suffix:
+                    buffer.append(message.suffix)
+                return "".join(buffer)
         
         chat_send_msg = ChatSendMsg(
             component = send_msg.component,
@@ -91,10 +98,10 @@ class BaseFIM(BaseChat):
     async def send_message(
         self,
         client: ChatClient,
-        images: list[str],
-        audios: list[str],
-        videos: list[str],
-        message: str,
+        images: list[str] | None,
+        audios: list[str] | None,
+        videos: list[str] | None,
+        message: str | None,
         suffix: str | None,
         persona_info: PersonaInfo,
         send_msg: SendMsg
