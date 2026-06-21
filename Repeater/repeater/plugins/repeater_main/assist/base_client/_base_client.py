@@ -24,15 +24,21 @@ class BaseClient:
 
     def __init__(self, persona_info: PersonaInfo, user_configs: UserConfigs, namespace: str | Namespace | None = None):
         self._persona_info = persona_info
+        self.user_configs = user_configs
+        self._namespace = namespace
+
         client_info = ClientInfo(
-            url = self._get_backend_url(user_configs),
+            url = self.base_url,
             follow_redirects = self.follow_redirects,
             timeout = self.timeout,
             limits = self.limits,
             encoding = self.encoding
         )
         self.client = self._httpx_clients.get_client(client_info)
-        self._namespace = namespace
+    
+    @property
+    def base_url(self) -> str:
+        return self._get_backend_url(self.user_configs)
     
     @property
     def namespace(self) -> str:
