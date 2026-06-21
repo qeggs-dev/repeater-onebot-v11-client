@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field, ConfigDict
 from typing import TypeVar, Generic
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 class DataRoutingField(BaseModel, Generic[T]):
     """
@@ -13,8 +13,8 @@ class DataRoutingField(BaseModel, Generic[T]):
         validate_assignment=True,
     )
 
-    load_from_user_id: T = None
-    save_to_user_id: T = None
+    load_from_user_id: T | None = None
+    save_to_user_id: T | None = None
 
     def fill_missing(self, user_id: T):
         """
@@ -45,9 +45,9 @@ class CrossUserDataRouting(BaseModel, Generic[T]):
         validate_assignment=True,
     )
 
-    context: DataRoutingField[T] = Field(default_factory=DataRoutingField)
-    prompt: DataRoutingField[T] = Field(default_factory=DataRoutingField)
-    config: DataRoutingField[T] = Field(default_factory=DataRoutingField)
+    context: DataRoutingField[T] = Field(default_factory=DataRoutingField[T])
+    prompt: DataRoutingField[T] = Field(default_factory=DataRoutingField[T])
+    config: DataRoutingField[T] = Field(default_factory=DataRoutingField[T])
 
     def fill_missing(self, user_id: T):
         self.context.fill_missing(user_id)
