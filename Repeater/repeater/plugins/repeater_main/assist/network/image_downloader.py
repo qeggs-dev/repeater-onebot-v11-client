@@ -27,11 +27,14 @@ class ImageDownloader:
             'bmp': 'image/bmp',
             'webp': 'image/webp'
         }
-        return type_map.get(image_type, 'application/octet-stream')
+        default = "application/octet-stream"
+        if image_type is None:
+            return default
+        return type_map.get(image_type, default)
     
     def get_images(self, skip_size: int = 10 * 1024 * 1024) -> Generator[str, None, None]:
         for segment in self._message:
-            if segment.type == 'image':
+            if segment.type == "image":
                 size = int(segment.data["file_size"])
                 if size > skip_size:
                     continue
