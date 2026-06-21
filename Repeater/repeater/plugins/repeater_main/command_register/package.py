@@ -35,8 +35,7 @@ from nonebot.rule import (
 from nonebot.permission import Permission
 from nonebot.dependencies import Dependent
 from nonebot.exception import (
-    NoneBotException,
-    FinishedException
+    NoneBotException
 )
 from ..client_net_configs import storage_configs
 from nonebot import logger
@@ -97,9 +96,6 @@ class CommandPackage(ABC, Generic[T]):
 
     enabled: bool = True
     """Whether the handler."""
-
-    empty_handler: bool = False
-    """Whether the Handler is empty (you can not use any of the hooks in the package after setting it) """
 
     documents: str | list[str] | None = None
     """This handler's documentation"""
@@ -173,7 +169,7 @@ class CommandPackage(ABC, Generic[T]):
         )
         return persona_info, send_msg
     
-    async def horizontal_enter(self, persona_info: PersonaInfo, send_msg: SendMsg) -> tuple[PersonaInfo, SendMsg]:
+    async def horizontal_enter(self, persona_info: PersonaInfo, send_msg: SendMsg | None = None) -> tuple[PersonaInfo, SendMsg]:
         """
         This method is called when the call comes from another Handler other than the framework.
 
@@ -181,6 +177,11 @@ class CommandPackage(ABC, Generic[T]):
         :param send_msg: SendMsg object
         :return: PersonaInfo object, SendMsg object
         """
+        if send_msg is None:
+            send_msg = SendMsg(
+                component = self.component,
+                persona_info = persona_info,
+            )
         persona_info_copy = PersonaInfo.from_horizontal(persona_info)
         return persona_info_copy, send_msg
     
@@ -214,7 +215,7 @@ class CommandPackage(ABC, Generic[T]):
         """
         pass
 
-    async def on_debug_mode(self, persona_info: PersonaInfo, send_msg: SendMsg):
+    async def on_debug_mode(self, persona_info: PersonaInfo, send_msg: SendMsg) -> None:
         """
         This method is executed when the Repeater discovers that the current environment configuration is Debug Mode.
 
@@ -223,7 +224,7 @@ class CommandPackage(ABC, Generic[T]):
         """
         await send_msg.send_debug_mode()
     
-    async def on_nonebot_exception(self, exception: NoneBotException, persona_info: PersonaInfo, send_msg: SendMsg):
+    async def on_nonebot_exception(self, exception: NoneBotException, persona_info: PersonaInfo, send_msg: SendMsg) -> T | None:
         """
         This method is called when the program throws a NoneBot exception
         You can do some handling here
@@ -235,7 +236,7 @@ class CommandPackage(ABC, Generic[T]):
         """
         raise
 
-    async def on_repeater_exception(self, exception: RepeaterCommandException, persona_info: PersonaInfo, send_msg: SendMsg):
+    async def on_repeater_exception(self, exception: RepeaterException, persona_info: PersonaInfo, send_msg: SendMsg) -> T | None:
         """
         This method is called when the program throws a Repeater exception
 
@@ -245,14 +246,10 @@ class CommandPackage(ABC, Generic[T]):
         """
         if isinstance(exception, BreakWithErrorMessage):
             await send_msg.send_error(str(exception))
-        elif isinstance(exception, ExitWithErrorMessage):
-            await send_msg.send_error(str(exception))
         elif isinstance(exception, BreakHandler):
             send_msg.break_handler()
-        elif isinstance(exception, ExitHandler):
-            send_msg.break_handler()
 
-    async def on_error(self, exception: Exception, persona_info: PersonaInfo, send_msg: SendMsg):
+    async def on_error(self, exception: Exception, persona_info: PersonaInfo, send_msg: SendMsg) -> T | None:
         """
         The error Handler for the Handler
 
@@ -275,7 +272,7 @@ class CommandPackage(ABC, Generic[T]):
             logger.exception(f"Error: {exception}")
             await send_msg.send_error(exception)
     
-    async def on_interpreter_error(self, exception: BaseException, persona_info: PersonaInfo, send_msg: SendMsg):
+    async def on_interpreter_error(self, exception: BaseException, persona_info: PersonaInfo, send_msg: SendMsg) -> T | None:
         """
         This section is executed when the interpreter encounters an error that is a BaseException but not an Exception.
 
@@ -289,7 +286,7 @@ class CommandPackage(ABC, Generic[T]):
         logger.exception(f"Error: {exception}")
         raise
     
-    async def on_cancel(self, persona_info: PersonaInfo, send_msg: SendMsg):
+    async def on_cancel(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T | None:
         """
         This section is executed when the Handler is cancelled.
 
@@ -301,7 +298,7 @@ class CommandPackage(ABC, Generic[T]):
         logger.warning(f"{self.component} cancelled")
         raise
     
-    async def handler_exit(self, persona_info: PersonaInfo, send_msg: SendMsg):
+    async def handler_exit(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T | None:
         """
         This section is executed whenever the Handler fails or exits.
 
@@ -389,7 +386,7 @@ class CommandPackage(ABC, Generic[T]):
         :return: None
         """
         await send_msg.send_error("Insufficient access rights.")
-        await send_msg.break_handler()
+        send_msg.break_handler()
     
     async def on_blacklist(self, persona_info: PersonaInfo, send_msg: SendMsg) -> NoReturn:
         """
@@ -403,7 +400,7 @@ class CommandPackage(ABC, Generic[T]):
             "User {user_id} is in the blacklist.",
             user_id = persona_info.user_id
         )
-        await send_msg.break_handler()
+        send_msg.break_handler()
     
     @classmethod
     def on_destroy(cls):
