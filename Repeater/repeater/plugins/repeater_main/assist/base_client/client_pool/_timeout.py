@@ -12,5 +12,5 @@ class ClientTimeout(BaseModel, frozen=True):
             connect = self.connect,
             read = self.read,
             write = self.write,
-            pool_connect = self.pool_connect
+            pool = self.pool_connect
         )
