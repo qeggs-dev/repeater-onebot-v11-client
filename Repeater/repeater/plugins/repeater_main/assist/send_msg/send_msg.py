@@ -31,7 +31,6 @@ from typing import (
 from datetime import datetime
 from .limit_speed import LimitSpeed
 from ...exceptions import (
-    ExitHandler,
     BreakHandler,
 )
 from ...logger import logger as base_logger
@@ -56,13 +55,19 @@ class SendMsg:
         self._chat_tts_api = ChatTTSAPI()
         self._matcher: Type[Matcher] | None = matcher
         
-        self._buffer: asyncio.Queue[tuple[Message, tuple, dict[str, Any], int]] = asyncio.Queue()
+        self._buffer: asyncio.Queue[tuple[str | Message | MessageSegment, tuple[Any, ...], dict[str, Any], int]] = asyncio.Queue()
         self._send_to_buffer: bool = False
     
     def add_prefix(self, prefix: MessageSegment | str):
+        """
+        添加消息前缀
+        """
         self._prefix.append(prefix)
     
     def clear_prefix(self):
+        """
+        清空消息前缀
+        """
         self._prefix = Message()
     
     def __call__(
@@ -71,52 +76,84 @@ class SendMsg:
             reply: bool = True,
             continue_handler: bool = False,
         ) -> Coroutine[Any, Any, None | NoReturn]:
+        """
+        发送消息
+        """
         return self.send_prompt(
-            message = message,
+            prompt = message,
             reply = reply,
             continue_handler = continue_handler,
         )
     
     @property
     def is_debug_mode(self) -> bool:
+        """
+        是否处于调试模式
+        """
         return RepeaterDebugMode
     
     @property
     def persona_info(self) -> PersonaInfo:
+        """
+        当前消息的 PersonaInfo 实例
+        """
         return self._persona_info
     
     @property
     def component(self) -> str:
+        """
+        当前消息的组件
+        """
         return self._component
     
     @property
     def matcher(self) -> Type[Matcher] | None:
+        """
+        当前消息的 Matcher 实例
+        """
         return self._matcher
     
     @matcher.setter
     def matcher(self, matcher: Type[Matcher] | None):
-        if isinstance(matcher, Matcher) or matcher is None:
+        """
+        设置当前消息的 Matcher 实例
+        """
+        if matcher is None:
+            self._matcher = None
+        elif issubclass(matcher, Matcher):
             self._matcher = matcher
         else:
             raise TypeError(f"matcher must be Matcher or None, not {type(matcher).__name__}")
     
     @property
     def send_to_buffer(self) -> bool:
+        """
+        是否将消息发送到缓冲区
+        """
         return self._send_to_buffer
     
     @send_to_buffer.setter
     def send_to_buffer(self, send_to_buffer: bool):
+        """
+        设置是否将消息发送到缓冲区
+        """
         if isinstance(send_to_buffer, bool):
             self._send_to_buffer = send_to_buffer
         else:
             raise TypeError(f"send_to_buffer must be bool, not {type(send_to_buffer).__name__}")
     
     @property
-    def buffer(self) -> asyncio.Queue[tuple[Message, tuple, dict[str, Any], int]]:
+    def buffer(self) -> asyncio.Queue[tuple[str | Message | MessageSegment, tuple[Any, ...], dict[str, Any], int]]:
+        """
+        当前消息的缓冲区
+        """
         return self._buffer
     
     @buffer.setter
     def buffer(self, buffer: asyncio.Queue):
+        """
+        设置当前消息的缓冲区
+        """
         if isinstance(buffer, asyncio.Queue):
             self._buffer = buffer
         else:
@@ -124,6 +161,9 @@ class SendMsg:
     
     @property
     def hello_content(self) -> str:
+        """
+        每日问候语
+        """
         now = datetime.now()
         buffer: list[str] = [
             storage_configs.hello_content
@@ -186,6 +226,14 @@ class SendMsg:
             reply: bool = True,
             continue_handler: bool = False,
         ):
+        """
+        发送响应结果并检查状态码
+
+        :param response: 响应体
+        :param message: 消息内容，不提供时使用响应体的文本内容
+        :param reply: 是否携带引用
+        :param continue_handler: 是否继续运行当前处理流程
+        """
         logger.info(
             "Send Response Check Code"
         )
@@ -215,6 +263,14 @@ class SendMsg:
             reply: bool = True,
             continue_handler: bool = False,
         ):
+            """
+            发送响应对象中的报错信息
+
+            :param response: 响应对象
+            :param message: 自定义消息文本或解析处理函数
+            :param reply: 是否携带引用
+            :param continue_handler: 是否继续运行当前处理流程
+            """
             logger.info(
                 "Send Error Response"
             )
@@ -247,19 +303,21 @@ class SendMsg:
         发送响应对象中的内容，主要用于HTTP错误提示
 
         :param response: 响应对象
-        :param message_handler: 自定义消息文本或解析处理函数
+        :param message: 自定义消息文本或解析处理函数
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
         logger.info(
             "Send Response"
         )
+
         if callable(message):
             message = message(response)
         elif isinstance(message, str):
             message = message
         else:
             message = response.text
+        
         await self.send_http_status(
             http_status = response.code,
             message = message,
@@ -288,7 +346,7 @@ class SendMsg:
         await self.send_prompt(
             (
                 f"{message}\n"
-                f"HTTP Code: {http_status}({HTTPCode(http_status)})"
+                f"HTTP Code: {http_status}({HTTPCode(code=http_status)})"
             ),
             reply = reply,
             continue_handler = continue_handler
@@ -301,7 +359,7 @@ class SendMsg:
             continue_handler: bool = False,
         ):
         """
-        发送多个响应对象中的内容，主要用于HTTP错误提示
+        发送多个响应对象中的内容
 
         :param responses: 响应对象
         :param reply: 是否携带引用
@@ -360,7 +418,10 @@ class SendMsg:
             self.handler_finished()
     
     @property
-    def prompt_str(self) -> str:
+    def prompt_prefix(self) -> str:
+        """
+        提示前缀
+        """
         return (
             f"==== {self._component} ====\n"
             f"> [{self._persona_info.namespace}]\n"
@@ -385,14 +446,14 @@ class SendMsg:
         if isinstance(prompt, Message):
             await self._send(
                 Message(
-                    self.prompt_str,
+                    self.prompt_prefix,
                 ).extend(prompt),
                 reply = reply,
                 continue_handler = continue_handler
             )
         elif isinstance(prompt, str):
             await self._send(
-                self.prompt_str + prompt,
+                self.prompt_prefix + prompt,
                 reply = reply,
                 continue_handler = continue_handler
             )
@@ -537,6 +598,11 @@ class SendMsg:
         ) -> None:
         """
         发送多个渲染文本
+
+        :param messages: 待发送的消息
+        :param document_bottom_comment: 文档底部注释
+        :param reply: 是否回复
+        :param continue_handler: 是否继续
         """
         logger.info(
             "Send Multiple Render"
@@ -578,6 +644,14 @@ class SendMsg:
             reply: bool = True,
             continue_handler: bool = False
         ):
+        """
+        发送提示消息（渲染为图片）
+
+        :param text: 提示消息
+        :param document_bottom_comment: 文档底部注释
+        :param reply: 是否回复
+        :param continue_handler: 是否继续处理
+        """
         logger.info(
             "Send Render Prompt"
         )
@@ -588,7 +662,7 @@ class SendMsg:
         await self._send(
             Message(
                 [
-                    self.prompt_str,
+                    MessageSegment.text(self.prompt_prefix),
                     image
                 ]
             ),
@@ -607,6 +681,7 @@ class SendMsg:
         发送渲染后的文本
 
         :param text: 渲染文本内容
+        :param document_bottom_comment: 文档底部注释
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
@@ -634,6 +709,7 @@ class SendMsg:
         发送tts
 
         :param text: 文本
+        :param send_error_message: 是否发送错误信息
         :param reply: 是否回复
         :param continue_handler: 是否继续处理流程
         """
@@ -667,6 +743,7 @@ class SendMsg:
 
         :param message: 消息
         :param threshold: 长度阈值
+        :param document_bottom_comment: 文档底部注释
         :param reply: 是否回复
         :param continue_handler: 是否继续处理流程
         """
@@ -702,6 +779,15 @@ class SendMsg:
             reply: bool = True,
             continue_handler: bool = False
         ):
+        """
+        发送提示消息并检查长度
+
+        :param prompt: 提示消息
+        :param threshold: 长度阈值
+        :param document_bottom_comment: 文档底部注释
+        :param reply: 是否回复
+        :param continue_handler: 是否继续处理
+        """
         logger.info(
             "Send Check Length Prompt"
         )
@@ -715,7 +801,7 @@ class SendMsg:
         if length_score >= threshold:
             await self.send_mixed_render(
                 text,
-                self.prompt_str,
+                self.prompt_prefix,
                 document_bottom_comment = document_document_bottom_comments,
                 reply = reply,
                 continue_handler = continue_handler
@@ -729,10 +815,21 @@ class SendMsg:
     
     @staticmethod
     async def empty_message() -> MessageSegment:
+        """
+        在发送聊天响应时，消息为空的提示
+
+        :return: 空消息
+        """
         return MessageSegment.text("[Message is empty.]")
     
     @staticmethod
     async def _get_text_message(content: str) -> MessageSegment:
+        """
+        获取文本消息
+
+        :param content: 文本内容
+        :return: 文本消息
+        """
         return MessageSegment.text(content)
     
     async def send_chat_response(
@@ -742,6 +839,14 @@ class SendMsg:
             reply: bool = True,
             continue_handler: bool = False
         ):
+        """
+        发送聊天响应
+
+        :param reasoning_content: 推理内容
+        :param content: 文本内容
+        :param reply: 是否回复
+        :param continue_handler: 是否继续处理
+        """
         logger.info(
             "Send Chat Response"
         )
@@ -812,6 +917,8 @@ class SendMsg:
     def handler_finished(self) -> NoReturn:
         """
         跳出当前处理函数
+
+        :raise: FinishedException
         """
         logger.info(
             "Break handler"
@@ -821,26 +928,22 @@ class SendMsg:
     def break_handler(self) -> NoReturn:
         """
         跳出当前处理函数
+
+        :raise: BreakHandler
         """
         logger.info(
             "Break handler"
         )
         raise BreakHandler
     
-    def exit_handler(self) -> NoReturn:
-        """
-        跳出当前处理函数
-        """
-        logger.info(
-            "Exit handler"
-        )
-        raise ExitHandler
-    
     async def render_text_to_msg_segment(self, text: str, direct_output: bool = False, document_bottom_comment: str = "") -> MessageSegment:
         """
         渲染文本
 
         :param text: 渲染文本内容
+        :param direct_output: 是否直接输出
+        :param document_bottom_comment: 文档底部注释
+        :return: 渲染后的消息段
         """
         return MessageSegment.image(
             await self.render_text(
@@ -855,6 +958,9 @@ class SendMsg:
         渲染文本
 
         :param text: 渲染文本内容
+        :param direct_output: 是否直接输出
+        :param document_bottom_comment: 文档底部注释
+        :return: 渲染图片的 URL
         """
         logger.info(
             "Render Text:\n{text}",
@@ -885,6 +991,8 @@ class SendMsg:
                 await self.send_response(render_response, lambda response: f"Render Error: {response.text}")
         else:
             raise ValueError("Text is empty.")
+        
+        assert False, "This line is not reachable."
     
     async def _send(
             self,
@@ -904,7 +1012,9 @@ class SendMsg:
             send_msg = self._persona_info.reply + send_msg
         try:
             await self.limit_speed.submit(
-                self._send_auto(send_msg)
+                task = self._send_to_target(
+                    message = send_msg
+                )
             )
         except Exception as error:
             logger.error(
@@ -915,30 +1025,47 @@ class SendMsg:
         if not continue_handler:
             self.handler_finished()
     
-    async def _send_auto(
+    async def _send_to_target(
         self,
         message: str | Message | MessageSegment,
         *args,
         **kwargs
     ):
+        """
+        发送消息到目标
+
+        :param message: 消息对象
+        """
         if self._send_to_buffer:
             logger.info(
                 "Send to buffer: \n{message}",
                 message = message
             )
-            await self._send_to_queue()
+            await self._send_to_queue(
+                message,
+                *args,
+                **kwargs
+            )
         elif self._matcher is not None:
             logger.info(
                 "Send to matcher: \n{message}",
                 message = message
             )
-            await self._send_to_matcher(message, *args, **kwargs)
+            await self._send_to_matcher(
+                message,
+                *args,
+                **kwargs
+            )
         else:
             logger.info(
                 "Send to api: \n{message}",
                 message = message
             )
-            await self._send_to_api(message, *args, **kwargs)
+            await self._send_to_api(
+                message,
+                *args,
+                **kwargs
+            )
     
     async def _send_to_queue(
         self,
@@ -946,6 +1073,11 @@ class SendMsg:
         *args,
         **kwargs
     ):
+        """
+        发送消息到队列
+
+        :param message: 消息对象
+        """
         now = time.perf_counter_ns()
         await self._buffer.put(
             (message, args, kwargs, now)
@@ -957,7 +1089,17 @@ class SendMsg:
         *args,
         **kwargs
     ):
-        await self._matcher.send(message, *args, **kwargs)
+        """
+        发送消息到 Matcher
+
+        :param message: 消息对象
+        """
+        if self._matcher is not None:
+            await self._matcher.send(
+                message,
+                *args,
+                **kwargs
+            )
     
     async def _send_to_api(
         self,
@@ -965,8 +1107,17 @@ class SendMsg:
         *args,
         **kwargs
     ):
+        """
+        发送消息到 API
+
+        :param message: 消息对象
+        """
+        if isinstance(message, MessageSegment):
+            message = Message(
+                message
+            )
         bot = self._persona_info.cached_api
-        if self._persona_info.source == MessageSource.GROUP:
+        if self._persona_info.source == MessageSource.GROUP and self._persona_info.group_id is not None:
             await bot.send_group_msg(
                 group_id = self._persona_info.group_id,
                 message = message,
@@ -975,7 +1126,7 @@ class SendMsg:
             )
         elif self._persona_info.source == MessageSource.PRIVATE:
             await bot.send_private_msg(
-                group_id = self._persona_info.user_id,
+                user_id = self._persona_info.user_id,
                 message = message,
                 *args,
                 **kwargs
@@ -985,10 +1136,23 @@ class SendMsg:
     
     @staticmethod
     def text_length_score(text: str) -> float:
-        return text_length_score(text)
+        """
+        计算文本长度得分
+
+        :param text: 文本
+        :return: 文本长度得分
+        """
+        return text_length_score(
+            text = text
+        )
     
     @property
     def text_length_score_threshold(self) -> float:
+        """
+        文本长度得分阈值
+
+        :return: 文本长度得分阈值
+        """
         if self._persona_info.source == MessageSource.GROUP:
             threshold = storage_configs.text_length_score_configs.threshold.group
         else:
@@ -997,29 +1161,41 @@ class SendMsg:
         return threshold
     
     async def _send_file(self, url: str, file_name: str):
+        """
+        发送文件
+
+        :param url: 文件URL
+        :param file_name: 文件名
+        """
         try:
-            if self._persona_info.source == MessageSource.GROUP:
+            if self._persona_info.source == MessageSource.GROUP and self._persona_info.group_id is not None:
                 await send_group_file(
-                    self._persona_info.cached_api,
-                    self._persona_info.group_id,
-                    url,
-                    file_name
+                    bot = self._persona_info.cached_api,
+                    group_id = self._persona_info.group_id,
+                    url = url,
+                    file_name = file_name
                 )
             elif self._persona_info.source == MessageSource.PRIVATE:
                 await send_private_file(
-                    self._persona_info.cached_api,
-                    self._persona_info.user_id,
-                    url,
-                    file_name
+                    bot = self._persona_info.cached_api,
+                    user_id = self._persona_info.user_id,
+                    url = url,
+                    file_name = file_name
                 )
         except ActionFailed as e:
             logger.error(f"Failed to upload file: {e}")
             await self.send_error("Failed to upload file.")
     
     async def send_file(self, url: str, file_name: str):
+        """
+        发送文件
+
+        :param url: 文件URL
+        :param file_name: 文件名
+        """
         await self.limit_speed.submit(
-            self._send_file(
-                url,
-                file_name
+            task = self._send_file(
+                url = url,
+                file_name = file_name
             )
         )

@@ -1,3 +1,5 @@
+import asyncio
+
 from nonebot.adapters.onebot.v11 import MessageSegment, Message
 from nonebot.internal.matcher.matcher import Matcher
 from ..persona_info import PersonaInfo
@@ -61,6 +63,10 @@ class SendMsg:
         ...
     
     @property
+    def component(self) -> str:
+        ...
+    
+    @property
     def matcher(self) -> Type[Matcher] | None:
         ...
     
@@ -69,19 +75,23 @@ class SendMsg:
         ...
     
     @property
-    def component(self) -> str:
-        ...
-    
-    @property
-    def hello_content(self) -> str:
-        ...
-    
-    @property
     def send_to_buffer(self) -> bool:
         ...
     
     @send_to_buffer.setter
     def send_to_buffer(self, send_to_buffer: bool):
+        ...
+    
+    @property
+    def buffer(self) -> asyncio.Queue[tuple[str | Message | MessageSegment, tuple[Any, ...], dict[str, Any], int]]:
+        ...
+    
+    @buffer.setter
+    def buffer(self, buffer: asyncio.Queue):
+        ...
+    
+    @property
+    def hello_content(self) -> str:
         ...
     
     @overload
@@ -564,7 +574,7 @@ class SendMsg:
         ...
     
     @staticmethod
-    async def empty_message(self) -> MessageSegment:
+    async def empty_message() -> MessageSegment:
         ...
     
     @staticmethod
@@ -601,9 +611,6 @@ class SendMsg:
         ...
     
     def break_handler(self) -> NoReturn:
-        ...
-    
-    def exit_handler(self) -> NoReturn:
         ...
 
     async def render_text_to_msg_segment(self, text: str, direct_output: bool = False, document_bottom_comment: str = "") -> MessageSegment:
