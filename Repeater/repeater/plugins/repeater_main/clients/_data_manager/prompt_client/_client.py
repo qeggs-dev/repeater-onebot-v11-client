@@ -15,7 +15,7 @@ class PromptClient(UserDataClient):
     # region set prompt  
     async def set_prompt(self, prompt: str) -> Response[None]:
         logger.info("Setting prompt")
-        response = await self._httpx_client.put(
+        response = await self.client.put(
             f"{SET_PROMPT_ROUTE}/{self.namespace_str}",
             data={
                 "prompt": prompt
@@ -27,11 +27,11 @@ class PromptClient(UserDataClient):
     # region get prompt  
     async def get_prompt(self) -> Response[str]:
         logger.info("Getting prompt")
-        response = await self._httpx_client.get(
+        response = await self.client.get(
             f"{GET_PROMPT_ROUTE}/{self.namespace_str}"
         )
         return Response(response)
     
     def get_prompt_url(self) -> str | None:
-        return urljoin(base_url, f"{GET_PROMPT_ROUTE}/{self.namespace_str}.md")
+        return urljoin(self.base_url, f"{GET_PROMPT_ROUTE}/{self.namespace_str}.md")
     # endregion
