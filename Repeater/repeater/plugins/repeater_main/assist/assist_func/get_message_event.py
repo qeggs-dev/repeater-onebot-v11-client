@@ -1,8 +1,7 @@
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent
-from numpy import integer
 from ...logger import logger
 
-async def get_message_event(bot: Bot, message_id: integer) -> MessageEvent:
+async def get_message_event(bot: Bot, message_id: int) -> MessageEvent:
     response = await bot.get_msg(
         message_id = message_id
     )
