@@ -4,6 +4,8 @@ from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from nonebot.internal.matcher.matcher import Matcher
 from typing import NoReturn, Type, Callable
 
+from Repeater.repeater.plugins.repeater_main.assist.response.error_response import ErrorResponse
+
 from ....assist import PersonaInfo, Response, SendMsg
 from .._response_body import ChatResponse
 from ..._content_role import ContentRole
@@ -35,8 +37,8 @@ class ChatSendMsg(SendMsg):
         self._content_handler = content_handler
         self._strip = strip
         if self._response.initialized:
-            self._data = self._response.get_data()
-            self._error = self._response.to_error()
+            self._data: ChatResponse | None = self._response.get_data()
+            self._error: Response[ErrorResponse] | None = self._response.to_error()
         else:
             self._data = None
             self._error = None
@@ -77,10 +79,10 @@ class ChatSendMsg(SendMsg):
         if self.is_debug_mode:
             await self.send_debug_mode()
         
-        if self._response.code != 200:
+        if self._response.code != 200 and self._error is not None:
             await self.send_error_response(self._error)
         
-        if self._response.exception_info:
+        if self._response.exception_info and self._response.exception_info.exc_value is not None:
             await self.send_error(self._response.exception_info.exc_value)
     
     def _get_response_usage(self) -> str:
@@ -91,7 +93,11 @@ class ChatSendMsg(SendMsg):
     async def send(self) -> NoReturn:
         await self._check_response()
 
-        score = self.text_length_score(self.content)
+        content = self.content
+        if content is None:
+            self.handler_finished()
+
+        score = self.text_length_score(content)
         threshold = self.text_length_score_threshold
         logger.info(f"Response content score: {score}")
         if score >= threshold:
@@ -116,6 +122,9 @@ class ChatSendMsg(SendMsg):
                 reply = False,
                 continue_handler = False
             )
+        
+        # This line is not necessary
+        self.handler_finished()
     
     async def send_text_mode(self, text: str | None = None) -> NoReturn:
         await self._check_response()
@@ -134,6 +143,9 @@ class ChatSendMsg(SendMsg):
         else:
             message.append(await self.empty_message())
         await self._send(message)
+
+        # This line is not necessary
+        self.handler_finished()
     
     async def send_image_mode(self, text: str | None = None) -> NoReturn:
         await self._check_response()
@@ -150,7 +162,7 @@ class ChatSendMsg(SendMsg):
         if self.content:
             content_render_task = asyncio.create_task(
                 self.render_text_to_msg_segment(
-                    self.content,
+                    text or self.content,
                     document_bottom_comment = self._get_response_usage()
                 )
             )
@@ -168,3 +180,6 @@ class ChatSendMsg(SendMsg):
             await self._send(message)
         else:
             await self.send_error("Nothing can be sent.")
+        
+        # This line is not necessary
+        self.handler_finished()
