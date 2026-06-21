@@ -22,8 +22,3 @@ class RequestLogClient(BaseClient):
             async for chunk in response.aiter_lines():
                 chunk_data = orjson.loads(chunk)
                 yield RequestLog(**chunk_data)
-
-    # region close
-    def close(self) -> None:
-        self.client.aclose()
-    # endregion
