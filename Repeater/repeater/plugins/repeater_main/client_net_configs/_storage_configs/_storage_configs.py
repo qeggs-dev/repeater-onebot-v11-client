@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field, field_validator
+from typing import Literal
 from ._camouflage import Camouflage
 from ._text_length_score_configs import TextLengthScoreConfigs
 from ._server_api_timeout import ServerAPITimeout
@@ -31,8 +32,8 @@ class StorageConfigs(BaseModel):
     text_file_encoding: str = "utf-8"
     log_registed_handler_name: bool = True
     platform_interface_cache: bool = True
-    platform_interface_cache_size: int = 1000
-    platform_interface_cache_timeout: int = 60
+    platform_interface_cache_size: int | float = 1000
+    platform_interface_cache_timeout: int | float = 60
     useless_button_words: list[str] = Field(default_factory=lambda: useless_button_words)
     useless_button_missing: str = "The button buzzed away."
 
