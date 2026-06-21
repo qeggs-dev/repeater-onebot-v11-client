@@ -75,7 +75,7 @@ class ContextClient(UserDataClient):
             return Response(response)
     
     def get_context_url(self) -> str | None:
-        return urljoin(base_url, f"{GET_CONTEXT_ROUTE}/{self._persona_info.namespace_str}.json")
+        return urljoin(self.base_url, f"{GET_CONTEXT_ROUTE}/{self._persona_info.namespace_str}.json")
     # endregion
 
     # region check role structure
