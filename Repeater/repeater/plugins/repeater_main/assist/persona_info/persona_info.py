@@ -5,7 +5,7 @@ import aiofiles
 from nonebot import get_bots
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment, Message
 from nonebot.internal.adapter.adapter import Adapter
-from typing import AsyncGenerator, Container
+from typing import AsyncGenerator, Container, Iterable
 
 from nonebot.internal.adapter.bot import Bot
 from ..assist_func import (
@@ -718,7 +718,7 @@ class PersonaInfo:
         )
     
     @staticmethod
-    def generates_text_from_messages_list(messages: list[dict | MessageEvent]) -> str:
+    def generates_text_from_messages_list(messages: Iterable[dict | MessageEvent]) -> str:
         """
         从消息列表生成文本
 
