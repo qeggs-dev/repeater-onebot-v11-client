@@ -287,7 +287,7 @@ class SendMsg:
     @overload
     async def send_error(
             self,
-            error: str | Exception,
+            error: str | BaseException,
             reply: bool = True,
             continue_handler: Literal[False] = False,
         ) -> NoReturn: ...
@@ -295,14 +295,14 @@ class SendMsg:
     @overload
     async def send_error(
             self,
-            error: str | Exception,
+            error: str | BaseException,
             reply: bool = True,
             continue_handler: Literal[True] = True,
         ) -> None: ...
     
     async def send_error(
             self,
-            error: str | Exception,
+            error: str | BaseException,
             reply: bool = True,
             continue_handler: bool = False
         ): ...

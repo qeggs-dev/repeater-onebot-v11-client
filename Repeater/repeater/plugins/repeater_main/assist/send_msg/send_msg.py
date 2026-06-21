@@ -462,7 +462,7 @@ class SendMsg:
     
     async def send_error(
             self,
-            error: str | Exception,
+            error: str | BaseException,
             reply: bool = True,
             continue_handler: bool = False
         ):
@@ -476,7 +476,7 @@ class SendMsg:
         logger.info(
             "Send Error"
         )
-        if isinstance(error, Exception):
+        if isinstance(error, BaseException):
             await self.send_prompt(
                 (
                     f"{error.__class__.__name__}: {error}"
