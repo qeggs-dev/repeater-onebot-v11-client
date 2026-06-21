@@ -14,7 +14,7 @@ class CachedAPI(Bot):
     装饰过的 OneBot v11 Bot 对象
     会缓存 API 的返回值以减少调用次数
     """
-    cache: ClassVar[TTLCache[tuple[str, frozenset], Any, float]] = TTLCache(
+    cache: ClassVar[TTLCache[tuple[str, frozenset], Any, float]] = TTLCache( # type: ignore
         maxsize = storage_configs.platform_interface_cache_size,
         ttl = storage_configs.platform_interface_cache_timeout
     )
