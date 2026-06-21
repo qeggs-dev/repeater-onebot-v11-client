@@ -31,7 +31,7 @@ class BaseChat(CommandPackage):
         forward_msgs = await persona_info.get_forward_msgs()
         if forward_msgs:
             forward_msgs_text = persona_info.generates_text_from_messages_list(forward_msgs)
-            message_text = f"Forwarded messages:\n{forward_msgs_text}\n\n---\n\n{message_text}"
+            message_text = f"Forwarded messages:\n{forward_msgs_text}\n\n---\n\n"
         else:
             message_text = ""
         
@@ -97,7 +97,7 @@ class BaseChat(CommandPackage):
             
             message_text = await self.parse_input(persona_info)
 
-            message_text += await self.parse_forward_msgs(persona_info, send_msg)
+            message_text = await self.parse_forward_msgs(persona_info, send_msg) + message_text
 
             images: list[str] = await persona_info.get_images_url()
             audios: list[str] = persona_info.get_audio_url()
@@ -217,10 +217,10 @@ class BaseChat(CommandPackage):
     async def send_message(
         self,
         client: ChatClient,
-        images: list[str],
-        audios: list[str],
-        videos: list[str],
-        message: str,
+        images: list[str] | None,
+        audios: list[str] | None,
+        videos: list[str] | None,
+        message: str | None,
         persona_info: PersonaInfo,
         send_msg: SendMsg
     ) -> Response[ChatResponse]:
