@@ -18,7 +18,7 @@ from ..user_config import UserConfigs
 class BaseClient:
     _httpx_clients: ClassVar[ClientPool] = ClientPool(storage_configs.client_pool_size)
     follow_redirects: ClassVar[bool] = False
-    timeout: ClassVar[int | str | ClientTimeout] = 5
+    timeout: ClassVar[int | float | ClientTimeout] = 5
     limits: ClassVar[ClientLimits | None] = None
     encoding: ClassVar[str] = "utf-8"
 
