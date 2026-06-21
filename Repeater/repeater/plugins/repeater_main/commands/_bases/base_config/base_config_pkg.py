@@ -1,5 +1,5 @@
 from abc import abstractmethod
-from typing import Any, TypeVar, ClassVar
+from typing import Any, TypeVar, ClassVar, Generic
 
 from ....clients import ConfigClient
 from ....assist import PersonaInfo, SendMsg, Response
@@ -9,7 +9,7 @@ from .operation_type import OperationType
 
 T = TypeVar("T")
 
-class BaseConfig(CommandPackage):
+class BaseConfig(CommandPackage, Generic[T]):
     field: str = ""
     operation: ClassVar[OperationType] = OperationType.SET
     cmd_type = CmdTypes.CONFIG
@@ -52,6 +52,7 @@ class BaseConfig(CommandPackage):
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg) -> None:
         client = await self.get_client(persona_info)
         raw_value = None
+        response: Response[Any] | None = None
         if self.operation in [OperationType.GET, OperationType.GET_AND_SET]:
             response = await client.get_configs()
             if not response:
@@ -67,11 +68,11 @@ class BaseConfig(CommandPackage):
         )
         match self.operation:
             case OperationType.SET:
-                response: Response[Any] = await client.set_config(field, value)
+                response = await client.set_config(field, value)
             case OperationType.GET_AND_SET:
-                response: Response[Any] = await client.set_config(field, value)
+                response = await client.set_config(field, value)
             case OperationType.GET:
-                response: Response[Any] = await client.get_configs()
+                response = await client.get_configs()
             case OperationType.GET_FILE_URL:
                 response = None
                 value = client.get_configs_url()
