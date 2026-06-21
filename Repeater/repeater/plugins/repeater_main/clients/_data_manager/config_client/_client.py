@@ -67,7 +67,7 @@ class ConfigClient(UserDataClient):
         return Response(response)
     
     def get_configs_url(self) -> str:
-        return urljoin(base_url, f"{GET_CONFIG_ROUTE}/{self.namespace_str}.json")
+        return urljoin(self.base_url, f"{GET_CONFIG_ROUTE}/{self.namespace_str}.json")
     # endregion
 
     # region remove config key
