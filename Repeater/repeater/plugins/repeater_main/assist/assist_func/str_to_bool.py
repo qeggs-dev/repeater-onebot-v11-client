@@ -5,14 +5,14 @@ def str_to_bool(s: str) -> bool:
     ...
 
 @overload
-def str_to_bool(s: str, optional: Literal[True] = False) -> bool | None:
+def str_to_bool(s: str, optional: Literal[True] = True) -> bool | None:
     ...
 
 @overload
 def str_to_bool(s: str, optional: Literal[False] = False) -> bool:
     ...
 
-def str_to_bool(s: str, optional: bool = False) -> bool:
+def str_to_bool(s: str, optional: bool = False) -> bool | None:
     """
     Convert a string to a boolean value.
 
