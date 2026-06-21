@@ -1,8 +1,9 @@
 from nonebot.adapters.onebot.v11 import MessageEvent
+from typing import Iterable
 from datetime import datetime
 from pydantic import ValidationError
 
-def generates_text_from_messages_list(messages: list[dict | MessageEvent]):
+def generates_text_from_messages_list(messages: Iterable[dict | MessageEvent]):
     text_buffer: list[str] = []
     validation_failure_counter: int = 0
     for message in messages:
