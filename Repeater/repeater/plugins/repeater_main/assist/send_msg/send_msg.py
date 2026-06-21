@@ -19,6 +19,7 @@ from ..text_render.text_render import TextRender
 from ..response.response import Response
 from ..chattts import ChatTTSAPI
 from typing import (
+    Iterable,
     Any,
     Callable,
     NoReturn,
@@ -201,7 +202,7 @@ class SendMsg:
             self,
             reply: bool = True,
             continue_handler: bool = False,
-        ):
+        ) -> NoReturn | None:
         """
         用于调试模式的信息打印
 
@@ -225,7 +226,7 @@ class SendMsg:
             message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
             reply: bool = True,
             continue_handler: bool = False,
-        ):
+        ) -> NoReturn | None:
         """
         发送响应结果并检查状态码
 
@@ -262,7 +263,7 @@ class SendMsg:
             message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
             reply: bool = True,
             continue_handler: bool = False,
-        ):
+        ) -> NoReturn | None:
             """
             发送响应对象中的报错信息
 
@@ -298,7 +299,7 @@ class SendMsg:
             message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
             reply: bool = True,
             continue_handler: bool = False,
-        ):
+        ) -> NoReturn | None:
         """
         发送响应对象中的内容，主要用于HTTP错误提示
 
@@ -331,7 +332,7 @@ class SendMsg:
             message: str | None = None,
             reply: bool = True,
             continue_handler: bool = False,
-        ):
+        ) -> NoReturn | None:
         """
         发送 HTTP 状态码，用于提示 HTTP 错误
 
@@ -357,7 +358,7 @@ class SendMsg:
             *responses: Response[T_RESPONSE] | tuple[Response[T_RESPONSE], str],
             reply: bool = True,
             continue_handler: bool = False,
-        ):
+        ) -> NoReturn | None:
         """
         发送多个响应对象中的内容
 
@@ -397,7 +398,7 @@ class SendMsg:
             self,
             reply: bool = True,
             continue_handler: bool = False,
-        ):
+        ) -> NoReturn | None:
         """
         发送欢迎信息
 
@@ -432,7 +433,7 @@ class SendMsg:
             prompt: Message | str,
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         """
         发送提示信息
 
@@ -465,7 +466,7 @@ class SendMsg:
             error: str | BaseException,
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         """
         发送错误信息
 
@@ -498,7 +499,7 @@ class SendMsg:
             warning: str,
             reply: bool = True,
             continue_handler: bool = True
-        ):
+        ) -> NoReturn | None:
         """
         发送警告信息
 
@@ -522,7 +523,7 @@ class SendMsg:
             text: str | None = None,
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         """
         发送纯文本
 
@@ -547,7 +548,7 @@ class SendMsg:
             document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         """
         发送混合渲染文本
 
@@ -591,11 +592,11 @@ class SendMsg:
     
     async def send_multiple_render(
             self,
-            messages: list[str | Message],
+            messages: Iterable[str | Message],
             document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: Literal[False] = False
-        ) -> None:
+        ) -> NoReturn | None:
         """
         发送多个渲染文本
 
@@ -643,7 +644,7 @@ class SendMsg:
             document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         """
         发送提示消息（渲染为图片）
 
@@ -676,7 +677,7 @@ class SendMsg:
             document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         """
         发送渲染后的文本
 
@@ -704,7 +705,7 @@ class SendMsg:
             send_error_message: bool = True,
             reply: bool = False,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         """
         发送tts
 
@@ -737,7 +738,7 @@ class SendMsg:
             document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         """
         发送长度检测后的文本
 
@@ -778,7 +779,7 @@ class SendMsg:
             document_document_bottom_comments: str = "",
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         """
         发送提示消息并检查长度
 
@@ -838,7 +839,7 @@ class SendMsg:
             content: str = "",
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         """
         发送聊天响应
 
@@ -897,7 +898,7 @@ class SendMsg:
             message: str | Message | MessageSegment,
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         """
         发送任意消息
 
@@ -999,7 +1000,7 @@ class SendMsg:
             message: str | Message | MessageSegment,
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         """
         发送消息
 
@@ -1030,7 +1031,7 @@ class SendMsg:
         message: str | Message | MessageSegment,
         *args,
         **kwargs
-    ):
+    ) -> None:
         """
         发送消息到目标
 
@@ -1072,7 +1073,7 @@ class SendMsg:
         message: str | Message | MessageSegment,
         *args,
         **kwargs
-    ):
+    ) -> None:
         """
         发送消息到队列
 
@@ -1088,7 +1089,7 @@ class SendMsg:
         message: str | Message | MessageSegment,
         *args,
         **kwargs
-    ):
+    ) -> None:
         """
         发送消息到 Matcher
 
@@ -1106,7 +1107,7 @@ class SendMsg:
         message: str | Message | MessageSegment,
         *args,
         **kwargs
-    ):
+    ) -> None:
         """
         发送消息到 API
 
@@ -1160,7 +1161,7 @@ class SendMsg:
 
         return threshold
     
-    async def _send_file(self, url: str, file_name: str):
+    async def _send_file(self, url: str, file_name: str) -> None:
         """
         发送文件
 
@@ -1186,7 +1187,7 @@ class SendMsg:
             logger.error(f"Failed to upload file: {e}")
             await self.send_error("Failed to upload file.")
     
-    async def send_file(self, url: str, file_name: str):
+    async def send_file(self, url: str, file_name: str) -> None:
         """
         发送文件
 

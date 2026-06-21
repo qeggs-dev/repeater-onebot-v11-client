@@ -5,6 +5,7 @@ from nonebot.internal.matcher.matcher import Matcher
 from ..persona_info import PersonaInfo
 from ..response.response import Response
 from typing import (
+    Iterable,
     Callable,
     Any,
     NoReturn,
@@ -112,7 +113,7 @@ class SendMsg:
             self,
             reply: bool = True,
             continue_handler: bool = False,
-        ): ...
+        ) -> NoReturn | None: ...
     
     @overload
     async def send_response_check_code(
@@ -138,7 +139,7 @@ class SendMsg:
             message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
             reply: bool = True,
             continue_handler: bool = False,
-        ): ...
+        ) -> NoReturn | None: ...
     
     @overload
     async def send_error_response(
@@ -164,7 +165,7 @@ class SendMsg:
             message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
             reply: bool = True,
             continue_handler: bool = False,
-        ): ...
+        ) -> NoReturn | None: ...
     
     @overload
     async def send_response(
@@ -190,7 +191,7 @@ class SendMsg:
             message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
             reply: bool = True,
             continue_handler: bool = False,
-        ): ...
+        ) -> NoReturn | None: ...
     
     @overload
     async def send_http_status(
@@ -216,7 +217,7 @@ class SendMsg:
             message: str | None = None,
             reply: bool = True,
             continue_handler: bool = False,
-        ): ...
+        ) -> NoReturn | None: ...
     
     @overload
     async def send_multiple_responses(
@@ -239,7 +240,7 @@ class SendMsg:
             *responses: Response[T_RESPONSE] | tuple[Response[T_RESPONSE], str],
             reply: bool = True,
             continue_handler: bool = False,
-        ): ...
+        ) -> NoReturn | None: ...
     
     @overload
     async def send_hello(
@@ -259,7 +260,7 @@ class SendMsg:
             self,
             reply: bool = True,
             continue_handler: bool = False,
-        ): ...
+        ) -> NoReturn | None: ...
     
     @overload
     async def send_prompt(
@@ -282,7 +283,7 @@ class SendMsg:
             prompt: Message | str,
             reply: bool = True,
             continue_handler: bool = False
-        ): ...
+        ) -> NoReturn | None: ...
     
     @overload
     async def send_error(
@@ -305,7 +306,7 @@ class SendMsg:
             error: str | BaseException,
             reply: bool = True,
             continue_handler: bool = False
-        ): ...
+        ) -> NoReturn | None: ...
     
     @overload
     async def send_warning(
@@ -328,7 +329,7 @@ class SendMsg:
             warning: str,
             reply: bool = True,
             continue_handler: bool = True
-        ): ...
+        ) -> NoReturn | None: ...
     
     @overload
     async def send_text(
@@ -351,7 +352,7 @@ class SendMsg:
             text: str | None = None,
             reply: bool = True,
             continue_handler: bool = False
-        ): ...
+        ) -> NoReturn | None: ...
     
     @overload
     async def send_mixed_render(
@@ -383,12 +384,12 @@ class SendMsg:
             document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: bool = False
-        ): ...
+        ) -> NoReturn | None: ...
     
     @overload
     async def send_multiple_render(
             self,
-            messages: list[str | Message],
+            messages: Iterable[str | Message],
             document_bottom_comment: str = "",
             reply: bool = False,
             continue_handler: Literal[False] = False
@@ -397,7 +398,7 @@ class SendMsg:
     @overload
     async def send_multiple_render(
             self,
-            messages: list[str | Message],
+            messages: Iterable[str | Message],
             document_bottom_comment: str = "",
             reply: bool = False,
             continue_handler: Literal[True] = True
@@ -405,11 +406,11 @@ class SendMsg:
 
     async def send_multiple_render(
             self,
-            messages: list[str | Message],
+            messages: Iterable[str | Message],
             document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: Literal[False] = False
-        ) -> None: ...
+        ) -> NoReturn | None: ...
     
     @overload
     async def send_render_prompt(
@@ -435,7 +436,7 @@ class SendMsg:
             document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: bool = False
-        ): ...
+        ) -> NoReturn | None: ...
     
     @overload
     async def send_render(
@@ -461,7 +462,7 @@ class SendMsg:
             document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: bool = False
-        ): ...
+        ) -> NoReturn | None: ...
     
     @overload
     async def send_tts(
@@ -487,7 +488,7 @@ class SendMsg:
             send_error_message: bool = True,
             reply: bool = False,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         ...
     
     @overload
@@ -517,7 +518,7 @@ class SendMsg:
             document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         ...
     
     @overload
@@ -547,7 +548,7 @@ class SendMsg:
             document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: bool = False
-        ): ...
+        ) -> NoReturn | None: ...
     
     @overload
     async def send_any(
@@ -570,7 +571,7 @@ class SendMsg:
             message: str | Message | MessageSegment,
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         ...
     
     @staticmethod
@@ -605,7 +606,7 @@ class SendMsg:
             content: str = "",
             reply: bool = True,
             continue_handler: bool = False
-        ): ...
+        ) -> NoReturn | None: ...
     
     def handler_finished(self) -> NoReturn:
         ...
@@ -640,36 +641,36 @@ class SendMsg:
             message: str | Message | MessageSegment,
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         ...
     
-    async def _send_auto(
+    async def _send_to_target(
         self,
         message: str | Message | MessageSegment,
         *args,
         **kwargs
-    ):...
+    ) -> None:...
 
     async def _send_to_queue(
         self,
         message: str | Message | MessageSegment,
         *args,
         **kwargs
-    ):...
+    ) -> None:...
     
     async def _send_to_matcher(
         self,
         message: str | Message | MessageSegment,
         *args,
         **kwargs
-    ):...
+    ) -> None:...
     
     async def _send_to_api(
         self,
         message: str | Message | MessageSegment,
         *args,
         **kwargs
-    ):...
+    ) -> None:...
     
     @staticmethod
     def text_length_score(text: str) -> float: ...
@@ -677,6 +678,6 @@ class SendMsg:
     @property
     def text_length_score_threshold(self) -> float: ...
     
-    async def _send_file(self, url: str, file_name: str): ...
+    async def _send_file(self, url: str, file_name: str) -> None: ...
     
-    async def send_file(self, url: str, file_name: str): ...
+    async def send_file(self, url: str, file_name: str) -> None: ...
