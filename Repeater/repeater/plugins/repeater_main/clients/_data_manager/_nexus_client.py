@@ -30,23 +30,18 @@ class NexusClient(BaseClient):
     # region download from nexus
     async def download_from_nexus(self, uuid: str) -> Response[NexusDownloadResponse]:
         try:
-            uuid = UUID(uuid)
+            resource_uuid = UUID(uuid)
         except ValueError:
             raise ValueError("UUID is not valid")
         
         response = await self.client.post(
             f"/nexus/download/{self._persona_info.namespace_str}/environment",
             json = {
-                "id": str(uuid)
+                "id": str(resource_uuid)
             }
         )
         return Response(
             httpx_response = response,
             model = NexusDownloadResponse
         )
-    # endregion
-
-    # region close
-    def close(self) -> None:
-        self.client.aclose()
     # endregion
