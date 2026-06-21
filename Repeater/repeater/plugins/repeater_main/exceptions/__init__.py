@@ -3,9 +3,7 @@ from .command import (
     RepeaterCommandException,
     ProcessControlException,
     BreakHandler,
-    ExitHandler,
     BreakWithErrorMessage,
-    ExitWithErrorMessage
 )
 
 __all__ = [
@@ -13,7 +11,5 @@ __all__ = [
     "RepeaterCommandException",
     "ProcessControlException",
     "BreakHandler",
-    "ExitHandler",
     "BreakWithErrorMessage",
-    "ExitWithErrorMessage"
 ]
