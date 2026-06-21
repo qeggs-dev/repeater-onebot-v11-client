@@ -3,7 +3,8 @@ from __future__ import annotations
 import aiofiles
 
 from nonebot import get_bots
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment, Message, Adapter
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment, Message
+from nonebot.internal.adapter.adapter import Adapter
 from typing import AsyncGenerator, Container
 
 from nonebot.internal.adapter.bot import Bot
@@ -179,7 +180,7 @@ class PersonaInfo:
                 break
         if reply_id is None:
             return None
-        reply_event = await self.get_message_event(message_id = reply_id)
+        reply_event = await self.get_message_event(message_id = int(reply_id))
         persona_info = self.__class__(
             bot = self.bot,
             event = reply_event
@@ -734,6 +735,6 @@ class PersonaInfo:
         :return: 消息事件
         """
         return await get_message_event(
-            self._cached_api,
-            message_id if message_id is not None else self.message_id
+            bot = self._cached_api,
+            message_id = message_id if message_id is not None else self.message_id
         )
