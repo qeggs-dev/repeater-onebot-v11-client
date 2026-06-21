@@ -10,7 +10,6 @@ from .._content_role import ContentRole
 from ._response_body import ChatResponse
 from ._break_response_body import BreakResponse
 from ._cross_user_data_routing import CrossUserDataRouting
-from ...exit_register import ExitRegister
 from ...assist import Response, BaseClient
 from .._content_unit import ContentUnit
 from ...client_net_configs import *
@@ -20,8 +19,6 @@ from ...logger import logger as base_logger
 from ...exceptions import BreakWithErrorMessage
 
 logger = base_logger.bind(module = "chat_client")
-
-exit_register = ExitRegister()
 
 class ChatClient(BaseClient):
     metadata_pattern = re.compile(r"> Message\s*?Metadata:.*?---(?:\r?\n)+", re.DOTALL | re.IGNORECASE)
@@ -223,8 +220,3 @@ class ChatClient(BaseClient):
             httpx_response = response,
             model = ChatBufferResponse
         )
-    
-    exit_register.register()
-    async def close(self):
-        await self.client.aclose()
-    # endregion
