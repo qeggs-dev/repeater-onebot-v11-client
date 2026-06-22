@@ -122,6 +122,32 @@ class CommandPackage(ABC, Generic[T]):
             text = "\n".join(self.documents)
         
         return text
+    
+    def __init__(self, *args, **kwargs):
+        """
+        Initialize the command package.
+
+        Warning: this method is used for the main initialization process of the Package. Do not override this method.
+        If you need advice try `__pre_init__` and `__post_init__` method.
+        """
+        self.__pre_init__(*args, **kwargs)
+        if isinstance(self.documents, str):
+            self.documents = textwrap.dedent(
+                self.documents.expandtabs(4)
+            )
+        self.__post_init__(*args, **kwargs)
+    
+    def __pre_init__(self):
+        """
+        This method will be called at initialization time.
+        """
+        pass
+    
+    def __post_init__(self):
+        """
+        This method will be called at initialization time.
+        """
+        pass
 
     async def message_enter(self, bot: Bot, event: MessageEvent, matcher: Type[Matcher]) -> tuple[PersonaInfo, SendMsg]:
         """
@@ -307,32 +333,6 @@ class CommandPackage(ABC, Generic[T]):
         :param persona_info: The persona_info object
         :param send_msg: The send_msg object
         :return: None
-        """
-        pass
-    
-    def __init__(self, *args, **kwargs):
-        """
-        Initialize the command package.
-
-        Warning: this method is used for the main initialization process of the Package. Do not override this method.
-        If you need advice try `__pre_init__` and `__post_init__` method.
-        """
-        self.__pre_init__(*args, **kwargs)
-        if isinstance(self.documents, str):
-            self.documents = textwrap.dedent(
-                self.documents.expandtabs(4)
-            )
-        self.__post_init__(*args, **kwargs)
-    
-    def __pre_init__(self):
-        """
-        This method will be called at initialization time.
-        """
-        pass
-    
-    def __post_init__(self):
-        """
-        This method will be called at initialization time.
         """
         pass
     
