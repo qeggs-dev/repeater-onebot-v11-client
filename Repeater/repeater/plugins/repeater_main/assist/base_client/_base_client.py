@@ -10,6 +10,7 @@ from .client_pool import (
     ClientTimeout,
     ClientLimits
 )
+from urllib.parse import urljoin
 from ...client_net_configs import *
 from ..namespace import Namespace
 from ..persona_info import PersonaInfo
@@ -18,6 +19,7 @@ from ..user_config import UserConfigs
 class BaseClient:
     _httpx_clients: ClassVar[ClientPool] = ClientPool(storage_configs.client_pool_size)
     follow_redirects: ClassVar[bool] = False
+    base_router: ClassVar[str | None] = None
     timeout: ClassVar[int | float | ClientTimeout] = 5
     limits: ClassVar[ClientLimits | None] = None
     encoding: ClassVar[str] = "utf-8"
@@ -37,8 +39,28 @@ class BaseClient:
         self.client = self._httpx_clients.get_client(client_info)
     
     @property
+    def backend_url(self) -> str:
+        backend_url = self._get_backend_url(self.user_configs)
+        return backend_url
+    
+    @property
     def base_url(self) -> str:
-        return self._get_backend_url(self.user_configs)
+        backend_url = self.backend_url
+        if self.base_router is None:
+            url = urljoin(backend_url, self.base_router)
+        else:
+            url = backend_url
+        return url
+    
+    def join_url(self, *urls: str) -> str:
+        return self.join_url_static(self.base_url, *urls)
+    
+    @staticmethod
+    def join_url_static(*urls: str) -> str:
+        url = ""
+        for u in urls:
+            url = urljoin(url, u)
+        return url
     
     @property
     def namespace(self) -> str:
