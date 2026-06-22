@@ -1,20 +1,21 @@
-from pydantic import BaseModel, Field, field_validator
-from typing import Literal
-from ._camouflage import Camouflage
-from ._text_length_score_configs import TextLengthScoreConfigs
-from ._server_api_timeout import ServerAPITimeout
+from pydantic import BaseModel, Field
+
+from .camouflage import Camouflage
+from .text_length_score_configs import TextLengthScoreConfigs
+from .server_api_timeout import ServerAPITimeout
 from .._useless_button_words import useless_button_words
-from ._behavioral_act import BehavioralACT
+from .behavioral_act import BehavioralACT
+from .hello_content import HelloContent
+from .platform_interface import PlatformInterface
 
 class StorageConfigs(BaseModel):
     text_length_score_configs: TextLengthScoreConfigs = Field(default_factory = TextLengthScoreConfigs)
-    hello_content: str = "Repeater Is Ready!"
-    hello_messages_by_weekday: dict[int | str, str] = Field(default_factory=dict, max_length=7)
-    hello_messages_for_date: dict[str, str] = Field(default_factory=dict)
+    hello_content: HelloContent = Field(default_factory = HelloContent)
     behavioral_acts: dict[int | str, BehavioralACT] = Field(default_factory=dict)
     default_behavioral_act: BehavioralACT = Field(default_factory=BehavioralACT)
     backends: dict[str, str] = Field(default_factory=dict)
     default_backend: str = ""
+    handler_timeout: int | float | None = Field(default=None, gt=0)
     client_pool_size: int = Field(default=10, ge=1)
     usage_group_context: bool = False
     server_api_timeout:ServerAPITimeout = Field(default_factory = ServerAPITimeout)
@@ -31,9 +32,7 @@ class StorageConfigs(BaseModel):
     max_text_file_size: int | None = None
     text_file_encoding: str = "utf-8"
     log_registed_handler_name: bool = True
-    platform_interface_cache: bool = True
-    platform_interface_cache_size: int | float = 1000
-    platform_interface_cache_timeout: int | float = 60
+    platform_interface: PlatformInterface = Field(default_factory=PlatformInterface)
     useless_button_words: list[str] = Field(default_factory=lambda: useless_button_words)
     useless_button_missing: str = "The button buzzed away."
 

@@ -1,5 +1,5 @@
 from ...config_loader import Loader, Mode
-from ._storage_configs import StorageConfigs
+from .storage_configs import StorageConfigs
 
 loader: Loader[StorageConfigs] = Loader(
     model=StorageConfigs,
