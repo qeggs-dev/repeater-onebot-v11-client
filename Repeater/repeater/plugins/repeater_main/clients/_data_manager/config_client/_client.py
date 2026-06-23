@@ -1,6 +1,5 @@
 import httpx
 
-from urllib.parse import urljoin
 from ....logger import logger as base_logger
 from typing import (
     Any,
