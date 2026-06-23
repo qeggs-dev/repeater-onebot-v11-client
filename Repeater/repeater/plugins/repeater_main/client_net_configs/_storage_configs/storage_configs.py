@@ -11,7 +11,7 @@ from .platform_interface import PlatformInterface
 class StorageConfigs(BaseModel):
     text_length_score_configs: TextLengthScoreConfigs = Field(default_factory = TextLengthScoreConfigs)
     hello_content: HelloContent = Field(default_factory = HelloContent)
-    behavioral_acts: dict[int | str, BehavioralACT] = Field(default_factory=dict)
+    behavioral_acts: dict[str, BehavioralACT] = Field(default_factory=dict)
     default_behavioral_act: BehavioralACT = Field(default_factory=BehavioralACT)
     backends: dict[str, str] = Field(default_factory=dict)
     default_backend: str = ""
@@ -35,11 +35,8 @@ class StorageConfigs(BaseModel):
     platform_interface: PlatformInterface = Field(default_factory=PlatformInterface)
     useless_button_words: list[str] = Field(default_factory=lambda: useless_button_words)
     useless_button_missing: str = "The button buzzed away."
-
-    def __post_init__(self):
-        self.behavioral_acts = {int(key): value for key, value in self.behavioral_acts.items()}
     
-    def get_behavioral_act(self, user_id: int) -> BehavioralACT:
+    def get_behavioral_act(self, user_id: str) -> BehavioralACT:
         if user_id in self.behavioral_acts:
             return self.behavioral_acts[user_id]
         else:
