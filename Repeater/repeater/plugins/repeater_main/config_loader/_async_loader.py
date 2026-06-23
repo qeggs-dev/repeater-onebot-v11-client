@@ -13,11 +13,18 @@ T_MODEL = TypeVar("T_MODEL", bound=BaseModel)
 
 class AsyncLoader(Generic[T_MODEL]):
     def __init__(self, model: Type[T_MODEL], path: str | os.PathLike, mode: Mode = Mode.JSON):
-        self._model = model
+        self._model: Type[T_MODEL] = model
         self._path = Path(path)
-        self._mode = mode
+        self._mode: Mode = mode
     
-    async def load(self, write_on_failure: bool = False) -> T_MODEL:
+    def exists(self) -> bool:
+        return self._path.exists()
+    
+    async def load(self, unexist_create: bool = False, write_on_failure: bool = False) -> T_MODEL:
+        if unexist_create and not self._path.exists():
+            config = self._model()
+            await self.save(config)
+            return config
         try:
             if self._mode == Mode.JSON:
                 return self._model(**(await self._decode_json(self._path)))

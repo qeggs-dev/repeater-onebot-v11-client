@@ -17,7 +17,11 @@ class Loader(Generic[T_MODEL]):
         self._path = Path(path)
         self._mode = mode
     
-    def load(self, write_on_failure: bool = False) -> T_MODEL:
+    def load(self, unexist_create: bool = False, write_on_failure: bool = False) -> T_MODEL:
+        if unexist_create and not self._path.exists():
+            config = self._model()
+            self.save(config)
+            return config
         try:
             if self._mode == Mode.JSON:
                 return self._model(**self._decode_json(self._path))
