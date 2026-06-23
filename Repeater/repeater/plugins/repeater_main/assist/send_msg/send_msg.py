@@ -1,6 +1,8 @@
 import time
 import asyncio
 
+from croniter import croniter
+from datetime import datetime
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment, Message
 from nonebot.internal.matcher.matcher import Matcher
 from nonebot.exception import FinishedException, ActionFailed
@@ -29,7 +31,6 @@ from typing import (
     Literal,
     ClassVar
 )
-from datetime import datetime
 from .limit_speed import LimitSpeed
 from ...exceptions import (
     BreakHandler,
@@ -165,37 +166,17 @@ class SendMsg:
         """
         每日问候语
         """
+        hello_content_configs = storage_configs.hello_content
         now = datetime.now()
         buffer: list[str] = [
-            storage_configs.hello_content
+            hello_content_configs.content
         ]
 
-        if now.strftime("%m-%d") in storage_configs.hello_messages_for_date:
-            buffer.append(
-                storage_configs.hello_messages_for_date[now.strftime("%m-%d")]
-            )
-        
-        weekday = now.weekday() + 1
-        weekday_str = now.strftime("%A")
-        weekday_abridge = now.strftime("%a")
-
-        if weekday in storage_configs.hello_messages_by_weekday:
-            buffer.append(
-                storage_configs.hello_messages_by_weekday[weekday]
-            )
-        elif str(weekday) in storage_configs.hello_messages_by_weekday:
-            buffer.append(
-                storage_configs.hello_messages_by_weekday[str(weekday)]
-            )
-        elif weekday_str in storage_configs.hello_messages_by_weekday:
-            buffer.append(
-                storage_configs.hello_messages_by_weekday[weekday_str]
-            )
-        elif weekday_abridge in storage_configs.hello_messages_by_weekday:
-            buffer.append(
-                storage_configs.hello_messages_by_weekday[weekday_abridge]
-            )
-
+        suffixs = hello_content_configs.suffixs
+        for suffix in suffixs:
+            if croniter.match(suffix.cron, now):
+                buffer.append(suffix.content)
+            
         return "".join(buffer)
     
     async def send_debug_mode(
