@@ -2,7 +2,7 @@ from nonebot.adapters.onebot.v11 import Bot
 
 async def send_private_file(
     bot: Bot,
-    user_id: int,
+    user_id: str,
     url: str,
     file_name: str,
 ):
