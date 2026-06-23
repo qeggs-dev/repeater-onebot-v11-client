@@ -4,7 +4,7 @@ from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from nonebot.internal.matcher.matcher import Matcher
 from typing import NoReturn, Type, Callable
 
-from Repeater.repeater.plugins.repeater_main.assist.response.error_response import ErrorResponse
+from ....assist import ErrorResponse
 
 from ....assist import PersonaInfo, Response, SendMsg
 from .._response_body import ChatResponse
