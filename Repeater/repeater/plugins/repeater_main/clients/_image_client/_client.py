@@ -25,8 +25,6 @@ class ImageClient(BaseClient):
 
     async def generate(
             self,
-            user_id: str,
-            
             model_id: str | list[str] | None = None,
             prompt: str = "",
             
@@ -63,7 +61,7 @@ class ImageClient(BaseClient):
             user = user,
         )
         response = await self.client.post(
-            url = urljoin(IMAGE_ROUTE, user_id),
+            url = urljoin(IMAGE_ROUTE, self.namespace),
             json = request.model_dump(),
         )
         return Response(
