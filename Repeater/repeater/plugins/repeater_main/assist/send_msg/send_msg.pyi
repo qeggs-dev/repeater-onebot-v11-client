@@ -1,5 +1,7 @@
 import asyncio
 
+from pathlib import Path
+from io import BytesIO
 from nonebot.adapters.onebot.v11 import MessageSegment, Message
 from nonebot.internal.matcher.matcher import Matcher
 from ..persona_info import PersonaInfo
@@ -551,6 +553,56 @@ class SendMsg:
         ) -> NoReturn | None: ...
     
     @overload
+    async def send_chat_response(
+            self,
+            reasoning_content: str | None = None,
+            content: str = "",
+            reply: bool = True,
+            continue_handler: Literal[False] = False
+        ) -> NoReturn: ...
+    
+    @overload
+    async def send_chat_response(
+            self,
+            reasoning_content: str | None = None,
+            content: str = "",
+            reply: bool = True,
+            continue_handler: Literal[True] = True
+        ) -> None: ...
+    
+    async def send_chat_response(
+            self,
+            reasoning_content: str | None = None,
+            content: str = "",
+            reply: bool = True,
+            continue_handler: bool = False
+        ) -> NoReturn | None: ...
+    
+    @overload
+    async def send_images(
+            self,
+            *images: str | bytes | BytesIO | Path,
+            reply: bool = True,
+            continue_handler: Literal[False] = False
+        ) -> NoReturn: ...
+    
+    @overload
+    async def send_images(
+            self,
+            *images: str | bytes | BytesIO | Path,
+            reply: bool = True,
+            continue_handler: Literal[True] = True
+        ) -> None: ...
+    
+    async def send_images(
+            self,
+            *images: str | bytes | BytesIO | Path,
+            reply: bool = True,
+            continue_handler: bool = False
+            ) -> NoReturn | None: ...
+
+    
+    @overload
     async def send_any(
             self,
             message: str | Message | MessageSegment,
@@ -581,32 +633,6 @@ class SendMsg:
     @staticmethod
     async def _get_text_message(content: str) -> MessageSegment:
         ...
-    
-    @overload
-    async def send_chat_response(
-            self,
-            reasoning_content: str | None = None,
-            content: str = "",
-            reply: bool = True,
-            continue_handler: Literal[False] = False
-        ) -> NoReturn: ...
-    
-    @overload
-    async def send_chat_response(
-            self,
-            reasoning_content: str | None = None,
-            content: str = "",
-            reply: bool = True,
-            continue_handler: Literal[True] = True
-        ) -> None: ...
-    
-    async def send_chat_response(
-            self,
-            reasoning_content: str | None = None,
-            content: str = "",
-            reply: bool = True,
-            continue_handler: bool = False
-        ) -> NoReturn | None: ...
     
     def handler_finished(self) -> NoReturn:
         ...

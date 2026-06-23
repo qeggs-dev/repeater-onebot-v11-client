@@ -1,8 +1,10 @@
 import time
 import asyncio
 
+from io import BytesIO
 from croniter import croniter
 from datetime import datetime
+from pathlib import Path
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment, Message
 from nonebot.internal.matcher.matcher import Matcher
 from nonebot.exception import FinishedException, ActionFailed
@@ -161,12 +163,16 @@ class SendMsg:
         else:
             raise TypeError(f"buffer must be asyncio.Queue, not {type(buffer).__name__}")
     
-    @property
-    def hello_content(self) -> str:
+    async def get_hello_content(self) -> str:
         """
-        每日问候语
+        获取每日问候语
         """
-        hello_content_configs = storage_configs.hello_content
+        user_configs = await self.persona_info.get_user_configs()
+        if user_configs.hello_content is None:
+            hello_content_configs = storage_configs.hello_content
+        else:
+            hello_content_configs = user_configs.hello_content
+        
         now = datetime.now()
         buffer: list[str] = [
             hello_content_configs.content
@@ -389,7 +395,7 @@ class SendMsg:
         logger.info(
             "Send Hello Message"
         )
-        hello_content = self.hello_content
+        hello_content = await self.get_hello_content()
         if hello_content:
             await self.send_text(
                 hello_content,
@@ -867,6 +873,34 @@ class SendMsg:
         
         results = await asyncio.gather(*tasks)
         message = Message(results)
+
+        await self._send(
+            message,
+            reply=reply,
+            continue_handler = continue_handler
+        )
+    
+    async def send_images(
+            self,
+            *images: str | bytes | BytesIO | Path,
+            reply: bool = True,
+            continue_handler: bool = False
+        ) -> NoReturn | None:
+        """
+        发送图片
+
+        :param images: 图片
+        :param reply: 是否回复
+        :param continue_handler: 是否继续处理
+        """
+        logger.info(
+            "Send Images"
+        )
+        message = Message()
+        for image in images:
+            message.append(
+                MessageSegment.image(image)
+            )
 
         await self._send(
             message,
