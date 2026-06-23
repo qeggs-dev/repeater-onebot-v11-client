@@ -42,7 +42,7 @@ class ToGroupChat(BaseChat):
         if matched:
             group_id_str = matched.group("group_id")
             assert isinstance(group_id_str, str), "The group_id must be a string"
-            group_id = int(group_id_str)
+            group_id = group_id_str
         else:
             raise ValueError("Invalid input format")
         
