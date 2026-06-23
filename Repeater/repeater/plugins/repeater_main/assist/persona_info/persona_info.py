@@ -70,22 +70,22 @@ class PersonaInfo:
         )
         self._message_event: MessageEvent = event
         self._args: Message | None = args
-        self._group_id: int | None = None
+        self._group_id: str | None = None
         self._source: MessageSource = MessageSource.GROUP
         self._source = MessageSource(event.message_type.strip().lower())
         self._enter_type: EnterType = EnterType.Command
         self._raw_message_event: MessageEvent | None = None
-        self._self_id: int = int(bot.self_id)
+        self._self_id: str = bot.self_id
 
         if self._source == MessageSource.GROUP:
             try:
-                self._group_id = int(event.model_dump()["group_id"])
+                self._group_id = event.model_dump()["group_id"]
                 if self._group_id is None:
                     raise ValueError("Is Group, But Group ID is None")
             except KeyError:
                 raise ValueError("Is Group, But Group ID is Not Found")
         
-        self._superusers: set[int] = set(int(user) for user in self._bot.config.superusers)
+        self._superusers: set[str] = set(user for user in self._bot.config.superusers)
         self._user_config_loader = UserConfigLoader(self.namespace)
     
     @classmethod
@@ -187,7 +187,7 @@ class PersonaInfo:
         )
         return persona_info
     
-    def namespace_from_this_group(self, user_id: int) -> Namespace:
+    def namespace_from_this_group(self, user_id: str) -> Namespace:
         """
         基于当前群组信息，构建指定 user_id 的 Namespace 实例
         """
@@ -246,14 +246,14 @@ class PersonaInfo:
         return self.user_id == self.self_id
     
     @property
-    def self_id(self) -> int:
+    def self_id(self) -> str:
         """
         机器人自身 ID
         """
         return self._self_id
     
     @property
-    def superusers(self) -> set[int]:
+    def superusers(self) -> set[str]:
         """
         超级用户集合
         """
@@ -267,7 +267,7 @@ class PersonaInfo:
         return self._message_event.message_id
 
     @property
-    def group_id(self) -> int | None:
+    def group_id(self) -> str | None:
         """
         当前群号
         """
@@ -276,11 +276,11 @@ class PersonaInfo:
         return self._group_id
     
     @property
-    def user_id (self) -> int:
+    def user_id(self) -> str:
         """
         当前用户 ID
         """
-        return self._message_event.user_id
+        return str(self._message_event.user_id)
     
     @property
     def nickname(self) -> str | None:
@@ -395,7 +395,7 @@ class PersonaInfo:
         """
         return self.private_namespace.namespace_str
 
-    def group_namespace(self, group_id: int | None = None) -> Namespace:
+    def group_namespace(self, group_id: str | None = None) -> Namespace:
         """
         当前用户所在命名空间（群聊）
         """
@@ -407,7 +407,7 @@ class PersonaInfo:
             user_id = self.user_id
         )
     
-    def group_namespace_str(self, group_id: int | None = None) -> str:
+    def group_namespace_str(self, group_id: str | None = None) -> str:
         """
         当前用户所在命名空间字符串（群聊）
         """
