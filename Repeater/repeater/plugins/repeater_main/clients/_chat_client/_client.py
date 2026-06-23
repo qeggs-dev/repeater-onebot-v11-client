@@ -97,7 +97,7 @@ class ChatClient(BaseClient):
         :param add_metadata: 是否添加元数据
         :return: AI返回的消息
         """
-        url = f"{CHAT_ROUTE}/{self.namespace}"
+        url = self.join_url_static(CHAT_ROUTE, self.namespace)
 
         if cross_user_data_routing is None:
             if self.merge_namespace:
@@ -187,7 +187,7 @@ class ChatClient(BaseClient):
         """
         try:
             response = await self.client.post(
-                url = f"{BREAK_CHAT_TASK_ROUTE}/{self.namespace}"
+                url = self.join_url_static(BREAK_CHAT_TASK_ROUTE, self.namespace)
             )
         except Exception as e:
             logger.error(
@@ -207,7 +207,7 @@ class ChatClient(BaseClient):
         """
         try:
             response = await self.client.get(
-                url = f"{GET_CHAT_BUFFER_ROUTE}/{self.namespace}"
+                url = self.join_url_static(GET_CHAT_BUFFER_ROUTE, self.namespace)
             )
         except Exception as e:
             logger.error(
