@@ -1,4 +1,3 @@
-from urllib.parse import urljoin
 from ...client_net_configs import *
 from ...assist import BaseClient
 from ...logger import logger
