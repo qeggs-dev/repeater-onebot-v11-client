@@ -2,6 +2,7 @@ from pydantic import BaseModel
 
 class ServerAPITimeout(BaseModel):
     chat: float = 600.0
+    image: float = 2400.0
     context: float = 10.0
     prompt: float = 10.0
     config: float = 10.0
