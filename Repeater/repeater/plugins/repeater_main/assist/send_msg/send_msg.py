@@ -1135,14 +1135,14 @@ class SendMsg:
         bot = self._persona_info.cached_api
         if self._persona_info.source == MessageSource.GROUP and self._persona_info.group_id is not None:
             await bot.send_group_msg(
-                group_id = self._persona_info.group_id,
+                group_id = int(self._persona_info.group_id),
                 message = message,
                 *args,
                 **kwargs
             )
         elif self._persona_info.source == MessageSource.PRIVATE:
             await bot.send_private_msg(
-                user_id = self._persona_info.user_id,
+                user_id = int(self._persona_info.user_id),
                 message = message,
                 *args,
                 **kwargs
