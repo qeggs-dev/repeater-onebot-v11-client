@@ -13,7 +13,7 @@ class TextRender(BaseClient):
             document_bottom_comment: str = ""
         ) -> Response[RendedImage]:
         response = await self.client.post(
-            f"{TEXT_RENDER_ROUTE}/{self.namespace}",
+            self.join_url_static(TEXT_RENDER_ROUTE, self.namespace),
             json={
                 "text": text,
                 "direct_output": direct_output,
