@@ -36,7 +36,7 @@ class UserDataClient(BaseClient):
     # region change subsession
     async def change_branch(self, new_branch_id: str) -> Response[None]:
         response = await self.client.put(
-            f"/userdata/{self.data_type}/change/{self._persona_info.namespace_str}",
+            self.join_url_static("userdata", self.data_type, "change", self._persona_info.namespace_str),
             data={
                 "new_branch_id": new_branch_id
             }
@@ -47,7 +47,7 @@ class UserDataClient(BaseClient):
     # region Delete
     async def delete(self) -> Response[None]:
         response = await self.client.delete(
-            f"/userdata/{self.data_type}/delete/{self._persona_info.namespace_str}"
+            self.join_url_static("userdata", self.data_type, "delete", self._persona_info.namespace_str)
         )
         return Response(response)
     # endregion
@@ -55,14 +55,14 @@ class UserDataClient(BaseClient):
     # region get branch list
     async def get_branch_list(self) -> Response[list[str]]:
         response = await self.client.get(
-            f"/userdata/{self.data_type}/branchs/{self._persona_info.namespace_str}"
+            self.join_url_static("userdata", self.data_type, "branchs", self._persona_info.namespace_str)
         )
         return Response(response)
 
     # region clone
     async def clone(self, dst_branch_id: str) -> Response[None]:
         response = await self.client.put(
-            f"/userdata/{self.data_type}/clone/{self._persona_info.namespace_str}",
+            self.join_url_static("userdata", self.data_type, "clone", self._persona_info.namespace_str),
             data={
                 "dst_branch_id": dst_branch_id
             }
@@ -73,7 +73,7 @@ class UserDataClient(BaseClient):
     # region clone from
     async def clone_from(self, src_branch_id: str) -> Response[None]:
         response = await self.client.put(
-            f"/userdata/{self.data_type}/clone_from/{self._persona_info.namespace_str}",
+            self.join_url_static("userdata", self.data_type, "clone_from", self._persona_info.namespace_str),
             data={
                 "src_branch_id": src_branch_id
             }
@@ -84,7 +84,7 @@ class UserDataClient(BaseClient):
     # region bind
     async def bind(self, dst_branch_id: str) -> Response[None]:
         response = await self.client.put(
-            f"/userdata/{self.data_type}/bind/{self._persona_info.namespace_str}",
+            self.join_url_static("userdata", self.data_type, "bind", self._persona_info.namespace_str),
             data={
                 "dst_branch_id": dst_branch_id
             }
@@ -95,7 +95,7 @@ class UserDataClient(BaseClient):
     # region bind from
     async def bind_from(self, src_branch_id: str) -> Response[None]:
         response = await self.client.put(
-            f"/userdata/{self.data_type}/bind_from/{self._persona_info.namespace_str}",
+            self.join_url_static("userdata", self.data_type, "bind_from", self._persona_info.namespace_str),
             data={
                 "src_branch_id": src_branch_id
             }
@@ -106,7 +106,7 @@ class UserDataClient(BaseClient):
     # region branch info
     async def branch_info(self) -> Response[BranchInfo]:
         response = await self.client.get(
-            f"/userdata/{self.data_type}/info/{self._persona_info.namespace_str}"
+            self.join_url_static("userdata", self.data_type, "info", self._persona_info.namespace_str),
         )
         return Response(
             response,
@@ -117,7 +117,7 @@ class UserDataClient(BaseClient):
     # region upload to nexus
     async def upload_to_nexus(self, timeout: int | None = None) -> Response[NexusUploadResponse]:
         response = await self.client.post(
-            f"/nexus/upload/{self._persona_info.namespace_str}/single/{self.data_type}",
+            self.join_url_static("userdata", self._persona_info.namespace_str, "single", self.data_type),
             json = {
                 "timeout": timeout
             }
@@ -136,7 +136,7 @@ class UserDataClient(BaseClient):
             raise ValueError("UUID is not valid")
         
         response = await self.client.post(
-            f"/nexus/download/{self._persona_info.namespace_str}/single/{self.data_type}",
+            self.join_url_static("userdata", self._persona_info.namespace_str, "single", self.data_type),
             json = {
                 "id": str(resource_uuid)
             }

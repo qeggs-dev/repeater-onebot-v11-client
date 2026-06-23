@@ -30,7 +30,7 @@ class TemplateRenderClient(BaseClient):
         logger.info("Expanding variable", module = "variable_expansion.core")
         merged_extra_template_fields = self._add_extra_template_fields(extra_fields)
         response = await self.client.post(
-            f"{TEMPLATE_RENDER}/{self._info.namespace_str}",
+            self.join_url_static(TEMPLATE_RENDER, self._info.namespace_str),
             json={
                 "user_info":{
                     "username": self._info.nickname,

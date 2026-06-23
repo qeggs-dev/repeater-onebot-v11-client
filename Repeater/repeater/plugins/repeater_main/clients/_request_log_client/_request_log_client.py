@@ -15,8 +15,8 @@ class RequestLogClient(BaseClient):
     
     async def get_request_log(self):
         async with self.client.stream(
-            "GET",
-            REQUEST_LOG_STREAM_ROUTE
+            method = "GET",
+            url = REQUEST_LOG_STREAM_ROUTE
         ) as response:
             response.raise_for_status()
             async for chunk in response.aiter_lines():

@@ -9,7 +9,7 @@ class StatusClient(BaseClient):
 
     async def get_client_task_status(self, namespace: str) -> Response[StatusResponse]:
         response = await self.client.get(
-            url = f"/status/core/task/{namespace}",
+            url = self.join_url_static("status", "core", "task", namespace),
         )
         return Response(
             httpx_response = response,

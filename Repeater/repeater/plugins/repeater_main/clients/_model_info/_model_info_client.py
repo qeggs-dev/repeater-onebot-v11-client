@@ -22,7 +22,7 @@ class ModelInfoClient(BaseClient):
     # region get all models
     async def get_all_models(self) -> Response[ModelsResponse]:
         response = await self.client.get(
-            f"{GET_MODEL_LIST}",
+            GET_MODEL_LIST,
         )
         return Response(
             httpx_response = response,
@@ -33,7 +33,7 @@ class ModelInfoClient(BaseClient):
     # region get models
     async def get_models(self, model_uid: str) -> Response[ModelsResponse]:
         response = await self.client.get(
-            f"{GET_MODEL_LIST}/{quote(model_uid)}",
+            self.join_url_static(GET_MODEL_LIST, model_uid),
         )
         return Response(
             httpx_response = response,
@@ -52,7 +52,7 @@ class ModelInfoClient(BaseClient):
             interval: int = 0
         ) -> Response[PingProviderResponse]:
         response = await self.client.post(
-            f"{PING_PROVIDER}/{quote(user_id)}",
+            self.join_url_static(PING_PROVIDER, user_id),
             json = {
                 "model_id": model_id,
                 "timeout": timeout, 

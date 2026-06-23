@@ -16,7 +16,7 @@ class NexusClient(BaseClient):
     # region upload to nexus
     async def upload_to_nexus(self, timeout: int | None = None) -> Response[NexusUploadResponse]:
         response = await self.client.post(
-            f"/nexus/upload/{self._persona_info.namespace_str}/environment",
+            self.join_url_static("nexus", "upload", self._persona_info.namespace_str, "environment"),
             json = {
                 "timeout": timeout
             }
@@ -35,7 +35,7 @@ class NexusClient(BaseClient):
             raise ValueError("UUID is not valid")
         
         response = await self.client.post(
-            f"/nexus/download/{self._persona_info.namespace_str}/environment",
+            self.join_url_static("nexus", "download", self._persona_info.namespace_str, "environment"),
             json = {
                 "id": str(resource_uuid)
             }

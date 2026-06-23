@@ -16,7 +16,7 @@ class PromptClient(UserDataClient):
     async def set_prompt(self, prompt: str) -> Response[None]:
         logger.info("Setting prompt")
         response = await self.client.put(
-            f"{SET_PROMPT_ROUTE}/{self.namespace_str}",
+            self.join_url_static(SET_PROMPT_ROUTE, self.namespace_str),
             data={
                 "prompt": prompt
             }
@@ -28,10 +28,10 @@ class PromptClient(UserDataClient):
     async def get_prompt(self) -> Response[str]:
         logger.info("Getting prompt")
         response = await self.client.get(
-            f"{GET_PROMPT_ROUTE}/{self.namespace_str}"
+            self.join_url_static(GET_PROMPT_ROUTE, self.namespace_str)
         )
         return Response(response)
     
     def get_prompt_url(self) -> str | None:
-        return urljoin(self.base_url, f"{GET_PROMPT_ROUTE}/{self.namespace_str}.md")
+        return self.join_url(GET_PROMPT_ROUTE, f"{self.namespace_str}.md")
     # endregion

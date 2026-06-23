@@ -49,7 +49,7 @@ class ConfigClient(UserDataClient):
             item_type=item_type
         )
         response = await self.client.put(
-            f"{SET_CONFIG_ROUTE}/{self.namespace_str}/{config_key}",
+            self.join_url_static(SET_CONFIG_ROUTE, self.namespace_str, config_key),
             json={
                 "type": item_type,
                 "value": value
@@ -62,19 +62,19 @@ class ConfigClient(UserDataClient):
     async def get_configs(self) -> Response[Any | None]:
         logger.info("Get {user} configs", user=self.namespace_str)
         response = await self.client.get(
-            f"{GET_CONFIG_ROUTE}/{self.namespace_str}"
+            self.join_url_static(GET_CONFIG_ROUTE, self.namespace_str)
         )
         return Response(response)
     
     def get_configs_url(self) -> str:
-        return urljoin(self.base_url, f"{GET_CONFIG_ROUTE}/{self.namespace_str}.json")
+        return self.join_url(GET_CONFIG_ROUTE, f"{self.namespace_str}.json")
     # endregion
 
     # region remove config key
     async def remove_config_key(self, config_key: str) -> Response[None]:
         logger.info("Remove config key: {config_key}", config_key=config_key)
         response = await self.client.delete(
-            f"{REMOVE_CONFIG_KEY_ROUTE}/{self.namespace_str}/{config_key}"
+            self.join_url_static(REMOVE_CONFIG_KEY_ROUTE, self.namespace_str, config_key)
         )
         return Response(response)
     # endregion
