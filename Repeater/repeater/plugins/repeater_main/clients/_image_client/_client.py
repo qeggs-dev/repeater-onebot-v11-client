@@ -61,7 +61,7 @@ class ImageClient(BaseClient):
             user = user,
         )
         response = await self.client.post(
-            url = urljoin(IMAGE_ROUTE, self.namespace),
+            url = self.join_url_static(IMAGE_ROUTE, self.namespace),
             json = request.model_dump(),
         )
         return Response(
