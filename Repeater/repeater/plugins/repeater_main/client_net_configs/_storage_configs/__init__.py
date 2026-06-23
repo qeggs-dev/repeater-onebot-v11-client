@@ -5,7 +5,10 @@ from .storage_configs_instance import storage_configs
 from .text_length_score_configs import TextLengthScoreConfigs
 from .text_length_score_threshold import TextLengthScoreThreshold
 from .behavioral_act import BehavioralACT
-from .hello_content import HelloContent
+from .hello_content import (
+    HelloContent,
+    HelloSuffix
+)
 from .platform_interface import PlatformInterface
 
 __all__ = [
@@ -17,5 +20,6 @@ __all__ = [
     "TextLengthScoreThreshold",
     "BehavioralACT",
     "HelloContent",
+    "HelloSuffix",
     "PlatformInterface"
 ]
