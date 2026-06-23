@@ -61,6 +61,11 @@ from .base_client import (
     ClientLimits,
     ClientInfo
 )
+from .type_check import (
+    is_iterable,
+    is_container,
+    is_collection,
+)
 
 __all__ = [
     "at_with_name",
@@ -114,5 +119,9 @@ __all__ = [
     "ClientPool",
     "ClientTimeout",
     "ClientLimits",
-    "ClientInfo"
+    "ClientInfo",
+    
+    "is_iterable",
+    "is_container",
+    "is_collection",
 ]
