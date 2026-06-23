@@ -1,7 +1,4 @@
 from ._chat_client import *
-from ._data_manager.context_client import *
-from ._data_manager.prompt_client import *
-from ._data_manager.config_client import *
 from ._data_manager import *
 from ._model_info import *
 from ._request_log_client import *
