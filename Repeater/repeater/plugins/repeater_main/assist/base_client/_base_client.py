@@ -57,6 +57,8 @@ class BaseClient:
         self,
         *urls: str,
         escape: bool = True,
+        add_slashes: bool = True,
+        follow_slashes: bool = False,
         safe: str | Iterable[int] = "/",
         encoding: str | None = None,
         errors: str | None = None
@@ -64,6 +66,8 @@ class BaseClient:
         return self.join_url_static(
             self.base_url,
             *urls,
+            add_slashes = add_slashes,
+            follow_slashes = follow_slashes,
             escape = escape,
             safe = safe,
             encoding = encoding,
@@ -74,15 +78,23 @@ class BaseClient:
     def join_url_static(
         *urls: str,
         escape: bool = True,
+        add_slashes: bool = True,
+        follow_slashes: bool = False,
         safe: str | Iterable[int] = "/",
         encoding: str | None = None,
         errors: str | None = None
     ) -> str:
         url = "/"
-        if escape:
-            for u in urls:
-                url = urljoin(
-                    url,
+        for u in urls:
+            if add_slashes and not u.startswith("/"):
+                u = f"/{u}"
+            
+            if url.endswith("/") and u.startswith("/"):
+                url = url.removesuffix("/")
+            
+            if escape:
+                url = (
+                    url + 
                     quote(
                         u,
                         safe = safe,
@@ -90,12 +102,11 @@ class BaseClient:
                         errors = errors
                     )
                 )
-        else:
-            for u in urls:
-                url = urljoin(
-                    url,
-                    u
-                )
+            else:
+                url = urljoin(url, u)
+        
+        if follow_slashes and not url.endswith("/"):
+            url = url + "/"
         return url
     
     @property
