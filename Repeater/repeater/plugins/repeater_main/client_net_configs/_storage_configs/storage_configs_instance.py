@@ -6,4 +6,4 @@ loader: Loader[StorageConfigs] = Loader(
     path="configs/main_api.json",
     mode=Mode.JSON
 )
-storage_configs: StorageConfigs = loader.load(write_on_failure=True)
+storage_configs: StorageConfigs = loader.load(unexist_create = True)
