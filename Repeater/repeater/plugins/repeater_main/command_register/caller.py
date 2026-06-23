@@ -68,7 +68,7 @@ class CommandCaller:
                 )
                 send_msg.break_handler()
             
-            if not cls.check_acceptable_sources(package, persona_info):
+            if not await cls.check_acceptable_sources(package, persona_info):
                 return await package.on_unacceptable_source(persona_info, send_msg)
             
             if package.superuser_permissions and not persona_info.is_superuser:
