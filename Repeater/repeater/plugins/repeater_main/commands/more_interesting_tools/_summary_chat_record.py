@@ -1,15 +1,21 @@
 import asyncio
-from ...assist import PersonaInfo, SendMsg, MessageSource
+from ...assist import (
+    PersonaInfo,
+    SendMsg,
+    MessageSource,
+    Response
+)
 from ...cmd_info import CmdTypes
 from ...command_register import(
     CommandCaller,
     CommandPackage
 )
-from ...clients import ChatClient, ChatSendMsg
+from .._bases import BaseChat, SendMessage
+from ...clients import ChatClient, ChatResponse
 
 
 @CommandCaller.register
-class SummaryChatRecord(CommandPackage):
+class SummaryChatRecord(BaseChat):
     cmd = "summaryChatRecord"
     aliases = {
         "scr",
@@ -20,14 +26,14 @@ class SummaryChatRecord(CommandPackage):
         "SUMMARY_CHAT_RECORD",
     }
     cmd_type = CmdTypes.OTHER
+    acceptable_sources = {MessageSource.GROUP}
 
-    async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        if send_msg.is_debug_mode:
-            await send_msg.send_debug_mode()
-
-        if persona_info.source == MessageSource.PRIVATE:
-            await send_msg.send_error("The current feature cannot be used in private chat.")
-
+    
+    async def parse_message(
+        self,
+        persona_info: PersonaInfo,
+        send_msg: SendMsg,
+    ) -> SendMessage:
         group_id = persona_info.group_id
 
         try:
@@ -48,18 +54,10 @@ class SummaryChatRecord(CommandPackage):
 
             if text:
                 text = f"{text}\n\n---\n\nPlease summarize the above chat record."
-
-            chat_client = ChatClient(persona_info)
-            response = await chat_client.send_message(
-                add_metadata=False,
-                message=text
+            return SendMessage(
+                text = text,
             )
-            chat_sendmsg = ChatSendMsg(
-                send_msg.component,
-                persona_info,
-                send_msg.matcher,
-                response
-            )
-            await chat_sendmsg.send()
         else:
             await send_msg.send_error("The input must be a positive integer!")
+        
+        send_msg.break_handler()

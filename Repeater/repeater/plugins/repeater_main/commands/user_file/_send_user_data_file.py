@@ -21,9 +21,6 @@ class SendUserDataFile(CommandPackage):
     cmd_type = CmdTypes.USERFILE
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        if send_msg.is_debug_mode:
-            await send_msg.send_debug_mode()
-
         user_configs = await persona_info.get_user_configs()
         user_file_client = UserFileClient(persona_info, user_configs)
         file_url = await user_file_client.get_user_data_file_url()

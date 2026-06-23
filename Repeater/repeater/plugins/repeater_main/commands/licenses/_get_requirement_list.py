@@ -21,9 +21,6 @@ class GetRequirementList(CommandPackage):
     cmd_type = CmdTypes.LICENSES
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        if send_msg.is_debug_mode:
-            await send_msg.send_debug_mode()
-
         user_configs = await persona_info.get_user_configs()
         license_client = LicenseClient(persona_info, user_configs)
         server_requirements = await license_client.get_requirement_list()

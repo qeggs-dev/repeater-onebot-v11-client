@@ -29,9 +29,6 @@ class TemplateRender(CommandPackage):
     cmd_type = CmdTypes.TEMPLATE
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        if send_msg.is_debug_mode:
-            await send_msg.send_debug_mode()
-
         msg = persona_info.message_striped_str
         variable_expansion_client = TemplateRenderClient(persona_info)
         response = await variable_expansion_client.render(text = msg)

@@ -21,17 +21,13 @@ class GetChatBuffer(CommandPackage):
     cmd_type = CmdTypes.STATUS
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        if send_msg.is_debug_mode:
-            await send_msg.send_debug_mode()
-
-        
         user_configs = await persona_info.get_user_configs()
         chat_client = ChatClient(persona_info, user_configs)
         response = await chat_client.get_chat_buffer()
         if response:
             buffer_response = response.get_data()
             if buffer_response is None:
-                await send_msg.send_error(response.get_error())
+                await send_msg.send_error_response(response)
             else:
                 for task_id, buffer in buffer_response.buffers.items():
                     await send_msg.send_chat_response(

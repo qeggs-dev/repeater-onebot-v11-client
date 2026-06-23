@@ -27,9 +27,6 @@ class SendMessage(CommandPackage):
     superuser_permissions = True
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        if send_msg.is_debug_mode:
-            await send_msg.send_debug_mode()
-
         if not storage_configs.allow_send_any_message:
             await send_msg.send_error("Send_Message is disabled")
             return
@@ -56,7 +53,7 @@ class SendMessage(CommandPackage):
             errors = e.errors()
             text_buffer: list[str] = []
             for error in errors:
-                error_text = f"{'.'.join(error['loc'])}: {error['msg']}"
+                error_text = f"{'.'.join(str(i) for i in error['loc'])}: {error['msg']}"
                 text_buffer.append(error_text)
             await send_msg.send_error("\n".join(text_buffer))
             return

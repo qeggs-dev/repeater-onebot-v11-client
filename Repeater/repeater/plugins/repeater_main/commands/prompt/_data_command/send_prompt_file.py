@@ -21,10 +21,6 @@ class SendPromptFile(CommandPackage):
     cmd_type = CmdTypes.PROMPT
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        if send_msg.is_debug_mode:
-            await send_msg.send_debug_mode()
-
-        
         user_configs = await persona_info.get_user_configs()
         prompt_client = PromptClient(persona_info, user_configs)
         file_url = prompt_client.get_prompt_url()

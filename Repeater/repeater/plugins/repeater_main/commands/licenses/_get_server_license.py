@@ -22,17 +22,15 @@ class GetServerLicenses(CommandPackage):
     cmd_type = CmdTypes.LICENSES 
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        if send_msg.is_debug_mode:
-            await send_msg.send_debug_mode()
-
         user_configs = await persona_info.get_user_configs()
         license_client = LicenseClient(persona_info, user_configs)
         server_version = await license_client.get_server_licenses()
         version_data = server_version.get_data()
         if version_data is None:
             await send_msg.send_error("Server License Data is Invalid.")
-        message = Message()
-        for name, license in version_data.items():
-            message.append(MessageSegment.text(f"{name}:\n"))
-            message.append(await send_msg.render_text(license, direct_output=True))
-        await send_msg.send_prompt(message)
+        else:
+            message = Message()
+            for name, license in version_data.items():
+                message.append(MessageSegment.text(f"{name}:\n"))
+                message.append(await send_msg.render_text(license, direct_output=True))
+            await send_msg.send_prompt(message)

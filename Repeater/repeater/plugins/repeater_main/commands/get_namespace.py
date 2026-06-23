@@ -26,9 +26,6 @@ class GetNamespace(CommandPackage):
     cmd_type = CmdTypes.NAMESPACE
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        if send_msg.is_debug_mode:
-            await send_msg.send_debug_mode()
-
         mentioned_id = get_first_mentioned_user(persona_info._message_event)
         group_id = persona_info.group_id
         namespace = persona_info.namespace

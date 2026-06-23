@@ -25,16 +25,13 @@ class ChatKeepReasoning(BaseChat):
     """
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        if send_msg.is_debug_mode:
-            send_msg.send_debug_mode()
-
         logger.info(
             "Received a message from {namespace}",
             namespace = persona_info.namespace_str,
             module = send_msg.component
         )
 
-        chat_client = ChatClient(persona_info)
+        chat_client = await self.get_client(persona_info)
 
         response = await chat_client.send_message(
             thinking=True,
@@ -43,7 +40,7 @@ class ChatKeepReasoning(BaseChat):
         send_msg = ChatSendMsg(
             send_msg.component,
             persona_info,
+            response,
             send_msg.matcher,
-            response
         )
-        await send_msg.send()
+        await self.send_chat_send_msg(send_msg)

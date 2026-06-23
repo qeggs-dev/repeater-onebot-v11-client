@@ -22,9 +22,6 @@ class AudioToFile(CommandPackage):
     cmd_type = CmdTypes.OTHER
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        if send_msg.is_debug_mode:
-            await send_msg.send_debug_mode()
-
         for message_segment in persona_info.message:
             if message_segment.type == "record":
                 fileurl = message_segment.data["url"]

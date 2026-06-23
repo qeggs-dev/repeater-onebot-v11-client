@@ -20,9 +20,6 @@ class ChangeSession(CommandPackage):
     cmd_type = CmdTypes.BRANCH_MIXED
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        if send_msg.is_debug_mode:
-            await send_msg.send_debug_mode()
-
         user_configs = await persona_info.get_user_configs()
         context_client = ContextClient(persona_info, user_configs)
         prompt_client = PromptClient(persona_info, user_configs)

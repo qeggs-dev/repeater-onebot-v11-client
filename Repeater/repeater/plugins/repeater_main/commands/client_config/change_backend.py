@@ -29,9 +29,6 @@ class ChangeBackend(CommandPackage):
     cmd_type = CmdTypes.CLIENT_CONFIG
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        if send_msg.is_debug_mode:
-            await send_msg.send_debug_mode()
-
         user_configs = await persona_info.get_user_configs()
         raw_backend = user_configs.backend
         if raw_backend is None:

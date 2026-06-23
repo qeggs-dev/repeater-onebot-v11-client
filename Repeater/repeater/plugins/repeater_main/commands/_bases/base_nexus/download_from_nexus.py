@@ -4,9 +4,6 @@ from ....cmd_info import CmdTypes
 
 class DownloadFromNexus(BaseNexus):
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        if send_msg.is_debug_mode:
-            await send_msg.send_debug_mode()
-        
         nexus_client = await self.get_client(persona_info)
         
         try:

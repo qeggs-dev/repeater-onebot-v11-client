@@ -8,7 +8,7 @@ from ...command_register import(
     CommandCaller,
     CommandPackage
 )
-
+from ...logger import logger
 
 @CommandCaller.register
 class RecentSpeakingRanking(CommandPackage):
@@ -22,6 +22,7 @@ class RecentSpeakingRanking(CommandPackage):
         "RECENT_SPEAKING_RANKING",
     }
     cmd_type = CmdTypes.OTHER
+    acceptable_sources = {MessageSource.GROUP}
 
     @staticmethod
     def recent_speaking_ranking_worker(message_list: dict[str, Any]) -> tuple[str, int, int]:
@@ -40,6 +41,12 @@ class RecentSpeakingRanking(CommandPackage):
                 except KeyError:
                     validation_failure_counter += 1
                     continue
+            if not isinstance(member_name, str):
+                logger.warning(
+                    "member_name is not a string, it is {member_type}",
+                    member_type = type(member_name).__name__,
+                )
+                continue
             if member_name not in member_speech_count:
                 member_speech_count[member_name] = 1
             else:
@@ -56,12 +63,6 @@ class RecentSpeakingRanking(CommandPackage):
         return text, total_effective, validation_failure_counter
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        if send_msg.is_debug_mode:
-            await send_msg.send_debug_mode()
-
-        if persona_info.source == MessageSource.PRIVATE:
-            await send_msg.send_error("The current feature cannot be used in private chat.")
-
         group_id = persona_info.group_id
 
         try:

@@ -22,9 +22,6 @@ class GetCoreTaskStatus(CommandPackage):
     cmd_type = CmdTypes.STATUS
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        if send_msg.is_debug_mode:
-            await send_msg.send_debug_mode()
-        
         user_configs = await persona_info.get_user_configs()
         status_client = StatusClient(persona_info, user_configs)
         response = await status_client.get_client_task_status(persona_info.namespace_str)

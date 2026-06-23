@@ -22,9 +22,6 @@ class AdaptationInfo(CommandPackage):
     cmd_type = CmdTypes.VERSION
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        if send_msg.is_debug_mode:
-            await send_msg.send_debug_mode()
-
         user_configs = await persona_info.get_user_configs()
         version_client = VersionAPIClient(persona_info, user_configs)
         server_version = await version_client.get_version()

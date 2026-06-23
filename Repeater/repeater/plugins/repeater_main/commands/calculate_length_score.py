@@ -19,9 +19,6 @@ class CalculateLengthScore(CommandPackage):
     cmd_type = CmdTypes.OTHER
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        if send_msg.is_debug_mode:
-            await send_msg.send_debug_mode()
-
         text = persona_info.message_striped_str
         length = len(text)
         length_score = send_msg.text_length_score(text)
