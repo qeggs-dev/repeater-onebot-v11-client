@@ -1,6 +1,7 @@
 import random
 import hashlib
 from datetime import datetime
+from typing import Literal
 from ...assist import PersonaInfo, SendMsg, Namespace
 from ...cmd_info import CmdTypes
 from ...command_register import(
@@ -32,7 +33,7 @@ class RandomFortune(CommandPackage):
         return time.year ^ time.month ^ time.day
     
     @staticmethod
-    def int_to_bytes(n: int, byteorder: str = "big", signed: bool = False) -> bytes:
+    def int_to_bytes(n: int, byteorder: Literal["big", "little"] = "big", signed: bool = False) -> bytes:
         length = (n.bit_length() + 7) // 8
         if signed and n < 0:
             length = (n.bit_length() + 8) // 8
@@ -42,10 +43,10 @@ class RandomFortune(CommandPackage):
     def see_fortune(cls, now: datetime, user_ids: list[str]):
         daily_seed = cls.daily_seed(now)
         hash_value = hashlib.pbkdf2_hmac(
-            "sha256",
-            cls.int_to_bytes(daily_seed),
-            ("\n".join(user_ids)).encode("utf-8"),
-            10 ** 5
+            hash_name = "sha256",
+            password = cls.int_to_bytes(daily_seed),
+            salt = ("\n".join(user_ids)).encode("utf-8"),
+            iterations = 10 ** 5
         )
         seed = int.from_bytes(hash_value, "big")
         rand = random.Random(seed)
@@ -70,7 +71,7 @@ class RandomFortune(CommandPackage):
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         now = datetime.now()
         at_list = persona_info.noself_at_list
-        user_ids = [str(persona_info.user_id)] + at_list
+        user_ids = [persona_info.user_id] + at_list
         
         fortune_text = self.see_fortune(now, user_ids)
         await send_msg.send_prompt(fortune_text)
