@@ -15,14 +15,14 @@ class CachedAPI(Bot):
     会缓存 API 的返回值以减少调用次数
     """
     cache: ClassVar[TTLCache[tuple[str, frozenset], Any, float]] = TTLCache( # type: ignore
-        maxsize = storage_configs.platform_interface_cache_size,
-        ttl = storage_configs.platform_interface_cache_timeout
+        maxsize = storage_configs.platform_interface.cache_size,
+        ttl = storage_configs.platform_interface.cache_timeout
     )
     cache_lock: ClassVar[asyncio.Lock] = asyncio.Lock()
 
     @wraps(Bot.call_api)
     async def call_api(self, api: str, **data: Any) -> Any:
-        if storage_configs.platform_interface_cache:
+        if storage_configs.platform_interface.cache:
             try:
                 key: tuple[str, frozenset] = (api, frozenset(data.items()))
                 cacheable: bool = True
@@ -51,7 +51,7 @@ class CachedAPI(Bot):
             
         result = await super().call_api(api, **data)
 
-        if storage_configs.platform_interface_cache:
+        if storage_configs.platform_interface.cache:
             async with self.cache_lock:
                 self.cache[key] = result
         
