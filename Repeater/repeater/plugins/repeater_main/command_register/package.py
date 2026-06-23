@@ -7,7 +7,9 @@ from abc import (
 )
 from ..assist import (
     PersonaInfo,
-    SendMsg
+    SendMsg,
+    MessageSource,
+    is_iterable,
 )
 from ..cmd_info import CmdTypes
 from .listen_type import ListenType
@@ -42,6 +44,8 @@ from nonebot import logger
 from typing import (
     Any,
     Iterable,
+    Literal,
+    Collection,
     NoReturn,
     Type,
     TypeVar,
@@ -97,13 +101,16 @@ class CommandPackage(ABC, Generic[T]):
     cmd_type: CmdTypes = CmdTypes.RESERVED
     """Command Type"""
 
+    acceptable_sources: Collection[MessageSource] | None = None
+    """This handler's acceptable sources"""
+
     enabled: bool = True
     """Whether the handler."""
 
-    documents: str | list[str] | None = None
+    documents: str | Iterable[str] | None = None
     """This handler's documentation"""
 
-    description: str | list[str] | None = None
+    description: str | Iterable[str] | None = None
     """This handler's description"""
 
     docs_delimiter: str = "\n"
@@ -120,18 +127,18 @@ class CommandPackage(ABC, Generic[T]):
     def get_description(self) -> str:
         """Handler description"""
         
-        if self.documents:
+        if self.documents is not None:
             doc = self.documents
-        elif self.description:
+        elif self.description is not None:
             doc = self.description
-        elif self.__doc__:
+        elif self.__doc__ is not None:
             doc = self.__doc__
         else:
             doc = ""
         
         if isinstance(doc, str):
             return doc
-        elif isinstance(doc, list):
+        elif is_iterable(doc):
             merged_doc = self.docs_delimiter.join(doc)
             return merged_doc
         else:
@@ -251,7 +258,7 @@ class CommandPackage(ABC, Generic[T]):
         return True
 
     @abstractmethod
-    async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T:
+    async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T | NoReturn:
         """
         Override this method to begin writing your business logic.
 
@@ -260,7 +267,7 @@ class CommandPackage(ABC, Generic[T]):
         """
         pass
 
-    async def on_debug_mode(self, persona_info: PersonaInfo, send_msg: SendMsg) -> None:
+    async def on_debug_mode(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T | Any | None | NoReturn:
         """
         This method is executed when the Repeater discovers that the current environment configuration is Debug Mode.
 
@@ -269,7 +276,35 @@ class CommandPackage(ABC, Generic[T]):
         """
         await send_msg.send_debug_mode()
     
-    async def on_nonebot_exception(self, exception: NoneBotException, persona_info: PersonaInfo, send_msg: SendMsg) -> T | None:
+    async def on_unacceptable_source(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T | Any | None | NoReturn:
+        """
+        This method is executed when the Repeater discovers that the current environment configuration is not acceptable.
+
+        :param persona_info: PersonaInfo object
+        :param send_msg: SendMsg object
+        """
+        if self.acceptable_sources is None:
+            assert False, "acceptable_sources must be set"
+        
+        for source in self.acceptable_sources:
+            match source:
+                case MessageSource.GROUP:
+                    match persona_info.source:
+                        case MessageSource.PRIVATE:
+                            await send_msg.send_error("This command is only available in group chat.")
+                        case MessageSource.GROUP:
+                            pass
+                case MessageSource.PRIVATE:
+                    match persona_info.source:
+                        case MessageSource.PRIVATE:
+                            pass
+                        case MessageSource.GROUP:
+                            await send_msg.send_error("This command is only available in private chat.")
+                case _:
+                    pass
+
+    
+    async def on_nonebot_exception(self, exception: NoneBotException, persona_info: PersonaInfo, send_msg: SendMsg) -> T | Any | None | NoReturn:
         """
         This method is called when the program throws a NoneBot exception
         You can do some handling here
@@ -281,7 +316,7 @@ class CommandPackage(ABC, Generic[T]):
         """
         raise
 
-    async def on_repeater_exception(self, exception: RepeaterException, persona_info: PersonaInfo, send_msg: SendMsg) -> T | None:
+    async def on_repeater_exception(self, exception: RepeaterException, persona_info: PersonaInfo, send_msg: SendMsg) -> T | Any | None | NoReturn:
         """
         This method is called when the program throws a Repeater exception
 
@@ -294,7 +329,7 @@ class CommandPackage(ABC, Generic[T]):
         elif isinstance(exception, BreakHandler):
             send_msg.break_handler()
 
-    async def on_error(self, exception: Exception, persona_info: PersonaInfo, send_msg: SendMsg) -> T | None:
+    async def on_error(self, exception: Exception, persona_info: PersonaInfo, send_msg: SendMsg) -> T | Any | None | NoReturn:
         """
         The error Handler for the Handler
 
@@ -317,7 +352,7 @@ class CommandPackage(ABC, Generic[T]):
             logger.exception(f"Error: {exception}")
             await send_msg.send_error(exception)
     
-    async def on_interpreter_error(self, exception: BaseException, persona_info: PersonaInfo, send_msg: SendMsg) -> T | None:
+    async def on_interpreter_error(self, exception: BaseException, persona_info: PersonaInfo, send_msg: SendMsg) -> T | Any | None | NoReturn:
         """
         This section is executed when the interpreter encounters an error that is a BaseException but not an Exception.
 
@@ -331,7 +366,7 @@ class CommandPackage(ABC, Generic[T]):
         logger.exception(f"Error: {exception}")
         raise
     
-    async def on_cancel(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T | None:
+    async def on_cancel(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T | Any | None | NoReturn:
         """
         This section is executed when the Handler is cancelled.
 
@@ -343,7 +378,7 @@ class CommandPackage(ABC, Generic[T]):
         logger.warning(f"{self.component} cancelled")
         raise
     
-    async def handler_exit(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T | None:
+    async def handler_exit(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T | Any | None | NoReturn:
         """
         This section is executed whenever the Handler fails or exits.
 
@@ -354,6 +389,31 @@ class CommandPackage(ABC, Generic[T]):
         :return: None
         """
         pass
+
+    async def insufficient_access(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T | Any | None | NoReturn:
+        """
+        If the current user does not meet the permission requirements of the command, execute the method.
+        
+        :param persona_info: User information
+        :param send_msg: Send message interface
+        :return: None
+        """
+        await send_msg.send_error("Insufficient access rights.")
+        send_msg.break_handler()
+    
+    async def on_blacklist(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T | Any | None | NoReturn:
+        """
+        If the current user is in the blacklist, execute the method.
+
+        :param persona_info: User information
+        :param send_msg: Send message interface
+        :return: None
+        """
+        logger.warning(
+            "User {user_id} is in the blacklist.",
+            user_id = persona_info.user_id
+        )
+        send_msg.break_handler()
     
     @classmethod
     def on_before_instantiate(cls):
@@ -395,31 +455,6 @@ class CommandPackage(ABC, Generic[T]):
         :return: None
         """
         raise
-
-    async def insufficient_access(self, persona_info: PersonaInfo, send_msg: SendMsg) -> NoReturn:
-        """
-        If the current user does not meet the permission requirements of the command, execute the method.
-        
-        :param persona_info: User information
-        :param send_msg: Send message interface
-        :return: None
-        """
-        await send_msg.send_error("Insufficient access rights.")
-        send_msg.break_handler()
-    
-    async def on_blacklist(self, persona_info: PersonaInfo, send_msg: SendMsg) -> NoReturn:
-        """
-        If the current user is in the blacklist, execute the method.
-
-        :param persona_info: User information
-        :param send_msg: Send message interface
-        :return: None
-        """
-        logger.warning(
-            "User {user_id} is in the blacklist.",
-            user_id = persona_info.user_id
-        )
-        send_msg.break_handler()
     
     @classmethod
     def on_destroy(cls):
