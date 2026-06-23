@@ -7,6 +7,9 @@ CHAT_ROUTE = "/generate/chat/completion"
 BREAK_CHAT_TASK_ROUTE = "/generate/chat/break"
 GET_CHAT_BUFFER_ROUTE = "/generate/chat/buffer"
 
+# ==== IMAGE API ==== #
+IMAGE_ROUTE = "/generate/image/generate"
+
 # ==== CONTEXT API ==== #
 GET_CONTEXT_ROUTE = "/userdata/context/get"
 GET_CONTEXT_LENGTH_ROUTE = "/userdata/context/length"
@@ -45,6 +48,5 @@ TEMPLATE_RENDER = "/template/render"
 VERSION_ROUTE = f"/version"
 
 # ==== CONFIG ==== #
-HELLO_CONTENT = storage_configs.hello_content
 RepeaterDebugMode = net_config.repeater_debug_mode # 是否开启调试模式，调试模式下，将直接返回消息内容，而不进行后端访问操作
 
