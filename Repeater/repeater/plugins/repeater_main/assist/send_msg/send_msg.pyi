@@ -93,8 +93,7 @@ class SendMsg:
     def buffer(self, buffer: asyncio.Queue):
         ...
     
-    @property
-    def hello_content(self) -> str:
+    async def get_hello_content(self) -> str:
         ...
     
     @overload
