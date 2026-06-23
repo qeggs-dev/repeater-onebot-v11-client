@@ -29,4 +29,4 @@ loader: Loader[TTSConfig] = Loader(
     mode = Mode.JSON
 )
 
-tts_config: TTSConfig = loader.load(write_on_failure=True)
+tts_config: TTSConfig = loader.load(unexist_create = True)
