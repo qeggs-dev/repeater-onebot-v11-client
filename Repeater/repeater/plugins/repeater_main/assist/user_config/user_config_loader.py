@@ -11,9 +11,9 @@ class UserConfigLoader:
         )
     
     async def load(self):
-        try:
+        if self.loader.exists():
             configs = await self.loader.load()
-        except Exception as e:
+        else:
             configs = UserConfigs()
         return configs
     
