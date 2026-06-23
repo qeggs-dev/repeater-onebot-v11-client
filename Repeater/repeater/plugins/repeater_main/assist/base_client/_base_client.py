@@ -1,7 +1,8 @@
 import json
 import httpx
 from typing import (
-    ClassVar
+    ClassVar,
+    Iterable
 )
 
 from .client_pool import (
@@ -10,7 +11,7 @@ from .client_pool import (
     ClientTimeout,
     ClientLimits
 )
-from urllib.parse import urljoin
+from urllib.parse import urljoin, quote
 from ...client_net_configs import *
 from ..namespace import Namespace
 from ..persona_info import PersonaInfo
@@ -52,14 +53,49 @@ class BaseClient:
             url = backend_url
         return url
     
-    def join_url(self, *urls: str) -> str:
-        return self.join_url_static(self.base_url, *urls)
+    def join_url(
+        self,
+        *urls: str,
+        escape: bool = True,
+        safe: str | Iterable[int] = "/",
+        encoding: str | None = None,
+        errors: str | None = None
+    ) -> str:
+        return self.join_url_static(
+            self.base_url,
+            *urls,
+            escape = escape,
+            safe = safe,
+            encoding = encoding,
+            errors = errors
+        )
     
     @staticmethod
-    def join_url_static(*urls: str) -> str:
-        url = ""
-        for u in urls:
-            url = urljoin(url, u)
+    def join_url_static(
+        *urls: str,
+        escape: bool = True,
+        safe: str | Iterable[int] = "/",
+        encoding: str | None = None,
+        errors: str | None = None
+    ) -> str:
+        url = "/"
+        if escape:
+            for u in urls:
+                url = urljoin(
+                    url,
+                    quote(
+                        u,
+                        safe = safe,
+                        encoding = encoding,
+                        errors = errors
+                    )
+                )
+        else:
+            for u in urls:
+                url = urljoin(
+                    url,
+                    u
+                )
         return url
     
     @property
