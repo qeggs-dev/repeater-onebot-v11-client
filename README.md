@@ -88,6 +88,7 @@ PS: 此处的长度评分函数并非实际算法，仅为演示使用
 | curlify2   | 2.0.0   | MIT License  | [MIT](https://github.com/marcuxyz/curlify2/blob/master/LICENSE)        | *Entire Project*              |
 | numpy      | 2.4.2   | BSD 3-Clause | [BSD-3-Clause](https://github.com/numpy/numpy/blob/main/LICENSE.txt)   | *Entire Project*              |
 | cachetools | 7.1.4   | MIT License  | [MIT](https://github.com/tkem/cachetools/blob/master/LICENSE)          | *Entire Project*              |
+| croniter   | 6.2.2   | MIT License  | [MIT](https://github.com/pallets-eco/croniter/blob/master/LICENSE)     | Hello Content                 |
 
 具体依赖的License请查看[LICENSES.md](LICENSES.md)
 
@@ -173,23 +174,25 @@ main_api.json
 
     // 在仅@且没有任何文本的情况下
     // 返回的消息内容
-    "hello_content": "Repeater is Online!",
-    
-    // hello_content 的可变后缀
-    // 这里的 Key 是一个用 `-` 分割的日期
-    // Value 是对应日期的消息内容
-    // 例如 "06-28" 对应 6月28日
-    // 当该值与 hello_messages_by_weekday 同时匹配时
-    // 该值将在上方显示
-    "hello_messages_for_date": {
-        "06-28": "\n\n今天是 6-28 ，是复读机生日！！！\n好耶！！！ ヽ(✿ﾟ▽ﾟ)ノ"
-    },
+    "hello_content": {
 
-    // hello_content 的可变后缀
-    // 这里的 Key 是星期
-    // Value 是星期对应的消息内容
-    "hello_messages_by_weekday": {
-        "4": "\n\n疯狂星期四! ! !\n复读机想要 50,000,000 Token ，求求了 (>^< ;)"
+        // 基础内容
+        // 可以让欢迎内容有相同的前缀
+        "content": "Repeater is Online!",
+        
+        // 后缀内容
+        "suffixs": [
+            {
+                // Cron 表达式
+                // 此处建议填写范围大一些
+                // 否则用户可能命中不到
+                // 注意：此处 Cron 不代表后缀是主动触发的，而是作为时间验证器使用
+                "cron": "* * 1 1 *",
+
+                // 后缀内容
+                "content": "\nHappy New Year!"
+            }
+        ]
     },
 
     // 是否在群聊中让所有人使用同一个上下文
@@ -200,6 +203,8 @@ main_api.json
 
         // 聊天 API 超时
         "chat": 600.0,
+
+        "image": 2400.0,
 
         // 上下文操作 API 超时
         "context": 10.0,
@@ -224,6 +229,9 @@ main_api.json
 
         // 版本 API 超时
         "version": 10.0,
+
+        // 请求统计 API 超时
+        "request_log": 1200.0,
 
         // 变量展开 API 超时
         "variable_expansion": 40.0,
@@ -284,12 +292,19 @@ main_api.json
     // 是否在注册时打印 Handler 名称
     // 默认为 true
     "log_registed_handler_name": true,
+    
+    // 平台接口配置
+    "platform_interface": {
+        // 是否缓存
+        "cache": true,
+        
+        // 接口缓存大小
+        "cache_size": 1000,
+    
+        // 接口缓存超时时间
+        "cache_timeout": 60,
+    },
 
-    // 平台接口缓存大小
-    "platform_interface_cache_size": 1000,
-
-    // 平台接口缓存超时时间
-    "platform_interface_cache_timeout": 60,
 
     // Ciallo~ (∠・ω< )⌒★
     // 在执行 ciallo 命令时，发送的内容
@@ -383,7 +398,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
 | :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
 | `echo`                     | `echo`   | `Echo`                    | `ECHO`      | 4.0 Beta       | 重复消息                       | 要重复消息内容                             | 重复消息内容，包括特殊消息段，如果输入不跟内容，复读机会等待下一条消息 |
-| `noPromptEcho`             | `npecho` | `NoPromptEcho`            | `ECHO`      | 4.3.16.0       | 无额外反应的 Echo              | 任何内容                                  | 与 `echo` 命令相同，但不在未找到参数时显示等待提示词 |
+| `noPromptEcho`             | `npecho` | `NoPromptEcho`            | `ECHO`      | 4.3.16.0       | 无额外反应的 Echo              | 任何内容                                   | 与 `echo` 命令相同，但不在未找到参数时显示等待提示词 |
 
 ### Chat Command
 
@@ -413,6 +428,12 @@ PS：该配置文件是专门用于对接ChatTTS的
 | :---                       | :---     | :---                      | :---        | :---           | :---                          | :---                                      | :---    |
 | `/fillInMiddle`            | `fim`    | `FillInTheMiddle`         | `FIM`       | 4.6.10.0       | FIM 内容生成                   | 自然语言输入                               | 用 `[fill_this]` 或 `___` 来填充空缺内容，一次只能填写一个空位 |
 | `/fillAtAfter`             | `faa`    | `FillAtAfter`             | `FIM`       | 4.6.10.0       | FIM 前缀续写                   | 自然语言前缀                               | 添入一个前缀，模型会自动尝试续写内容 |
+
+### Gen Image Command
+
+| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :---                      | :---        | :---           | :---                          | :---                                      | :---    |
+| `generateImage`            | `gi`     | `GenerateImage`           | `GENIMG`    | 4.8.0.0        | 使用模型生成图片               | 提示词                                     | 使用模型生成图片内容 |
 
 ### Context Command
 
@@ -482,6 +503,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `setPresetDirectives`      | `spd`    | `SetPresetDirectives`     | `CONFIG`    | 4.6.1.0        | 设置 Directive 预设           | *\*多个 Directive*                          | 添加 Directive |
 | `addPresetDirectives`      | `apd`    | `AddPresetDirectives`     | `CONFIG`    | 4.6.1.0        | 添加 Directive 预设           | `<type>: <name>`                            | 添加 Directive |
 | `removePresetDirectives`   | `rpd`    | `RemovePresetDirectives`  | `CONFIG`    | 4.6.1.0        | 移除 Directive 预设           | `<type>: <name>`                            | 移除 Directive |
+| `setImageModel`            | `sim`    | `SetImageModel`           | `CONFIG`    | 4.8.0.0        | 设置 Image Model              | 模型名称                                    | 设置 Image Model |
 
 ### Branch Command
 
@@ -581,11 +603,12 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `envUploadToNexus`         | `eutn`   | `EnvUploadToNexus`        | `NEXUS`     | 4.3.19.0       | 上传环境到 Nexus               | 超时秒数                                   | 同时上传所有用户数据到Nexus |
 | `envDownloadFromNexus`     | `edfn`   | `EnvDownloadFromNexus`    | `NEXUS`     | 4.3.19.0       | 从 Nexus 下载环境              | 资源 UUID                                  | 从 Nexus 同时下载所有用户数据 |
 
-### User Config Command
+### Client Config Command
 
-| Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
-| :---                       | :---     | :--                       | :--         | :--            | :--                           | :--                                       | :--     |
-| `changeBackend`            | `cb`     | `ChangeBackend`           | `USER`      | 4.7.4.0       | 更改后端                        | 后端 ID                                   | 更换用于处理请求的后端 |
+| Command                    | Abridge  | Full Name                 | Type            | Joined Version | Description                   | Parameter Description                     | Remarks |
+| :---                       | :---     | :--                       | :--             | :--            | :--                           | :--                                       | :--     |
+| `changeBackend`            | `cb`     | `ChangeBackend`           | `CLIENT_CONFIG` | 4.7.4.0        | 更改后端                       | 后端 ID                                   | 更换用于处理请求的后端 |
+| `setHelloContent`          | `shc`    | `SetHelloContent`         | `CLIENT_CONFIG` | 4.8.0.0        | 设置欢迎内容                   | 欢迎内容配置                               | 设置客户端启动时的欢迎内容 |
 
 ### Licenses Command
 
