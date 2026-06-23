@@ -13,8 +13,8 @@ class Namespace(BaseModel):
     )
 
     mode: MessageSource = MessageSource.GROUP
-    group_id: int | None = None
-    user_id: int = 0
+    group_id: str | None = None
+    user_id: str = ""
 
     @property
     def _namespace(self) -> str:
