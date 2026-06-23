@@ -55,6 +55,9 @@ class CommandPackage(ABC, Generic[T]):
     Command Package Base Class
     """
 
+    __time_for_registed__: int
+    """Time for registed"""
+
     cmd: str | tuple[str, ...]
     """[Command Only] Command"""
 
@@ -100,6 +103,12 @@ class CommandPackage(ABC, Generic[T]):
     documents: str | list[str] | None = None
     """This handler's documentation"""
 
+    description: str | list[str] | None = None
+    """This handler's description"""
+
+    docs_delimiter: str = "\n"
+    """Documentation delimiter"""
+
     superuser_permissions: bool = False
     """Whether the Handler is superuser permissions."""
 
@@ -108,20 +117,30 @@ class CommandPackage(ABC, Generic[T]):
         """The human-readable name of the Handler (required) """
         return f"Repeater.{self.cmd_type.value}.{self.__class__.__name__}"
     
-    @property
-    def description(self) -> str:
+    def get_description(self) -> str:
         """Handler description"""
         
-        text = ""
-
-        if isinstance(self.documents, str):
-            text = textwrap.dedent(
-                self.documents.expandtabs(4)
-            )
-        elif isinstance(self.documents, list):
-            text = "\n".join(self.documents)
+        if self.documents:
+            doc = self.documents
+        elif self.description:
+            doc = self.description
+        elif self.__doc__:
+            doc = self.__doc__
+        else:
+            doc = ""
         
-        return text
+        if isinstance(doc, str):
+            return doc
+        elif isinstance(doc, list):
+            merged_doc = self.docs_delimiter.join(doc)
+            return merged_doc
+        else:
+            logger.warning(
+                "Handler {component} has an invalid documentation type: {doc_type}",
+                component=self.component,
+                doc_type=type(doc).__name__,
+            )
+            return ""
     
     def __init__(self, *args, **kwargs):
         """

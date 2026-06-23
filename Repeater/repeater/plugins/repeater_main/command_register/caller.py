@@ -1,5 +1,5 @@
 import sys
-import json
+import time
 import asyncio
 from .package import CommandPackage
 from ..assist import PersonaInfo, SendMsg
@@ -71,6 +71,8 @@ class CommandCaller:
                 package.handler(persona_info, send_msg)
             )
             running = RunningPackage(
+                start_time = time.time_ns(),
+                start_monotonic_time = time.perf_counter_ns(),
                 package = package,
                 matcher = send_msg.matcher,
                 persona_info = persona_info,
@@ -105,11 +107,12 @@ class CommandCaller:
         return await cls.enter_handler(package_instance, persona_info_copy, send_msg_copy)
 
     @classmethod
-    def register(cls, package: Type[CommandPackage[T_Handler_Result]]) -> Type[CommandPackage[T_Handler_Result]]:
+    def register(cls, package: Type[CommandPackage[T_Handler_Result]], overwrite: bool = False) -> Type[CommandPackage[T_Handler_Result]]:
         if package.enabled:
             try:
                 package.on_before_instantiate()
                 package_instance = package()
+                package_instance.__time_for_registed__ = time.time_ns()
                 matcher = package_instance.on_matcher_registered(
                     cls._get_matcher(package_instance)
                 )

@@ -3,7 +3,7 @@ from typing import TypeVar, Generic, Type
 from .package import CommandPackage
 from ..assist import PersonaInfo, SendMsg
 from nonebot.matcher import Matcher
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 T = TypeVar("T")
 
@@ -12,6 +12,8 @@ class RunningPackage(Generic[T]):
     """
     运行中的命令包
     """
+    start_time: int
+    start_monotonic_time: int
     package: CommandPackage[T]
     matcher: Type[Matcher] | None
     persona_info: PersonaInfo
