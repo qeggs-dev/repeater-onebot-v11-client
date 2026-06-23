@@ -585,7 +585,7 @@ class SendMsg:
     @overload
     async def send_chat_response(
             self,
-            reasoning_content: str = "",
+            reasoning_content: str | None = None,
             content: str = "",
             reply: bool = True,
             continue_handler: Literal[False] = False
@@ -594,7 +594,7 @@ class SendMsg:
     @overload
     async def send_chat_response(
             self,
-            reasoning_content: str = "",
+            reasoning_content: str | None = None,
             content: str = "",
             reply: bool = True,
             continue_handler: Literal[True] = True
@@ -602,7 +602,7 @@ class SendMsg:
     
     async def send_chat_response(
             self,
-            reasoning_content: str = "",
+            reasoning_content: str | None = None,
             content: str = "",
             reply: bool = True,
             continue_handler: bool = False
