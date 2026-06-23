@@ -4,6 +4,7 @@ class CmdTypes(Enum):
     CHAT = "CHAT"
     FIM = "FIM"
     CONTEXT = "CONTEXT"
+    GENIMG = "GENIMG"
     PROMPT = "PROMPT"
     CONFIG = "CONFIG"
     MIXED = "MIXED"
