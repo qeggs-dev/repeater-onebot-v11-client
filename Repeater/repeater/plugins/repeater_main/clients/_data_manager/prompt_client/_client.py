@@ -32,6 +32,6 @@ class PromptClient(UserDataClient):
         )
         return Response(response)
     
-    def get_prompt_url(self) -> str | None:
+    def get_prompt_url(self) -> str:
         return self.join_url(GET_PROMPT_ROUTE, f"{self.namespace_str}.md")
     # endregion

@@ -74,7 +74,7 @@ class ContextClient(UserDataClient):
         else:
             return Response(response)
     
-    def get_context_url(self) -> str | None:
+    def get_context_url(self) -> str:
         return self.join_url(GET_CONTEXT_ROUTE, f"{self._persona_info.namespace_str}.json")
     # endregion
 
