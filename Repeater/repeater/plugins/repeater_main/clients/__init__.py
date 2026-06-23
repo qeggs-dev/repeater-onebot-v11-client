@@ -1,5 +1,6 @@
 from ._chat_client import *
 from ._data_manager import *
+from ._image_client import *
 from ._model_info import *
 from ._request_log_client import *
 from ._status_client import *
