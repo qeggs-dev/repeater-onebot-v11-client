@@ -29,7 +29,6 @@ class ImportPublicPkgs:
         self.caller_file: str = caller_file
        
         self.package_path: str = os.path.dirname(self.caller_file)
-        self.package: str = self.caller_name
         self.subpackages: list[str] = []
         self.modules: list[ModuleType] = []
     
@@ -39,7 +38,7 @@ class ImportPublicPkgs:
                 if _module_name.startswith("_"):
                     continue
                 self.subpackages.append(_module_name)
-                module = importlib.import_module("." + _module_name, package = self.package)
+                module = importlib.import_module("." + _module_name)
                 self.modules.append(module)
                 yield module
             except Exception as e:
