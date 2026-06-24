@@ -396,14 +396,11 @@ class SendMsg:
             "Send Hello Message"
         )
         hello_content = await self.get_hello_content()
-        if hello_content:
-            await self.send_text(
-                hello_content,
-                reply = reply,
-                continue_handler = continue_handler
-            )
-        elif not continue_handler:
-            self.handler_finished()
+        await self.send_text(
+            hello_content,
+            reply = reply,
+            continue_handler = continue_handler
+        )
     
     @property
     def prompt_prefix(self) -> str:
@@ -1039,7 +1036,7 @@ class SendMsg:
             )
             raise
         if not continue_handler:
-            self.handler_finished()
+            self.break_handler()
     
     async def _send_to_target(
         self,
