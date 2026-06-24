@@ -1,6 +1,6 @@
 from ...assist import PersonaInfo, SendMsg, Response
 from ...command_register import CommandCaller
-from ._template_render import TemplateRender
+from .template_render import TemplateRender
 
 @CommandCaller.register
 class TemplateRenderText(TemplateRender):

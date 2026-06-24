@@ -1,13 +1,13 @@
-from ..assist import PersonaInfo, SendMsg
-from ..cmd_info import CmdTypes
-from ..command_register import(
+from ...assist import PersonaInfo, SendMsg
+from ...cmd_info import CmdTypes
+from ...command_register import(
     CommandCaller,
     CommandPackage
 )
 
 
 @CommandCaller.register
-class TextRender(CommandPackage):
+class MarkdownRender(CommandPackage):
     cmd = "markdownRender"
     aliases = {
         "mr",

@@ -1,11 +1,11 @@
-from ..assist import PersonaInfo, SendMsg
-from ..cmd_info import CmdTypes
-from ..command_register import(
+from ...assist import PersonaInfo, SendMsg
+from ...cmd_info import CmdTypes
+from ...command_register import(
     CommandCaller,
     CommandPackage
 )
-from ..clients import VersionAPIClient
-from .._adaptation_info import __adaptation__
+from ...clients import VersionAPIClient
+from ..._adaptation_info import __adaptation__
 
 
 @CommandCaller.register

@@ -1,9 +1,5 @@
-from .ciallo import Ciallo
-from .random_fortune import RandomFortune
-from .useless_button import UselessButton
+from ..._import_public_pkgs import ImportPublicPkgs as _ImportPublicPkgs
 
-__all__ = [
-    "Ciallo",
-    "RandomFortune",
-    "UselessButton",
-]
+_import_public_pkgs= _ImportPublicPkgs()
+_import_public_pkgs.import_pkgs()
+__all__ = _import_public_pkgs.all_list() # type: ignore

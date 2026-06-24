@@ -1,15 +1,15 @@
-from ..assist import (
+from ...assist import (
     get_first_mentioned_user,
     PersonaInfo,
     Namespace,
     SendMsg
 )
-from ..cmd_info import CmdTypes
-from ..command_register import(
+from ...cmd_info import CmdTypes
+from ...command_register import(
     CommandCaller,
     CommandPackage
 )
-from ..command_register import CommandCaller, CommandPackage
+from ...command_register import CommandCaller, CommandPackage
 
 
 @CommandCaller.register
@@ -34,8 +34,8 @@ class GetNamespace(CommandPackage):
         else:
             await send_msg.send_prompt(
                 Namespace(
-                    mode=namespace.mode,
-                    group_id=group_id,
-                    user_id=int(mentioned_id)
+                    mode = namespace.mode,
+                    group_id = group_id,
+                    user_id = mentioned_id
                 ).namespace_str
             )

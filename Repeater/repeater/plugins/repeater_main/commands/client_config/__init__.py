@@ -1,7 +1,6 @@
-from .change_backend import ChangeBackend
-from .set_hello_content import SetHelloContent
+from ..._import_public_pkgs import ImportPublicPkgs as _ImportPublicPkgs
 
-__all__ = [
-    "ChangeBackend",
-    "SetHelloContent",
-]
+_import_public_pkgs= _ImportPublicPkgs()
+_import_public_pkgs.import_pkgs()
+_import_public_pkgs.inject_modules()
+__all__ = _import_public_pkgs.all_list() # type: ignore

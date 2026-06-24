@@ -1,11 +1,6 @@
-from ._choose_group_member import ChooseGroupMember
-from ._recent_speaking_ranking import RecentSpeakingRanking
-from ._audio_to_file import AudioToFile
-from ._summary_chat_record import SummaryChatRecord
+from ..._import_public_pkgs import ImportPublicPkgs as _ImportPublicPkgs
 
-__all__ = [
-    "ChooseGroupMember",
-    "RecentSpeakingRanking",
-    "AudioToFile",
-    "SummaryChatRecord",
-]
+_import_public_pkgs= _ImportPublicPkgs()
+_import_public_pkgs.import_pkgs()
+_import_public_pkgs.inject_modules()
+__all__ = _import_public_pkgs.all_list() # type: ignore

@@ -43,16 +43,22 @@ class SetHelloContent(CommandPackage):
                 await send_msg("Invalid JSON or YAML format.")
                 return
         
-        try:
-            user_configs.hello_content = HelloContent(
-                **data
-            )
-        except ValidationError as e:
-            errors = e.errors()
-            buffer: list[str] = []
-            for error in errors:
-                buffer.append(f"{'.'.join(str(i) for i in error['loc'])}: {error['msg']}")
-            await send_msg.send_error(
-                f"Invalid hello content setting:\n{''.join(buffer)}"
-            )
+        if data is None:
+            user_configs.hello_content = None
+        elif not isinstance(data, dict):
+            await send_msg("Invalid JSON or YAML format.")
+            return
+        else:
+            try:
+                user_configs.hello_content = HelloContent(
+                    **data
+                )
+            except ValidationError as e:
+                errors = e.errors()
+                buffer: list[str] = []
+                for error in errors:
+                    buffer.append(f"{'.'.join(str(i) for i in error['loc'])}: {error['msg']}")
+                await send_msg.send_error(
+                    f"Invalid hello content setting:\n{''.join(buffer)}"
+                )
         await persona_info.set_user_configs(user_configs)

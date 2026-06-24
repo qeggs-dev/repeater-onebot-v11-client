@@ -1,7 +1,6 @@
-from ._model_info import GetModelList
-from ._ping_provider_host import PingProviderHost
+from ..._import_public_pkgs import ImportPublicPkgs as _ImportPublicPkgs
 
-__all__ = [
-    "GetModelList",
-    "PingProviderHost",
-]
+_import_public_pkgs= _ImportPublicPkgs()
+_import_public_pkgs.import_pkgs()
+_import_public_pkgs.inject_modules()
+__all__ = _import_public_pkgs.all_list() # type: ignore

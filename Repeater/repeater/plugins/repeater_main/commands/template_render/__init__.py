@@ -1,9 +1,6 @@
-from ._template_render import TemplateRender
-from ._template_render_text import TemplateRenderText
-from ._template_render_image import TemplateRenderImage
+from ..._import_public_pkgs import ImportPublicPkgs as _ImportPublicPkgs
 
-__all__ = [
-    "TemplateRender",
-    "TemplateRenderText",
-    "TemplateRenderImage",
-]
+_import_public_pkgs= _ImportPublicPkgs()
+_import_public_pkgs.import_pkgs()
+_import_public_pkgs.inject_modules()
+__all__ = _import_public_pkgs.all_list() # type: ignore
