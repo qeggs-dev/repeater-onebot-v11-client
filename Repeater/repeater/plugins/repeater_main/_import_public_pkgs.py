@@ -29,16 +29,17 @@ class ImportPublicPkgs:
         self.caller_file: str = caller_file
        
         self.package_path: str = os.path.dirname(self.caller_file)
+        self.package: str = self.caller_name
         self.subpackages: list[str] = []
         self.modules: list[ModuleType] = []
     
     def import_pkgs_iter(self) -> Generator[ModuleType, None, None]:
-        for _, _module_name, _ in pkgutil.iter_modules([self.package_path]):
+        for _, module_name, _ in pkgutil.iter_modules([self.package_path]):
             try:
-                if _module_name.startswith("_"):
+                if module_name.startswith("_"):
                     continue
-                self.subpackages.append(_module_name)
-                module = importlib.import_module("." + _module_name)
+                self.subpackages.append(module_name)
+                module = importlib.import_module("." + module_name, package = self.package)
                 self.modules.append(module)
                 yield module
             except Exception as e:
