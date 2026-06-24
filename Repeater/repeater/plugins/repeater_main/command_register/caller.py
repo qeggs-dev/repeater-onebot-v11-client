@@ -27,6 +27,7 @@ T_Handler_Result = TypeVar("T_Handler_Result")
 
 class CommandCaller:
     commands: dict[Type[CommandPackage[Any]], CommandPackage[Any]] = {}
+    triggers: dict[str | tuple[str, ...], Type[CommandPackage[Any]]] = {}
     matchers: dict[Type[CommandPackage[Any]], Type[Matcher]] = {}
     runnings: set[RunningPackage] = set()
 
@@ -130,6 +131,8 @@ class CommandCaller:
         if package.enabled:
             try:
                 package.on_before_instantiate()
+                if package in cls.commands:
+                    package.on_duplicate_handler()
                 package_instance = package()
                 package_instance.__time_for_registed__ = time.time_ns()
                 matcher = package_instance.on_matcher_registered(
@@ -157,10 +160,20 @@ class CommandCaller:
                 matcher.append_handler(handler)
                 cls.commands[package] = package_instance
                 cls.matchers[package] = matcher
+                cls._reg_triggers(package_instance.cmd, package)
+                if package_instance.aliases:
+                    for trigger in package_instance.aliases:
+                        cls._reg_triggers(trigger, package)
                 package_instance.on_registed()
             except:
                 package.on_reg_failed(*sys.exc_info())
         return package
+    
+    @classmethod
+    def _reg_triggers(cls, trigger: str | tuple[str, ...], package: Type[CommandPackage[T_Handler_Result]]):
+        if trigger in cls.triggers:
+            package.on_duplicate_trigger(trigger)
+        cls.triggers[trigger] = package
     
     @classmethod
     def log_registed_info(cls):

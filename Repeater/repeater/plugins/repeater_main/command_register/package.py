@@ -161,6 +161,8 @@ class CommandPackage(ABC, Generic[T]):
             self.documents = textwrap.dedent(
                 self.documents.expandtabs(4)
             )
+        self._args = args
+        self._kwargs = kwargs
         self.__post_init__(*args, **kwargs)
     
     def __pre_init__(self):
@@ -174,6 +176,19 @@ class CommandPackage(ABC, Generic[T]):
         This method will be called at initialization time.
         """
         pass
+
+    def __repr__(self):
+        args = ", ".join(repr(item) for item in self._args)
+        kwargs = ", ".join(f"{repr(key)}={repr(value)}" for key, value in self._kwargs.items())
+
+        if args and kwargs:
+            return f"{self.__class__.__name__}({args}, {kwargs})"
+        elif args:
+            return f"{self.__class__.__name__}({args})"
+        elif kwargs:
+            return f"{self.__class__.__name__}({kwargs})"
+        else:
+            return f"{self.__class__.__name__}()"
 
     async def message_enter(self, bot: Bot, event: MessageEvent, matcher: Type[Matcher]) -> tuple[PersonaInfo, SendMsg]:
         """
@@ -327,7 +342,7 @@ class CommandPackage(ABC, Generic[T]):
         if isinstance(exception, BreakWithErrorMessage):
             await send_msg.send_error(str(exception))
         elif isinstance(exception, BreakHandler):
-            send_msg.break_handler()
+            return None
 
     async def on_error(self, exception: Exception, persona_info: PersonaInfo, send_msg: SendMsg) -> T | Any | None | NoReturn:
         """
@@ -471,3 +486,39 @@ class CommandPackage(ABC, Generic[T]):
         Both instance and class methods are allowed.
         """
         pass
+    
+    @classmethod
+    def on_duplicate_trigger(cls, trigger: str | tuple[str, ...]):
+        """
+        This section is executed when the Handler is triggered by a duplicate trigger.
+
+        You can override this method and do what you need to do.
+
+        :param persona_info: The persona_info object
+        :param send_msg: The send_msg object
+        """
+        if storage_configs.throw_on_duplicate.trigger:
+            raise ValueError(f"Trigger {repr(trigger)} is already registered")
+        else:
+            logger.warning(
+                "Trigger {trigger} is already registered, this can have undesired consequences.",
+                trigger = repr(trigger)
+            )
+
+    @classmethod
+    def on_duplicate_handler(cls):
+        """
+        This section is executed when the Handler is triggered by a duplicate handler.
+
+        You can override this method and do what you need to do.
+
+        :param persona_info: The persona_info object
+        :param send_msg: The send_msg object
+        """
+        if storage_configs.throw_on_duplicate.handler:
+            raise ValueError(f"Handler {repr(cls)} is already registered")
+        else:
+            logger.warning(
+                "Handler {handler} is already registered, this may result in overwriting.",
+                handler = repr(cls)
+            )
