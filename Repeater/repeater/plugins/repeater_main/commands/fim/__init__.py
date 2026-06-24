@@ -1,5 +1,5 @@
-from ..._import_public_pkgs import ImportPublicPkgs as _ImportPublicPkgs
+from ..._submodule_importer import SubmoduleImporter as _ImportPublicPkgs
 
-_import_public_pkgs= _ImportPublicPkgs()
-_import_public_pkgs.import_pkgs()
-__all__ = _import_public_pkgs.all_list() # type: ignore
+_importer= _ImportPublicPkgs()
+_importer.import_pkgs()
+__all__ = _importer.all_list() # type: ignore
