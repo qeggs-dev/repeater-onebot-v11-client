@@ -13,7 +13,7 @@ class SetImageModel(BaseConfig):
         "set_image_model",
         "Set_Image_Model",
         "SetImageModel",
-        "SET_DEFAULT_MODEL",
+        "SET_IMAGE_MODEL",
     }
     field = "image_model_id"
     
