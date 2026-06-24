@@ -18,7 +18,7 @@ class SyncStorage(ABC, Generic[T_STORAGE_DATA]):
         """
         self.storage_base_path = Path(storage_base_path)
     
-    def _path(self, path: str | os.PathLike):
+    def path(self, path: str | os.PathLike):
         path = Path(path)
         if path.is_absolute():
             return path
@@ -45,12 +45,12 @@ class SyncStorage(ABC, Generic[T_STORAGE_DATA]):
         pass
 
     def move(self, src: str | os.PathLike, dst: str | os.PathLike) -> None:
-        src = self._path(src)
-        dst = self._path(dst)
+        src = self.path(src)
+        dst = self.path(dst)
         src.rename(dst)
     
     def remove(self, path: str | os.PathLike) -> None:
-        path = self._path(path)
+        path = self.path(path)
         if path.exists():
             if path.is_file():
                 path.unlink()
@@ -58,8 +58,8 @@ class SyncStorage(ABC, Generic[T_STORAGE_DATA]):
                 shutil.rmtree(path)
     
     def copy(self, src: str | os.PathLike, dst: str | os.PathLike) -> None:
-        src = self._path(src)
-        dst = self._path(dst)
+        src = self.path(src)
+        dst = self.path(dst)
         if src.is_file():
             shutil.copy(src, dst)
         elif src.is_dir():

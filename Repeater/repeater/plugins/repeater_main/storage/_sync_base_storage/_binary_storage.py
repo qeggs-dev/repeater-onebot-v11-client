@@ -8,7 +8,7 @@ logger = base_logger.bind(module = "Storage.Sync.Binary")
 class BinaryStorage(SyncStorage[bytes]):
     def load(self, path: str | os.PathLike) -> bytes:
         try:
-            path = self._path(path)
+            path = self.path(path)
             logger.info(f"Loading binary from {path}")
             if not path.parent.exists():
                 path.parent.mkdir(parents=True)
@@ -20,7 +20,7 @@ class BinaryStorage(SyncStorage[bytes]):
     
     def load_line_stream(self, path: str | os.PathLike) -> Generator[bytes, None, None]:
         try:
-            path = self._path(path)
+            path = self.path(path)
             logger.info(f"Use line-by-line chunk streaming to load the file \"{path}\"")
             with open(path, "rb") as f:
                 for line in f:
@@ -31,7 +31,7 @@ class BinaryStorage(SyncStorage[bytes]):
     
     def load_stream(self, path: str | os.PathLike, chunk_size: int = 1024) -> Generator[bytes, None, None]:
         try:
-            path = self._path(path)
+            path = self.path(path)
             logger.info(f"Stream load the file \"{path}\" in {chunk_size}-byte chunks")
             with open(path, "rb") as f:
                 while True:
@@ -45,7 +45,7 @@ class BinaryStorage(SyncStorage[bytes]):
     
     def save(self, path: str | os.PathLike, data: bytes, append: bool = False) -> None:
         try:
-            path = self._path(path)
+            path = self.path(path)
             logger.info(f"Saving binary to {path}")
             if not path.parent.exists():
                 path.parent.mkdir(parents=True)
@@ -57,11 +57,11 @@ class BinaryStorage(SyncStorage[bytes]):
     
     def save_stream(self, path: str | os.PathLike, stream: Iterable[bytes], append: bool = False) -> None:
         try:
-            path = self._path(path)
+            path = self.path(path)
             logger.info(f"Saving binary stream to {path}")
             if not path.parent.exists():
                 path.parent.mkdir(parents=True)
-            with open(self._path(path), "wb" if not append else "ab") as f:
+            with open(self.path(path), "wb" if not append else "ab") as f:
                 for line in stream:
                     f.write(line)
         except Exception as e:
