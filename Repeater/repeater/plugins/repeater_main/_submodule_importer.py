@@ -44,6 +44,9 @@ class SubmoduleImporter:
         self.modules: list[ModuleType] = []
     
     def import_pkgs_iter(self, name_filter: Callable[[str], bool] = lambda x: not x.startswith("_")) -> Generator[ModuleType, None, None]:
+        """
+        Iterate over all subpackages and modules in the package.
+        """
         for _, module_name, _ in pkgutil.iter_modules([self.package_path]):
             try:
                 if name_filter(module_name):
@@ -60,12 +63,18 @@ class SubmoduleImporter:
                     raise
 
     def import_pkgs(self) -> list[ModuleType]:
+        """
+        Import all subpackages and modules in the package.
+        """
         models: list[ModuleType] = []
         for module in self.import_pkgs_iter():
             models.append(module)
         return models
     
     def model_names_iter(self) -> Generator[str, None, None]:
+        """
+        Iterate over the name of the module that has been imported.
+        """
         for module in self.modules:
             if module.__name__.startswith(self.caller_name + "."):
                 module_name = module.__name__.removeprefix(self.caller_name + ".")
@@ -74,6 +83,9 @@ class SubmoduleImporter:
             yield module_name
     
     def inject_modules(self) -> None:
+        """
+        Injects the imported module into the context.
+        """
         caller_globals, caller_locals = self._get_caller_variables()
 
         caller_name = caller_globals.get("__name__", None)
@@ -94,6 +106,9 @@ class SubmoduleImporter:
     
     @staticmethod
     def _get_caller_variables() -> tuple[dict[str, Any], dict[str, Any]]:
+        """
+        Gets the caller's variables.
+        """
         frame = inspect.currentframe()
         if frame is None:
             raise RuntimeError("Not found frame")
