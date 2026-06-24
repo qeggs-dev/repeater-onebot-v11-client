@@ -4,10 +4,10 @@ from pydantic import BaseModel
 from typing import Type, Any, TypeVar, Generic
 from pathlib import Path
 from ._mode import Mode
-from ..storage import async_json_storage, async_yaml_storage
+from ..storage import async_json_storage, async_yaml_storage, storage_path
 from ..logger import logger as base_logger
 
-logger = base_logger.bind(module = "Configs.Core")
+logger = base_logger.bind(module = "Configs.Loader")
 
 T_MODEL = TypeVar("T_MODEL", bound=BaseModel)
 
@@ -17,12 +17,19 @@ class AsyncLoader(Generic[T_MODEL]):
         self._path = Path(path)
         self._mode: Mode = mode
     
+    def get_storage_path(self) -> Path:
+        return Path(storage_path.storage_base_path) / self._path
+    
     def exists(self) -> bool:
-        return self._path.exists()
+        return self.get_storage_path().exists()
     
     async def load(self, unexist_create: bool = False, write_on_failure: bool = False) -> T_MODEL:
         if unexist_create and not self._path.exists():
             config = self._model()
+            logger.warning(
+                "Config {config_file} is not found, creating new one",
+                config_file = self._path.as_posix()
+            )
             await self.save(config)
             return config
         try:
@@ -34,7 +41,10 @@ class AsyncLoader(Generic[T_MODEL]):
                 raise ValueError("Unknown mode")
         except Exception as e:
             if write_on_failure:
-                logger.warning(f"Failed to load config from \"{self._path.as_posix()}\", writing default config")
+                logger.warning(
+                    "Failed to load config from \"{config_file}\", writing default config",
+                    config_file = self._path.as_posix()
+                )
                 model = self._model()
                 await self.save(model)
                 return model
