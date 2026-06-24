@@ -3,13 +3,23 @@ import sys
 import inspect
 import pkgutil
 import importlib
-from typing import Any, Generator
+from typing import Any, Generator, Callable
 from types import ModuleType
 from .logger import logger
 from .client_net_configs import storage_configs
 
-class ImportPublicPkgs:
-    """Import public packages"""
+class SubmoduleImporter:
+    """
+    Import submodules recursively from a package.
+
+    Usage:
+
+        >>> importer = SubmoduleImporter()
+        >>> importer.import_pkgs(
+        ...     lambda: x = not x.startswith("_"),
+        ... )
+        >>> importer.inject_modules() # Optional, because the program already registers these variables at import time.
+    """
 
     def __init__(self):
         caller_globals, caller_locals = self._get_caller_variables()
@@ -33,15 +43,14 @@ class ImportPublicPkgs:
         self.subpackages: list[str] = []
         self.modules: list[ModuleType] = []
     
-    def import_pkgs_iter(self) -> Generator[ModuleType, None, None]:
+    def import_pkgs_iter(self, name_filter: Callable[[str], bool] = lambda x: not x.startswith("_")) -> Generator[ModuleType, None, None]:
         for _, module_name, _ in pkgutil.iter_modules([self.package_path]):
             try:
-                if module_name.startswith("_"):
-                    continue
-                self.subpackages.append(module_name)
-                module = importlib.import_module("." + module_name, package = self.package)
-                self.modules.append(module)
-                yield module
+                if name_filter(module_name):
+                    self.subpackages.append(module_name)
+                    module = importlib.import_module("." + module_name, package = self.package)
+                    self.modules.append(module)
+                    yield module
             except Exception as e:
                 logger.exception(
                     "Import error: {error}",
