@@ -51,6 +51,7 @@ from typing import (
     TypeVar,
     Generic,
 )
+from .sub_cmd_breaked import SubCmdBreaked
 
 T = TypeVar("T")
 
@@ -342,7 +343,7 @@ class CommandPackage(ABC, Generic[T]):
         if isinstance(exception, BreakWithErrorMessage):
             await send_msg.send_error(str(exception))
         elif isinstance(exception, BreakHandler):
-            return None
+            return SubCmdBreaked
 
     async def on_error(self, exception: Exception, persona_info: PersonaInfo, send_msg: SendMsg) -> T | Any | None | NoReturn:
         """

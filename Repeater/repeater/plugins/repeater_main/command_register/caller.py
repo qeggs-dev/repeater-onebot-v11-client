@@ -22,18 +22,20 @@ from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Message
 from .listen_type import ListenType
 from nonebot import logger
 from .running_package import RunningPackage
+from .sub_cmd_breaked import SubCmdBreaked
 
 T_Handler_Result = TypeVar("T_Handler_Result")
 
 class CommandCaller:
     commands: dict[Type[CommandPackage[Any]], CommandPackage[Any]] = {}
     triggers: dict[str | tuple[str, ...], Type[CommandPackage[Any]]] = {}
+    types: dict[CmdTypes, list[Type[CommandPackage[Any]]]] = {}
     matchers: dict[Type[CommandPackage[Any]], Type[Matcher]] = {}
     runnings: set[RunningPackage] = set()
 
     @classmethod
-    def get_command_handler(cls, package: CommandPackage[T_Handler_Result], matcher: Type[Matcher]) -> Callable[[Bot, MessageEvent, Message], Awaitable[T_Handler_Result | Any | None | NoReturn]]:
-        async def command_handler(bot: Bot, event: MessageEvent, args: Message = CommandArg()) -> T_Handler_Result | None:
+    def get_command_handler(cls, package: CommandPackage[T_Handler_Result], matcher: Type[Matcher]) -> Callable[[Bot, MessageEvent, Message], Awaitable[T_Handler_Result | Any | SubCmdBreaked | None | NoReturn]]:
+        async def command_handler(bot: Bot, event: MessageEvent, args: Message = CommandArg()) -> T_Handler_Result | Any | SubCmdBreaked | None | NoReturn:
             logger.info(
                 "Run command handler: {name}",
                 name = package.component,
@@ -43,8 +45,8 @@ class CommandCaller:
         return command_handler
     
     @classmethod
-    def get_message_handler(cls, package: CommandPackage[T_Handler_Result], matcher: Type[Matcher]) -> Callable[[Bot, MessageEvent], Awaitable[T_Handler_Result | Any | None | NoReturn]]:
-        async def message_handler(bot: Bot, event: MessageEvent) -> T_Handler_Result | None:
+    def get_message_handler(cls, package: CommandPackage[T_Handler_Result], matcher: Type[Matcher]) -> Callable[[Bot, MessageEvent], Awaitable[T_Handler_Result | Any | SubCmdBreaked | None | NoReturn]]:
+        async def message_handler(bot: Bot, event: MessageEvent) -> T_Handler_Result | Any | SubCmdBreaked | None | NoReturn:
             logger.info(
                 "Run message handler: {name}",
                 name = package.component,
@@ -54,7 +56,19 @@ class CommandCaller:
         return message_handler
     
     @classmethod
-    async def enter_handler(cls, package: CommandPackage[T_Handler_Result], persona_info: PersonaInfo, send_msg: SendMsg) -> T_Handler_Result | Any | None | NoReturn:
+    async def enter_handler(cls, package: CommandPackage[T_Handler_Result], persona_info: PersonaInfo, send_msg: SendMsg) -> T_Handler_Result | Any | SubCmdBreaked | None | NoReturn:
+        result = await cls._enter_handler(
+            package,
+            persona_info,
+            send_msg
+        )
+        if isinstance(result, type):
+            if issubclass(result, SubCmdBreaked):
+                return result()
+        return result
+    
+    @classmethod
+    async def _enter_handler(cls, package: CommandPackage[T_Handler_Result], persona_info: PersonaInfo, send_msg: SendMsg) -> T_Handler_Result | Any | SubCmdBreaked | Type[SubCmdBreaked] | None | NoReturn:
         try:
             logger.info(
                 "Enter command from message: {message_id}",
@@ -115,7 +129,7 @@ class CommandCaller:
             await package.handler_exit(persona_info, send_msg)
     
     @classmethod
-    async def horizontal_call(cls, package: Type[CommandPackage[T_Handler_Result]], persona_info: PersonaInfo, send_msg: SendMsg | None = None) -> T_Handler_Result | Any | None | NoReturn:
+    async def horizontal_call(cls, package: Type[CommandPackage[T_Handler_Result]], persona_info: PersonaInfo, send_msg: SendMsg | None = None) -> T_Handler_Result | Any | SubCmdBreaked | None | NoReturn:
         package_instance: CommandPackage[T_Handler_Result] = cls.commands[package]
         persona_info_copy, send_msg_copy = await package_instance.horizontal_enter(persona_info, send_msg)
         return await cls.enter_handler(package_instance, persona_info_copy, send_msg_copy)
@@ -125,9 +139,9 @@ class CommandCaller:
         if package.acceptable_sources is None:
             return True
         return persona_info.source in package.acceptable_sources
-
+    
     @classmethod
-    def register(cls, package: Type[CommandPackage[T_Handler_Result]], overwrite: bool = False) -> Type[CommandPackage[T_Handler_Result]]:
+    def register(cls, package: Type[CommandPackage[T_Handler_Result]]) -> Type[CommandPackage[T_Handler_Result]]:
         if package.enabled:
             try:
                 package.on_before_instantiate()
@@ -158,43 +172,70 @@ class CommandCaller:
                         raise ValueError(f"{package_instance.listen_type} is not supported")
                 
                 matcher.append_handler(handler)
-                cls.commands[package] = package_instance
-                cls.matchers[package] = matcher
-                cls._reg_triggers(package_instance.cmd, package)
-                if package_instance.aliases:
-                    for trigger in package_instance.aliases:
-                        cls._reg_triggers(trigger, package)
+                cls._reg_package(
+                    package = package,
+                    package_instance = package_instance,
+                    matcher = matcher
+                )
                 package_instance.on_registed()
             except:
                 package.on_reg_failed(*sys.exc_info())
         return package
     
     @classmethod
-    def _reg_triggers(cls, trigger: str | tuple[str, ...], package: Type[CommandPackage[T_Handler_Result]]):
+    def _reg_package(
+        cls,
+        package: Type[CommandPackage[T_Handler_Result]],
+        package_instance: CommandPackage[T_Handler_Result],
+        matcher: Type[Matcher]
+    ) -> None:
+        cls.commands[package] = package_instance
+        cls.matchers[package] = matcher
+        cls._reg_types(package_instance.cmd_type, package)
+        if package_instance.listen_type == ListenType.Command:
+            cls._reg_triggers(package_instance.cmd, package)
+            if package_instance.aliases:
+                for trigger in package_instance.aliases:
+                    cls._reg_triggers(trigger, package)
+    
+    @classmethod
+    def _reg_types(cls, cmd_type: CmdTypes, package: Type[CommandPackage[T_Handler_Result]]) -> None:
+        types_list = cls.types.setdefault(cmd_type, [])
+        types_list.append(package)
+    
+    @classmethod
+    def _reg_triggers(cls, trigger: str | tuple[str, ...], package: Type[CommandPackage[T_Handler_Result]]) -> None:
         if trigger in cls.triggers:
             package.on_duplicate_trigger(trigger)
         cls.triggers[trigger] = package
     
     @classmethod
-    def log_registed_info(cls):
+    def log_registed_info(cls) -> None:
+        total = len(cls.commands)
         logger.info(
             "Registed {count} commands",
-            count = len(cls.commands)
+            count = total
         )
-        commands:dict[CmdTypes, int] = {}
-        for package in cls.commands:
-            if package.cmd_type not in commands:
-                commands[package.cmd_type] = 0
-            commands[package.cmd_type] += 1
-        for cmd_type, count in commands.items():
+        
+        if total > 0:
             logger.info(
-                "Repeater.{cmd_type} registed {count} commands",
-                count = count,
-                cmd_type = cmd_type.value
+                "Repeater:"
             )
+            for cmd_type, packages in cls.types.items():
+                logger.info(
+                    "  {cmd_type}({ratio:.2%})",
+                    cmd_type = cmd_type,
+                    ratio = len(packages) / total
+                )
+                for package in packages:
+                    package_instance = cls.commands[package]
+                    logger.info(
+                        "    {name}",
+                        name = package_instance.component,
+                    )
     
     @classmethod
-    def destroy(cls, package: Type[CommandPackage[T_Handler_Result]]):
+    def destroy(cls, package: Type[CommandPackage[T_Handler_Result]]) -> None:
         if package in cls.commands:
             package_instance = cls.commands.pop(package)
             matcher = cls.matchers.pop(package)
@@ -208,7 +249,7 @@ class CommandCaller:
             matcher.destroy()
     
     @classmethod
-    async def adestroy(cls, package: Type[CommandPackage[T_Handler_Result]]):
+    async def adestroy(cls, package: Type[CommandPackage[T_Handler_Result]]) -> None:
         if package in cls.commands:
             package_instance = cls.commands.pop(package)
             matcher = cls.matchers.pop(package)
