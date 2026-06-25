@@ -9,7 +9,7 @@ from ...command_register import(
 )
 from ..._adaptation_info import __adaptation__
 from ._parse_input import parse_input
-
+from ._split_by_indent import split_by_indent
 
 @CommandCaller.register
 class Parallel(CommandPackage):
@@ -32,7 +32,7 @@ class Parallel(CommandPackage):
     """
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        lines = persona_info.message_striped_str.splitlines()
+        lines = split_by_indent(persona_info.message_striped_str)
         command_call: list[tuple[Type[CommandPackage[Any]], str]] = await parse_input(lines, send_msg)
         
         tasks: list[asyncio.Task[Any]] = []
