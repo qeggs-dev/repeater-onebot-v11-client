@@ -7,10 +7,12 @@ from ..useless_button_words_list import useless_button_words
 from .behavioral_act import BehavioralACT
 from .hello_content import HelloContent
 from .platform_interface import PlatformInterface
+from .loading import LoadingConfigs
 
 class StorageConfigs(BaseModel):
     text_length_score_configs: TextLengthScoreConfigs = Field(default_factory = TextLengthScoreConfigs)
     hello_content: HelloContent = Field(default_factory = HelloContent)
+    loading: LoadingConfigs = Field(default_factory = LoadingConfigs)
     behavioral_acts: dict[str, BehavioralACT] = Field(default_factory=dict)
     default_behavioral_act: BehavioralACT = Field(default_factory=BehavioralACT)
     backends: dict[str, str] = Field(default_factory=dict)
