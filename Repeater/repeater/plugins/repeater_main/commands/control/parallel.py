@@ -1,4 +1,3 @@
-import re
 import asyncio
 
 from typing import Any, Type
@@ -33,7 +32,8 @@ class Parallel(CommandPackage):
     """
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        command_call: list[tuple[Type[CommandPackage[Any]], str]] = await parse_input(persona_info, send_msg)
+        lines = persona_info.message_striped_str.splitlines()
+        command_call: list[tuple[Type[CommandPackage[Any]], str]] = await parse_input(lines, send_msg)
         
         tasks: list[asyncio.Task[Any]] = []
         for index, (package, args) in enumerate(command_call):

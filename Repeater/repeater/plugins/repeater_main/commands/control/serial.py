@@ -1,6 +1,3 @@
-import re
-import asyncio
-
 from typing import Any, Type, Coroutine
 from ...assist import PersonaInfo, SendMsg
 from ...cmd_info import CmdTypes
@@ -33,9 +30,10 @@ class Serial(CommandPackage):
     """
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        command_call: list[tuple[Type[CommandPackage[Any]], str]] = await parse_input(persona_info, send_msg)
+        lines = persona_info.message_striped_str.splitlines()
+        command_call: list[tuple[Type[CommandPackage[Any]], str]] = await parse_input(lines, send_msg)
         
-        tasks: list[Coroutine[Any, Any, Any]] = []
+        tasks: list[tuple[CommandPackage[Any], PersonaInfo, SendMsg]] = []
         for index, (package, args) in enumerate(command_call):
             try:
                 package_instance = CommandCaller.get_instance(package)
@@ -47,20 +45,37 @@ class Serial(CommandPackage):
                 package_instance.component
             )
             tasks.append(
-                CommandCaller.horizontal_call(
+                (
                     package_instance,
-                    persona_info = copyed_persona_info,
-                    send_msg = copyed_send_msg
+                    copyed_persona_info,
+                    copyed_send_msg
                 )
             )
         
-        results = [await task for task in tasks]
-
-        buffer: list[str] = []
-        for index, ((package, args), result) in enumerate(zip(command_call, results)):
-            package_instance = CommandCaller.get_instance(package)
-            buffer.append(
-                f"[{index}] {package_instance.component} -> {result}"
+        results = []
+        last_result: Any = None
+        for package, persona_info, send_msg in tasks:
+            msg =  persona_info.message_striped_str
+            if "$ret" in msg:
+                copyed_persona_info = persona_info.copy_with_args(
+                    msg.replace("$ret", str(last_result))
+                )
+            result = await CommandCaller.horizontal_call(
+                package,
+                copyed_persona_info,
+                send_msg
             )
-        
-        await send_msg.send_check_length("\n".join(buffer))
+            results.append(result)
+            last_result = result
+
+        if not results:
+            buffer: list[str] = []
+            for index, ((package, args), result) in enumerate(zip(command_call, results)):
+                package_instance = CommandCaller.get_instance(package)
+                buffer.append(
+                    f"[{index}] {package_instance.component} -> {result}"
+                )
+            
+            await send_msg.send_check_length_prompt("\n".join(buffer))
+        else:
+            await send_msg.send_error("No Results...")

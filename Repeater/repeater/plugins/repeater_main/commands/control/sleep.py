@@ -33,4 +33,8 @@ class Sleep(CommandPackage):
             await send_msg.send_error("Please enter a valid number")
             return
         
+        if sleep_time < 0:
+            await send_msg.send_error("Please enter a positive number")
+            return
+        
         await asyncio.sleep(sleep_time)
