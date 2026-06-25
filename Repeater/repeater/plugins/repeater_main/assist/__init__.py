@@ -11,7 +11,8 @@ from .assist_func import (
     text_length_score,
     str_to_bool,
     format_carry_duration,
-    parse_delimited_string
+    parse_delimited_string,
+    escape_string
 )
 from .persona_info import (
     EnterType,
@@ -81,6 +82,7 @@ __all__ = [
     "str_to_bool",
     "format_carry_duration",
     "parse_delimited_string",
+    "escape_string",
 
     "EnterType",
     "PersonaInfo",
