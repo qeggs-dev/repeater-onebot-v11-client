@@ -4,7 +4,7 @@ import asyncio
 from .package import CommandPackage
 from ..assist import PersonaInfo, SendMsg
 from ..cmd_info import CmdTypes
-from ..client_net_configs import storage_configs
+from ..client_configs import storage_configs
 from ..exceptions import *
 from nonebot.exception import NoneBotException
 from typing import (

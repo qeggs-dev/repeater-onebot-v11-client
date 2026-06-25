@@ -39,7 +39,7 @@ from nonebot.dependencies import Dependent
 from nonebot.exception import (
     NoneBotException
 )
-from ..client_net_configs import storage_configs
+from ..client_configs import storage_configs
 from nonebot import logger
 from typing import (
     Any,
@@ -498,7 +498,7 @@ class CommandPackage(ABC, Generic[T]):
         :param persona_info: The persona_info object
         :param send_msg: The send_msg object
         """
-        if storage_configs.throw_on_duplicate.trigger:
+        if storage_configs.loading.throw_on_duplicate.trigger:
             raise ValueError(f"Trigger {repr(trigger)} is already registered")
         else:
             logger.warning(
@@ -516,7 +516,7 @@ class CommandPackage(ABC, Generic[T]):
         :param persona_info: The persona_info object
         :param send_msg: The send_msg object
         """
-        if storage_configs.throw_on_duplicate.handler:
+        if storage_configs.loading.throw_on_duplicate.handler:
             raise ValueError(f"Handler {repr(cls)} is already registered")
         else:
             logger.warning(
