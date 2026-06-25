@@ -1,3 +1,4 @@
+from _asyncio import Future
 import sys
 import time
 import asyncio
@@ -347,14 +348,11 @@ class CommandCaller:
         package: Type[CommandPackage[T_Handler_Result]],
     ) -> tuple[
         CommandPackage[Any],
-        type[CommandPackage[Any]],
-        list[type[CommandPackage[Any]]],
-        list[type[CommandPackage[T_Handler_Result]]],
         type[Matcher]
     ]:
         package_instance: CommandPackage[Any] = cls.commands.pop(package)
         main_trigger: Type[CommandPackage[Any]] = cls.triggers.pop(package.cmd)
-        types = cls.types.pop(package_instance.cmd_type)
+        types: list[Type[CommandPackage[Any]]] = cls.types.pop(package_instance.cmd_type)
         triggers: list[Type[CommandPackage[T_Handler_Result]]] = []
         if package_instance.aliases is not None:
             triggers = [
@@ -365,9 +363,6 @@ class CommandCaller:
 
         return (
             package_instance,
-            main_trigger,
-            types,
-            triggers,
             matcher
         )
 
@@ -396,7 +391,7 @@ class CommandCaller:
         """
         Register package to types pool
         """
-        types_list = cls.types.setdefault(cmd_type, [])
+        types_list: list[Type[CommandPackage[Any]]] = cls.types.setdefault(cmd_type, [])
         types_list.append(package)
     
     @classmethod
@@ -444,15 +439,7 @@ class CommandCaller:
         :param package: The package of the Handler
         """
         if package in cls.commands:
-            (
-                package_instance,
-                main_trigger,
-                types,
-                triggers,
-                matcher
-            ) = cls._unreg_package_instance(package)
-            
-            matcher: Type[Matcher] = cls.matchers.pop(package)
+            package_instance, matcher = cls._unreg_package_instance(package)
 
             logger.info(
                 "Destroy Handler: {name}",
@@ -470,8 +457,8 @@ class CommandCaller:
         :param package: The package of the Handler
         """
         if package in cls.commands:
-            package_instance = cls.commands.pop(package)
-            matcher = cls.matchers.pop(package)
+            package_instance: CommandPackage[Any] = cls.commands.pop(package)
+            matcher: Type[Matcher] = cls.matchers.pop(package)
 
             logger.info(
                 "Async Destroy command: {name}",
@@ -527,7 +514,7 @@ class CommandCaller:
         namespace = persona_info.namespace
         if namespace in cls.listen_message_tasks:
             async with cls.listen_lock:
-                futures = cls.listen_message_tasks.pop(namespace)
+                futures: set[Future[PersonaInfo]] = cls.listen_message_tasks.pop(namespace)
                 for future in futures:
                     future.set_result(persona_info)
                 
