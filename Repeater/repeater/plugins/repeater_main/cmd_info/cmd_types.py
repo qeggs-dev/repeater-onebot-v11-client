@@ -1,6 +1,8 @@
 from enum import Enum
 
 class CmdTypes(Enum):
+    LISTEN_ALL = "LISTEN_ALL"
+    ECHO = "ECHO"
     CHAT = "CHAT"
     FIM = "FIM"
     CONTEXT = "CONTEXT"
