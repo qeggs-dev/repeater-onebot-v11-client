@@ -41,6 +41,10 @@ class CommandCaller:
         return get_driver().config.command_sep
     
     @classmethod
+    def match_trigger(cls, trigger: str | tuple[str, ...]) -> Type[CommandPackage[Any]]:
+        return cls.triggers[trigger]
+    
+    @classmethod
     def get_instance(cls, package: Type[CommandPackage[T_Handler_Result]]) -> CommandPackage[T_Handler_Result]:
         """
         Get the instance of the command package.
