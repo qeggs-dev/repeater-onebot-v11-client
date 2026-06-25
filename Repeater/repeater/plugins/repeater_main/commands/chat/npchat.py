@@ -1,7 +1,7 @@
-from ...clients import ChatClient
+from ...clients import ChatClient, ChatResponse
 from .._bases import BaseChat
 from ...command_register import CommandCaller
-from ...assist import PersonaInfo, SendMsg
+from ...assist import PersonaInfo, SendMsg, Response
 
 @CommandCaller.register
 class NPChat(BaseChat):
@@ -32,8 +32,8 @@ class NPChat(BaseChat):
         message: str,
         persona_info: PersonaInfo,
         send_msg: SendMsg
-    ) -> str:
-        response = await client.send_message(
+    ) -> Response[ChatResponse]:
+        response: Response[ChatResponse] = await client.send_message(
             message = message,
             image_url = images,
             audio_url = audios,
