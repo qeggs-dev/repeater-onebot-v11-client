@@ -31,7 +31,10 @@ class Serial(CommandPackage):
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         lines = split_by_indent(persona_info.message_striped_str)
-        command_call: list[tuple[Type[CommandPackage[Any]], str]] = await parse_input(lines, send_msg)
+        try:
+            command_call: list[tuple[Type[CommandPackage[Any]], str]] = parse_input(lines)
+        except ValueError as e:
+            await send_msg.send_error(f"Invalid Input Format: {e}")
         
         tasks: list[tuple[CommandPackage[Any], PersonaInfo, SendMsg]] = []
         for index, (package, args) in enumerate(command_call):
@@ -54,12 +57,14 @@ class Serial(CommandPackage):
         
         results = []
         last_result: Any = None
-        for package, persona_info, send_msg in tasks:
-            msg =  persona_info.message_striped_str
+        for package, info, send_msg in tasks:
+            msg =  info.message_striped_str
             if "$ret" in msg:
-                copyed_persona_info = persona_info.copy_with_args(
+                copyed_persona_info = info.copy_with_args(
                     msg.replace("$ret", str(last_result))
                 )
+            else:
+                copyed_persona_info = info
             result = await CommandCaller.horizontal_call(
                 package,
                 copyed_persona_info,
@@ -68,7 +73,7 @@ class Serial(CommandPackage):
             results.append(result)
             last_result = result
 
-        if not results:
+        if results:
             buffer: list[str] = []
             for index, ((package, args), result) in enumerate(zip(command_call, results)):
                 package_instance = CommandCaller.get_instance(package)

@@ -1,13 +1,13 @@
 import re
 import asyncio
 
-from ...assist import PersonaInfo, SendMsg, escape_string
+from ...assist import escape_string
 from ...command_register import CommandPackage, CommandCaller
 from typing import Type, Any
 
-pattern = re.compile(r"^(?P<command>\w+)\s*(?P<args>.*)$", re.IGNORECASE | re.DOTALL | re.UNICODE)
+pattern = re.compile(r"^(?P<command>\w+?)\s+?(?P<args>.*)$", re.IGNORECASE | re.DOTALL)
 
-async def parse_input(lines: list[str], send_msg: SendMsg) -> list[tuple[type[CommandPackage[Any]], str]]:
+def parse_input(lines: list[str]) -> list[tuple[type[CommandPackage[Any]], str]]:
     command_call: list[tuple[Type[CommandPackage[Any]], str]] = []
     for index, line in enumerate(lines, start=1):
         matched = pattern.match(line)
@@ -18,15 +18,13 @@ async def parse_input(lines: list[str], send_msg: SendMsg) -> list[tuple[type[Co
 
             try:
                 package = CommandCaller.match_trigger(command)
-            except KeyError:
-                await send_msg.send_error(f"[{index}] Command Not Found: {command}")
-                send_msg.break_handler()
+            except KeyError as e:
+                raise ValueError(f"[{index}] Command Not Found: {command}") from e
 
             try:
                 escaped_args = escape_string(args)
             except ValueError as e:
-                await send_msg.send_error(f"[{index}] Escape Error: {e}")
-                send_msg.break_handler()
+                raise ValueError(f"[{index}] Escape Error: {e}") from e
             
             command_call.append(
                 (
@@ -35,6 +33,5 @@ async def parse_input(lines: list[str], send_msg: SendMsg) -> list[tuple[type[Co
                 )
             )
         else:
-            await send_msg.send_error(f"[{index}] Invalid Command Format")
-            send_msg.break_handler()
+            raise ValueError(f"[{index}] Invalid Command Format")
     return command_call

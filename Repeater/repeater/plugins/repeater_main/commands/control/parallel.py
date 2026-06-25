@@ -33,7 +33,10 @@ class Parallel(CommandPackage):
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         lines = split_by_indent(persona_info.message_striped_str)
-        command_call: list[tuple[Type[CommandPackage[Any]], str]] = await parse_input(lines, send_msg)
+        try:
+            command_call: list[tuple[Type[CommandPackage[Any]], str]] = parse_input(lines)
+        except ValueError as e:
+            await send_msg.send_error(f"Invalid Input Format: {e}")
         
         tasks: list[asyncio.Task[Any]] = []
         for index, (package, args) in enumerate(command_call):
@@ -58,11 +61,14 @@ class Parallel(CommandPackage):
         
         results = await asyncio.gather(*tasks)
 
-        buffer: list[str] = []
-        for index, ((package, args), result) in enumerate(zip(command_call, results)):
-            package_instance = CommandCaller.get_instance(package)
-            buffer.append(
-                f"[{index}] {package_instance.component} -> {result}"
-            )
+        if results:
+            buffer: list[str] = []
+            for index, ((package, args), result) in enumerate(zip(command_call, results)):
+                package_instance = CommandCaller.get_instance(package)
+                buffer.append(
+                    f"[{index}] {package_instance.component} -> {result}"
+                )
         
-        await send_msg.send_check_length("\n".join(buffer))
+            await send_msg.send_check_length("\n".join(buffer))
+        else:
+            await send_msg.send_error("No Results...")
