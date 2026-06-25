@@ -64,7 +64,13 @@ class CommandCaller:
         )
         if isinstance(result, type):
             if issubclass(result, SubCmdBreaked):
-                return result()
+                result = result()
+        
+        logger.info(
+            "Handler return: {result}({type})",
+            result = repr(result),
+            type = type(result).__name__,
+        )
         return result
     
     @classmethod
