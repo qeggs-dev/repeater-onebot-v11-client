@@ -3,16 +3,13 @@ from pydantic import BaseModel, Field
 from .camouflage import Camouflage
 from .text_length_score_configs import TextLengthScoreConfigs
 from .server_api_timeout import ServerAPITimeout
-from .._useless_button_words import useless_button_words
+from ..useless_button_words_list import useless_button_words
 from .behavioral_act import BehavioralACT
 from .hello_content import HelloContent
 from .platform_interface import PlatformInterface
-from .throw_on_duplicate import ThrowOnDuplicate
 
 class StorageConfigs(BaseModel):
     text_length_score_configs: TextLengthScoreConfigs = Field(default_factory = TextLengthScoreConfigs)
-    throw_on_duplicate: ThrowOnDuplicate = Field(default_factory = ThrowOnDuplicate)
-    continue_on_error: bool = Field(default = False)
     hello_content: HelloContent = Field(default_factory = HelloContent)
     behavioral_acts: dict[str, BehavioralACT] = Field(default_factory=dict)
     default_behavioral_act: BehavioralACT = Field(default_factory=BehavioralACT)

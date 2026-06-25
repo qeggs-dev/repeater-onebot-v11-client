@@ -1,6 +1,6 @@
 # 服务端配置
-from ._net_config import net_config
-from ._storage_configs import storage_configs
+from .net_config import net_config
+from .storage_configs import storage_configs
 
 # ==== CHAT API ==== #
 CHAT_ROUTE = "/generate/chat/completion"
