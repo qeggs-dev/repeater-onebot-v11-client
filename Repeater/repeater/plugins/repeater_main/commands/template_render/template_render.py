@@ -30,7 +30,8 @@ class TemplateRender(CommandPackage):
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         msg = persona_info.message_striped_str
-        variable_expansion_client = TemplateRenderClient(persona_info)
+        user_configs = await persona_info.get_user_configs()
+        variable_expansion_client = TemplateRenderClient(persona_info, user_configs)
         response = await variable_expansion_client.render(text = msg)
         await self.send_result(persona_info, send_msg, response)
     
