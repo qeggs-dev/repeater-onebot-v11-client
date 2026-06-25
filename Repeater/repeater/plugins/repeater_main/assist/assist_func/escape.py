@@ -50,6 +50,9 @@ def escape_string(string: str) -> str:
     """
     Process escape sequences in a string
     """
+    if not isinstance(string, str):
+        raise TypeError("Expected string, got " + type(string).__name__)
+    
     output = ""
     i = 0
     length = len(string)
