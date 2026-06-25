@@ -39,6 +39,7 @@ from ...exceptions import (
     BreakHandler,
 )
 from ...logger import logger as base_logger
+from .sending_target import SendingTarget
 
 logger = base_logger.bind(module = "SendMsg")
 
@@ -48,11 +49,31 @@ class SendMsg:
     limit_speed: ClassVar[LimitSpeed] = LimitSpeed(
         storage_configs.camouflage.send_msg_limit_speed_per_minute
     )
+    
+    @overload
+    def __init__(
+            self,
+            component: str,
+            persona_info: PersonaInfo,
+            matcher: Type[Matcher],
+            send_target: Literal[SendingTarget.MATCHER] = SendingTarget.MATCHER
+        ): ...
+    
+    @overload
     def __init__(
             self,
             component: str,
             persona_info: PersonaInfo,
             matcher: Type[Matcher] | None = None,
+            send_target: SendingTarget = SendingTarget.AUTO
+        ): ...
+
+    def __init__(
+            self,
+            component: str,
+            persona_info: PersonaInfo,
+            matcher: Type[Matcher] | None = None,
+            send_target: SendingTarget = SendingTarget.AUTO
         ):
         self._component: str = component
         self._persona_info: PersonaInfo = persona_info
@@ -61,7 +82,16 @@ class SendMsg:
         self._matcher: Type[Matcher] | None = matcher
         
         self._buffer: asyncio.Queue[tuple[str | Message | MessageSegment, tuple[Any, ...], dict[str, Any], int]] = asyncio.Queue()
-        self._send_to_buffer: bool = False
+        self.sending_target: SendingTarget = send_target
+        match self.sending_target:
+            case SendingTarget.AUTO:
+                if matcher is None:
+                    self.sending_target = SendingTarget.API
+                else:
+                    self.sending_target = SendingTarget.MATCHER
+            case SendingTarget.MATCHER:
+                if matcher is None:
+                    raise ValueError("Matcher can't be a target, because it's not given.")
     
     def copy_with_component(self, component: str | None = None) -> "SendMsg":
         return self.__class__(
@@ -152,23 +182,6 @@ class SendMsg:
             self._matcher = matcher
         else:
             raise TypeError(f"matcher must be Matcher or None, not {type(matcher).__name__}")
-    
-    @property
-    def send_to_buffer(self) -> bool:
-        """
-        是否将消息发送到缓冲区
-        """
-        return self._send_to_buffer
-    
-    @send_to_buffer.setter
-    def send_to_buffer(self, send_to_buffer: bool):
-        """
-        设置是否将消息发送到缓冲区
-        """
-        if isinstance(send_to_buffer, bool):
-            self._send_to_buffer = send_to_buffer
-        else:
-            raise TypeError(f"send_to_buffer must be bool, not {type(send_to_buffer).__name__}")
     
     @property
     def buffer(self) -> asyncio.Queue[tuple[str | Message | MessageSegment, tuple[Any, ...], dict[str, Any], int]]:
@@ -1453,36 +1466,43 @@ class SendMsg:
 
         :param message: 消息对象
         """
-        if self._send_to_buffer:
-            logger.info(
-                "Send to buffer: \n{message}",
-                message = message
-            )
-            await self._send_to_queue(
-                message,
-                *args,
-                **kwargs
-            )
-        elif self._matcher is not None:
-            logger.info(
-                "Send to matcher: \n{message}",
-                message = message
-            )
-            await self._send_to_matcher(
-                message,
-                *args,
-                **kwargs
-            )
-        else:
-            logger.info(
-                "Send to api: \n{message}",
-                message = message
-            )
-            await self._send_to_api(
-                message,
-                *args,
-                **kwargs
-            )
+        match self.sending_target:
+            case SendingTarget.BUFFER:
+                logger.info(
+                    "Send to buffer: \n{message}",
+                    message = message
+                )
+                await self._send_to_queue(
+                    message,
+                    *args,
+                    **kwargs
+                )
+            case SendingTarget.MATCHER:
+                logger.info(
+                    "Send to matcher: \n{message}",
+                    message = message
+                )
+                await self._send_to_matcher(
+                    message,
+                    *args,
+                    **kwargs
+                )
+            case SendingTarget.API:
+                logger.info(
+                    "Send to api: \n{message}",
+                    message = message
+                )
+                await self._send_to_api(
+                    message,
+                    *args,
+                    **kwargs
+                )
+            case SendingTarget.NULL:
+                logger.info(
+                    "Send to null: \n{message}",
+                    message = message
+                )
+                pass
     
     async def _send_to_queue(
         self,
