@@ -5,8 +5,8 @@ import pkgutil
 import importlib
 from typing import Any, Generator, Callable
 from types import ModuleType
-from .logger import logger
-from .client_configs import storage_configs
+from ..logger import logger
+from ..client_configs import storage_configs
 
 class SubmoduleImporter:
     """

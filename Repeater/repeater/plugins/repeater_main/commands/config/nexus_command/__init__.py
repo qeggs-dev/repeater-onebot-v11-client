@@ -1,4 +1,4 @@
-from ...._submodule_importer import SubmoduleImporter as _ImportPublicPkgs
+from ....import_assist import SubmoduleImporter as _ImportPublicPkgs
 
 _importer= _ImportPublicPkgs()
 _importer.import_pkgs()
