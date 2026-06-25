@@ -1079,7 +1079,7 @@ class SendMsg:
             self,
             prompt: Message | str,
             threshold: float = 1.0,
-            document_document_bottom_comments: str = "",
+            document_bottom_comments: str = "",
             reply: bool = True,
             continue_handler: Literal[False] = False
         ) -> NoReturn: ...
@@ -1089,7 +1089,7 @@ class SendMsg:
             self,
             prompt: Message | str,
             threshold: float = 1.0,
-            document_document_bottom_comments: str = "",
+            document_bottom_comments: str = "",
             reply: bool = True,
             continue_handler: Literal[True] = True
         ) -> None: ...
@@ -1098,7 +1098,7 @@ class SendMsg:
             self,
             prompt: Message | str,
             threshold: float = 1.0,
-            document_document_bottom_comments: str = "",
+            document_bottom_comments: str = "",
             reply: bool = True,
             continue_handler: bool = False
         ) -> NoReturn | None:
@@ -1125,7 +1125,7 @@ class SendMsg:
             await self.send_mixed_render(
                 text,
                 self.prompt_prefix,
-                document_bottom_comment = document_document_bottom_comments,
+                document_bottom_comment = document_bottom_comments,
                 reply = reply,
                 continue_handler = continue_handler
             )
