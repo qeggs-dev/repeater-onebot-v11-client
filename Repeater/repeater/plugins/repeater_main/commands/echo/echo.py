@@ -1,0 +1,23 @@
+from ...command_register import(
+    CommandCaller,
+    CommandPackage
+)
+from ...cmd_info import CmdTypes
+from ...assist import PersonaInfo, SendMsg
+
+@CommandCaller.register
+class Echo(CommandPackage):
+    cmd = "echo"
+    aliases = {
+        "Echo",
+        "ECHO"
+    }
+    cmd_type = CmdTypes.ECHO
+
+    async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
+        if not persona_info:
+            await send_msg.send_prompt("Wait for input message...", continue_handler = True)
+            new_message = await CommandCaller.wait_message(persona_info.namespace)
+            await send_msg.send_any(new_message.message, reply = False)
+        else:
+            await send_msg.send_any(persona_info.message, reply = False)
