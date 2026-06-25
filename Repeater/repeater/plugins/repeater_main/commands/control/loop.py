@@ -45,6 +45,10 @@ class Loop(CommandPackage):
                 times = 1
             else:
                 times = int(times_str)
+            
+            if times < 1:
+                await send_msg.send_error("times must be greater than 0")
+                return
 
             try:
                 package = CommandCaller.match_trigger(command)
