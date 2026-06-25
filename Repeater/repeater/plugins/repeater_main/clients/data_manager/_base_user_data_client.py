@@ -17,10 +17,6 @@ logger = base_logger.bind(module = "UserData.Core")
 class UserDataClient(BaseClient):
     timeout = storage_configs.server_api_timeout.data_manager
     data_type: ClassVar[str] = ""
-
-    def __init__(self, persona_info: PersonaInfo, user_configs: UserConfigs, namespace: str | Namespace | None = None):
-        super().__init__(persona_info, user_configs)
-        self._namespace = namespace
     
     @property
     def namespace_str(self) -> str:
