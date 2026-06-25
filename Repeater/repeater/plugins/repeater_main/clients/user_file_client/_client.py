@@ -1,0 +1,15 @@
+from ...client_configs import *
+from ...assist import BaseClient
+from ...logger import logger
+
+class UserFileClient(BaseClient):
+    # region get_utl
+    async def get_user_data_file_url(self):
+        logger.info("Get user data file url", module = "user_file.core")
+        return self.join_url(DOWNLOAD_USER_DATA_FILE_ROUTE, f"{self._persona_info.namespace_str}.zip")
+    # endregion
+
+    # region package_user_space_url
+    async def package_user_space_url(self):
+        logger.info("Package user space url", module = "user_file.core")
+        return self.join_url(PACKAGE_USER_SPACE_ROUTE, f"{self._persona_info.namespace_str}.zip")
