@@ -741,23 +741,23 @@ PS：`CHAT` 类型命令大部分都做到了支持视觉输入
 而不是也当成分隔符去切割子字符串
 
 
-当逐行命令支持嵌套时
+`CONTROL` 命令下的逐行命令
 我们可以这样编写参数
 ```
-lines1
+/ser
+echo
   lines2
   lines3
     lines4
-lines5
-lines6 args
+echo finished
+sleep 2.7
 ```
-它经过处理后就会变成
-``` Python
-[
-    "lines1\nlines2\nlines3\n  lines4",
-    "lines5",
-    "lines6 args"
-]
+它等同于这种写法
+```
+/ser
+echo lines2\nlines3\n  lines4
+echo finished
+sleep 2.7
 ```
 其中嵌套开始的第一行不变
 然后所有嵌套向内收缩一格
