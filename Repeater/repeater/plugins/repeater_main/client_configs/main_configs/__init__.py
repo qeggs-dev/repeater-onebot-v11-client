@@ -22,6 +22,7 @@ __all__ = [
     "PlatformInterface",
     "ServerAPITimeout",
     "StorageConfigs",
+    "storage_configs",
     "storage_configs_class",
     "TextLengthScoreConfigs",
     "TextLengthScoreThreshold",
