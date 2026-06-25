@@ -7,7 +7,7 @@ from ...command_register import(
     CommandCaller,
     CommandPackage
 )
-from ...client_net_configs import storage_configs, HelloContent
+from ...client_configs import storage_configs, HelloContent
 from pydantic import ValidationError
 
 @CommandCaller.register

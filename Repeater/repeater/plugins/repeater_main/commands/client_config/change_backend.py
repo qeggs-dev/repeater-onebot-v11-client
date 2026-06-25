@@ -4,7 +4,7 @@ from ...command_register import(
     CommandCaller,
     CommandPackage
 )
-from ...client_net_configs import storage_configs
+from ...client_configs import storage_configs
 
 
 @CommandCaller.register
