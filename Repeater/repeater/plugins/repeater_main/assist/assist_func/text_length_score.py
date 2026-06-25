@@ -1,4 +1,4 @@
-from ...client_net_configs import storage_configs
+from ...client_configs import storage_configs
 
 def text_length_score(text: str) -> float:
     if not text:

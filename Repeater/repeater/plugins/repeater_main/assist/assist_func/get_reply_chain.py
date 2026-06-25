@@ -1,7 +1,7 @@
 from nonebot.adapters.onebot.v11 import Bot, Message, MessageEvent
 from ...logger import logger
 from typing import AsyncGenerator
-from ...client_net_configs import storage_configs
+from ...client_configs import storage_configs
 from .get_reply_msgs import get_reply_msgs
 
 async def get_reply_chain(

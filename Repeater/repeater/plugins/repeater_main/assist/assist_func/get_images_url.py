@@ -1,4 +1,4 @@
-from ...client_net_configs import storage_configs
+from ...client_configs import storage_configs
 from ..network.image_downloader import ImageDownloader
 from nonebot.adapters.onebot.v11 import Message
 

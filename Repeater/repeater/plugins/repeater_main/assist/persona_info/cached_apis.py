@@ -4,7 +4,7 @@ from nonebot.adapters.onebot.v11 import Bot
 from typing import Any, Awaitable, ClassVar
 from functools import wraps
 from cachetools import TTLCache
-from ...client_net_configs import storage_configs
+from ...client_configs import storage_configs
 from ...logger import logger
 
 class CachedAPI(Bot):

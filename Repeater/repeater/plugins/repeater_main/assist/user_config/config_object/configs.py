@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from ....client_net_configs import HelloContent
+from ....client_configs import HelloContent
 
 class UserConfigs(BaseModel):
     backend: str | None = None

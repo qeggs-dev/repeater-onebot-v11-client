@@ -15,7 +15,7 @@ from ..assist_func import (
     send_private_file,
 )
 from ..text_render.text_render import RendedImage
-from ...client_net_configs import RepeaterDebugMode, storage_configs
+from ...client_configs import RepeaterDebugMode, storage_configs
 from ..network import HTTPCode
 from ..persona_info import PersonaInfo
 from ..namespace import MessageSource

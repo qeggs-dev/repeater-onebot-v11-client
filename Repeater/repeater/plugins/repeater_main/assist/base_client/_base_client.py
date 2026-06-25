@@ -12,7 +12,7 @@ from .client_pool import (
     ClientLimits
 )
 from urllib.parse import urljoin, quote
-from ...client_net_configs import *
+from ...client_configs import *
 from ..namespace import Namespace
 from ..persona_info import PersonaInfo
 from ..user_config import UserConfigs

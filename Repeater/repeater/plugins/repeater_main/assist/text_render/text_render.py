@@ -1,4 +1,4 @@
-from ...client_net_configs import *
+from ...client_configs import *
 from ..response.response import Response
 from .response import RendedImage
 from ..base_client import BaseClient

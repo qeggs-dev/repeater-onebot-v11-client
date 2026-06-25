@@ -1,6 +1,6 @@
 import hashlib
 from pydantic import BaseModel, ConfigDict
-from ...client_net_configs import storage_configs
+from ...client_configs import storage_configs
 from .message_source import MessageSource
 
 class Namespace(BaseModel):
