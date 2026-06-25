@@ -2,7 +2,7 @@ import sys
 import time
 import asyncio
 from .package import CommandPackage
-from ..assist import PersonaInfo, SendMsg
+from ..assist import PersonaInfo, SendMsg, Namespace
 from ..cmd_info import CmdTypes
 from ..client_configs import storage_configs
 from ..exceptions import *
@@ -33,6 +33,8 @@ class CommandCaller:
     types: dict[CmdTypes, list[Type[CommandPackage[Any]]]] = {}
     matchers: dict[Type[CommandPackage[Any]], Type[Matcher]] = {}
     runnings: set[RunningPackage] = set()
+    listen_message_tasks: dict[Namespace, set[asyncio.Future[PersonaInfo]]] = {}
+    listen_lock: asyncio.Lock = asyncio.Lock()
 
     @staticmethod
     def delimiters() -> set[str]:
@@ -83,6 +85,25 @@ class CommandCaller:
             persona_info ,send_msg = await package.message_enter(bot, event, matcher)
             return await cls.enter_handler(package, persona_info, send_msg)
         return message_handler
+    
+    @classmethod
+    async def wait_message(cls, namepsace: Namespace) -> PersonaInfo:
+        """
+        Wait for the message.
+
+        :param package: The command package.
+        :param task: The task.
+        :return: None
+        """
+        future: asyncio.Future[PersonaInfo] = asyncio.get_event_loop().create_future()
+        async with cls.listen_lock:
+            cls.listen_message_tasks.setdefault(namepsace, set()).add(future)
+        logger.info(
+            "Create Wait Message Task: {future}",
+            future = repr(future),
+        )
+        result = await future
+        return result
     
     @classmethod
     async def enter_handler(cls, package: CommandPackage[T_Handler_Result], persona_info: PersonaInfo, send_msg: SendMsg) -> T_Handler_Result | Any | SubCmdBreaked | None | NoReturn:
@@ -144,7 +165,7 @@ class CommandCaller:
                 return await package.on_debug_mode(persona_info, send_msg)
             
             task: asyncio.Task[T_Handler_Result] = asyncio.create_task(
-                coro = package.handler(
+                coro = package.enter_handler(
                     persona_info = persona_info,
                     send_msg = send_msg
                 )
@@ -226,6 +247,7 @@ class CommandCaller:
         :return: CommandPackage Type
         """
         if package.enabled:
+            register_start_time = time.perf_counter_ns()
             try:
                 package.on_before_instantiate()
                 if package in cls.commands:
@@ -263,6 +285,13 @@ class CommandCaller:
                 package_instance.on_registed()
             except:
                 package.on_reg_failed(*sys.exc_info())
+            register_end_time = time.perf_counter_ns()
+
+            logger.info(
+                "Register command {name} done, cost {cost:.3f} ms",
+                name = package_instance.component,
+                cost = (register_end_time - register_start_time) / 1e6
+            )
         return package
     
     @classmethod
@@ -404,3 +433,16 @@ class CommandCaller:
             case _:
                 raise ValueError(f"Unknown listen type: {package.listen_type}")
         return matcher
+    
+    @classmethod
+    async def report_message(cls, persona_info: PersonaInfo, send_msg: SendMsg):
+        """
+        Report a new message for processing.
+        """
+        namespace = persona_info.namespace
+        if namespace in cls.listen_message_tasks:
+            async with cls.listen_lock:
+                futures = cls.listen_message_tasks.pop(namespace)
+                for future in futures:
+                    future.set_result(persona_info)
+                

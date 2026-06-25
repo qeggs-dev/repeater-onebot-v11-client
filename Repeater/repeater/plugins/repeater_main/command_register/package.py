@@ -8,6 +8,7 @@ from abc import (
 from ..assist import (
     PersonaInfo,
     SendMsg,
+    SendingTarget,
     MessageSource,
     is_iterable,
 )
@@ -44,12 +45,13 @@ from nonebot import logger
 from typing import (
     Any,
     Iterable,
-    Literal,
+    Callable,
     Collection,
     NoReturn,
     Type,
     TypeVar,
     Generic,
+    Awaitable
 )
 from .sub_cmd_breaked import SubCmdBreaked
 
@@ -119,6 +121,9 @@ class CommandPackage(ABC, Generic[T]):
 
     superuser_permissions: bool = False
     """Whether the Handler is superuser permissions."""
+
+    send_msg: bool = True
+    """Allow sending messages"""
 
     @property
     def component(self) -> str:
@@ -269,9 +274,20 @@ class CommandPackage(ABC, Generic[T]):
             return False
         
         if behavioral_act.block_output:
-            send_msg.send_to_buffer = True
+            send_msg.sending_target = SendingTarget.NULL
         
         return True
+    
+    async def enter_handler(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T | NoReturn:
+        """
+        This method is called before the handler method.
+
+        :param persona_info: PersonaInfo object
+        :param send_msg: SendMsg object
+        :return: PersonaInfo object, SendMsg object
+        """
+        result = await self.handler(persona_info, send_msg)
+        return result
 
     @abstractmethod
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T | NoReturn:
