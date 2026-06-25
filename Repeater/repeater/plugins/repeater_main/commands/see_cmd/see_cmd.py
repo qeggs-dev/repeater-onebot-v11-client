@@ -9,7 +9,6 @@ from ._assists import (
     all_splited_commands,
     see_cmds
 )
-from nonebot import get_driver
 
 @CommandCaller.register
 class SeeCmd(CommandPackage):
@@ -36,8 +35,7 @@ class SeeCmd(CommandPackage):
         commands: dict[CmdTypes, list[CommandPackage]] = {}
 
         cmd_name: str = persona_info.message_striped_str
-        config: Config = get_driver().config
-        delimiters: set[str] = config.command_sep
+        delimiters = CommandCaller.delimiters()
         cmd_names: set[str | tuple[str, ...]] = set()
 
         if cmd_name:

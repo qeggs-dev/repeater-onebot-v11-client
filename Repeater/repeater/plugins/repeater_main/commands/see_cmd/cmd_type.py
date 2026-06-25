@@ -6,7 +6,6 @@ from ...assist import PersonaInfo, SendMsg
 from ...cmd_info import CmdTypes
 from ._assists import see_cmds
 from typing import Type
-from nonebot import get_driver
 
 @CommandCaller.register
 class CmdType(CommandPackage):
@@ -38,8 +37,7 @@ class CmdType(CommandPackage):
             await send_msg.send_error("Invalid command type.")
             return
 
-        config = get_driver().config
-        delimiters = config.command_sep
+        delimiters = CommandCaller.delimiters()
 
         if cmd_type not in CommandCaller.types:
             await send_msg.send_error(f"\"{cmd_type}\" is not a valid command type.")
