@@ -76,11 +76,14 @@ class SubmoduleImporter:
         Iterate over the name of the module that has been imported.
         """
         for module in self.modules:
-            if module.__name__.startswith(self.caller_name + "."):
-                module_name = module.__name__.removeprefix(self.caller_name + ".")
+            if module.__package__:
+                yield module.__package__
             else:
-                module_name = module.__name__
-            yield module_name
+                if module.__name__.startswith(self.caller_name + "."):
+                    module_name = module.__name__.removeprefix(self.caller_name + ".")
+                else:
+                    module_name = module.__name__
+                yield module_name
     
     def inject_modules(self) -> None:
         """
