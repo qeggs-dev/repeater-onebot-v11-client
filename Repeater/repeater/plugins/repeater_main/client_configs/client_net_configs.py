@@ -48,5 +48,5 @@ TEMPLATE_RENDER = "/template/render"
 VERSION_ROUTE = f"/version"
 
 # ==== CONFIG ==== #
-RepeaterDebugMode = net_config.repeater_debug_mode # 是否开启调试模式，调试模式下，将直接返回消息内容，而不进行后端访问操作
+REPEATER_DEBUG_MODE: bool = net_config.repeater_debug_mode # 是否开启调试模式，调试模式下，将直接返回消息内容，而不进行后端访问操作
 
