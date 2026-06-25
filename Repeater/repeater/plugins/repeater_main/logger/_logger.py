@@ -6,7 +6,7 @@ from ._level import Level
 
 class LoggerConfig(BaseModel):
     repeater_logger_level: Level = Field(Level.INFO)
-    repeater_logger_format: str = Field("{time:YYYY-MM-DD HH:mm:ss.SSS} | {level} | {extra[module]} - {message}")
+    repeater_logger_format: str = Field("{time:YYYY-MM-DD HH:mm:ss.SSS} | {level: <8} | {extra[module]} - {message}")
     repeater_logger_path: str = Field("logs/repeater-log-{time:YYYY-MM-DD-HH-mm-ss}.log")
     repeater_logger_enable_queue: bool = Field(True)
     repeater_logger_delay: bool = Field(True)
@@ -16,10 +16,8 @@ class LoggerConfig(BaseModel):
 
 logger_config = get_plugin_config(LoggerConfig)
 
-base_logger = logger
-
 # file
-base_logger.add(
+logger.add(
     logger_config.repeater_logger_path,
     level = logger_config.repeater_logger_level.value,
     format = logger_config.repeater_logger_format,
@@ -30,7 +28,7 @@ base_logger.add(
     compression = logger_config.repeater_logger_compression,
 )
 
-base_logger.configure(
+logger.configure(
     extra={
         "module": "[System]"
     }
