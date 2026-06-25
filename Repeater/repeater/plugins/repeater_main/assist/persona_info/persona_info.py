@@ -54,7 +54,7 @@ class PersonaInfo:
             self,
             bot: Bot,
             event: MessageEvent,
-            args: Message | None = None
+            args: str | Message | None = None
         ) -> None:
         """
         创建一个 PersonaInfo 对象
@@ -69,7 +69,15 @@ class PersonaInfo:
             self._bot.self_id
         )
         self._message_event: MessageEvent = event
-        self._args: Message | None = args
+
+        self._args: Message | None
+        if isinstance(args, Message):
+            self._args = args
+        elif isinstance(args, str):
+            self._args = Message(args)
+        else:
+            self._args = None
+        
         self._group_id: str | None = None
         self._source: MessageSource = MessageSource.GROUP
         self._source = MessageSource(event.message_type.strip().lower())
@@ -134,6 +142,26 @@ class PersonaInfo:
         )
         persona_info._enter_type = EnterType.Horizontal
         return persona_info
+    
+    def copy(self) -> PersonaInfo:
+        """
+        复制一份
+        """
+        return self.__class__(
+            bot = self.bot,
+            event = self.event,
+            args = self.args
+        )
+    
+    def copy_with_args(self, args: Message | str | None = None) -> PersonaInfo:
+        """
+        复制一份，并自定义 args
+        """
+        return self.__class__(
+            bot = self.bot,
+            event = self.event,
+            args = args if args is not None else self.args
+        )
     
     async def from_message_event(self, event: MessageEvent | None) -> PersonaInfo:
         """
