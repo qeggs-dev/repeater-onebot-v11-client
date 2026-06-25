@@ -1,3 +1,5 @@
+import re
+
 from ...assist import PersonaInfo, SendMsg
 from ...cmd_info import CmdTypes
 from ...command_register import(
@@ -9,21 +11,16 @@ from ..._adaptation_info import __adaptation__
 
 
 @CommandCaller.register
-class Sleep(CommandPackage):
-    cmd = "sleep"
+class Parallel(CommandPackage):
+    cmd = "parallel"
     aliases = {
-        "s",
-        "S",
-        "Sleep",
-        "SLEEP",
+        "p",
+        "P",
+        "Parallel",
+        "PARALLEL",
     }
-    cmd_type = CmdTypes.SEQUENCE
+    cmd_type = CmdTypes.CONTROL
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        try:
-            sleep_time = int(persona_info.message_striped_str)
-        except ValueError:
-            await send_msg.send_error("Please enter a valid number")
-            return
-        
+        lines = persona_info.message_striped_str.splitlines()
         
