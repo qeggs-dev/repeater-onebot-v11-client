@@ -6,7 +6,6 @@ from ...command_register import(
     CommandCaller,
     CommandPackage
 )
-from ...clients import VersionAPIClient
 from ..._adaptation_info import __adaptation__
 
 
@@ -20,10 +19,16 @@ class Sleep(CommandPackage):
         "SLEEP",
     }
     cmd_type = CmdTypes.CONTROL
+    documents = f"""
+    Sleep for a specified number of seconds
+
+    Usage: 
+        /{cmd} <seconds>
+    """
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         try:
-            sleep_time = int(persona_info.message_striped_str)
+            sleep_time = float(persona_info.message_striped_str)
         except ValueError:
             await send_msg.send_error("Please enter a valid number")
             return
