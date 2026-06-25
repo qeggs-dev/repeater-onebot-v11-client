@@ -20,6 +20,8 @@ class CmdTypes(Enum):
     RENDER = "RENDER"
     MODEL = "MODEL"
     VERSION = "VERSION"
+    SEQUENCE = "SEQUENCE"
+    CONTROL = "CONTROL"
     LICENSES = "LICENSES"
     NEXUS = "NEXUS"
     STATUS = "STATUS"
