@@ -72,15 +72,3 @@ class Serial(CommandPackage):
             )
             results.append(result)
             last_result = result
-
-        if results:
-            buffer: list[str] = []
-            for index, ((package, args), result) in enumerate(zip(command_call, results)):
-                package_instance = CommandCaller.get_instance(package)
-                buffer.append(
-                    f"[{index}] {package_instance.component} -> {result}"
-                )
-            
-            await send_msg.send_check_length_prompt("\n".join(buffer))
-        else:
-            await send_msg.send_error("No Results...")

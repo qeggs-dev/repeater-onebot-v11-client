@@ -60,15 +60,3 @@ class Parallel(CommandPackage):
             )
         
         results = await asyncio.gather(*tasks)
-
-        if results:
-            buffer: list[str] = []
-            for index, ((package, args), result) in enumerate(zip(command_call, results)):
-                package_instance = CommandCaller.get_instance(package)
-                buffer.append(
-                    f"[{index}] {package_instance.component} -> {result}"
-                )
-        
-            await send_msg.send_check_length("\n".join(buffer))
-        else:
-            await send_msg.send_error("No Results...")
