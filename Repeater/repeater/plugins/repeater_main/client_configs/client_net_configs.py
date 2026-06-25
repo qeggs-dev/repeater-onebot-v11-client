@@ -1,6 +1,5 @@
 # 服务端配置
 from .net_config import net_config
-from .main_configs import storage_configs
 
 # ==== CHAT API ==== #
 CHAT_ROUTE = "/generate/chat/completion"
@@ -45,7 +44,7 @@ TEXT_RENDER_ROUTE = "/render"
 TEMPLATE_RENDER = "/template/render"
 
 # ==== VERSION API ==== #
-VERSION_ROUTE = f"/version"
+VERSION_ROUTE = "/version"
 
 # ==== CONFIG ==== #
 REPEATER_DEBUG_MODE: bool = net_config.repeater_debug_mode # 是否开启调试模式，调试模式下，将直接返回消息内容，而不进行后端访问操作
