@@ -6,7 +6,7 @@ import importlib
 from typing import Any, Generator, Callable
 from types import ModuleType
 from .logger import logger
-from .client_net_configs import storage_configs
+from .client_configs import storage_configs
 
 class SubmoduleImporter:
     """
@@ -59,7 +59,7 @@ class SubmoduleImporter:
                     "Import error: {error}",
                     error = str(e)
                 )
-                if not storage_configs.continue_on_error:
+                if not storage_configs.loading.continue_on_error:
                     raise
 
     def import_pkgs(self) -> list[ModuleType]:
