@@ -16,6 +16,7 @@ from typing import (
     NoReturn
 )
 from nonebot import on_command, on_message
+from nonebot import get_driver
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Message
@@ -33,8 +34,29 @@ class CommandCaller:
     matchers: dict[Type[CommandPackage[Any]], Type[Matcher]] = {}
     runnings: set[RunningPackage] = set()
 
+    @staticmethod
+    def delimiters() -> set[str]:
+        return get_driver().config.command_sep
+    
+    @classmethod
+    def get_instance(cls, package: Type[CommandPackage[T_Handler_Result]]) -> CommandPackage[T_Handler_Result]:
+        """
+        Get the instance of the command package.
+
+        :param package: The command package.
+        :return: The instance of the command package.
+        """
+        return cls.commands[package]
+
     @classmethod
     def get_command_handler(cls, package: CommandPackage[T_Handler_Result], matcher: Type[Matcher]) -> Callable[[Bot, MessageEvent, Message], Awaitable[T_Handler_Result | Any | SubCmdBreaked | None | NoReturn]]:
+        """
+        Get the command handler.
+
+        :param package: The command package.
+        :param matcher: The matcher.
+        :return: The command handler.
+        """
         async def command_handler(bot: Bot, event: MessageEvent, args: Message = CommandArg()) -> T_Handler_Result | Any | SubCmdBreaked | None | NoReturn:
             logger.info(
                 "Run command handler: {name}",
@@ -46,6 +68,13 @@ class CommandCaller:
     
     @classmethod
     def get_message_handler(cls, package: CommandPackage[T_Handler_Result], matcher: Type[Matcher]) -> Callable[[Bot, MessageEvent], Awaitable[T_Handler_Result | Any | SubCmdBreaked | None | NoReturn]]:
+        """
+        Get the message handler.
+
+        :param package: The command package.
+        :param matcher: The matcher.
+        :return: The message handler.
+        """
         async def message_handler(bot: Bot, event: MessageEvent) -> T_Handler_Result | Any | SubCmdBreaked | None | NoReturn:
             logger.info(
                 "Run message handler: {name}",
@@ -57,6 +86,14 @@ class CommandCaller:
     
     @classmethod
     async def enter_handler(cls, package: CommandPackage[T_Handler_Result], persona_info: PersonaInfo, send_msg: SendMsg) -> T_Handler_Result | Any | SubCmdBreaked | None | NoReturn:
+        """
+        Enter the message handler.
+
+        :param package: The command package.
+        :param persona_info: The persona info.
+        :param send_msg: The send message function.
+        :return: The result of the message handler.
+        """
         result = await cls._enter_handler(
             package,
             persona_info,
@@ -75,6 +112,14 @@ class CommandCaller:
     
     @classmethod
     async def _enter_handler(cls, package: CommandPackage[T_Handler_Result], persona_info: PersonaInfo, send_msg: SendMsg) -> T_Handler_Result | Any | SubCmdBreaked | Type[SubCmdBreaked] | None | NoReturn:
+        """
+        Enter the message handler.
+
+        :param package: The command package.
+        :param persona_info: The persona info.
+        :param send_msg: The send message function.
+        :return: The result of the message handler.
+        """
         try:
             logger.info(
                 "Enter command from message: {message_id}",
@@ -135,19 +180,51 @@ class CommandCaller:
             await package.handler_exit(persona_info, send_msg)
     
     @classmethod
-    async def horizontal_call(cls, package: Type[CommandPackage[T_Handler_Result]], persona_info: PersonaInfo, send_msg: SendMsg | None = None) -> T_Handler_Result | Any | SubCmdBreaked | None | NoReturn:
-        package_instance: CommandPackage[T_Handler_Result] = cls.commands[package]
+    async def horizontal_call(
+        cls,
+        package: Type[CommandPackage[T_Handler_Result]] | CommandPackage[T_Handler_Result],
+        persona_info: PersonaInfo,
+        send_msg: SendMsg | None = None
+    ) -> T_Handler_Result | Any | SubCmdBreaked | None | NoReturn:
+        """
+        Horizontal call handler
+
+        :param package: CommandPackage
+        :param persona_info: PersonaInfo
+        :param send_msg: SendMsg
+        :return: Handler result
+        """
+        if isinstance(package, type) and issubclass(package, CommandPackage):
+            package_instance: CommandPackage[T_Handler_Result] = cls.commands[package]
+        elif isinstance(package, CommandPackage):
+            package_instance = package
+        else:
+            raise TypeError("package must be CommandPackage or subclass of CommandPackage")
+        
         persona_info_copy, send_msg_copy = await package_instance.horizontal_enter(persona_info, send_msg)
         return await cls.enter_handler(package_instance, persona_info_copy, send_msg_copy)
     
     @staticmethod
     async def check_acceptable_sources(package: CommandPackage[T_Handler_Result], persona_info: PersonaInfo) -> bool:
+        """
+        Check if the persona is allowed to call the command
+
+        :param package: CommandPackage
+        :param persona_info: PersonaInfo
+        :return: True if the persona is allowed to call the command, False otherwise
+        """
         if package.acceptable_sources is None:
             return True
         return persona_info.source in package.acceptable_sources
     
     @classmethod
     def register(cls, package: Type[CommandPackage[T_Handler_Result]]) -> Type[CommandPackage[T_Handler_Result]]:
+        """
+        Register a command
+
+        :param package: CommandPackage Type
+        :return: CommandPackage Type
+        """
         if package.enabled:
             try:
                 package.on_before_instantiate()
@@ -156,7 +233,7 @@ class CommandCaller:
                 package_instance = package()
                 package_instance.__time_for_registed__ = time.time_ns()
                 matcher = package_instance.on_matcher_registered(
-                    cls._get_matcher(package_instance)
+                    cls._create_matcher(package_instance)
                 )
                     
                 match package_instance.listen_type:
@@ -195,6 +272,9 @@ class CommandCaller:
         package_instance: CommandPackage[T_Handler_Result],
         matcher: Type[Matcher]
     ) -> None:
+        """
+        Register package to resource pool
+        """
         cls.commands[package] = package_instance
         cls.matchers[package] = matcher
         cls._reg_types(package_instance.cmd_type, package)
@@ -206,17 +286,26 @@ class CommandCaller:
     
     @classmethod
     def _reg_types(cls, cmd_type: CmdTypes, package: Type[CommandPackage[T_Handler_Result]]) -> None:
+        """
+        Register package to types pool
+        """
         types_list = cls.types.setdefault(cmd_type, [])
         types_list.append(package)
     
     @classmethod
     def _reg_triggers(cls, trigger: str | tuple[str, ...], package: Type[CommandPackage[T_Handler_Result]]) -> None:
+        """
+        Register package to triggers pool
+        """
         if trigger in cls.triggers:
             package.on_duplicate_trigger(trigger)
         cls.triggers[trigger] = package
     
     @classmethod
     def log_registed_info(cls) -> None:
+        """
+        Log registed info
+        """
         total = len(cls.commands)
         logger.info(
             "Registed {count} commands",
@@ -242,12 +331,17 @@ class CommandCaller:
     
     @classmethod
     def destroy(cls, package: Type[CommandPackage[T_Handler_Result]]) -> None:
+        """
+        Destroy a Handler
+
+        :param package: The package of the Handler
+        """
         if package in cls.commands:
             package_instance = cls.commands.pop(package)
             matcher = cls.matchers.pop(package)
 
             logger.info(
-                "Destroy command: {name}",
+                "Destroy Handler: {name}",
                 name = package_instance.component
             )
             
@@ -256,6 +350,11 @@ class CommandCaller:
     
     @classmethod
     async def adestroy(cls, package: Type[CommandPackage[T_Handler_Result]]) -> None:
+        """
+        Destroy a Handler on an async context
+        
+        :param package: The package of the Handler
+        """
         if package in cls.commands:
             package_instance = cls.commands.pop(package)
             matcher = cls.matchers.pop(package)
@@ -269,7 +368,13 @@ class CommandCaller:
             matcher.destroy()
     
     @staticmethod
-    def _get_matcher(package: CommandPackage) -> Type[Matcher]:
+    def _create_matcher(package: CommandPackage) -> Type[Matcher]:
+        """
+        Create a matcher for a package
+
+        :param package: The package of the Handler
+        :return: The matcher
+        """
         match package.listen_type:
             case ListenType.Command:
                 matcher = on_command(
