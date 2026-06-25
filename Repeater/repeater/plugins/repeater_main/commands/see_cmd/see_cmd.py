@@ -1,3 +1,4 @@
+from nonebot.config import Config
 from ...command_register import(
     CommandCaller,
     CommandPackage
@@ -5,7 +6,7 @@ from ...command_register import(
 from ...assist import PersonaInfo, SendMsg
 from ...cmd_info import CmdTypes
 from ._assists import (
-    match_command,
+    all_splited_commands,
     see_cmds
 )
 from nonebot import get_driver
@@ -34,26 +35,26 @@ class SeeCmd(CommandPackage):
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         commands: dict[CmdTypes, list[CommandPackage]] = {}
 
-        cmd_name = persona_info.message_striped_str
-        config = get_driver().config
-        delimiters = config.command_sep
+        cmd_name: str = persona_info.message_striped_str
+        config: Config = get_driver().config
+        delimiters: set[str] = config.command_sep
+        cmd_names: set[str | tuple[str, ...]] = set()
 
-        for package in CommandCaller.commands.values():
-            if not hasattr(package, "cmd"):
-                continue
-            if match_command(package.cmd, cmd_name, delimiters):
-                if package.cmd_type not in commands:
-                    commands[package.cmd_type] = []
-                if package.enabled:
-                    commands[package.cmd_type].append(package)
-            elif package.aliases:
-                for alias in package.aliases:
-                    if match_command(alias, cmd_name, delimiters):
-                        if package.cmd_type not in commands:
-                            commands[package.cmd_type] = []
-                        if package.enabled:
-                            commands[package.cmd_type].append(package)
-                        break
+        if cmd_name:
+            matched_times: int = 0
+            for delimiter in delimiters:
+                if delimiter in cmd_name:
+                    matched_times += 1
+                    for splited in all_splited_commands(cmd_name, delimiters):
+                        cmd_names.add(splited)
+            if matched_times == 0:
+                cmd_names.add(cmd_name)
+        
+        for name in cmd_names:
+            if name in CommandCaller.triggers:
+                package = CommandCaller.triggers[name]
+                package_instance = CommandCaller.commands[package]
+                commands.setdefault(package.cmd_type, []).append(package_instance)
         
         if not commands:
             await send_msg.send_error(f"\"{cmd_name}\" is Not A Valid Command")

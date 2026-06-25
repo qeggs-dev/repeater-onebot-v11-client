@@ -5,6 +5,7 @@ from ...command_register import(
 from ...assist import PersonaInfo, SendMsg
 from ...cmd_info import CmdTypes
 from ._assists import see_cmds
+from typing import Type
 from nonebot import get_driver
 
 @CommandCaller.register
@@ -40,11 +41,11 @@ class CmdType(CommandPackage):
         config = get_driver().config
         delimiters = config.command_sep
 
-        now_type_cmds: list[CommandPackage] = []
-        commands[cmd_type] = now_type_cmds
-        for package in CommandCaller.commands.values():
-            if package.cmd_type == cmd_type:
-                now_type_cmds.append(package)
+        if cmd_type not in CommandCaller.types:
+            await send_msg.send_error(f"\"{cmd_type}\" is not a valid command type.")
+            return
+        now_type_cmds: list[Type[CommandPackage]] = CommandCaller.types[cmd_type]
+        commands[cmd_type] = [CommandCaller.commands[cmd] for cmd in now_type_cmds]
         
         if not now_type_cmds:
             await send_msg.send_error(f"\"{cmd_type}\" has not any commands")
