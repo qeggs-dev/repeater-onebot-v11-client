@@ -13,6 +13,7 @@ from typing import (
     Callable,
     Awaitable,
     TypeVar,
+    Union,
     NoReturn
 )
 from nonebot import on_command, on_message
@@ -253,40 +254,9 @@ class CommandCaller:
         if package.enabled:
             register_start_time = time.perf_counter_ns()
             try:
-                package.on_before_instantiate()
                 if package in cls.commands:
                     package.on_duplicate_handler()
-                package_instance = package()
-                package_instance.__time_for_registed__ = time.time_ns()
-                matcher = package_instance.on_matcher_registered(
-                    cls._create_matcher(package_instance)
-                )
-                    
-                match package_instance.listen_type:
-                    case ListenType.Command:
-                        if storage_configs.log_registed_handler_name:
-                            logger.info(
-                                "Register command: {name}",
-                                name = package_instance.component
-                            )
-                        handler = cls.get_command_handler(package_instance, matcher)
-                    case ListenType.Message:
-                        if storage_configs.log_registed_handler_name:
-                            logger.info(
-                                "Register command: {name}",
-                                name = package_instance.component
-                            )
-                        handler = cls.get_message_handler(package_instance, matcher)
-                    case _:
-                        raise ValueError(f"{package_instance.listen_type} is not supported")
-                
-                matcher.append_handler(handler)
-                cls._reg_package(
-                    package = package,
-                    package_instance = package_instance,
-                    matcher = matcher
-                )
-                package_instance.on_registed()
+                package_instance, matcher, handler = cls._make_pack(package)
             except:
                 package.on_reg_failed(*sys.exc_info())
             register_end_time = time.perf_counter_ns()
@@ -297,6 +267,110 @@ class CommandCaller:
                 cost = (register_end_time - register_start_time) / 1e6
             )
         return package
+    
+    @classmethod
+    def _make_pack(
+        cls,
+        package: Type[CommandPackage[T_Handler_Result]],
+    )  -> tuple[
+        CommandPackage[T_Handler_Result], # package_instance
+        type[Matcher], # matcher
+        Union[
+        # Command Handler
+            Callable[
+                [Bot, MessageEvent, Message],
+                Awaitable[T_Handler_Result | Any | SubCmdBreaked | None]
+            ],
+            # Message Handler
+            Callable[
+                [Bot, MessageEvent],
+                Awaitable[T_Handler_Result | Any | SubCmdBreaked | None]
+            ]
+        ]
+    ]:
+        package.on_before_instantiate()
+        package_instance = package()
+        package_instance.__time_for_registed__ = time.time_ns()
+        matcher = package_instance.on_matcher_registered(
+            cls._create_matcher(package_instance)
+        )
+            
+        match package_instance.listen_type:
+            case ListenType.Command:
+                if storage_configs.log_registed_handler_name:
+                    logger.info(
+                        "Register command: {name}",
+                        name = package_instance.component
+                    )
+                handler = cls.get_command_handler(package_instance, matcher)
+            case ListenType.Message:
+                if storage_configs.log_registed_handler_name:
+                    logger.info(
+                        "Register command: {name}",
+                        name = package_instance.component
+                    )
+                handler = cls.get_message_handler(package_instance, matcher)
+            case _:
+                raise ValueError(f"{package_instance.listen_type} is not supported")
+        return package_instance, matcher, handler
+    
+    @classmethod
+    def _reg_package_instance(
+        cls,
+        package: Type[CommandPackage[T_Handler_Result]],
+        package_instance: CommandPackage[T_Handler_Result],
+        matcher: Type[Matcher],
+        handler: Union[
+        # Command Handler
+            Callable[
+                [Bot, MessageEvent, Message],
+                Awaitable[T_Handler_Result | Any | SubCmdBreaked | None]
+            ],
+            # Message Handler
+            Callable[
+                [Bot, MessageEvent],
+                Awaitable[T_Handler_Result | Any | SubCmdBreaked | None]
+            ]
+        ]
+    ) -> None:
+        matcher.append_handler(handler)
+        cls._reg_package(
+            package = package,
+            package_instance = package_instance,
+            matcher = matcher
+        )
+        package_instance.on_registed()
+    
+    @classmethod
+    def _unreg_package_instance(
+        cls,
+        package: Type[CommandPackage[T_Handler_Result]],
+    ) -> tuple[
+        CommandPackage[Any],
+        type[CommandPackage[Any]],
+        list[type[CommandPackage[Any]]],
+        list[type[CommandPackage[T_Handler_Result]]],
+        type[Matcher]
+    ]:
+        package_instance: CommandPackage[Any] = cls.commands.pop(package)
+        main_trigger: Type[CommandPackage[Any]] = cls.triggers.pop(package.cmd)
+        types = cls.types.pop(package_instance.cmd_type)
+        triggers: list[Type[CommandPackage[T_Handler_Result]]] = []
+        if package_instance.aliases is not None:
+            triggers = [
+                cls.triggers.pop(trigger) for trigger in package_instance.aliases
+            ]
+        
+        matcher: Type[Matcher] = cls.matchers.pop(package)
+
+        return (
+            package_instance,
+            main_trigger,
+            types,
+            triggers,
+            matcher
+        )
+
     
     @classmethod
     def _reg_package(
@@ -370,8 +444,15 @@ class CommandCaller:
         :param package: The package of the Handler
         """
         if package in cls.commands:
-            package_instance = cls.commands.pop(package)
-            matcher = cls.matchers.pop(package)
+            (
+                package_instance,
+                main_trigger,
+                types,
+                triggers,
+                matcher
+            ) = cls._unreg_package_instance(package)
+            
+            matcher: Type[Matcher] = cls.matchers.pop(package)
 
             logger.info(
                 "Destroy Handler: {name}",
