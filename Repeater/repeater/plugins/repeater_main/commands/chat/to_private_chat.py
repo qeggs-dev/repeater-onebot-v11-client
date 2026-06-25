@@ -28,6 +28,7 @@ class ToPrivateChat(BaseChat):
         user_configs = await persona_info.get_user_configs()
         client = ChatClient(
             persona_info,
+            user_configs = user_configs,
             namespace = persona_info.private_namespace,
         )
         return client

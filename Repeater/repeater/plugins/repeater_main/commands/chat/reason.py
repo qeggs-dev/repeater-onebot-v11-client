@@ -1,7 +1,7 @@
-from ...assist import PersonaInfo, SendMsg
-from ...clients import ChatClient
+from ...clients import ChatClient, ChatResponse
 from ...command_register import CommandCaller
 from .._bases import BaseChat
+from ...assist import PersonaInfo, SendMsg, Response
 
 @CommandCaller.register
 class Reason(BaseChat):
@@ -30,7 +30,7 @@ class Reason(BaseChat):
         message: str,
         persona_info: PersonaInfo,
         send_msg: SendMsg
-    ) -> str:
+    ) -> Response[ChatResponse] :
         response = await client.send_message(
             message = message,
             image_url = images,

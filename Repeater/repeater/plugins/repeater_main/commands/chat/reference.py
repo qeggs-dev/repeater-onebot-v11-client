@@ -1,5 +1,5 @@
-from ...assist import PersonaInfo, SendMsg
-from ...clients import ChatClient, DataRoutingField, CrossUserDataRouting
+from ...assist import PersonaInfo, SendMsg, Response
+from ...clients import ChatClient, DataRoutingField, CrossUserDataRouting, ChatResponse
 from ...command_register import CommandCaller
 from .._bases import BaseChat
 
@@ -31,7 +31,7 @@ class Reference(BaseChat):
         message: str,
         persona_info: PersonaInfo,
         send_msg: SendMsg
-    ) -> str:
+    ) -> Response[ChatResponse] :
         if not persona_info.noself_at_list:
             await send_msg.send_error("Please at a member to get reference.")
             

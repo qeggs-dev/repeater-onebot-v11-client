@@ -56,6 +56,7 @@ class GenerateCandidateAnswer(BaseChat):
                 ContentRole.TOOLS: None
             }
         )
+        return response
 
     @staticmethod
     def filters(message: str) -> str:

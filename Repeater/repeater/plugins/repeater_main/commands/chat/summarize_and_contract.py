@@ -1,7 +1,7 @@
-from ...clients import ChatClient
+from ...clients import ChatClient, ChatResponse
 from ...command_register import CommandCaller
 from .._bases import BaseChat
-from ...assist import PersonaInfo, SendMsg
+from ...assist import PersonaInfo, SendMsg, Response
 
 @CommandCaller.register
 class SummarizeAndContract(BaseChat):
@@ -33,9 +33,9 @@ class SummarizeAndContract(BaseChat):
         message: str,
         persona_info: PersonaInfo,
         send_msg: SendMsg
-    ) -> str:
+    ) -> Response[ChatResponse]:
         if not message:
-            return "Please provide a message to summarize"
+            await send_msg.send_error("Please provide a message to summarize")
         response = await client.send_message(
             message = message,
             image_url = images,
