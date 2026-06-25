@@ -260,6 +260,13 @@ class CommandCaller:
                 package_instance, matcher, handler = cls._make_pack(package)
             except:
                 package.on_reg_failed(*sys.exc_info())
+            
+            cls._reg_package_instance(
+                package = package,
+                package_instance = package_instance,
+                matcher = matcher,
+                handler = handler
+            )
             register_end_time = time.perf_counter_ns()
 
             logger.info(
