@@ -35,6 +35,7 @@ from .text_render import (
 from .send_msg import (
     LimitSpeed,
     SendMsg,
+    SendingTarget
 )
 from .chattts import (
     ChatTTSAPI,
@@ -100,6 +101,7 @@ __all__ = [
 
     "LimitSpeed",
     "SendMsg",
+    "SendingTarget",
     
     "ChatTTSAPI",
     "TTSResponse",
