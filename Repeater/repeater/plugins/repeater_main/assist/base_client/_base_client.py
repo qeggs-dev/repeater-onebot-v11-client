@@ -38,6 +38,10 @@ class BaseClient:
             encoding = self.encoding
         )
         self.client = self._httpx_clients.get_client(client_info)
+        self.__post_init__()
+    
+    def __post_init__(self):
+        pass
     
     @property
     def backend_url(self) -> str:
