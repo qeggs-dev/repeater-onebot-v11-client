@@ -1,5 +1,5 @@
 import re
-import httpx
+import uuid
 import asyncio
 
 from typing import (
@@ -17,12 +17,20 @@ from .request_model import ChatRequestModel, ChatUserInfo, AdditionalData
 from ..._adaptation_info import __adaptation__, __adaptation_text__
 from ...logger import logger as base_logger
 from ...exceptions import BreakWithErrorMessage
+from ..status_client import StatusClient
 
 logger = base_logger.bind(module = "chat_client")
 
 class ChatClient(BaseClient):
     metadata_pattern = re.compile(r"> Message\s*?Metadata:.*?---(?:\r?\n)+", re.DOTALL | re.IGNORECASE)
     timeout = storage_configs.server_api_timeout.chat
+
+    def __post_init__(self):
+        self.status_client = StatusClient(
+            persona_info = self._persona_info,
+            user_configs = self.user_configs,
+            namespace = self._namespace,
+        )
     
     @property
     def merge_namespace(self) -> str | None:
@@ -97,6 +105,7 @@ class ChatClient(BaseClient):
         :param add_metadata: 是否添加元数据
         :return: AI返回的消息
         """
+        task_id = uuid.uuid4()
         url = self.join_url_static(CHAT_ROUTE, self.namespace)
 
         if cross_user_data_routing is None:
@@ -108,6 +117,7 @@ class ChatClient(BaseClient):
 
         data = ChatRequestModel(
             message = message,
+            task_id = str(task_id),
             suffix = suffix,
             echo = echo,
             fim_mode = fim_mode,
@@ -162,16 +172,22 @@ class ChatClient(BaseClient):
                     if buffer_response:
                         buffer = buffer_response.get_data()
                         if buffer is not None:
+                            now_task_buffer = buffer.buffers.get(str(task_id))
+                            if now_task_buffer is None:
+                                continue
                             if last_buffer_length is None:
-                                last_buffer_length = len(buffer)
                                 if last_buffer_length == 0:
-                                    await self.break_chat_task()
-                                    raise BreakWithErrorMessage("The build task has been actively aborted because the buffer did not find anything.")
+                                    await self._abnormal_status(
+                                        "The build task has been actively aborted because the buffer did not find anything.",
+                                        task_id = str(task_id),
+                                    )
                             else:
                                 now_buffer_length = len(buffer)
                                 if now_buffer_length == last_buffer_length:
-                                    await self.break_chat_task()
-                                    raise BreakWithErrorMessage("The build task has been actively aborted because this check buffer is the same length as the last time.")
+                                    await self._abnormal_status(
+                                        "The build task has been actively aborted because this check buffer is the same length as the last time.",
+                                        task_id = str(task_id),
+                                    )
                                 else:
                                     last_buffer_length = now_buffer_length
         response = await task
@@ -181,14 +197,32 @@ class ChatClient(BaseClient):
             ChatResponse
         )
     
-    async def break_chat_task(self) -> Response[BreakResponse]:
+    async def _abnormal_status(self, message: str, task_id: str | None = None) -> None:
+        response = await self.status_client.get_client_task_status(self.namespace)
+        if response:
+            data = response.get_data()
+            if data is not None:
+                stack = data.tasks
+            for task in stack:
+                if "Calling Tools" in task:
+                    return
+        
+        await self.break_chat_task(task_id)
+        raise BreakWithErrorMessage(message)
+    
+    async def break_chat_task(self, task_id: str | None = None) -> Response[BreakResponse]:
         """
         中断当前在线的任务
         """
         try:
-            response = await self.client.post(
-                url = self.join_url_static(BREAK_CHAT_TASK_ROUTE, self.namespace)
-            )
+            if task_id is None:
+                response = await self.client.post(
+                    url = self.join_url_static(BREAK_CHAT_TASK_ROUTE, self.namespace)
+                )
+            else:
+                response = await self.client.post(
+                    url = self.join_url_static(BREAK_CHAT_TASK_ROUTE, self.namespace, task_id)
+                )
         except Exception as e:
             logger.error(
                 "Error sending message to chat core: {error}",
