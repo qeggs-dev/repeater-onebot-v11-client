@@ -1,9 +1,6 @@
-from ._template_render import TemplateRender
-from ._template_render_text import TemplateRenderText
-from ._template_render_image import TemplateRenderImage
+from ...import_assist import SubmoduleImporter as _SubmoduleImporter
 
-__all__ = [
-    "TemplateRender",
-    "TemplateRenderText",
-    "TemplateRenderImage",
-]
+_importer= _SubmoduleImporter()
+_importer.import_pkgs()
+_importer.inject_modules()
+__all__ = _importer.all_list() # type: ignore

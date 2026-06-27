@@ -1,11 +1,11 @@
 import random
 from ...assist import PersonaInfo, SendMsg
+from ...cmd_info import CmdTypes
 from ...command_register import(
     CommandCaller,
-    CommandPackage,
-    CmdTypes
+    CommandPackage
 )
-from ...client_net_configs import storage_configs
+from ...client_configs import storage_configs
 
 @CommandCaller.register
 class UselessButton(CommandPackage):
@@ -30,10 +30,15 @@ class UselessButton(CommandPackage):
 
     @staticmethod
     def button():
-        button_hit = (random.randint(0, 100) == 25)
+        button_hit = (random.randint(1, 100) == 25)
         if button_hit:
-            word = random.choice(storage_configs.useless_button_words)
-            return word
+            useless_button_words = storage_configs.useless_button_words
+            weights = [0.5**i for i in range(len(useless_button_words))]
+            word = random.choices(storage_configs.useless_button_words, weights)
+            if word:
+                return word[0]
+            else:
+                return storage_configs.useless_button_missing
         else:
             return storage_configs.useless_button_missing
     

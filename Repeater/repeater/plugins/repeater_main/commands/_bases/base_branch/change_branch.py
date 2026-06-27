@@ -1,6 +1,7 @@
 from ....assist import PersonaInfo, SendMsg
+from ....cmd_info import CmdTypes
 from .base_branch import BaseBranch
-from ..._clients import UserDataClient
+from ....clients import UserDataClient
 
 class ChangeBranch(BaseBranch):
     async def parser(self, branch_id: str, client: UserDataClient, send_msg: SendMsg):

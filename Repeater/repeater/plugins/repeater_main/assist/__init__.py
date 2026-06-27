@@ -11,7 +11,8 @@ from .assist_func import (
     text_length_score,
     str_to_bool,
     format_carry_duration,
-    parse_delimited_string
+    parse_delimited_string,
+    escape_string
 )
 from .persona_info import (
     EnterType,
@@ -34,6 +35,7 @@ from .text_render import (
 from .send_msg import (
     LimitSpeed,
     SendMsg,
+    SendingTarget
 )
 from .chattts import (
     ChatTTSAPI,
@@ -50,6 +52,22 @@ from .network import (
     set_ssl_context,
     ImageDownloader
 )
+from .user_config import (
+    UserConfigs,
+    UserConfigLoader
+)
+from .base_client import (
+    BaseClient,
+    ClientPool,
+    ClientTimeout,
+    ClientLimits,
+    ClientInfo
+)
+from .type_check import (
+    is_iterable,
+    is_container,
+    is_collection,
+)
 
 __all__ = [
     "at_with_name",
@@ -65,6 +83,7 @@ __all__ = [
     "str_to_bool",
     "format_carry_duration",
     "parse_delimited_string",
+    "escape_string",
 
     "EnterType",
     "PersonaInfo",
@@ -82,6 +101,7 @@ __all__ = [
 
     "LimitSpeed",
     "SendMsg",
+    "SendingTarget",
     
     "ChatTTSAPI",
     "TTSResponse",
@@ -95,4 +115,17 @@ __all__ = [
     "get_ssl_context",
     "set_ssl_context",
     "ImageDownloader",
+
+    "UserConfigs",
+    "UserConfigLoader",
+
+    "BaseClient",
+    "ClientPool",
+    "ClientTimeout",
+    "ClientLimits",
+    "ClientInfo",
+    
+    "is_iterable",
+    "is_container",
+    "is_collection",
 ]

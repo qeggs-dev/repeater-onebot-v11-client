@@ -1,9 +1,6 @@
-from ._get_requirement_licenses import GetRequirementLicenses
-from ._get_requirement_list import GetRequirementList
-from ._get_server_license import GetServerLicenses
+from ...import_assist import SubmoduleImporter as _SubmoduleImporter
 
-__all__ = [
-    "GetRequirementLicenses",
-    "GetRequirementList",
-    "GetServerLicenses"
-]
+_importer= _SubmoduleImporter()
+_importer.import_pkgs()
+_importer.inject_modules()
+__all__ = _importer.all_list() # type: ignore

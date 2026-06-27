@@ -1,0 +1,24 @@
+from .._bases import BaseFIM
+from ...clients import ChatSendMsg
+from ...command_register import CommandCaller
+
+@CommandCaller.register
+class FillAtAfter(BaseFIM):
+    cmd = "fillAtAfter"
+    aliases = {
+        "faa",
+        "FAA",
+        "fill_at_after",
+        "Fill_At_After",
+        "FillAtAfter",
+        "FILL_AT_AFTER"
+    }
+    documents = f"""
+        Given a prefix, let AI write the following.
+        
+        Usage:
+        ```
+        /{cmd} text
+        ```
+    """
+    echo = True

@@ -1,9 +1,6 @@
-from ._see_cmd import SeeCmd
-from ._cmd_types_list import CmdTypes
-from ._cmd_type import CmdType
+from ...import_assist import SubmoduleImporter as _SubmoduleImporter
 
-__all__ = [
-    "SeeCmd",
-    "CmdTypes",
-    "CmdType"
-]
+_importer= _SubmoduleImporter()
+_importer.import_pkgs()
+_importer.inject_modules()
+__all__ = _importer.all_list() # type: ignore

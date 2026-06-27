@@ -1,9 +1,5 @@
-from .ciallo import Ciallo
-from .random_fortune import RandomFortune
-from .useless_button import UselessButton
+from ...import_assist import SubmoduleImporter as _SubmoduleImporter
 
-__all__ = [
-    "Ciallo",
-    "RandomFortune",
-    "UselessButton",
-]
+_importer= _SubmoduleImporter()
+_importer.import_pkgs()
+__all__ = _importer.all_list() # type: ignore

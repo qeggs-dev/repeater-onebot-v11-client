@@ -69,9 +69,12 @@ class Response(Generic[T_Response]):
         if self._parsed_data is not None:
             return self._parsed_data
         
-        if issubclass(self._model, BaseModel):
-            data: Any = self.json()
-            return self._model(**data)
+        if self._model is not None:
+            if issubclass(self._model, BaseModel):
+                data: Any = self.json()
+                return self._model(**data)
+        
+        return None
     
     def get_error(self) -> ErrorResponse | None:
         if self.code != 200:

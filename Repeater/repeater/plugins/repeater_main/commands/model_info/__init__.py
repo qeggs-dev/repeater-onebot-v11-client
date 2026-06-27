@@ -1,7 +1,6 @@
-from ._model_info import GetModelList
-from ._ping_provider_host import PingProviderHost
+from ...import_assist import SubmoduleImporter as _SubmoduleImporter
 
-__all__ = [
-    "GetModelList",
-    "PingProviderHost",
-]
+_importer= _SubmoduleImporter()
+_importer.import_pkgs()
+_importer.inject_modules()
+__all__ = _importer.all_list() # type: ignore

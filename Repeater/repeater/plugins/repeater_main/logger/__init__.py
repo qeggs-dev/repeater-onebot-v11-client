@@ -1,1 +1,2 @@
-from ._logger import base_logger as logger
+from ._logger import logger
+from ._warning_logger import WarningHandler

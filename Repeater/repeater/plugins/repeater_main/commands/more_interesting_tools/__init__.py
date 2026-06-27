@@ -1,11 +1,6 @@
-from ._choose_group_member import ChooseGroupMember
-from ._recent_speaking_ranking import RecentSpeakingRanking
-from ._audio_to_file import AudioToFile
-from ._summary_chat_record import SummaryChatRecord
+from ...import_assist import SubmoduleImporter as _SubmoduleImporter
 
-__all__ = [
-    "ChooseGroupMember",
-    "RecentSpeakingRanking",
-    "AudioToFile",
-    "SummaryChatRecord",
-]
+_importer= _SubmoduleImporter()
+_importer.import_pkgs()
+_importer.inject_modules()
+__all__ = _importer.all_list() # type: ignore

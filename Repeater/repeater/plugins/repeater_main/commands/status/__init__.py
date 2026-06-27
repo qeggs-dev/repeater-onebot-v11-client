@@ -1,9 +1,6 @@
-from ._get_client_task_status import GetCoreTaskStatus
-from ._break_chat_task import BreakChatTask
-from ._get_chat_buffer import GetChatBuffer
+from ...import_assist import SubmoduleImporter as _SubmoduleImporter
 
-__all__ = [
-    "GetCoreTaskStatus",
-    "BreakChatTask",
-    "GetChatBuffer"
-]
+_importer= _SubmoduleImporter()
+_importer.import_pkgs()
+_importer.inject_modules()
+__all__ = _importer.all_list() # type: ignore

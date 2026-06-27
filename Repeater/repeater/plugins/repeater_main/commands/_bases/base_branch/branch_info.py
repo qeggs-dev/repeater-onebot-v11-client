@@ -1,13 +1,10 @@
 from ....assist import PersonaInfo, SendMsg
 from .base_branch import BaseBranch
-from ..._clients import UserDataClient
-from .branch_type import BranchType
 
 class BranchInfo(BaseBranch):
-    branch_type: BranchType = BranchType.Reserved
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        client = self.get_client(persona_info)
+        client = await self.get_client(persona_info)
         response = await client.branch_info()
         if response.code == 200:
             data = response.get_data()
@@ -15,7 +12,7 @@ class BranchInfo(BaseBranch):
                 await send_msg.send_error("Unable to process data.")
 
             text_buffer: list[str] = []
-            text_buffer.append(f"Branch Type: {self.branch_type.name}")
+            text_buffer.append(f"Branch Type: {self.userdata_cmds_type.value}")
             text_buffer.append(f"Branch ID: {data.branch_id}")
             if data.file_exists:
                 text_buffer.append(f"Branch Size: {data.size}")
@@ -26,4 +23,4 @@ class BranchInfo(BaseBranch):
 
             await send_msg.send_prompt("\n".join(text_buffer))
         else:
-            await send_msg.send_response_check_code(response, f"Get {self.branch_type.name} branch info failed")
+            await send_msg.send_response_check_code(response, f"Get {self.userdata_cmds_type.value} branch info failed")

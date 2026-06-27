@@ -1,7 +1,6 @@
-from ._upload_environment_to_nexus import EnvironmentUploadToNexus
-from ._download_environment_from_nexus import EnvironmentDownloadFromNexus
+from ...import_assist import SubmoduleImporter as _SubmoduleImporter
 
-__all__ = [
-    "EnvironmentUploadToNexus",
-    "EnvironmentDownloadFromNexus"
-]
+_importer= _SubmoduleImporter()
+_importer.import_pkgs()
+_importer.inject_modules()
+__all__ = _importer.all_list() # type: ignore

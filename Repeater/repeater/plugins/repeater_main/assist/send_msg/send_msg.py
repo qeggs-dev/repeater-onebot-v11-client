@@ -1,6 +1,10 @@
 import time
 import asyncio
 
+from io import BytesIO
+from croniter import croniter
+from datetime import datetime
+from pathlib import Path
 from nonebot.adapters.onebot.v11 import MessageEvent, MessageSegment, Message
 from nonebot.internal.matcher.matcher import Matcher
 from nonebot.exception import FinishedException, ActionFailed
@@ -11,7 +15,7 @@ from ..assist_func import (
     send_private_file,
 )
 from ..text_render.text_render import RendedImage
-from ...client_net_configs import RepeaterDebugMode, storage_configs
+from ...client_configs import REPEATER_DEBUG_MODE, storage_configs
 from ..network import HTTPCode
 from ..persona_info import PersonaInfo
 from ..namespace import MessageSource
@@ -19,6 +23,7 @@ from ..text_render.text_render import TextRender
 from ..response.response import Response
 from ..chattts import ChatTTSAPI
 from typing import (
+    Iterable,
     Any,
     Callable,
     NoReturn,
@@ -26,11 +31,15 @@ from typing import (
     TypeVar,
     Type,
     Literal,
-    ClassVar
+    ClassVar,
+    overload
 )
-from datetime import datetime
 from .limit_speed import LimitSpeed
+from ...exceptions import (
+    BreakHandler,
+)
 from ...logger import logger as base_logger
+from .sending_target import SendingTarget
 
 logger = base_logger.bind(module = "SendMsg")
 
@@ -40,30 +49,84 @@ class SendMsg:
     limit_speed: ClassVar[LimitSpeed] = LimitSpeed(
         storage_configs.camouflage.send_msg_limit_speed_per_minute
     )
+    
+    @overload
+    def __init__(
+            self,
+            component: str,
+            persona_info: PersonaInfo,
+            matcher: Type[Matcher],
+            send_target: Literal[SendingTarget.MATCHER] = SendingTarget.MATCHER
+        ): ...
+    
+    @overload
     def __init__(
             self,
             component: str,
             persona_info: PersonaInfo,
             matcher: Type[Matcher] | None = None,
+            send_target: SendingTarget = SendingTarget.AUTO
+        ): ...
+
+    def __init__(
+            self,
+            component: str,
+            persona_info: PersonaInfo,
+            matcher: Type[Matcher] | None = None,
+            send_target: SendingTarget = SendingTarget.AUTO
         ):
         self._component: str = component
         self._persona_info: PersonaInfo = persona_info
-        self._text_render = TextRender(
-            namespace = self._persona_info.namespace,
-            timeout = storage_configs.server_api_timeout.render
-        )
         self._prefix: Message = Message()
         self._chat_tts_api = ChatTTSAPI()
         self._matcher: Type[Matcher] | None = matcher
         
-        self._buffer: asyncio.Queue[tuple[Message, tuple, dict[str, Any], int]] = asyncio.Queue()
-        self.send_to_buffer: bool = False
+        self._buffer: asyncio.Queue[tuple[str | Message | MessageSegment, tuple[Any, ...], dict[str, Any], int]] = asyncio.Queue()
+        self.sending_target: SendingTarget = send_target
+        match self.sending_target:
+            case SendingTarget.AUTO:
+                if matcher is None:
+                    self.sending_target = SendingTarget.API
+                else:
+                    self.sending_target = SendingTarget.MATCHER
+            case SendingTarget.MATCHER:
+                if matcher is None:
+                    raise ValueError("Matcher can't be a target, because it's not given.")
+    
+    def copy_with_component(self, component: str | None = None) -> "SendMsg":
+        return self.__class__(
+            component = component if component is not None else self._component,
+            persona_info = self._persona_info,
+            matcher = self._matcher,
+        )
     
     def add_prefix(self, prefix: MessageSegment | str):
+        """
+        添加消息前缀
+        """
         self._prefix.append(prefix)
     
     def clear_prefix(self):
+        """
+        清空消息前缀
+        """
         self._prefix = Message()
+    
+    @overload
+    def __call__(
+            self,
+            message: str | Message,
+            reply: bool = True,
+            continue_handler: Literal[False] = False,
+        ) -> Coroutine[Any, Any, NoReturn]: ...
+    
+    @overload
+    def __call__(
+            self,
+            message: str | Message,
+            reply: bool = True,
+            continue_handler: Literal[True] = True,
+        ) -> Coroutine[Any, Any, None]: ...
     
     def __call__(
             self,
@@ -71,86 +134,113 @@ class SendMsg:
             reply: bool = True,
             continue_handler: bool = False,
         ) -> Coroutine[Any, Any, None | NoReturn]:
+        """
+        发送消息
+        """
         return self.send_prompt(
-            message = message,
+            prompt = message,
             reply = reply,
             continue_handler = continue_handler,
         )
     
     @property
     def is_debug_mode(self) -> bool:
-        return RepeaterDebugMode
+        """
+        是否处于调试模式
+        """
+        return REPEATER_DEBUG_MODE
     
     @property
     def persona_info(self) -> PersonaInfo:
+        """
+        当前消息的 PersonaInfo 实例
+        """
         return self._persona_info
     
     @property
     def component(self) -> str:
+        """
+        当前消息的组件
+        """
         return self._component
     
     @property
     def matcher(self) -> Type[Matcher] | None:
+        """
+        当前消息的 Matcher 实例
+        """
         return self._matcher
     
     @matcher.setter
     def matcher(self, matcher: Type[Matcher] | None):
-        if isinstance(matcher, Matcher) or matcher is None:
+        """
+        设置当前消息的 Matcher 实例
+        """
+        if matcher is None:
+            self._matcher = None
+        elif issubclass(matcher, Matcher):
             self._matcher = matcher
         else:
             raise TypeError(f"matcher must be Matcher or None, not {type(matcher).__name__}")
     
     @property
-    def buffer(self) -> asyncio.Queue[tuple[Message, tuple, dict[str, Any], int]]:
+    def buffer(self) -> asyncio.Queue[tuple[str | Message | MessageSegment, tuple[Any, ...], dict[str, Any], int]]:
+        """
+        当前消息的缓冲区
+        """
         return self._buffer
     
     @buffer.setter
     def buffer(self, buffer: asyncio.Queue):
+        """
+        设置当前消息的缓冲区
+        """
         if isinstance(buffer, asyncio.Queue):
             self._buffer = buffer
         else:
             raise TypeError(f"buffer must be asyncio.Queue, not {type(buffer).__name__}")
     
-    @property
-    def hello_content(self) -> str:
+    async def get_hello_content(self) -> str:
+        """
+        获取每日问候语
+        """
+        user_configs = await self.persona_info.get_user_configs()
+        if user_configs.hello_content is None:
+            hello_content_configs = storage_configs.hello_content
+        else:
+            hello_content_configs = user_configs.hello_content
+        
         now = datetime.now()
         buffer: list[str] = [
-            storage_configs.hello_content
+            hello_content_configs.content
         ]
 
-        if now.strftime("%m-%d") in storage_configs.hello_messages_for_date:
-            buffer.append(
-                storage_configs.hello_messages_for_date[now.strftime("%m-%d")]
-            )
-        
-        weekday = now.weekday() + 1
-        weekday_str = now.strftime("%A")
-        weekday_abridge = now.strftime("%a")
-
-        if weekday in storage_configs.hello_messages_by_weekday:
-            buffer.append(
-                storage_configs.hello_messages_by_weekday[weekday]
-            )
-        elif str(weekday) in storage_configs.hello_messages_by_weekday:
-            buffer.append(
-                storage_configs.hello_messages_by_weekday[str(weekday)]
-            )
-        elif weekday_str in storage_configs.hello_messages_by_weekday:
-            buffer.append(
-                storage_configs.hello_messages_by_weekday[weekday_str]
-            )
-        elif weekday_abridge in storage_configs.hello_messages_by_weekday:
-            buffer.append(
-                storage_configs.hello_messages_by_weekday[weekday_abridge]
-            )
-
+        suffixs = hello_content_configs.suffixs
+        for suffix in suffixs:
+            if croniter.match(suffix.cron, now):
+                buffer.append(suffix.content)
+            
         return "".join(buffer)
+    
+    @overload
+    async def send_debug_mode(
+            self,
+            reply: bool = True,
+            continue_handler: Literal[False] = False,
+        ) -> NoReturn: ...
+
+    @overload
+    async def send_debug_mode(
+            self,
+            reply: bool = True,
+            continue_handler: Literal[True] = True,
+        ) -> None: ...
     
     async def send_debug_mode(
             self,
             reply: bool = True,
             continue_handler: bool = False,
-        ):
+        ) -> NoReturn | None:
         """
         用于调试模式的信息打印
 
@@ -168,13 +258,39 @@ class SendMsg:
             continue_handler = continue_handler,
         )
     
+    @overload
+    async def send_response_check_code(
+            self,
+            response: Response[T_RESPONSE],
+            message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
+            reply: bool = True,
+            continue_handler: Literal[False] = False,
+        ) -> NoReturn: ...
+
+    @overload
+    async def send_response_check_code(
+            self,
+            response: Response[T_RESPONSE],
+            message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
+            reply: bool = True,
+            continue_handler: Literal[True] = True,
+        ) -> None: ...
+    
     async def send_response_check_code(
             self,
             response: Response[T_RESPONSE],
             message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
             reply: bool = True,
             continue_handler: bool = False,
-        ):
+        ) -> NoReturn | None:
+        """
+        发送响应结果并检查状态码
+
+        :param response: 响应体
+        :param message: 消息内容，不提供时使用响应体的文本内容
+        :param reply: 是否携带引用
+        :param continue_handler: 是否继续运行当前处理流程
+        """
         logger.info(
             "Send Response Check Code"
         )
@@ -197,13 +313,39 @@ class SendMsg:
                 continue_handler = continue_handler,
             )
     
+    @overload
+    async def send_error_response(
+            self,
+            response: Response[T_RESPONSE],
+            message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
+            reply: bool = True,
+            continue_handler: Literal[False] = False,
+        ) -> NoReturn: ...
+
+    @overload
+    async def send_error_response(
+            self,
+            response: Response[T_RESPONSE],
+            message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
+            reply: bool = True,
+            continue_handler: Literal[True] = True,
+        ) -> None: ...
+    
     async def send_error_response(
             self,
             response: Response[T_RESPONSE],
             message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
             reply: bool = True,
             continue_handler: bool = False,
-        ):
+        ) -> NoReturn | None:
+            """
+            发送响应对象中的报错信息
+
+            :param response: 响应对象
+            :param message: 自定义消息文本或解析处理函数
+            :param reply: 是否携带引用
+            :param continue_handler: 是否继续运行当前处理流程
+            """
             logger.info(
                 "Send Error Response"
             )
@@ -225,30 +367,50 @@ class SendMsg:
                 continue_handler = continue_handler,
             )
     
+    @overload
+    async def send_response(
+            self,
+            response: Response[T_RESPONSE],
+            message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
+            reply: bool = True,
+            continue_handler: Literal[False] = False,
+        ) -> NoReturn: ...
+
+    @overload
+    async def send_response(
+            self,
+            response: Response[T_RESPONSE],
+            message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
+            reply: bool = True,
+            continue_handler: Literal[True] = True,
+        ) -> None: ...
+    
     async def send_response(
             self,
             response: Response[T_RESPONSE],
             message: Callable[[Response[T_RESPONSE]], str] | str | None = None,
             reply: bool = True,
             continue_handler: bool = False,
-        ):
+        ) -> NoReturn | None:
         """
         发送响应对象中的内容，主要用于HTTP错误提示
 
         :param response: 响应对象
-        :param message_handler: 自定义消息文本或解析处理函数
+        :param message: 自定义消息文本或解析处理函数
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
         logger.info(
             "Send Response"
         )
+
         if callable(message):
             message = message(response)
         elif isinstance(message, str):
             message = message
         else:
             message = response.text
+        
         await self.send_http_status(
             http_status = response.code,
             message = message,
@@ -256,13 +418,31 @@ class SendMsg:
             continue_handler = continue_handler,
         )
     
+    @overload
+    async def send_http_status(
+            self,
+            http_status: int,
+            message: str | None = None,
+            reply: bool = True,
+            continue_handler: Literal[False] = False,
+        ) -> NoReturn: ...
+
+    @overload
+    async def send_http_status(
+            self,
+            http_status: int,
+            message: str | None = None,
+            reply: bool = True,
+            continue_handler: Literal[True] = True,
+        ) -> None: ...
+    
     async def send_http_status(
             self,
             http_status: int,
             message: str | None = None,
             reply: bool = True,
             continue_handler: bool = False,
-        ):
+        ) -> NoReturn | None:
         """
         发送 HTTP 状态码，用于提示 HTTP 错误
 
@@ -277,20 +457,36 @@ class SendMsg:
         await self.send_prompt(
             (
                 f"{message}\n"
-                f"HTTP Code: {http_status}({HTTPCode(http_status)})"
+                f"HTTP Code: {http_status}({HTTPCode(code=http_status)})"
             ),
             reply = reply,
             continue_handler = continue_handler
         )
+    
+    @overload
+    async def send_multiple_responses(
+            self,
+            *responses: Response[T_RESPONSE] | tuple[Response[T_RESPONSE], str],
+            reply: bool = True,
+            continue_handler: Literal[False] = False
+        ) -> NoReturn: ...
+    
+    @overload
+    async def send_multiple_responses(
+            self,
+            *responses: Response[T_RESPONSE] | tuple[Response[T_RESPONSE], str],
+            reply: bool = True,
+            continue_handler: Literal[True] = True
+        ) -> None: ...
     
     async def send_multiple_responses(
             self,
             *responses: Response[T_RESPONSE] | tuple[Response[T_RESPONSE], str],
             reply: bool = True,
             continue_handler: bool = False,
-        ):
+        ) -> NoReturn | None:
         """
-        发送多个响应对象中的内容，主要用于HTTP错误提示
+        发送多个响应对象中的内容
 
         :param responses: 响应对象
         :param reply: 是否携带引用
@@ -324,11 +520,25 @@ class SendMsg:
             continue_handler = continue_handler
         )
     
+    @overload
+    async def send_hello(
+            self,
+            reply: bool = True,
+            continue_handler: Literal[False] = False,
+        ) -> NoReturn: ...
+    
+    @overload
+    async def send_hello(
+            self,
+            reply: bool = True,
+            continue_handler: Literal[True] = True,
+        ) -> None: ...
+    
     async def send_hello(
             self,
             reply: bool = True,
             continue_handler: bool = False,
-        ):
+        ) -> NoReturn | None:
         """
         发送欢迎信息
 
@@ -338,29 +548,45 @@ class SendMsg:
         logger.info(
             "Send Hello Message"
         )
-        hello_content = self.hello_content
-        if hello_content:
-            await self.send_text(
-                hello_content,
-                reply = reply,
-                continue_handler = continue_handler
-            )
-        elif not continue_handler:
-            self.break_handler()
+        hello_content = await self.get_hello_content()
+        await self.send_text(
+            hello_content,
+            reply = reply,
+            continue_handler = continue_handler
+        )
     
     @property
-    def prompt_str(self) -> str:
+    def prompt_prefix(self) -> str:
+        """
+        提示前缀
+        """
         return (
             f"==== {self._component} ====\n"
             f"> [{self._persona_info.namespace}]\n"
         )
+    
+    @overload
+    async def send_prompt(
+            self,
+            prompt: Message | str,
+            reply: bool = True,
+            continue_handler: Literal[False] = False,
+        ) -> NoReturn: ...
+
+    @overload
+    async def send_prompt(
+            self,
+            prompt: Message | str,
+            reply: bool = True,
+            continue_handler: Literal[True] = True,
+        ) -> None: ...
     
     async def send_prompt(
             self,
             prompt: Message | str,
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         """
         发送提示信息
 
@@ -374,26 +600,42 @@ class SendMsg:
         if isinstance(prompt, Message):
             await self._send(
                 Message(
-                    self.prompt_str,
+                    self.prompt_prefix,
                 ).extend(prompt),
                 reply = reply,
                 continue_handler = continue_handler
             )
         elif isinstance(prompt, str):
             await self._send(
-                self.prompt_str + prompt,
+                self.prompt_prefix + prompt,
                 reply = reply,
                 continue_handler = continue_handler
             )
         else:
             raise TypeError("prompt must be str or Message")
     
+    @overload
     async def send_error(
             self,
-            error: str | Exception,
+            error: str | BaseException,
+            reply: bool = True,
+            continue_handler: Literal[False] = False,
+        ) -> NoReturn: ...
+
+    @overload
+    async def send_error(
+            self,
+            error: str | BaseException,
+            reply: bool = True,
+            continue_handler: Literal[True] = True,
+        ) -> None: ...
+    
+    async def send_error(
+            self,
+            error: str | BaseException,
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         """
         发送错误信息
 
@@ -404,7 +646,7 @@ class SendMsg:
         logger.info(
             "Send Error"
         )
-        if isinstance(error, Exception):
+        if isinstance(error, BaseException):
             await self.send_prompt(
                 (
                     f"{error.__class__.__name__}: {error}"
@@ -421,12 +663,28 @@ class SendMsg:
                 continue_handler = continue_handler
             )
     
+    @overload
+    async def send_warning(
+            self,
+            warning: str,
+            reply: bool = True,
+            continue_handler: Literal[True] = True
+        ) -> None: ...
+
+    @overload
+    async def send_warning(
+            self,
+            warning: str,
+            reply: bool = True,
+            continue_handler: Literal[False] = False
+        ) -> NoReturn: ...
+    
     async def send_warning(
             self,
             warning: str,
             reply: bool = True,
             continue_handler: bool = True
-        ):
+        ) -> NoReturn | None:
         """
         发送警告信息
 
@@ -445,12 +703,28 @@ class SendMsg:
             continue_handler = continue_handler
         )
     
+    @overload
+    async def send_text(
+            self,
+            text: str | None = None,
+            reply: bool = True,
+            continue_handler: Literal[False] = False
+        ) -> NoReturn: ...
+    
+    @overload
+    async def send_text(
+            self,
+            text: str | None = None,
+            reply: bool = True,
+            continue_handler: Literal[True] = True
+        ) -> None: ...
+    
     async def send_text(
             self,
             text: str | None = None,
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         """
         发送纯文本
 
@@ -467,6 +741,28 @@ class SendMsg:
             continue_handler = continue_handler
         )
     
+    @overload
+    async def send_mixed_render(
+            self,
+            text_to_render: str,
+            text: str | None = None,
+            prompt_mode: bool = False,
+            document_bottom_comment: str = "",
+            reply: bool = True,
+            continue_handler: Literal[False] = False
+        ) -> NoReturn: ...
+    
+    @overload
+    async def send_mixed_render(
+            self,
+            text_to_render: str,
+            text: str | None = None,
+            prompt_mode: bool = False,
+            document_bottom_comment: str = "",
+            reply: bool = True,
+            continue_handler: Literal[True] = True
+        ) -> None: ...
+    
     async def send_mixed_render(
             self,
             text_to_render: str,
@@ -475,7 +771,7 @@ class SendMsg:
             document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         """
         发送混合渲染文本
 
@@ -487,7 +783,7 @@ class SendMsg:
         logger.info(
             "Send Mixed Render"
         )
-        image = await self.render_text(
+        image = await self.render_text_to_msg_segment(
             text_to_render,
             document_bottom_comment = document_bottom_comment
         )
@@ -517,15 +813,38 @@ class SendMsg:
                 continue_handler = continue_handler
             )
     
+    @overload
     async def send_multiple_render(
             self,
-            messages: list[str | Message],
+            messages: Iterable[str | Message],
+            document_bottom_comment: str = "",
+            reply: bool = False,
+            continue_handler: Literal[False] = False
+        ) -> NoReturn: ...
+
+    @overload
+    async def send_multiple_render(
+            self,
+            messages: Iterable[str | Message],
+            document_bottom_comment: str = "",
+            reply: bool = False,
+            continue_handler: Literal[True] = True
+        ) -> None: ...
+    
+    async def send_multiple_render(
+            self,
+            messages: Iterable[str | Message],
             document_bottom_comment: str = "",
             reply: bool = True,
-            continue_handler: Literal[False] = False
-        ) -> None:
+            continue_handler: bool = False
+        ) -> NoReturn | None:
         """
         发送多个渲染文本
+
+        :param messages: 待发送的消息
+        :param document_bottom_comment: 文档底部注释
+        :param reply: 是否回复
+        :param continue_handler: 是否继续
         """
         logger.info(
             "Send Multiple Render"
@@ -535,7 +854,7 @@ class SendMsg:
             if isinstance(msg, str):
                 tasks.append(
                     asyncio.create_task(
-                        self.render_text(
+                        self.render_text_to_msg_segment(
                             msg,
                             document_bottom_comment = document_bottom_comment
                         )
@@ -544,7 +863,7 @@ class SendMsg:
             elif isinstance(msg, Message):
                 tasks.append(
                     asyncio.create_task(
-                        self.render_text(
+                        self.render_text_to_msg_segment(
                             msg.extract_plain_text(),
                             document_bottom_comment = document_bottom_comment
                         )
@@ -560,24 +879,50 @@ class SendMsg:
             continue_handler = continue_handler
         )
     
+    @overload
+    async def send_render_prompt(
+            self,
+            text: str,
+            document_bottom_comment: str = "",
+            reply: bool = True,
+            continue_handler: Literal[False] = False
+        ) -> NoReturn: ...
+    
+    @overload
+    async def send_render_prompt(
+            self,
+            text: str,
+            document_bottom_comment: str = "",
+            reply: bool = True,
+            continue_handler: Literal[True] = True
+        ) -> None: ...
+    
     async def send_render_prompt(
             self,
             text: str,
             document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
+        """
+        发送提示消息（渲染为图片）
+
+        :param text: 提示消息
+        :param document_bottom_comment: 文档底部注释
+        :param reply: 是否回复
+        :param continue_handler: 是否继续处理
+        """
         logger.info(
             "Send Render Prompt"
         )
-        image = await self.render_text(
+        image = await self.render_text_to_msg_segment(
             text,
             document_bottom_comment = document_bottom_comment
         )
         await self._send(
             Message(
                 [
-                    self.prompt_str,
+                    MessageSegment.text(self.prompt_prefix),
                     image
                 ]
             ),
@@ -585,24 +930,43 @@ class SendMsg:
             continue_handler = continue_handler
         )
     
+    @overload
+    async def send_render(
+            self,
+            text: str,
+            document_bottom_comment: str = "",
+            reply: bool = True,
+            continue_handler: Literal[True] = True
+        ) -> None: ...
+    
+    @overload
+    async def send_render(
+            self,
+            text: str,
+            document_bottom_comment: str = "",
+            reply: bool = True,
+            continue_handler: Literal[False] = False
+        ) -> NoReturn: ...
+    
     async def send_render(
             self,
             text: str,
             document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         """
         发送渲染后的文本
 
         :param text: 渲染文本内容
+        :param document_bottom_comment: 文档底部注释
         :param reply: 是否携带引用
         :param continue_handler: 是否继续运行当前处理流程
         """
         logger.info(
             "Send Render"
         )
-        image = await self.render_text(
+        image = await self.render_text_to_msg_segment(
             text,
             document_bottom_comment = document_bottom_comment
         )
@@ -612,17 +976,36 @@ class SendMsg:
             continue_handler = continue_handler
         )
     
+    @overload
+    async def send_tts(
+            self,
+            text: str,
+            send_error_message: bool = True,
+            reply: bool = False,
+            continue_handler: Literal[False] = False
+        ) -> NoReturn: ...
+
+    @overload
+    async def send_tts(
+            self,
+            text: str,
+            send_error_message: bool = True,
+            reply: bool = False,
+            continue_handler: Literal[True] = True
+        ) -> None: ...
+    
     async def send_tts(
             self,
             text: str,
             send_error_message: bool = True,
             reply: bool = False,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         """
         发送tts
 
         :param text: 文本
+        :param send_error_message: 是否发送错误信息
         :param reply: 是否回复
         :param continue_handler: 是否继续处理流程
         """
@@ -643,6 +1026,26 @@ class SendMsg:
         else:
             logger.error(f"Send TTS Error: {response.code} {response.text}")
     
+    @overload
+    async def send_check_length(
+            self,
+            message: Message | str,
+            threshold: float = 1.0,
+            document_bottom_comment: str = "",
+            reply: bool = True,
+            continue_handler: Literal[False] = False
+        ) -> NoReturn: ...
+    
+    @overload
+    async def send_check_length(
+            self,
+            message: Message | str,
+            threshold: float = 1.0,
+            document_bottom_comment: str = "",
+            reply: bool = True,
+            continue_handler: Literal[True] = True
+        ) -> None: ...
+    
     async def send_check_length(
             self,
             message: Message | str,
@@ -650,12 +1053,13 @@ class SendMsg:
             document_bottom_comment: str = "",
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         """
         发送长度检测后的文本
 
         :param message: 消息
         :param threshold: 长度阈值
+        :param document_bottom_comment: 文档底部注释
         :param reply: 是否回复
         :param continue_handler: 是否继续处理流程
         """
@@ -683,14 +1087,43 @@ class SendMsg:
                 continue_handler = continue_handler
             )
     
+    @overload
     async def send_check_length_prompt(
             self,
             prompt: Message | str,
             threshold: float = 1.0,
-            document_document_bottom_comments: str = "",
+            document_bottom_comments: str = "",
+            reply: bool = True,
+            continue_handler: Literal[False] = False
+        ) -> NoReturn: ...
+    
+    @overload
+    async def send_check_length_prompt(
+            self,
+            prompt: Message | str,
+            threshold: float = 1.0,
+            document_bottom_comments: str = "",
+            reply: bool = True,
+            continue_handler: Literal[True] = True
+        ) -> None: ...
+    
+    async def send_check_length_prompt(
+            self,
+            prompt: Message | str,
+            threshold: float = 1.0,
+            document_bottom_comments: str = "",
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
+        """
+        发送提示消息并检查长度
+
+        :param prompt: 提示消息
+        :param threshold: 长度阈值
+        :param document_bottom_comment: 文档底部注释
+        :param reply: 是否回复
+        :param continue_handler: 是否继续处理
+        """
         logger.info(
             "Send Check Length Prompt"
         )
@@ -704,8 +1137,8 @@ class SendMsg:
         if length_score >= threshold:
             await self.send_mixed_render(
                 text,
-                self.prompt_str,
-                document_bottom_comment = document_document_bottom_comments,
+                self.prompt_prefix,
+                document_bottom_comment = document_bottom_comments,
                 reply = reply,
                 continue_handler = continue_handler
             )
@@ -718,19 +1151,56 @@ class SendMsg:
     
     @staticmethod
     async def empty_message() -> MessageSegment:
+        """
+        在发送聊天响应时，消息为空的提示
+
+        :return: 空消息
+        """
         return MessageSegment.text("[Message is empty.]")
     
     @staticmethod
     async def _get_text_message(content: str) -> MessageSegment:
+        """
+        获取文本消息
+
+        :param content: 文本内容
+        :return: 文本消息
+        """
         return MessageSegment.text(content)
+    
+    @overload
+    async def send_chat_response(
+            self,
+            reasoning_content: str | None = None,
+            content: str = "",
+            reply: bool = True,
+            continue_handler: Literal[False] = False
+        ) -> NoReturn: ...
+    
+    @overload
+    async def send_chat_response(
+            self,
+            reasoning_content: str | None = None,
+            content: str = "",
+            reply: bool = True,
+            continue_handler: Literal[True] = True
+        ) -> None: ...
     
     async def send_chat_response(
             self,
-            reasoning_content: str = "",
+            reasoning_content: str | None = None,
             content: str = "",
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
+        """
+        发送聊天响应
+
+        :param reasoning_content: 推理内容
+        :param content: 文本内容
+        :param reply: 是否回复
+        :param continue_handler: 是否继续处理
+        """
         logger.info(
             "Send Chat Response"
         )
@@ -738,7 +1208,7 @@ class SendMsg:
         if reasoning_content:
             tasks.append(
                 asyncio.create_task(
-                    self.render_text(
+                    self.render_text_to_msg_segment(
                         reasoning_content,
                     )
                 )
@@ -748,7 +1218,7 @@ class SendMsg:
             if self.text_length_score(content) >= self.text_length_score_threshold:
                 tasks.append(
                     asyncio.create_task(
-                        self.render_text(
+                        self.render_text_to_msg_segment(
                             content,
                         )
                     )
@@ -776,12 +1246,72 @@ class SendMsg:
             continue_handler = continue_handler
         )
     
+    @overload
+    async def send_images(
+            self,
+            *images: str | bytes | BytesIO | Path,
+            reply: bool = True,
+            continue_handler: Literal[False] = False
+        ) -> NoReturn: ...
+    
+    @overload
+    async def send_images(
+            self,
+            *images: str | bytes | BytesIO | Path,
+            reply: bool = True,
+            continue_handler: Literal[True] = True
+        ) -> None: ...
+    
+    async def send_images(
+            self,
+            *images: str | bytes | BytesIO | Path,
+            reply: bool = True,
+            continue_handler: bool = False
+        ) -> NoReturn | None:
+        """
+        发送图片
+
+        :param images: 图片
+        :param reply: 是否回复
+        :param continue_handler: 是否继续处理
+        """
+        logger.info(
+            "Send Images"
+        )
+        message = Message()
+        for image in images:
+            message.append(
+                MessageSegment.image(image)
+            )
+
+        await self._send(
+            message,
+            reply=reply,
+            continue_handler = continue_handler
+        )
+    
+    @overload
+    async def send_any(
+            self,
+            message: str | Message | MessageSegment,
+            reply: bool = True,
+            continue_handler: Literal[False] = False
+        ) -> NoReturn: ...
+
+    @overload
+    async def send_any(
+            self,
+            message: str | Message | MessageSegment,
+            reply: bool = True,
+            continue_handler: Literal[True] = True
+        ) -> None: ...
+    
     async def send_any(
             self,
             message: str | Message | MessageSegment,
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         """
         发送任意消息
 
@@ -798,48 +1328,108 @@ class SendMsg:
             continue_handler = continue_handler
         )
     
-    def break_handler(self) -> NoReturn:
+    def handler_finished(self) -> NoReturn:
         """
         跳出当前处理函数
+
+        :raise: FinishedException
         """
         logger.info(
             "Break handler"
         )
         raise FinishedException
+    
+    def break_handler(self) -> NoReturn:
+        """
+        跳出当前处理函数
 
-    async def render_text(self, text: str, direct_output: bool = False, document_bottom_comment: str = "") -> MessageSegment:
+        :raise: BreakHandler
+        """
+        logger.info(
+            "Break handler"
+        )
+        raise BreakHandler
+    
+    async def render_text_to_msg_segment(self, text: str, direct_output: bool = False, document_bottom_comment: str = "") -> MessageSegment:
         """
         渲染文本
 
         :param text: 渲染文本内容
+        :param direct_output: 是否直接输出
+        :param document_bottom_comment: 文档底部注释
+        :return: 渲染后的消息段
+        """
+        return MessageSegment.image(
+            await self.render_text(
+                text,
+                direct_output,
+                document_bottom_comment
+            )
+        )
+
+    async def render_text(self, text: str, direct_output: bool = False, document_bottom_comment: str = "") -> str:
+        """
+        渲染文本
+
+        :param text: 渲染文本内容
+        :param direct_output: 是否直接输出
+        :param document_bottom_comment: 文档底部注释
+        :return: 渲染图片的 URL
         """
         logger.info(
-            "Render Text"
+            "Render Text:\n{text}",
+            text = text,
+        )
+        user_configs = await self.persona_info.get_user_configs()
+        text_render = TextRender(
+            persona_info = self.persona_info,
+            user_configs = user_configs,
         )
         if text:
-            render_response: Response[RendedImage] = await self._text_render.render(
+            render_response: Response[RendedImage] = await text_render.render(
                 text,
                 direct_output = direct_output,
                 document_bottom_comment = document_bottom_comment
             )
-            if render_response.code == 200:
+            if render_response:
                 data = render_response.get_data()
                 if data is not None:
-                    message = MessageSegment.image(data.image_url)
+                    url = data.image_url
+                    return url
                 else:
                     logger.error(f"Render Data Is Invalid")
+                    await self.send_response(render_response, "Render Response Is Invalid")
+            elif render_response.initialized:
+                await self.send_error_response(render_response)
             else:
                 await self.send_response(render_response, lambda response: f"Render Error: {response.text}")
-            return message
         else:
             raise ValueError("Text is empty.")
+        
+        assert False, "This line is not reachable."
+    
+    @overload
+    async def _send(
+            self,
+            message: str | Message | MessageSegment,
+            reply: bool = True,
+            continue_handler: Literal[False] = False
+        ) -> NoReturn: ...
+    
+    @overload
+    async def _send(
+            self,
+            message: str | Message | MessageSegment,
+            reply: bool = True,
+            continue_handler: Literal[True] = True
+        ) -> None: ...
     
     async def _send(
             self,
             message: str | Message | MessageSegment,
             reply: bool = True,
             continue_handler: bool = False
-        ):
+        ) -> NoReturn | None:
         """
         发送消息
 
@@ -852,7 +1442,9 @@ class SendMsg:
             send_msg = self._persona_info.reply + send_msg
         try:
             await self.limit_speed.submit(
-                self._send_auto(send_msg)
+                task = self._send_to_target(
+                    message = send_msg
+                )
             )
         except Exception as error:
             logger.error(
@@ -863,37 +1455,66 @@ class SendMsg:
         if not continue_handler:
             self.break_handler()
     
-    async def _send_auto(
+    async def _send_to_target(
         self,
         message: str | Message | MessageSegment,
         *args,
         **kwargs
-    ):
-        if self.send_to_buffer:
-            logger.info(
-                "Send to buffer: \n{message}",
-                message = message
-            )
-            await self._send_to_buffer()
-        elif self._matcher is not None:
-            logger.info(
-                "Send to matcher: \n{message}",
-                message = message
-            )
-            await self._send_to_matcher(message, *args, **kwargs)
-        else:
-            logger.info(
-                "Send to api: \n{message}",
-                message = message
-            )
-            await self._send_to_api(message, *args, **kwargs)
+    ) -> None:
+        """
+        发送消息到目标
+
+        :param message: 消息对象
+        """
+        match self.sending_target:
+            case SendingTarget.BUFFER:
+                logger.info(
+                    "Send to buffer: \n{message}",
+                    message = message
+                )
+                await self._send_to_queue(
+                    message,
+                    *args,
+                    **kwargs
+                )
+            case SendingTarget.MATCHER:
+                logger.info(
+                    "Send to matcher: \n{message}",
+                    message = message
+                )
+                await self._send_to_matcher(
+                    message,
+                    *args,
+                    **kwargs
+                )
+            case SendingTarget.API:
+                logger.info(
+                    "Send to api: \n{message}",
+                    message = message
+                )
+                await self._send_to_api(
+                    message,
+                    *args,
+                    **kwargs
+                )
+            case SendingTarget.NULL:
+                logger.info(
+                    "Send to null: \n{message}",
+                    message = message
+                )
+                pass
     
-    async def _send_to_buffer(
+    async def _send_to_queue(
         self,
         message: str | Message | MessageSegment,
         *args,
         **kwargs
-    ):
+    ) -> None:
+        """
+        发送消息到队列
+
+        :param message: 消息对象
+        """
         now = time.perf_counter_ns()
         await self._buffer.put(
             (message, args, kwargs, now)
@@ -904,26 +1525,45 @@ class SendMsg:
         message: str | Message | MessageSegment,
         *args,
         **kwargs
-    ):
-        await self._matcher.send(message, *args, **kwargs)
+    ) -> None:
+        """
+        发送消息到 Matcher
+
+        :param message: 消息对象
+        """
+        if self._matcher is not None:
+            await self._matcher.send(
+                message,
+                *args,
+                **kwargs
+            )
     
     async def _send_to_api(
         self,
         message: str | Message | MessageSegment,
         *args,
         **kwargs
-    ):
+    ) -> None:
+        """
+        发送消息到 API
+
+        :param message: 消息对象
+        """
+        if isinstance(message, MessageSegment):
+            message = Message(
+                message
+            )
         bot = self._persona_info.cached_api
-        if self._persona_info.source == MessageSource.GROUP:
+        if self._persona_info.source == MessageSource.GROUP and self._persona_info.group_id is not None:
             await bot.send_group_msg(
-                group_id = self._persona_info.group_id,
+                group_id = int(self._persona_info.group_id),
                 message = message,
                 *args,
                 **kwargs
             )
         elif self._persona_info.source == MessageSource.PRIVATE:
             await bot.send_private_msg(
-                group_id = self._persona_info.user_id,
+                user_id = int(self._persona_info.user_id),
                 message = message,
                 *args,
                 **kwargs
@@ -933,10 +1573,23 @@ class SendMsg:
     
     @staticmethod
     def text_length_score(text: str) -> float:
-        return text_length_score(text)
+        """
+        计算文本长度得分
+
+        :param text: 文本
+        :return: 文本长度得分
+        """
+        return text_length_score(
+            text = text
+        )
     
     @property
     def text_length_score_threshold(self) -> float:
+        """
+        文本长度得分阈值
+
+        :return: 文本长度得分阈值
+        """
         if self._persona_info.source == MessageSource.GROUP:
             threshold = storage_configs.text_length_score_configs.threshold.group
         else:
@@ -944,30 +1597,42 @@ class SendMsg:
 
         return threshold
     
-    async def _send_file(self, url: str, file_name: str):
+    async def _send_file(self, url: str, file_name: str) -> None:
+        """
+        发送文件
+
+        :param url: 文件URL
+        :param file_name: 文件名
+        """
         try:
-            if self._persona_info.source == MessageSource.GROUP:
+            if self._persona_info.source == MessageSource.GROUP and self._persona_info.group_id is not None:
                 await send_group_file(
-                    self._persona_info.cached_api,
-                    self._persona_info.group_id,
-                    url,
-                    file_name
+                    bot = self._persona_info.cached_api,
+                    group_id = self._persona_info.group_id,
+                    url = url,
+                    file_name = file_name
                 )
             elif self._persona_info.source == MessageSource.PRIVATE:
                 await send_private_file(
-                    self._persona_info.cached_api,
-                    self._persona_info.user_id,
-                    url,
-                    file_name
+                    bot = self._persona_info.cached_api,
+                    user_id = self._persona_info.user_id,
+                    url = url,
+                    file_name = file_name
                 )
         except ActionFailed as e:
             logger.error(f"Failed to upload file: {e}")
             await self.send_error("Failed to upload file.")
     
-    async def send_file(self, url: str, file_name: str):
+    async def send_file(self, url: str, file_name: str) -> None:
+        """
+        发送文件
+
+        :param url: 文件URL
+        :param file_name: 文件名
+        """
         await self.limit_speed.submit(
-            self._send_file(
-                url,
-                file_name
+            task = self._send_file(
+                url = url,
+                file_name = file_name
             )
         )

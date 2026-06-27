@@ -1,7 +1,6 @@
-from ._send_user_data_file import SendUserDataFile
-from ._package_user_space import PackageUserSpace
+from ...import_assist import SubmoduleImporter as _SubmoduleImporter
 
-__all__ = [
-    "SendUserDataFile",
-    "PackageUserSpace",
-]
+_importer= _SubmoduleImporter()
+_importer.import_pkgs()
+_importer.inject_modules()
+__all__ = _importer.all_list() # type: ignore

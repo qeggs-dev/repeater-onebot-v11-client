@@ -22,4 +22,4 @@ def get_ssl_context():
 
 def set_ssl_context(new_ssl_context: ssl.SSLContext):
     global ssl_context
-    ssl_context.set_ssl_context(ssl_context)
+    ssl_context.set_ssl_context(new_ssl_context)

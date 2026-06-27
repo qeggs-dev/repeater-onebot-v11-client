@@ -1,4 +1,5 @@
 from ._obj import (
+    storage_path,
     text_storage,
     binary_storage,
     async_text_storage,
@@ -22,6 +23,7 @@ from ._yaml_storage import YamlStorage
 from ._async_yaml_storage import YamlStorage as AsyncYamlStorage
 
 __all__ = [
+    "storage_path",
     "text_storage",
     "binary_storage",
     "async_text_storage",

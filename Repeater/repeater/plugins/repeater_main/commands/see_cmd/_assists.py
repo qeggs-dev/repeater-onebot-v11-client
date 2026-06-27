@@ -1,23 +1,15 @@
 from ...command_register import(
-    CommandPackage,
-    CmdTypes
+    CommandPackage
 )
 from ...assist import SendMsg
-from typing import Iterable, NoReturn
+from ...cmd_info import CmdTypes
+from typing import Iterable, NoReturn, Generator
 
-def all_joined_commands(cmd: tuple[str, ...], delimiters: Iterable[str]) -> set[str]:
-    return {delimiter.join(cmd) for delimiter in delimiters}
+def all_joined_commands(cmd: tuple[str, ...], delimiters: Iterable[str]) -> Generator[str, None, None]:
+    return (delimiter.join(cmd) for delimiter in delimiters)
 
-def match_command(cmd: str | tuple[str, ...], cmd_name: str, delimiters: Iterable[str]):
-    if isinstance(cmd, str) and cmd_name == cmd:
-        return True
-    elif (
-        isinstance(cmd, tuple) and
-        cmd_name in all_joined_commands(cmd, delimiters)
-    ):
-        return True
-    else:
-        return False
+def all_splited_commands(cmd: str, delimiters: Iterable[str]) -> Generator[tuple[str, ...], None, None]:
+    return (tuple(cmd.split(delimiter)) for delimiter in delimiters)
 
 async def see_cmds(
         commands: dict[CmdTypes, list[CommandPackage]],
@@ -31,10 +23,10 @@ async def see_cmds(
         for package in commands[cmd_type]:
             text_buffer.append("")
             text_buffer.append(f"**{package.component}**")
-            text_buffer.append(f"**type**: `{cmd_type}`")
+            text_buffer.append(f"**type**: `{cmd_type.value}`")
             if package.description:
                 text_buffer.append("")
-                text_buffer.append(package.description.replace("\n", "\n> "))
+                text_buffer.append(package.get_description().replace("\n", "\n> "))
                 text_buffer.append("")
             
             text_buffer.append("**trigger:**")
@@ -65,3 +57,4 @@ async def see_cmds(
     if not text:
         await send_msg.send_error("Text Buffer is Empty")
     await send_msg.send_render_prompt(text)
+    send_msg.break_handler()

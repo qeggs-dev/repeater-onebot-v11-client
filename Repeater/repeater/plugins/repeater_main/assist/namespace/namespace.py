@@ -1,6 +1,6 @@
 import hashlib
 from pydantic import BaseModel, ConfigDict
-from ...client_net_configs import storage_configs
+from ...client_configs import storage_configs
 from .message_source import MessageSource
 
 class Namespace(BaseModel):
@@ -13,8 +13,8 @@ class Namespace(BaseModel):
     )
 
     mode: MessageSource = MessageSource.GROUP
-    group_id: int | None = None
-    user_id: int = 0
+    group_id: str | None = None
+    user_id: str = ""
 
     @property
     def _namespace(self) -> str:

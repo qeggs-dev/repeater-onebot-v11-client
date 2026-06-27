@@ -8,8 +8,8 @@ async def get_forward_msgs(bot: Bot, message: Message) -> list[MessageEvent]:
         if msg.type == "forward":
             forward_msg = await bot.get_forward_msg(id=msg.data["id"])
             messages = forward_msg["messages"]
-            for message in messages:
-                msgs.append(MessageEvent(**message))
+            for sub_msg in messages:
+                msgs.append(MessageEvent(**sub_msg))
     if not msgs:
         logger.warning(
             "Forward is not found"

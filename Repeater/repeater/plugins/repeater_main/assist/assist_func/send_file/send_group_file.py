@@ -2,7 +2,7 @@ from nonebot.adapters.onebot.v11 import Bot
 
 async def send_group_file(
     bot: Bot,
-    group_id: int,
+    group_id: str,
     url: str,
     file_name: str,
 ):

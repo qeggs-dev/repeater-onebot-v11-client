@@ -1,3 +1,4 @@
+import os
 from ._async_base_storage import BinaryStorage
 from pathlib import Path
 from typing import Any, AsyncGenerator, AsyncIterable, Iterable, TypeVar
@@ -14,7 +15,7 @@ class OrjsonStorage(BinaryStorage):
 
     存储json数据
     """
-    async def load_json(self, path: Path | str, default: T = None) -> Any | T:
+    async def load_json(self, path: str | os.PathLike, default: T = None) -> Any | T:
         try:
             logger.info(f"Loading json from {path}")
             return orjson.loads(
@@ -27,7 +28,7 @@ class OrjsonStorage(BinaryStorage):
             else:
                 return default
     
-    async def save_json(self, path: Path | str, data: Any):
+    async def save_json(self, path: str | os.PathLike, data: Any):
         try:
             logger.info(f"Saving json to {path}")
             await self.save(
@@ -38,7 +39,7 @@ class OrjsonStorage(BinaryStorage):
             logger.error(f"Error saving json to {path}: {e}")
             raise
     
-    async def load_jsonl(self, path: Path | str, default: T = None) -> AsyncGenerator[Any | T, None]:
+    async def load_jsonl(self, path: str | os.PathLike, default: T = None) -> AsyncGenerator[Any | T, None]:
         try:
             logger.info(f"Loading jsonl from {path}")
             async for line in self.load_line_stream(path):
@@ -56,7 +57,7 @@ class OrjsonStorage(BinaryStorage):
             else:
                 yield default
             
-    async def save_jsonl(self, path: Path | str, data: Iterable[Any], append: bool = False):
+    async def save_jsonl(self, path: str | os.PathLike, data: Iterable[Any], append: bool = False):
         try:
             logger.info(f"Saving jsonl to {path}")
             def json_dumps(obj: Iterable[Any]):
@@ -73,7 +74,7 @@ class OrjsonStorage(BinaryStorage):
             logger.error(f"Error saving jsonl to {path}: {e}")
             raise
     
-    async def save_jsonl_a(self, path: Path | str, data: AsyncIterable[Any], append: bool = False):
+    async def save_jsonl_a(self, path: str | os.PathLike, data: AsyncIterable[Any], append: bool = False):
         try:
             async def json_dumps(obj: AsyncIterable[Any]):
                 async for line in obj:

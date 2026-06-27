@@ -7,11 +7,14 @@ from abc import (
 )
 from ..assist import (
     PersonaInfo,
-    SendMsg
+    SendMsg,
+    SendingTarget,
+    MessageSource,
+    is_iterable,
 )
+from ..cmd_info import CmdTypes
 from .listen_type import ListenType
-from .cmd_type import CmdTypes
-from .exceptions import *
+from ..exceptions import *
 from datetime import (
     datetime,
     timedelta
@@ -34,16 +37,23 @@ from nonebot.rule import (
 )
 from nonebot.permission import Permission
 from nonebot.dependencies import Dependent
-from nonebot.exception import NoneBotException
+from nonebot.exception import (
+    NoneBotException
+)
+from ..client_configs import storage_configs
 from nonebot import logger
 from typing import (
     Any,
     Iterable,
+    Callable,
+    Collection,
     NoReturn,
     Type,
     TypeVar,
     Generic,
+    Awaitable
 )
+from .sub_cmd_breaked import SubCmdBreaked
 
 T = TypeVar("T")
 
@@ -51,6 +61,9 @@ class CommandPackage(ABC, Generic[T]):
     """
     Command Package Base Class
     """
+
+    __time_for_registed__: int
+    """Time for registed"""
 
     cmd: str | tuple[str, ...]
     """[Command Only] Command"""
@@ -91,37 +104,97 @@ class CommandPackage(ABC, Generic[T]):
     cmd_type: CmdTypes = CmdTypes.RESERVED
     """Command Type"""
 
+    acceptable_sources: Collection[MessageSource] | None = None
+    """This handler's acceptable sources"""
+
     enabled: bool = True
     """Whether the handler."""
 
-    empty_handler: bool = False
-    """Whether the Handler is empty (you can not use any of the hooks in the package after setting it) """
-
-    documents: str | list[str] | None = None
+    documents: str | Iterable[str] | None = None
     """This handler's documentation"""
+
+    description: str | Iterable[str] | None = None
+    """This handler's description"""
+
+    docs_delimiter: str = "\n"
+    """Documentation delimiter"""
 
     superuser_permissions: bool = False
     """Whether the Handler is superuser permissions."""
+
+    send_msg: bool = True
+    """Allow sending messages"""
 
     @property
     def component(self) -> str:
         """The human-readable name of the Handler (required) """
         return f"Repeater.{self.cmd_type.value}.{self.__class__.__name__}"
     
-    @property
-    def description(self) -> str:
+    def get_description(self) -> str:
         """Handler description"""
         
-        text = ""
+        if self.documents is not None:
+            doc = self.documents
+        elif self.description is not None:
+            doc = self.description
+        elif self.__doc__ is not None:
+            doc = self.__doc__
+        else:
+            doc = ""
+        
+        if isinstance(doc, str):
+            return doc
+        elif is_iterable(doc):
+            merged_doc = self.docs_delimiter.join(doc)
+            return merged_doc
+        else:
+            logger.warning(
+                "Handler {component} has an invalid documentation type: {doc_type}",
+                component=self.component,
+                doc_type=type(doc).__name__,
+            )
+            return ""
+    
+    def __init__(self, *args, **kwargs):
+        """
+        Initialize the command package.
 
+        Warning: this method is used for the main initialization process of the Package. Do not override this method.
+        If you need advice try `__pre_init__` and `__post_init__` method.
+        """
+        self.__pre_init__(*args, **kwargs)
         if isinstance(self.documents, str):
-            text = textwrap.dedent(
+            self.documents = textwrap.dedent(
                 self.documents.expandtabs(4)
             )
-        elif isinstance(self.documents, list):
-            text = "\n".join(self.documents)
-        
-        return text
+        self._args = args
+        self._kwargs = kwargs
+        self.__post_init__(*args, **kwargs)
+    
+    def __pre_init__(self):
+        """
+        This method will be called at initialization time.
+        """
+        pass
+    
+    def __post_init__(self):
+        """
+        This method will be called at initialization time.
+        """
+        pass
+
+    def __repr__(self):
+        args = ", ".join(repr(item) for item in self._args)
+        kwargs = ", ".join(f"{repr(key)}={repr(value)}" for key, value in self._kwargs.items())
+
+        if args and kwargs:
+            return f"{self.__class__.__name__}({args}, {kwargs})"
+        elif args:
+            return f"{self.__class__.__name__}({args})"
+        elif kwargs:
+            return f"{self.__class__.__name__}({kwargs})"
+        else:
+            return f"{self.__class__.__name__}()"
 
     async def message_enter(self, bot: Bot, event: MessageEvent, matcher: Type[Matcher]) -> tuple[PersonaInfo, SendMsg]:
         """
@@ -169,7 +242,7 @@ class CommandPackage(ABC, Generic[T]):
         )
         return persona_info, send_msg
     
-    async def horizontal_enter(self, persona_info: PersonaInfo, send_msg: SendMsg) -> tuple[PersonaInfo, SendMsg]:
+    async def horizontal_enter(self, persona_info: PersonaInfo, send_msg: SendMsg | None = None) -> tuple[PersonaInfo, SendMsg]:
         """
         This method is called when the call comes from another Handler other than the framework.
 
@@ -177,11 +250,47 @@ class CommandPackage(ABC, Generic[T]):
         :param send_msg: SendMsg object
         :return: PersonaInfo object, SendMsg object
         """
+        if send_msg is None:
+            send_msg = SendMsg(
+                component = self.component,
+                persona_info = persona_info,
+            )
         persona_info_copy = PersonaInfo.from_horizontal(persona_info)
         return persona_info_copy, send_msg
+    
+    async def permissions_check(self, persona_info: PersonaInfo, send_msg: SendMsg) -> bool:
+        """
+        This method is called to check permissions.
+
+        :param persona_info: PersonaInfo object
+        :param send_msg: SendMsg object
+        :return: True or False
+        """
+        behavioral_act = storage_configs.get_behavioral_act(persona_info.user_id)
+        if not behavioral_act.check_cmd_types_allowed(self.cmd_type):
+            return False
+        
+        if behavioral_act.block_handlers:
+            return False
+        
+        if behavioral_act.block_output:
+            send_msg.sending_target = SendingTarget.NULL
+        
+        return True
+    
+    async def enter_handler(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T | NoReturn:
+        """
+        This method is called before the handler method.
+
+        :param persona_info: PersonaInfo object
+        :param send_msg: SendMsg object
+        :return: PersonaInfo object, SendMsg object
+        """
+        result = await self.handler(persona_info, send_msg)
+        return result
 
     @abstractmethod
-    async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T:
+    async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T | NoReturn:
         """
         Override this method to begin writing your business logic.
 
@@ -190,7 +299,7 @@ class CommandPackage(ABC, Generic[T]):
         """
         pass
 
-    async def on_debug_mode(self, persona_info: PersonaInfo, send_msg: SendMsg):
+    async def on_debug_mode(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T | Any | None | NoReturn:
         """
         This method is executed when the Repeater discovers that the current environment configuration is Debug Mode.
 
@@ -198,8 +307,61 @@ class CommandPackage(ABC, Generic[T]):
         :param send_msg: SendMsg object
         """
         await send_msg.send_debug_mode()
+    
+    async def on_unacceptable_source(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T | Any | None | NoReturn:
+        """
+        This method is executed when the Repeater discovers that the current environment configuration is not acceptable.
 
-    async def on_error(self, exception: Exception, persona_info: PersonaInfo, send_msg: SendMsg):
+        :param persona_info: PersonaInfo object
+        :param send_msg: SendMsg object
+        """
+        if self.acceptable_sources is None:
+            assert False, "acceptable_sources must be set"
+        
+        for source in self.acceptable_sources:
+            match source:
+                case MessageSource.GROUP:
+                    match persona_info.source:
+                        case MessageSource.PRIVATE:
+                            await send_msg.send_error("This command is only available in group chat.")
+                        case MessageSource.GROUP:
+                            pass
+                case MessageSource.PRIVATE:
+                    match persona_info.source:
+                        case MessageSource.PRIVATE:
+                            pass
+                        case MessageSource.GROUP:
+                            await send_msg.send_error("This command is only available in private chat.")
+                case _:
+                    pass
+
+    
+    async def on_nonebot_exception(self, exception: NoneBotException, persona_info: PersonaInfo, send_msg: SendMsg) -> T | Any | None | NoReturn:
+        """
+        This method is called when the program throws a NoneBot exception
+        You can do some handling here
+        Re-throwing is recommended to avoid the framework not receiving the message
+
+        :param exception: NoneBotException object
+        :param persona_info: PersonaInfo object
+        :param send_msg: SendMsg object
+        """
+        raise
+
+    async def on_repeater_exception(self, exception: RepeaterException, persona_info: PersonaInfo, send_msg: SendMsg) -> T | Any | None | NoReturn:
+        """
+        This method is called when the program throws a Repeater exception
+
+        :param exception: RepeaterException object
+        :param persona_info: PersonaInfo object
+        :param send_msg: SendMsg object
+        """
+        if isinstance(exception, BreakWithErrorMessage):
+            await send_msg.send_error(str(exception))
+        elif isinstance(exception, BreakHandler):
+            return SubCmdBreaked
+
+    async def on_error(self, exception: Exception, persona_info: PersonaInfo, send_msg: SendMsg) -> T | Any | None | NoReturn:
         """
         The error Handler for the Handler
 
@@ -213,14 +375,7 @@ class CommandPackage(ABC, Generic[T]):
         :param persona_info: The persona_info object
         :param send_msg: The send_msg object
         """
-        if isinstance(exception, NoneBotException):
-            raise
-        elif isinstance(exception, RepeaterCommandException):
-            if isinstance(exception, BreakWithErrorMessage):
-                await send_msg.send_error(str(exception))
-            elif isinstance(exception, BreakHandler) or isinstance(exception, ExitHandler):
-                pass
-        elif isinstance(exception, httpx.HTTPStatusError):
+        if isinstance(exception, httpx.HTTPStatusError):
             await send_msg.send_http_status(
                 http_status = exception.response.status_code,
                 message = exception.response.text
@@ -229,7 +384,7 @@ class CommandPackage(ABC, Generic[T]):
             logger.exception(f"Error: {exception}")
             await send_msg.send_error(exception)
     
-    async def on_interpreter_error(self, exception: BaseException, persona_info: PersonaInfo, send_msg: SendMsg):
+    async def on_interpreter_error(self, exception: BaseException, persona_info: PersonaInfo, send_msg: SendMsg) -> T | Any | None | NoReturn:
         """
         This section is executed when the interpreter encounters an error that is a BaseException but not an Exception.
 
@@ -243,7 +398,7 @@ class CommandPackage(ABC, Generic[T]):
         logger.exception(f"Error: {exception}")
         raise
     
-    async def on_cancel(self, persona_info: PersonaInfo, send_msg: SendMsg):
+    async def on_cancel(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T | Any | None | NoReturn:
         """
         This section is executed when the Handler is cancelled.
 
@@ -255,7 +410,7 @@ class CommandPackage(ABC, Generic[T]):
         logger.warning(f"{self.component} cancelled")
         raise
     
-    async def handler_exit(self, persona_info: PersonaInfo, send_msg: SendMsg):
+    async def handler_exit(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T | Any | None | NoReturn:
         """
         This section is executed whenever the Handler fails or exits.
 
@@ -266,25 +421,31 @@ class CommandPackage(ABC, Generic[T]):
         :return: None
         """
         pass
-    
-    def __init__(self, *args, **kwargs):
-        """
-        Initialize the command package.
 
-        Warning: this method is used for the main initialization process of the Package. Do not override this method.
-        If you need advice try `__post_init__` method.
+    async def insufficient_access(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T | Any | None | NoReturn:
         """
-        if isinstance(self.documents, str):
-            self.documents = textwrap.dedent(
-                self.documents.expandtabs(4)
-            )
-        self.__post_init__(*args, **kwargs)
+        If the current user does not meet the permission requirements of the command, execute the method.
+        
+        :param persona_info: User information
+        :param send_msg: Send message interface
+        :return: None
+        """
+        await send_msg.send_error("Insufficient access rights.")
+        send_msg.break_handler()
     
-    def __post_init__(self):
+    async def on_blacklist(self, persona_info: PersonaInfo, send_msg: SendMsg) -> T | Any | None | NoReturn:
         """
-        This method will be called at initialization time.
+        If the current user is in the blacklist, execute the method.
+
+        :param persona_info: User information
+        :param send_msg: Send message interface
+        :return: None
         """
-        pass
+        logger.warning(
+            "User {user_id} is in the blacklist.",
+            user_id = persona_info.user_id
+        )
+        send_msg.break_handler()
     
     @classmethod
     def on_before_instantiate(cls):
@@ -326,17 +487,6 @@ class CommandPackage(ABC, Generic[T]):
         :return: None
         """
         raise
-
-    async def insufficient_access(self, persona_info: PersonaInfo, send_msg: SendMsg) -> NoReturn:
-        """
-        If the current user does not meet the permission requirements of the command, execute the method.
-        
-        :param persona_info: User information
-        :param send_msg: Send message interface
-        :return: None
-        """
-        await send_msg.send_error("Insufficient access rights.")
-        await send_msg.break_handler()
     
     @classmethod
     def on_destroy(cls):
@@ -353,3 +503,39 @@ class CommandPackage(ABC, Generic[T]):
         Both instance and class methods are allowed.
         """
         pass
+    
+    @classmethod
+    def on_duplicate_trigger(cls, trigger: str | tuple[str, ...]):
+        """
+        This section is executed when the Handler is triggered by a duplicate trigger.
+
+        You can override this method and do what you need to do.
+
+        :param persona_info: The persona_info object
+        :param send_msg: The send_msg object
+        """
+        if storage_configs.loading.throw_on_duplicate.trigger:
+            raise ValueError(f"Trigger {repr(trigger)} is already registered")
+        else:
+            logger.warning(
+                "Trigger {trigger} is already registered, this can have undesired consequences.",
+                trigger = repr(trigger)
+            )
+
+    @classmethod
+    def on_duplicate_handler(cls):
+        """
+        This section is executed when the Handler is triggered by a duplicate handler.
+
+        You can override this method and do what you need to do.
+
+        :param persona_info: The persona_info object
+        :param send_msg: The send_msg object
+        """
+        if storage_configs.loading.throw_on_duplicate.handler:
+            raise ValueError(f"Handler {repr(cls)} is already registered")
+        else:
+            logger.warning(
+                "Handler {handler} is already registered, this may result in overwriting.",
+                handler = repr(cls)
+            )

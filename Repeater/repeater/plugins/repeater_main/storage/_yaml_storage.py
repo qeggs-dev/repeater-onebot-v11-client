@@ -1,3 +1,4 @@
+import os
 from ._sync_base_storage import TextStorage
 from pathlib import Path
 from typing import Any
@@ -12,7 +13,7 @@ class YamlStorage(TextStorage):
 
     存储文件格式为 YAML
     """
-    def load_yaml(self, path: Path | str, encoding: str = "utf-8") -> Any:
+    def load_yaml(self, path: str | os.PathLike, encoding: str = "utf-8") -> Any:
         try:
             logger.info(f"Loading yaml from {path}")
             return self.load(
@@ -23,7 +24,7 @@ class YamlStorage(TextStorage):
             logger.error(f"load yaml error: {e}")
             return None
     
-    def save_yaml(self, path: Path | str, data: Any, encoding: str = "utf-8"):
+    def save_yaml(self, path: str | os.PathLike, data: Any, encoding: str = "utf-8"):
         try:
             logger.info(f"Saving yaml to {path}")
             self.save(
