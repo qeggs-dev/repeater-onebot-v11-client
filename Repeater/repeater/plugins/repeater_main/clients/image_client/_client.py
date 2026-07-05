@@ -62,7 +62,7 @@ class ImageClient(BaseClient):
         )
         response = await self.client.post(
             url = self.join_url_static(IMAGE_ROUTE, self.namespace),
-            json = request.model_dump(),
+            json = request.model_dump(exclude_none = True),
         )
         return Response(
             httpx_response = response,
