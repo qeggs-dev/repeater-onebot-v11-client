@@ -14,6 +14,7 @@ class RequestLog(BaseModel):
     url: str = ""
     model: str = ""
     user_id: str = ""
+    task_id: str = ""
     user_name: str | None = None
     stream: bool = True
 
@@ -27,9 +28,12 @@ class RequestLog(BaseModel):
     request_end_time: TimeStamp = Field(default_factory=lambda: TimeStamp(timestamp=0, monotonic=0))
     stream_processing_start_time: TimeStamp = Field(default_factory=lambda: TimeStamp(timestamp=0, monotonic=0))
     stream_processing_end_time: TimeStamp = Field(default_factory=lambda: TimeStamp(timestamp=0, monotonic=0))
-    task_end_time: TimeStamp = Field(default=lambda: TimeStamp(timestamp=0, monotonic=0))
-    chunk_times: list[TimeStamp] = Field(default_factory=list)
+    task_end_time: TimeStamp = Field(default_factory=lambda: TimeStamp(timestamp=0, monotonic=0))
     chunk_generated_times: list[TimeStamp] = Field(default_factory=list)
+    translation_chunk_times: list[TimeStamp] = Field(default_factory=list)
+    translation_queue_backlog: list[int] = Field(default_factory=list)
+    chunk_times: list[TimeStamp] = Field(default_factory=list)
+    queue_backlog: list[int] = Field(default_factory=list)
     created_time: int = 0
 
     total_tokens: int = 0
@@ -41,7 +45,6 @@ class RequestLog(BaseModel):
     total_context_length: int = 0
     reasoning_content_length: int = 0
     new_content_length: int = 0
-    
 
 class CallAPILog(BaseModel):
     """
