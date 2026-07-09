@@ -433,12 +433,13 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `parallel`                 | `par`    | `Parallel`                | `CONTROL`   | 4.8.0.0        | 并行执行命令                   | 每行一个命令，可嵌套                        | 每行一个命令，并行执行，支持转义字符 |
 | `waitCall`                 | `wc`     | `WaitCall`                | `CONTROL`   | 4.8.0.0        | 等待用户输入消息后执行          | 格式为: 跳过的消息数量 命令 参数            | 消息数量不能小于 1，默认为 1，最终交给 Handler 的是最后一条消息 |
 | `loop`                     | `l`      | `Loop`                    | `CONTROL`   | 4.8.0.0        | 循环执行命令                   | 格式为: 循环次数 命令 参数                  | 循环次数必须为一个有效数字且大于 0，默认为 1 |
+| `messageWithdrawn`         | `mw`     | `MessageWithdrawn`        | `CONTROL`   | 4.8.0.0        | 撤回机器人消息                 | 引用一个该机器人的消息                      | 撤回机器人发送的消息 |
 
 ### Chat Command
 
 | Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
 | :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
-| ` `                        | ` `      | ` `                       | `CHAT`      | 4.0 Beta       | 默认命令，自然语言对话          | 自然语言输入                               | 当@复读机的时候，如果没有命中其他命令就会执行这个 |
+| ` `                        | ` `      | ` `                       | `CHAT`      | 4.0 Beta       | 默认命令，自然语言对话          | 自然语言输入                               | 当@复读机的时候，如果没有命中其他命令就会执行这个 Handler |
 | `chat`                     | `c`      | `Chat`                    | `CHAT`      | 4.0 Beta       | 与机器人对话                   | 自然语言输入                               | 强制模型用文字输出，绕过Markdown渲染检查 |
 | `keepAnswering`            | `ka`     | `KeepAnswering`           | `CHAT`      | 4.0 Beta       | 持续对话(常规)                 | 无                                        | 无须输入，AI再次回复 |
 | `keepReasoning`            | `kr`     | `KeepReasoning`           | `CHAT`      | 4.0 Beta       | 持续对话(推理)                 | 无                                        | 无须输入，AI再次使用推理回复 |
@@ -455,6 +456,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `generateCandidateReason`  | `gcr`    | `GenerateCandidateReason` | `CHAT`      | 4.3.23.1       | 生成候选推理                   | 无                                        | 生成候选回答并开启推理（生成内容不保存） |
 | `toGroupChat`              | `tgc`    | `ToGroupChat`             | `CHAT`      | 4.7.5.0        | 使用群聊身份进行对话            | 群号 自然语言输入                          | 使用群聊身份进行对话 |
 | `toPrivateChat`            | `tpc`    | `ToPrivateChat`           | `CHAT`      | 4.7.5.0        | 使用私聊身份进行对话            | 自然语言输入                               | 使用私聊身份进行对话 |
+| `smartAt`                  | `smat`   | `SmartAT`                 | `CHAT`      | 4.8.1.3        | 默认命令的命令版本              | 自然语言输入                               | 使用该命令，可以用命令的方式触发默认 Handler |
 
 ### FIM Command
 
@@ -468,6 +470,8 @@ PS：该配置文件是专门用于对接ChatTTS的
 | Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
 | :---                       | :---     | :---                      | :---        | :---           | :---                          | :---                                      | :---    |
 | `generateImage`            | `gi`     | `GenerateImage`           | `GENIMG`    | 4.8.0.0        | 使用模型生成图片               | 提示词                                     | 使用模型生成图片内容 |
+| `generateImageStream`      | `gis`    | `GenerateImageStream`     | `GENIMG`    | 4.8.0.0        | 流式返回生成的图片             | 提示词                                     | 流式返回生成的图片内容 |
+| `generateImageWithSize`    | `giz`    | `GenerateImageWithSize`   | `GENIMG`    | 4.8.0.0        | 使用模型生成图片               | 宽x高 提示词                               | 使用模型生成图片内容，并指定画幅 |
 
 ### Context Command
 

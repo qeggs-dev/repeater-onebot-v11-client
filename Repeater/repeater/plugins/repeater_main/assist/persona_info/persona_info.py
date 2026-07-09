@@ -49,6 +49,10 @@ class PersonaInfo:
         ...         async for ref in persona_info.from_reference_chain():
         ...             ref_user_id = ref.user_id
         ...             # do something
+        ...             pass
+        ...     else:
+        ...         # empty message
+        ...         pass
     """
     def __init__(
             self,
@@ -243,11 +247,11 @@ class PersonaInfo:
         判断消息是否为空
         """
         for message in self.message:
-            if message.type not in  ["at", "text", "reply"]:
-                return True
             if message.type == "text":
                 if message.data["text"]:
                     return True
+            elif message.type not in ["at", "reply"]:
+                return True
         return False
     
     @property
