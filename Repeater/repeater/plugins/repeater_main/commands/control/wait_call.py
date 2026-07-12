@@ -26,10 +26,10 @@ class WaitCall(CommandPackage):
         Wait for last input to be called.
 
         Usage:
-            /{cmd} [times] command args
+            /{cmd} [times] command
     """
 
-    pattern = re.compile(r"^(?P<times>\d+)?\s+(?P<command>\w+)\s*(?P<args>.*)$", re.IGNORECASE | re.DOTALL | re.UNICODE)
+    pattern = re.compile(r"^(?P<times>\d+)?\s+(?P<command>\w+)$", re.IGNORECASE | re.DOTALL | re.UNICODE)
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
         msg = persona_info.message_striped_str
@@ -37,11 +37,9 @@ class WaitCall(CommandPackage):
         if matched:
             times_str = matched.group("times")
             command = matched.group("command")
-            args = matched.group("args")
 
             assert isinstance(times_str, str), "times_str must be str"
             assert isinstance(command, str), "command must be str"
-            assert isinstance(args, str), "args must be str"
 
             if not times_str:
                 times = 1
