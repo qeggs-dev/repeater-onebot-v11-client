@@ -1597,7 +1597,7 @@ class SendMsg:
 
         return threshold
     
-    async def _send_file(self, url: str, file_name: str) -> None:
+    async def send_file(self, url: str, file_name: str) -> None:
         """
         发送文件
 
@@ -1622,17 +1622,3 @@ class SendMsg:
         except ActionFailed as e:
             logger.error(f"Failed to upload file: {e}")
             await self.send_error("Failed to upload file.")
-    
-    async def send_file(self, url: str, file_name: str) -> None:
-        """
-        发送文件
-
-        :param url: 文件URL
-        :param file_name: 文件名
-        """
-        await self.limit_speed.submit(
-            task = self._send_file(
-                url = url,
-                file_name = file_name
-            )
-        )
