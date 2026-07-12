@@ -67,15 +67,17 @@ class BaseClient:
         encoding: str | None = None,
         errors: str | None = None
     ) -> str:
-        return self.join_url_static(
+        return urljoin(
             self.base_url,
-            *urls,
-            add_slashes = add_slashes,
-            follow_slashes = follow_slashes,
-            escape = escape,
-            safe = safe,
-            encoding = encoding,
-            errors = errors
+            self.join_url_static(
+                *urls,
+                add_slashes = add_slashes,
+                follow_slashes = follow_slashes,
+                escape = escape,
+                safe = safe,
+                encoding = encoding,
+                errors = errors
+            )
         )
     
     @staticmethod
@@ -107,7 +109,7 @@ class BaseClient:
                     )
                 )
             else:
-                url = urljoin(url, u)
+                url = url + u
         
         if follow_slashes and not url.endswith("/"):
             url = url + "/"
