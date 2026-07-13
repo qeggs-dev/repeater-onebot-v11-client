@@ -34,7 +34,7 @@ from typing import (
     ClassVar,
     overload
 )
-from .limit_speed import LimitSpeed
+from .speed_limiter import SpeedLimiter
 from ...exceptions import (
     BreakHandler,
 )
@@ -46,8 +46,14 @@ logger = base_logger.bind(module = "SendMsg")
 T_RESPONSE = TypeVar("T_RESPONSE")
 
 class SendMsg:
-    limit_speed: ClassVar[LimitSpeed] = LimitSpeed(
-        storage_configs.camouflage.send_msg_limit_speed_per_minute
+    message_speed_limiter: ClassVar[SpeedLimiter] = SpeedLimiter(
+        storage_configs.camouflage.limit_speed_per_minute.send_msg
+    )
+    file_speed_limiter: ClassVar[SpeedLimiter] = SpeedLimiter(
+        storage_configs.camouflage.limit_speed_per_minute.file
+    )
+    poke_speed_limiter: ClassVar[SpeedLimiter] = SpeedLimiter(
+        storage_configs.camouflage.limit_speed_per_minute.poke
     )
     
     @overload
@@ -1441,7 +1447,7 @@ class SendMsg:
         if reply:
             send_msg = self._persona_info.reply + send_msg
         try:
-            await self.limit_speed.submit(
+            await self.message_speed_limiter.submit(
                 task = self._send_to_target(
                     message = send_msg
                 )
@@ -1597,7 +1603,7 @@ class SendMsg:
 
         return threshold
     
-    async def send_file(self, url: str, file_name: str) -> None:
+    async def _send_file(self, url: str, file_name: str) -> None:
         """
         发送文件
 
@@ -1622,3 +1628,46 @@ class SendMsg:
         except ActionFailed as e:
             logger.error(f"Failed to upload file: {e}")
             await self.send_error("Failed to upload file.")
+    
+    async def send_file(self, url: str, file_name: str) -> None:
+        """
+        发送文件
+
+        :param url: 文件URL
+        :param file_name: 文件名
+        """
+        await self.file_speed_limiter.submit(
+            self._send_file(
+                url = url,
+                file_name = file_name
+            ),
+        )
+    
+    async def _send_poke(self, group_id: str | None = None, user_id: str | None = None) -> None:
+        """
+        发送戳一戳
+        """
+        match self._persona_info.source:
+            case MessageSource.GROUP:
+                if self._persona_info.group_id is not None:
+                    await self._persona_info.cached_api.send_poke(
+                        group_id = group_id or self._persona_info.group_id,
+                        user_id = user_id or self._persona_info.user_id
+                    )
+            case MessageSource.PRIVATE:
+                await self._persona_info.cached_api.send_poke(
+                    user_id = user_id or self._persona_info.user_id
+                )
+            case _:
+                await self.send_error("Unsupported message source.")
+    
+    async def send_poke(self, group_id: str | None = None, user_id: str | None = None) -> None:
+        """
+        发送戳一戳
+        """
+        await self.poke_speed_limiter.submit(
+            self._send_poke(
+                user_id = user_id,
+                group_id = group_id
+            ),
+        )
