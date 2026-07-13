@@ -33,7 +33,7 @@ from .text_render import (
     RendedImage
 )
 from .send_msg import (
-    LimitSpeed,
+    SpeedLimiter,
     SendMsg,
     SendingTarget
 )
@@ -99,7 +99,7 @@ __all__ = [
     "TextRender",
     "RendedImage",
 
-    "LimitSpeed",
+    "SpeedLimiter",
     "SendMsg",
     "SendingTarget",
     
