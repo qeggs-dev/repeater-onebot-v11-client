@@ -25,6 +25,12 @@ def parse_input(message: list[Message]) -> list[tuple[type[CommandPackage[Any]],
                     rest_text = rest_text[index + 1:]
                     break
                 name_buffer.append(char)
+            else:
+                # no break
+                if name_buffer:
+                    name = "".join(name_buffer)
+                    rest_text = ""
+
             
             args = Message(rest_text)
             args.extend(line[1:])
