@@ -1,5 +1,5 @@
 from typing import Iterable, Generator
-from nonebot.adapters.onebot.v11 import Message, MessageSegment
+from nonebot.adapters.onebot.v11 import Message
 
 def split_by_indent(
     message: Message,
@@ -12,13 +12,13 @@ def split_by_indent(
     now_message: Message = Message()
     for now_indent, line in enumerate_indent(lines, indent, indent_char):
         if now_indent == 0:
-            now_message.clear()
+            now_message = Message() # 不能使用 clear，这会导致已经添加的 segment 被清空
             results.append(line)
         elif indent >= last_indent:
             now_message.extend(line)
         elif indent < last_indent:
             results.append(now_message)
-            now_message.clear()
+            now_message = Message()
             now_message.extend(line)
         last_indent = now_indent
     
@@ -59,35 +59,6 @@ def enumerate_indent(
 def splitlines(
     message: Message
 ) -> list[Message]:
-    results: list[Message] = []
-    now_message = Message()
-    
-    for segment in message:
-        segments = segment_splitlines(segment)
-        if len(segments) > 1:
-            for segment in segments:
-                now_message.append(segment)
-                results.append(now_message)
-                now_message = Message()
-        else:
-            now_message.append(segment)
-    
-    if now_message:
-        results.append(now_message)
-    
-    return results
-
-def segment_splitlines(
-    segment: MessageSegment,
-) -> list[MessageSegment]:
-    if segment.type != "text":
-        return [segment]
-    else:
-        text: str = segment.data["text"]
-        if not isinstance(text, str):
-            raise ValueError("text must be str")
-        
-        if "\n" in text:
-            return [MessageSegment.text(t) for t in text.split("\n")]
-        else:
-            return [segment]
+    cq_code_str = str(message)
+    cq_codes = cq_code_str.splitlines()
+    return [Message(cq_code) for cq_code in cq_codes if cq_code]
