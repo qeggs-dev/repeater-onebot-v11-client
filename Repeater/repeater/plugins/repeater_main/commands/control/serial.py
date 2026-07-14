@@ -1,4 +1,5 @@
 from typing import Any, Type, Coroutine
+from nonebot.adapters.onebot.v11 import Message
 from ...assist import PersonaInfo, SendMsg
 from ...cmd_info import CmdTypes
 from ...command_register import(
@@ -30,11 +31,13 @@ class Serial(CommandPackage):
     """
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        lines = split_by_indent(persona_info.message_striped_str)
+        lines = split_by_indent(persona_info.message)
         try:
-            command_call: list[tuple[Type[CommandPackage[Any]], str]] = parse_input(lines)
+            command_call: list[tuple[Type[CommandPackage[Any]], Message]] = parse_input(lines)
         except ValueError as e:
             await send_msg.send_error(f"Invalid Input Format: {e}")
+        except KeyError as e:
+            await send_msg.send_error(f"Unknown Command: {e}")
         
         tasks: list[tuple[CommandPackage[Any], PersonaInfo, SendMsg]] = []
         for index, (package, args) in enumerate(command_call):
