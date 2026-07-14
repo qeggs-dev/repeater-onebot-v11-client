@@ -59,19 +59,10 @@ class Serial(CommandPackage):
             )
         
         results = []
-        last_result: Any = None
         for package, info, send_msg in tasks:
-            msg =  info.message_striped_str
-            if "$ret" in msg:
-                copyed_persona_info = info.copy_with_args(
-                    msg.replace("$ret", str(last_result))
-                )
-            else:
-                copyed_persona_info = info
             result = await CommandCaller.horizontal_call(
                 package,
-                copyed_persona_info,
+                info,
                 send_msg
             )
             results.append(result)
-            last_result = result
