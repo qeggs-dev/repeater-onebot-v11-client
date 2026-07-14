@@ -39,6 +39,10 @@ class CommandCaller:
     listen_lock: asyncio.Lock = asyncio.Lock()
 
     @staticmethod
+    def cmd_prefixs() -> set[str]:
+        return get_driver().config.command_start
+
+    @staticmethod
     def delimiters() -> set[str]:
         return get_driver().config.command_sep
     
