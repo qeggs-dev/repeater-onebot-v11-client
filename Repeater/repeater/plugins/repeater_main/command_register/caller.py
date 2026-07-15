@@ -1,6 +1,7 @@
 from _asyncio import Future
 import sys
 import time
+import uuid
 import asyncio
 from .package import CommandPackage
 from ..assist import PersonaInfo, SendMsg, Namespace
@@ -25,7 +26,7 @@ from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Message
 from .listen_type import ListenType
 from nonebot import logger
 from .running_package import RunningPackage
-from .sub_cmd_breaked import SubCmdBreaked
+from .sub_cmd_exit import SubCmdBreaked
 
 T_Handler_Result = TypeVar("T_Handler_Result")
 
@@ -34,7 +35,8 @@ class CommandCaller:
     triggers: dict[str | tuple[str, ...], Type[CommandPackage[Any]]] = {}
     types: dict[CmdTypes, list[Type[CommandPackage[Any]]]] = {}
     matchers: dict[Type[CommandPackage[Any]], Type[Matcher]] = {}
-    runnings: set[RunningPackage] = set()
+    runnings: dict[uuid.UUID, RunningPackage] = {}
+    running_map: dict[Namespace, set[uuid.UUID]] = {}
     listen_message_tasks: dict[Namespace, set[asyncio.Future[PersonaInfo]]] = {}
     listen_lock: asyncio.Lock = asyncio.Lock()
 
@@ -59,6 +61,10 @@ class CommandCaller:
         :return: The instance of the command package.
         """
         return cls.commands[package]
+    
+    @classmethod
+    def get_user_runnings(cls, namespace: Namespace) -> list[RunningPackage]:
+        return [cls.runnings[uuid] for uuid in cls.running_map.get(namespace, set())]
 
     @classmethod
     def get_command_handler(cls, package: CommandPackage[T_Handler_Result], matcher: Type[Matcher]) -> Callable[[Bot, MessageEvent, Message], Awaitable[T_Handler_Result | Any | SubCmdBreaked | None | NoReturn]]:
@@ -180,7 +186,9 @@ class CommandCaller:
                     send_msg = send_msg
                 )
             )
+            task_id = uuid.uuid4()
             running: RunningPackage[T_Handler_Result] = RunningPackage(
+                task_id = task_id,
                 start_time = time.time_ns(),
                 start_monotonic_time = time.perf_counter_ns(),
                 package = package,
@@ -189,7 +197,11 @@ class CommandCaller:
                 send_msg = send_msg,
                 task = task
             )
-            cls.runnings.add(running)
+            cls.runnings[task_id] = running
+            cls.running_map.setdefault(
+                persona_info.namespace,
+                set()
+            ).add(task_id)
 
             try:
                 result = await task
@@ -197,7 +209,12 @@ class CommandCaller:
             except asyncio.CancelledError:
                 return await package.on_cancel(persona_info, send_msg)
             finally:
-                cls.runnings.remove(running)
+                cls.runnings.pop(task_id, None)
+                if persona_info.namespace in cls.running_map:
+                    user_running = cls.running_map[persona_info.namespace]
+                    user_running.discard(task_id)
+                    if not user_running:
+                        cls.running_map.pop(persona_info.namespace)
             
         except NoneBotException as e:
             return await package.on_nonebot_exception(e, persona_info, send_msg)
