@@ -2,7 +2,7 @@
 from .start_time import *
 
 # === Commands === #
-from .commands import *
+from . import commands as _commands
 
 # === Adaptation Info === #
 from ._adaptation_info import __adaptation__, __adaptation_text__

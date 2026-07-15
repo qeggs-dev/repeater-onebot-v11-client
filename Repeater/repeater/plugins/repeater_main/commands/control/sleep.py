@@ -6,8 +6,6 @@ from ...command_register import(
     CommandCaller,
     CommandPackage
 )
-from ..._adaptation_info import __adaptation__
-
 
 @CommandCaller.register
 class Sleep(CommandPackage):
@@ -23,7 +21,7 @@ class Sleep(CommandPackage):
     Sleep for a specified number of seconds
 
     Usage: 
-        /{cmd} <seconds>
+        /{cmd} seconds
     """
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):

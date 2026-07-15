@@ -1,3 +1,5 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from .limit_speed_per_minute import LimitSpeedPerMinute
+
 class Camouflage(BaseModel):
-    send_msg_limit_speed_per_minute: int | float | None = 100
+    limit_speed_per_minute: LimitSpeedPerMinute = Field(default_factory=LimitSpeedPerMinute)

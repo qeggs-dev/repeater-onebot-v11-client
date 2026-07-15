@@ -157,6 +157,15 @@ class PersonaInfo:
             args = self.args
         )
     
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, PersonaInfo):
+            return (
+                self._bot == other._bot and
+                self._message_event == other._message_event and
+                self._args == other._args
+            )
+        return False
+    
     def copy_with_args(self, args: Message | str | None = None) -> PersonaInfo:
         """
         复制一份，并自定义 args

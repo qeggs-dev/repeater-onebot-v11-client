@@ -434,6 +434,9 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `waitCall`                 | `wc`     | `WaitCall`                | `CONTROL`   | 4.8.0.0        | 等待用户输入消息后执行          | 格式为: 跳过的消息数量 命令 参数            | 消息数量不能小于 1，默认为 1，最终交给 Handler 的是最后一条消息 |
 | `loop`                     | `l`      | `Loop`                    | `CONTROL`   | 4.8.0.0        | 循环执行命令                   | 格式为: 循环次数 命令 参数                  | 循环次数必须为一个有效数字且大于 0，默认为 1 |
 | `messageWithdrawn`         | `mw`     | `MessageWithdrawn`        | `CONTROL`   | 4.8.0.0        | 撤回机器人消息                 | 引用一个该机器人的消息                      | 撤回机器人发送的消息 |
+| `poke`                     | `poke`   | `Poke`                    | `CONTROL`   | 4.8.3.2        | 戳一戳                        | @戳一戳的对象                              | 不填写参数时目标为自己 |
+| `cancel`                   | `cl`     | `Cancel`                  | `CONTROL`   | 4.8.0.0        | 取消一个命令                   | 任务 ID                                   | 取消一个命令 |
+| `taskList`                 | `tl`     | `TaskList`                | `CONTROL`   | 4.8.0.0        | 查看当前任务列表                | 无                                       | 查看当前用户所有正在运行的 Task 实例 |
 
 ### Chat Command
 
@@ -716,6 +719,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | `recentSpeakingRanking`    | `rsr`    | `RecentSpeakingRanking`   | `OTHER`     | 4.2.3.0        | 最近发言排行                   | 无                                        | 获取群组内最近发言的成员列表 |
 | `summaryChatRecord`        | `scr`    | `SummaryChatRecord`       | `OTHER`     | 4.2.6.6        | 聊天记录总结                   | 整数，传入的消息数量                        | 获取当前群聊内指定数量的聊天记录摘要 |
 | `calculateLengthScore`     | `cls`    | `CalculateLengthScore`    | `OTHER`     | 4.4.4.0        | 计算长度评分                   | 文本内容                                   | 计算给定文本的长度评分值 |
+| `historyCharStatistics`    | `hcs`    | `HistoryCharStatistics`   | `OTHER`     | 4.8.3.2        | 聊天信息字符统计               | 消息数量，显示的排名数量                     | 获取当前群聊内指定数量的聊天记录字符统计 |
 
 PS：`CHAT` 类型命令大部分都做到了支持视觉输入
 默认命令已支持全模态输入

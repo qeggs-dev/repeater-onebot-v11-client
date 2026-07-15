@@ -3,7 +3,7 @@ import asyncio
 from typing import Awaitable
 from nonebot import logger
 
-class LimitSpeed:
+class SpeedLimiter:
     def __init__(
             self,
             limit_speed_per_minute: int | float | None = 100

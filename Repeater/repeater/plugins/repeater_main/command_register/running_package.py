@@ -1,3 +1,4 @@
+import uuid
 import asyncio
 from typing import TypeVar, Generic, Type
 from .package import CommandPackage
@@ -12,6 +13,7 @@ class RunningPackage(Generic[T]):
     """
     运行中的命令包
     """
+    task_id: uuid.UUID
     start_time: int
     start_monotonic_time: int
     package: CommandPackage[T]
@@ -21,9 +23,12 @@ class RunningPackage(Generic[T]):
     task: asyncio.Task[T]
 
     def __hash__(self) -> int:
-        return hash((type(self), self.task))
+        return hash((type(self), self.task_id, self.task))
     
     def __eq__(self, __o: object) -> bool:
         if isinstance(__o, RunningPackage):
-            return self.task == __o.task
+            return self.task_id == __o.task_id and self.task == __o.task
         return False
+    
+    def cancel(self):
+        self.task.cancel()
