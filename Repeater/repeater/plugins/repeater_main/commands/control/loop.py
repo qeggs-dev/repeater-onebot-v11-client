@@ -2,13 +2,13 @@ import re
 import asyncio
 
 from typing import Any, Type
+from nonebot.adapters.onebot.v11 import MessageSegment
 from ...assist import PersonaInfo, SendMsg
 from ...cmd_info import CmdTypes
 from ...command_register import(
     CommandCaller,
     CommandPackage
 )
-from ..._adaptation_info import __adaptation__
 
 @CommandCaller.register
 class Loop(CommandPackage):
@@ -30,16 +30,21 @@ class Loop(CommandPackage):
     pattern = re.compile(r"^(?P<times>\d+)?\s+(?P<command>\w+)\s*(?P<args>.*)$", re.IGNORECASE | re.DOTALL | re.UNICODE)
 
     async def handler(self, persona_info: PersonaInfo, send_msg: SendMsg):
-        msg = persona_info.message_striped_str
-        matched = self.pattern.match(msg)
+        msg = persona_info.message
+        first_segment = msg[0]
+        if first_segment.type != "text":
+            await send_msg.send_error("Please input a text message.")
+        matched = self.pattern.match(first_segment.data["text"])
         if matched:
             times_str = matched.group("times")
             command = matched.group("command")
-            args = matched.group("args")
+            args_prefix = matched.group("args")
 
             assert isinstance(times_str, str), "times_str must be str"
             assert isinstance(command, str), "command must be str"
-            assert isinstance(args, str), "args must be str"
+            assert isinstance(args_prefix, str), "args_prefix must be str"
+
+            args = MessageSegment.text(args_prefix) + msg[1:]
 
             if not times_str:
                 times = 1
