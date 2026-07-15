@@ -752,25 +752,23 @@ PS：`CHAT` 类型命令大部分都做到了支持视觉输入
 我们可以这样编写参数
 ```
 /ser
-echo
+/echo
   lines2
   lines3
     lines4
-echo finished
-sleep 2.7
+/echo finished
+/sleep 2.7
 ```
 它等同于这种写法
 ```
 /ser
-echo lines2\nlines3\n  lines4
-echo finished
-sleep 2.7
+/echo lines2\nlines3\n  lines4
+/echo finished
+/sleep 2.7
 ```
 其中嵌套开始的第一行不变
 然后所有嵌套向内收缩一格
 直到嵌套结束
-请不要在内部的命令开头添加特殊符号
-这可能会影响 trigger 的识别
 
 所有命令都有变体
 多单词的命令格式有：
