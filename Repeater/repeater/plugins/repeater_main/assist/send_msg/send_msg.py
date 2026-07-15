@@ -119,31 +119,31 @@ class SendMsg:
         self._prefix = Message()
     
     @overload
-    def __call__(
+    async def __call__(
             self,
             message: str | Message,
             reply: bool = True,
             continue_handler: Literal[False] = False,
-        ) -> Coroutine[Any, Any, NoReturn]: ...
+        ) -> NoReturn: ...
     
     @overload
-    def __call__(
+    async def __call__(
             self,
             message: str | Message,
             reply: bool = True,
             continue_handler: Literal[True] = True,
-        ) -> Coroutine[Any, Any, None]: ...
+        ) -> None: ...
     
-    def __call__(
+    async def __call__(
             self,
             message: str | Message,
             reply: bool = True,
             continue_handler: bool = False,
-        ) -> Coroutine[Any, Any, None | NoReturn]:
+        ) -> None | NoReturn:
         """
         发送消息
         """
-        return self.send_prompt(
+        return await self.send_prompt(
             prompt = message,
             reply = reply,
             continue_handler = continue_handler,
