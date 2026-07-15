@@ -5,7 +5,6 @@ from ...command_register import(
     CommandCaller,
     CommandPackage
 )
-from ..._adaptation_info import __adaptation__
 from nonebot.exception import ActionFailed
 
 @CommandCaller.register

@@ -8,7 +8,6 @@ from ...command_register import(
     CommandCaller,
     CommandPackage
 )
-from ..._adaptation_info import __adaptation__
 from ._parse_input import parse_input
 from ._split_by_indent import split_by_indent
 
@@ -27,8 +26,8 @@ class Parallel(CommandPackage):
 
         Usage:
             /{cmd}
-            cmd1_trigger cmd1_args...
-            cmd2_trigger cmd2_args...
+            /cmd1_trigger cmd1_args...
+            /cmd2_trigger cmd2_args...
             ...
     """
 

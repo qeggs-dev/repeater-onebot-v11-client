@@ -8,7 +8,6 @@ from ...command_register import(
     CommandCaller,
     CommandPackage
 )
-from ..._adaptation_info import __adaptation__
 
 @CommandCaller.register
 class WaitCall(CommandPackage):
@@ -26,7 +25,7 @@ class WaitCall(CommandPackage):
         Wait for last input to be called.
 
         Usage:
-            /{cmd} [times] command
+            /{cmd} times command
     """
 
     pattern = re.compile(r"^(?P<times>\d+)?\s+(?P<command>\w+)$", re.IGNORECASE | re.DOTALL | re.UNICODE)
