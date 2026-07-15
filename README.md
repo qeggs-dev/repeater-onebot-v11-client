@@ -698,7 +698,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
 | `#` or `/`                 | `anot`   | `Annotation`              | `RESERVED`  | 4.3.9.3        | 注释，不会执行任何操作          | 无                                        | 不执行任何操作，直接忽略内容，由于命令前缀的存在，触发需要 `/#` 或 `//` |
 
-### Send Msg Command
+### Send Msg Command (Superuser Only)
 
 | Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
 | :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
