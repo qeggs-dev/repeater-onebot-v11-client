@@ -208,6 +208,8 @@ main_api.json
                 // 此处建议填写范围大一些
                 // 否则用户可能命中不到
                 // 注意：此处 Cron 不代表后缀是主动触发的，而是作为时间验证器使用
+                // 系统不会在到时间时主动触发后缀
+                // 而是在用户发送一条验证消息时，系统会验证该消息是否在 Cron 表达式范围内
                 "cron": "* * 1 1 *",
 
                 // 后缀内容
@@ -267,9 +269,23 @@ main_api.json
     // 伪装选项，可能会有一定的反风控效果
     "camouflage": {
         // 限制发送消息的频率
-        // 默认 100 次/分钟
-        // 如果想关闭可以设置为 null
-        "send_msg_limit_speed_per_minute": 100
+        "limit_speed_per_minute": {
+
+            // 限制消息发送的频率
+            // 默认 100 次/分钟
+            // 如果想关闭可以设置为 null
+            "send_msg": 100,
+
+            // 限制文件发送的频率
+            // 默认 50 次/分钟
+            // 如果想关闭可以设置为 null
+            "file": 50,
+
+            // 限制戳一戳发送的频率
+            // 默认 6 次/分钟
+            // 如果想关闭可以设置为 null
+            "poke": 6
+        }
     },
 
     // 下载图片的超时时间
@@ -698,7 +714,7 @@ PS：该配置文件是专门用于对接ChatTTS的
 | :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
 | `#` or `/`                 | `anot`   | `Annotation`              | `RESERVED`  | 4.3.9.3        | 注释，不会执行任何操作          | 无                                        | 不执行任何操作，直接忽略内容，由于命令前缀的存在，触发需要 `/#` 或 `//` |
 
-### Send Msg Command
+### Send Msg Command (Superuser Only)
 
 | Command                    | Abridge  | Full Name                 | Type        | Joined Version | Description                   | Parameter Description                     | Remarks |
 | :---                       | :---     | :---                      | :---:       | :---           | :---                          | :---                                      | :---    |
@@ -752,25 +768,23 @@ PS：`CHAT` 类型命令大部分都做到了支持视觉输入
 我们可以这样编写参数
 ```
 /ser
-echo
+/echo
   lines2
   lines3
     lines4
-echo finished
-sleep 2.7
+/echo finished
+/sleep 2.7
 ```
 它等同于这种写法
 ```
 /ser
-echo lines2\nlines3\n  lines4
-echo finished
-sleep 2.7
+/echo lines2\nlines3\n  lines4
+/echo finished
+/sleep 2.7
 ```
 其中嵌套开始的第一行不变
 然后所有嵌套向内收缩一格
 直到嵌套结束
-请不要在内部的命令开头添加特殊符号
-这可能会影响 trigger 的识别
 
 所有命令都有变体
 多单词的命令格式有：
